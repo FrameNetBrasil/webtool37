@@ -1,0 +1,1447 @@
+{{include layers/markup.html}}
+
+<script type="text/javascript">
+
+    var annotation = {
+        chronometer: 0,
+        dataIsSaved: true,
+        topDialog: '',
+        timeout: {{$data->sessionTimeout|noescape}},
+        type: {{$data->type}},
+        canSave: {{$data->canSave}},
+        isMaster: {{$data->isMaster|noescape}},
+        isSenior: {{$data->isSenior|noescape}},
+        rgbColors: JSON.parse({{$data->colors}}),
+        layerType: JSON.parse({{$data->layerType}}),
+        instantiationType: JSON.parse({{$data->instantiationType}}),
+        instantiationTypeObj: JSON.parse({{$data->instantiationTypeObj}})
+    };
+
+    $(function () {
+
+        annotation.idSubCorpus = {{$data->idSubCorpus}};
+
+        annotation.e = null;
+        $(document).on('keydown', function(e) {
+            annotation.e = e;
+        });
+        $(document).on('keyup', function(e) {
+            annotation.e = null;
+        });
+
+        annotation.coreIcon = {"cty_core": "fa-icon fa fa-circle", "cty_peripheral": "fa-icon fa fa-dot-circle-o", "cty_extra-thematic": "fa-icon fa fa-circle-o"};
+
+        annotation.idSentence = {{$data->idSentence}};
+        annotation.idAnnotationSet = {{$data->idAnnotationSet}};
+        annotation.words = JSON.parse({{$data->layers['words']}});
+        annotation.chars = JSON.parse({{$data->layers['chars']}});
+        annotation.annotationSets = JSON.parse({{$data->layers['annotationSets']}});
+        annotation.layers = JSON.parse({{$data->layers['layers']}});
+        annotation.labels = JSON.parse({{$data->layers['labels']}});
+        annotation.labelTypes = JSON.parse({{$data->layers['labelTypes']}});
+        annotation.nis = JSON.parse({{$data->layers['nis']}});
+//annotation.niFields = JSON.parse({{$data->layers['niFields']}});
+        annotation.data = JSON.parse({{$data->layers['data']}});
+        annotation.lus = {};
+
+//console.log(annotation.layers);
+//console.log(annotation.labelTypes);
+
+        annotation.currentSelection = {
+            rowIndex: -1,
+            fields: {}
+        }
+
+        annotation.cursor = {
+            rowIndex: 1,
+            field: 0
+        }
+
+        annotation.rows = {};
+
+        annotation.styleSelected = function (jq) {
+            jq.css('background-color','#CCC').css('color','black');
+        }
+
+        annotation.rowStyler = function(index,row){
+            //console.log('refreshing row ' + index);
+            if (!row.show) {
+                return 'display:none';
+            }
+            if (row.idLayerType == 0){
+                return {class:'layerTarget'};
+            } else {
+                return {class:'layerSelected'};
+            }
+        }
+
+        annotation.onSelect = function (rowIndex, rowData) {
+        }
+
+        annotation.labelHelp = function () {
+            window.open({{$manager->getURL('annotation/main/labelhelp')}}, '_blank');
+        }
+
+        annotation.onClickCell = function (rowIndex, field, value) {
+            var rows=$('#layers').datagrid("getRows");
+            var row = rows[rowIndex];
+            if (row.idLayerType == 0){
+                return;
+            }
+            if (row.layerTypeEntry.substr(0,8) == 'lty_cefe'){
+                return;
+            }
+            if (field == 'ni') {
+                annotation.clearSelection(annotation.currentSelection.rowIndex);
+                //console.log(annotation.layerType[row.idLayerType]);
+                if (annotation.layerType[row.idLayerType]['entry'] == 'lty_fe') {
+                    annotation.currentSelection.rowIndex = rowIndex;
+                    var comboEditor = {
+                        type:'combobox',
+                        options:{
+                            valueField:'idInstantiationType',
+                            textField:'instantiationType',
+                            data: annotation.instantiationType
+                        }
+                    };
+                    var labels = annotation.labelTypes[row.idLayer];
+                    var fes = []; var i = 0;
+                    for (idLabel in labels) {
+                        if ((labels[idLabel]['coreType'] == 'cty_core') || (labels[idLabel]['coreType'] == 'cty_core-unexpressed')) {
+                            //console.log(idLabel);
+                            var value = '';
+                            if (typeof annotation.nis[row.idLayer] != 'undefined') {
+                                if (typeof annotation.nis[row.idLayer][idLabel] != 'undefined') {
+                                    value = annotation.nis[row.idLayer][idLabel]['idInstantiationType'];
+                                }
+                            }
+                            fes[i++] = {idLayer: row.idLayer, idLayerType:row.idLayerType, name:idLabel, value:value, editor:comboEditor};
+                        }
+                    }
+                    $('#pg').propertygrid({data: fes});
+                    $('#pg').propertygrid({idLayer: row.idLayer});
+                    $('#pg').propertygrid({
+                        columns:[[
+                            {
+                                field:'name', width:200, title:'Element',
+                                styler: annotation.cellStyler,
+                                formatter: annotation.cellFormatter
+                            },
+                            {
+                                field: 'value', width:70, title: 'IT',
+                                formatter: function(value,row,index){
+                                    var r = '';
+                                    jQuery.each(annotation.instantiationType, function (i, it) {
+                                        if (value == it.idInstantiationType) {
+                                            r = it.instantiationType;
+                                        }
+                                    });
+                                    return r;
+                                }
+                            }
+                        ]]
+                    });
+                    $('#dlgNI').dialog('doLayout');
+                    $('#dlgNI').dialog('open');
+                    annotation.pushTopDialog('#dlgNI');
+                }
+                return;
+            } else {
+                if (annotation.chars[field]['char'] == ' ') {
+                    return;
+                }
+                var shift = false;
+                //console.log(annotation.e);
+                if (annotation.e) {
+                    shift = (annotation.e.which == 16);
+                }
+                if (!shift) {
+                    annotation.clearSelection(annotation.currentSelection.rowIndex);
+                }
+                //console.log(rowIndex);
+                //console.log(field);
+                annotation.markSelection(rowIndex, field);
+                document.getSelection().removeAllRanges();
+            }
+        }
+
+        annotation.dlgNISave = function() {
+            //console.log('NI onClose');
+            var nis = annotation.nis;//{};
+            var rows=$('#pg').propertygrid("getRows");
+            var idLayer = 0;
+            //console.log(rows);
+            var idLayer = $('#pg').propertygrid("options").idLayer;
+            //console.log(idLayer);
+            //console.log(nis);
+            nis[idLayer] = {};
+            for(index in rows) {
+                var row = rows[index];
+                idLayer = row.idLayer;
+                //console.log(row);
+                //nis[row.idLayer] = {};
+                if ((row.value !== '') && (row.value != '0')) {
+                    //console.log('[' + row.value + ']');
+                    //console.log(row.name);
+                    var idLabel = row.name;
+                    //console.log(idLabel);
+                    //console.log(annotation.labelTypes[row.idLayer][idLabel]);
+                    nis[row.idLayer] = nis[row.idLayer] || {};
+                    nis[row.idLayer][idLabel] = {
+                        fe: annotation.labelTypes[row.idLayer][idLabel]['label'],
+                        idInstantiationType: row.value,
+                        label: annotation.instantiationTypeObj[row.value],
+                        //idSentenceWord:  annotation.niFields[row.idLayer].substr(2),
+                        idColor: annotation.labelTypes[row.idLayer][idLabel]['idColor']
+                    };
+                }
+            }
+            //console.log(nis);
+            var rowIndex = annotation.currentSelection.rowIndex;
+            //console.log('rowIndex = ' + rowIndex);
+
+            $('#layers').datagrid('beginEdit', rowIndex);
+            annotation.nis = nis;
+            $('#layers').datagrid('getRows')[rowIndex]['ni'] = '';
+            $('#layers').datagrid('endEdit', rowIndex);
+            $('#layers').datagrid('autoSizeColumn','ni');
+            annotation.dirtyData();
+        }
+
+        annotation.onRowContextMenu = function(e, rowIndex, rowData) {
+            //console.log('onRowContextMenu ' + rowIndex);
+            e.preventDefault();
+            var rows=$('#layers').datagrid("getRows");
+            var row = rows[rowIndex];
+            //if (annotation.layerType[row.idLayerType]['name'] == 'Target') {
+            if (row.idLayerType == 0){
+                annotation.createASMenu(rowIndex, rowData);
+                annotation.ASMenu.menu('show', {
+                    left:e.pageX,
+                    top:e.pageY
+                });
+            } else if (annotation.currentSelection.rowIndex == rowIndex) {
+                annotation.createContextMenu(rowIndex, rowData);
+                annotation.contextMenu.menu('show', {
+                    left:e.pageX,
+                    top:e.pageY
+                });
+            }
+        }
+
+        annotation.onHeaderContextMenu = function(e, field){
+            //console.log('onHeaderContextMenu ' + field);
+            e.preventDefault();
+            annotation.createHeaderContextMenu(field);
+            annotation.headerContextMenu.menu('show', {
+                left:e.pageX,
+                top:e.pageY
+            });
+        }
+
+        annotation.markSelection = function(rowIndex, field) {
+            if (annotation.currentSelection.rowIndex > 0 ) {
+                if (rowIndex != annotation.currentSelection.rowIndex) {
+                    annotation.clearSelection(annotation.currentSelection.rowIndex);
+                }
+            }
+            console.log(rowIndex);
+            console.log(field);
+            var rows = $('#layers').datagrid('getRows');
+            var row = rows[rowIndex];
+            //console.log(row);
+
+            var columns = $('#layers').datagrid('getColumnFields');
+            var start = end = -1;
+            // se já tiver anotação nesta camada na coluna escolhida, usa os limites da anotação
+            var idLabel = row[field];
+            if (idLabel) {
+                pstart = pend = parseInt(field.substr(2,5));
+                console.log(pstart);
+                while (row['wf' + pstart] == idLabel) {
+                    start = pstart--;
+                }
+                while (row['wf' + pend] == idLabel) {
+                    end = pend++;
+                }
+            }
+
+            if (start == -1) {
+                if ((row.layerTypeEntry == 'lty_gf') || (row.layerTypeEntry == 'lty_pt')) {
+                    // se já tiver anotação na camada FE na coluna escolhida, usa os limites do FE
+                    if (row.idLayerType != 1) {
+                        for (r in rows) {
+                            var tempRow = rows[r];
+                            if ((tempRow.idLayerType == 1) && (tempRow.idAnnotationSet == row.idAnnotationSet)) {
+                                var idLabel = tempRow[field];
+                                console.log('idLabel = ' + idLabel);
+                                if (idLabel) {
+                                    //console.log(tempRow);
+                                    pstart = pend = parseInt(field.substr(2, 5));
+                                    while (tempRow['wf' + pstart] == idLabel) {
+                                        start = pstart--;
+                                    }
+                                    while (tempRow['wf' + pend] == idLabel) {
+                                        end = pend++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (start == -1) {
+                // se não existe anotação nesta camada na coluna escolhida, usa os limites da palavra correspondente à coluna
+                for (var column = 0; column < columns.length; column++) {
+                    var f = columns[column];
+                    if ((annotation.currentSelection.fields[f]) || (f == field)) {
+                        var word = annotation.words[annotation.chars[f]['word']];
+                        if (start == -1) {
+                            start = word['startChar'];
+                            end = word['endChar'];
+                        }
+                        if (f == field) {
+                            end = word['endChar'];
+                        }
+                    }
+                }
+            }
+            if (start > -1) {
+                annotation.clearSelection(rowIndex);
+                for (var i = start; i <= end; i++) {
+                    var f = 'wf' + i;//columns[i];
+                    $( "tr[datagrid-row-index|='" + rowIndex +  "'] > td[field=" + f + "]" ).addClass( "cellSelected" );
+                    annotation.currentSelection.fields[f] = true;
+                }
+                annotation.currentSelection.start = start;
+                annotation.currentSelection.end = end;
+            }
+            annotation.currentSelection.rowIndex = rowIndex;
+            annotation.cursor.rowIndex = rowIndex;
+            annotation.cursor.field = annotation.currentSelection.start;
+        }
+
+        annotation.clearSelection = function(rowIndex) {
+            $( "tr[datagrid-row-index|='" + rowIndex +  "'] > td").removeClass( "cellSelected" );
+            annotation.currentSelection.rowIndex = -1;
+            annotation.currentSelection.fields = {};
+        }
+
+        annotation.getDataToPost = function() {
+            var data = [];
+            var i = 0;
+            var rows = $('#layers').datagrid('getRows');
+            for (r in rows) {
+                var row = rows[r];
+                var line = {};
+                line['ni'] = {};
+                for (field in row) {
+                    if (field == 'ni') {
+                        if (annotation.nis[row['idLayer']]) {
+                            line['ni'][row['idLayer']] = {};
+                            for (idLabel in annotation.nis[row['idLayer']]) {
+                                line['ni'][row['idLayer']][idLabel] = {
+                                    idInstantiationType: annotation.nis[row['idLayer']][idLabel]['idInstantiationType'],
+                                    idSentenceWord: annotation.nis[row['idLayer']][idLabel]['idSentenceWord']
+                                };
+                            }
+                        }
+                    }
+                    else {
+                        line[field] = row[field];
+                    }
+                }
+                data[i++] = line;
+            }
+            //console.log(data);
+            return JSON.stringify(data);
+        }
+
+        annotation.toolbarNull = [
+
+        ];
+        {{if ($data->canSave) }}
+
+        annotation.save = function() {
+
+            var panel = $('#layers').datagrid("getPanel");
+            annotation.showMessage(panel, "Saving AnnotationSets...");
+            $('#type').val(annotation.type);
+            var data = annotation.getDataToPost();
+            $('#dataLayers').val(data);
+            manager.doPostBack('formLayers');
+            annotation.cleanData();
+            annotation.hideMessage(panel);
+        }
+
+        annotation.toolbar = [
+            {
+                text:'<u>S</u>ave',
+                iconCls:'fa fa-folder-o fa16px',
+                handler: function(){
+                    annotation.save();
+                }
+            },
+            /*
+            {
+                text:'Doubt',
+                iconCls:'fa fa-frown-o fa16px',
+                handler: function(){
+                    var data = JSON.stringify(annotation.annotationSets);
+                    $('#annotationSets').val(data);
+                    $('#validation').val('-1');
+                    manager.doPostBack('formValidation');
+                }
+            },
+            {
+                text:'Ignore',
+                iconCls:'fa fa-ban fa16px',
+                handler: function(){
+                    var data = JSON.stringify(annotation.annotationSets);
+                    $('#annotationSets').val(data);
+                    $('#validation').val('-2');
+                    manager.doPostBack('formValidation');
+                }
+            },
+            */
+            {
+                text:'Remove AS',
+                iconCls:'fa fa-remove fa16px',
+                handler: function(){
+                    annotation.dlgASOpenRemove();
+                }
+            },
+            {
+                text:'Label Help',
+                iconCls:'fa fa-question-circle-o fa16px',
+                handler: function(){
+                    annotation.labelHelp();
+                }
+            }
+        ];
+
+        annotation.toolbarSenior = [
+            {
+                text:'<u>S</u>ave',
+                iconCls:'fa fa-folder-o fa16px',
+                handler: function(){
+                    annotation.save();
+                }
+            },
+            /*
+            {
+                text:'Approve',
+                iconCls:'fa fa-thumbs-o-up fa16px',
+                handler: function(){
+                    var data = JSON.stringify(annotation.annotationSets);
+                    $('#annotationSets').val(data);
+                    $('#validation').val('1');
+                    manager.doPostBack('formValidation');
+                }
+            },
+            {
+                text:'Disapprove',
+                iconCls:'fa fa-thumbs-o-down fa16px',
+                handler: function(){
+                    var data = JSON.stringify(annotation.annotationSets);
+                    $('#annotationSets').val(data);
+                    $('#validation').val('0');
+                    //manager.doPostBack('formValidation');
+                    annotation.dlgValidationOpen();
+                }
+            },
+            {
+                text:'Ignore',
+                iconCls:'fa fa-ban fa16px',
+                handler: function(){
+                    var data = JSON.stringify(annotation.annotationSets);
+                    $('#annotationSets').val(data);
+                    $('#validation').val('-2');
+                    manager.doPostBack('formValidation');
+                }
+            },
+            */
+            {
+                text:'Label Help',
+                iconCls:'fa fa-question-circle-o fa16px',
+                handler: function(){
+                    annotation.labelHelp();
+                }
+            }
+        ];
+
+        annotation.toolbarMaster = [
+            {
+                text:'<u>S</u>ave',
+                iconCls:'fa fa-folder-o fa16px',
+                handler: function(){
+                    annotation.save();
+                }
+            },
+            /*
+            {
+                text:'Approve',
+                iconCls:'fa fa-thumbs-o-up fa16px',
+                handler: function(){
+                    var data = JSON.stringify(annotation.annotationSets);
+                    $('#annotationSets').val(data);
+                    $('#validation').val('1');
+                    manager.doPostBack('formValidation');
+                }
+            },
+            {
+                text:'Disapprove',
+                iconCls:'fa fa-thumbs-o-down fa16px',
+                handler: function(){
+                    var data = JSON.stringify(annotation.annotationSets);
+                    $('#annotationSets').val(data);
+                    $('#validation').val('0');
+                    //manager.doPostBack('formValidation');
+                    annotation.dlgValidationOpen();
+                }
+            },
+            {
+                text:'Ignore',
+                iconCls:'fa fa-ban fa16px',
+                handler: function(){
+                    var data = JSON.stringify(annotation.annotationSets);
+                    $('#annotationSets').val(data);
+                    $('#validation').val('-2');
+                    manager.doPostBack('formValidation');
+                }
+            },
+            {
+                text:'Release',
+                iconCls:'fa fa-unlock fa16px',
+                handler: function(){
+                    var data = JSON.stringify(annotation.annotationSets);
+                    $('#annotationSets').val(data);
+                    $('#validation').val('-3');
+                    manager.doPostBack('formValidation');
+                }
+            },
+            */
+            {
+                text:'Hide AS',
+                iconCls:'fa fa-minus-square-o fa16px',
+                handler: function(){
+                    annotation.dlgASOpen();
+                }
+            },
+            {
+                text:'Remove AS',
+                iconCls:'fa fa-remove fa16px',
+                handler: function(){
+                    annotation.dlgASOpenRemove();
+                }
+            },
+            /*
+            {
+                text:'Add Cxn',
+                iconCls:'fa fa-plus-square-o fa16px',
+                handler: function(){
+                    annotation.dlgCxnOpen();
+                }
+            },
+            */
+            {
+                text:'Label Help',
+                iconCls:'fa fa-question fa16px',
+                handler: function(){
+                    annotation.labelHelp();
+                }
+            }
+        ];
+
+        {{/if}}
+
+        annotation.dlgASOpen = function() {
+            var data = [];
+            var i = 0;
+            for (as in annotation.annotationSets) {
+                data[i++] = annotation.annotationSets[as];
+            }
+            $('#asGrid').datagrid({data: data});
+            var rows = $('#asGrid').datagrid('getRows');
+            for (r in rows) {
+                if (!annotation.annotationSets[rows[r].idAnnotationSet].show) {
+                    $('#asGrid').datagrid('checkRow', r);
+                }
+            }
+            $('#dlgAS').dialog('doLayout');
+            $('#dlgAS').dialog('open');
+            annotation.pushTopDialog('#dlgAS');
+        }
+
+        annotation.dlgASSave = function() {
+            for (as in annotation.annotationSets) {
+                annotation.annotationSets[as].show = true;
+            }
+            var rowsChecked = $('#asGrid').datagrid('getChecked');
+            for (c in rowsChecked) {
+                var idAnnotationSet = rowsChecked[c].idAnnotationSet;
+                annotation.annotationSets[idAnnotationSet].show = false;
+            }
+            var rows = $('#layers').datagrid('getRows');
+            for (r in rows) {
+                rows[r].show = annotation.annotationSets[rows[r].idAnnotationSet].show;
+                $('#layers').datagrid('refreshRow', r);
+            }
+        }
+
+        annotation.dlgASOpenRemove = function() {
+            if (!annotation.checkSavedData()) {
+                return;
+            }
+            var data = [];
+            var i = 0;
+            for (as in annotation.annotationSets) {
+                data[i++] = annotation.annotationSets[as];
+            }
+            $('#asGridRemove').datagrid({data: data});
+            var rows = $('#asGridRemove').datagrid('getRows');
+            for (r in rows) {
+                if (!annotation.annotationSets[rows[r].idAnnotationSet].show) {
+                    $('#asGridRemove').datagrid('checkRow', r);
+                }
+            }
+            $('#dlgASRemove').dialog('doLayout');
+            $('#dlgASRemove').dialog('open');
+            annotation.pushTopDialog('#dlgASRemove');
+        }
+
+        annotation.dlgASSaveRemove = function() {
+            var AStoRemove = {};
+            var rowsChecked = $('#asGridRemove').datagrid('getChecked');
+            for (c in rowsChecked) {
+                var idAnnotationSet = rowsChecked[c].idAnnotationSet;
+                console.log(idAnnotationSet);
+                AStoRemove[idAnnotationSet] = idAnnotationSet;
+            }
+            $.ajax({
+                type: "POST",
+                url: {{$manager->getURL('annotation/main/deleteAS')}},
+                data: {AStoDelete: 'json:' + JSON.stringify(AStoRemove)},
+                dataType: "json",
+                async: false
+            });
+            $('#layersPane').html('');
+            manager.doGet({{$manager->getURL('annotation/main/layers')}} + '/' + annotation.idSentence + '/' + annotation.idAnnotationSet, 'layersPane');
+        }
+
+        annotation.dlgASCommentsSave = function() {
+            manager.doPost('', {{$manager->getURL('annotation/main/saveASComments')}}, 'formASComments');
+            $('#dlgASComments').dialog('close');
+        }
+
+
+        annotation.dlgCxnOpen = function() {
+            $('#cxnGrid').datagrid({singleSelect:true, url: {{$manager->getURL('annotation/main/cxnGridData')}}});
+            $('#dlgCxn').dialog('doLayout');
+            $('#dlgCxn').dialog('open');
+        }
+
+        annotation.dlgCxnClose = function() {
+            if (!annotation.checkSavedData()) {
+                return;
+            }
+            var selected = $('#cxnGrid').datagrid('getSelected');
+            //console.log(selected);
+            $.ajax({
+                type: "POST",
+                url: {{$manager->getURL('annotation/main/addManualSubcorpus')}},
+            data: {idConstruction: selected.idConstruction, idSentence: annotation.idSentence},
+            dataType: "json",
+                    async: false,
+        });
+            $('#layersPane').html('');
+            manager.doGet({{$manager->getURL('annotation/main/layers')}} + '/' + annotation.idSentence + '/' + annotation.idAnnotationSet, 'layersPane');
+        }
+
+        annotation.dlgValidationOpen = function() {
+            $('#dlgValidation').dialog('doLayout');
+            $('#dlgValidation').dialog('open');
+        }
+
+        annotation.cellFormatter = function (value,row,index) {
+            if (this.field == 'name') {
+                if ((typeof annotation.layers[row.idLayer] != 'undefined') ) {
+                    return annotation.labelTypes[row.idLayer][value]['label'];
+                }
+            }
+            if (this.field == 'wf0') {
+                if ((typeof annotation.layers[row.idLayer] != 'undefined') ) {
+                    annotation.layers[row.idLayer]['currentLabel'] = 0;
+                }
+            }
+            var text = (typeof value != 'undefined') ? value : '';
+            if (text != '') {
+                if (row.idLayerType > 0){
+                    var pos = 0;
+                    var label = annotation.labelTypes[row.idLayer][text]['label'];
+                    if (text != annotation.layers[row.idLayer]['currentLabel']) {
+                        annotation.layers[row.idLayer]['currentLabel'] = text;
+                        pos = annotation.layers[row.idLayer]['currentLabelPos'] = 0;
+                    } else {
+                        pos = ++annotation.layers[row.idLayer]['currentLabelPos'];
+                    }
+                    text = label.charAt(pos);
+                }
+            } else {
+                if ((typeof annotation.layers[row.idLayer] != 'undefined') ) {
+                    if (annotation.layers[row.idLayer]['currentLabelPos'] > 0) {
+                        annotation.layers[row.idLayer]['currentLabel'] = 0;
+                        annotation.layers[row.idLayer]['currentLabelPos'] = 0;
+                    }
+                }
+            }
+            return text;
+        }
+
+        annotation.cellLayerFormatter = function (value,row,index) {
+            var text = value;
+            if (row.idLayerType == 0){
+                text = "<a class='fa fa-comment-o fa16px' style=':hover {color:green};text-decoration:none;' onclick='annotation.ASComments(" + row.idAnnotationSet + ")'>&nbsp</a>" + annotation.annotationSets[row.idAnnotationSet]['name'];
+                console.log(text);
+            }
+            return text;
+        }
+
+        annotation.ASComments = function (idAnnotationSet) {
+            console.log('----' + idAnnotationSet);
+            annotation.idASComments = idAnnotationSet;
+            $('#dlgASComments').dialog({href: {{$manager->getURL('annotation/main/formASComments')}} + "/" + annotation.idASComments });
+            $('#dlgASComments').dialog('doLayout');
+            $('#dlgASComments').dialog('open');
+        }
+
+        annotation.cellNIFormatter = function (value,row,index) {
+            var text = '';
+            var i = 0;
+            if (row.idLayerType == -1){
+                text = '';
+                i = 1;
+            } else {
+                var nis = annotation.nis[row.idLayer];
+                if (nis) {
+                    jQuery.each(nis, function (idLabel, ni) {
+                        var color = annotation.rgbColors[ni.idColor];
+                        var style = 'background-color:#' + color.rgbBg + ';color:#' + color.rgbFg + ';';
+                        text = text + "<div class='easyui-tooltip divNI' title='" + ni.fe + "' style='" + style + "'>" + ni.label + "</div>";
+                        i++;
+                    });
+                }
+                var width = i * 30;
+            }
+            return "<div style='width:" + width + "px'>" + text + "</div>";
+        }
+
+        annotation.cellStyler = function (value,row,index) {
+            var style = '';
+            if ((typeof value != 'undefined') && (value != '')) {
+                var idLabelType;
+                var idColor;
+                if (row.idLayerType == -1){
+                    idColor = 1;
+                } else {
+                    if (row.idLayerType == 0) {
+                        idLabelType = Object.keys(annotation.labelTypes[row.idLayer])[0];
+                    } else {
+                        idLabelType = value;
+                    }
+                    idColor = annotation.labelTypes[row.idLayer][idLabelType]['idColor'];
+                }
+                //console.log('cellStyler');
+                //console.log('idLabelType = ' + idLabelType);
+                //console.log(row);
+                var color = annotation.rgbColors[idColor];
+                var style = 'background-color:#' + color.rgbBg + ';color:#'+ color.rgbFg + ';';
+            }
+            return style;
+        }
+
+        annotation.setFields = function(selection, value) {
+            $('#layers').datagrid('beginEdit', selection.rowIndex);
+            var i = 0; var wf = ''; var word = {};
+            for (field in selection.fields) {
+                $('#layers').datagrid('getRows')[selection.rowIndex][field] = value;
+            }
+            $('#layers').datagrid('endEdit', selection.rowIndex);
+            annotation.clearSelection(selection.rowIndex);
+            annotation.dirtyData();
+        }
+
+        annotation.contextMenu = null;
+        annotation.createContextMenu = function (rowIndex, rowData) {
+            //console.log('createContextMenu ' + rowIndex);
+            var menu = 'menu' + rowIndex;
+            $menu = $('#' + menu);
+            //console.log($menu);
+            if ($menu.length == 0) {
+                $("<div id='" + menu + "'/>").appendTo('body');
+                $menu = $('#' + menu);
+            } else {
+                $menu.html('');
+            }
+            annotation.contextMenu = $menu;
+            annotation.contextMenu.menu({
+                onClick: function(item){
+                    console.log('---'+item);
+                    var value = (item.id == 'clear') ? '' : item.id;
+                    annotation.setFields(annotation.currentSelection, value);
+                }
+            });
+            annotation.contextMenu.menu('appendItem', {
+                id: 'clear',
+                text: {{_'Clear'}},
+                name: 'Clear',
+                iconCls: 'fa fa-undo'
+            });
+            var idLayer = rowData['idLayer'];
+            //console.log('idLayer = ' + idLayer);
+            var labels = annotation.labelTypes[idLayer];
+            for(idLabelType in labels){
+                //console.log(label);
+                var labelType = annotation.labelTypes[idLayer][idLabelType];
+                var color = annotation.rgbColors[labelType['idColor']];
+                var style = 'background-color:#' + color.rgbBg + ';color:#'+ color.rgbFg + ';';
+                var text = "<div style='" + style + "'>" + labelType['label'] + "</div>";
+                var icon = labelType['coreType'] == '' ? 'fa fa-caret-right' : annotation.coreIcon[labelType['coreType']];
+                annotation.contextMenu.menu('appendItem', {
+                    id: idLabelType,
+                    text: text,
+                    name: labelType['label'],
+                    iconCls: icon
+                });
+            }
+        }
+
+        annotation.addMWEManualSubcorpus  = function (wf, idLU, idSentence) {
+            var data = [];
+            var i = 0;
+            for (idWord in annotation.words) {
+                word = annotation.words[idWord];
+                if (word.word != ' ') {
+                    data[i++] = word;
+                }
+            }
+            console.log(data);
+            console.log(wf);
+            $('#mwe').datagrid({data: data});
+            var rows = $('#mwe').datagrid('getRows');
+            for (r in rows) {
+                if (rows[r].word == wf.word) {
+                    $('#mwe').datagrid('checkRow', r);
+                }
+            }
+            $('#mweIdLU').val(idLU);
+            $('#mweIdSentence').val(idSentence);
+            $('#dlgMWE').dialog('doLayout');
+            $('#dlgMWE').dialog('open');
+        }
+
+        annotation.dlgMWEClose = function() {
+            var idLU = $('#mweIdLU').val();
+            var idSentence = $('#mweIdSentence').val();
+            var startChar = 4000;
+            var endChar = -1;
+            var rowsChecked = $('#mwe').datagrid('getChecked');
+            for (w in rowsChecked) {
+                word = rowsChecked[w];
+                if (word.startChar < startChar) {
+                    startChar = word.startChar;
+                }
+                if (word.endChar > endChar) {
+                    endChar = word.endChar;
+                }
+            }
+            annotation.addManualSubcorpus(idLU, idSentence, startChar, endChar);
+        }
+
+        annotation.addManualSubcorpus  = function (idLU, idSentence, startChar, endChar) {
+            $.ajax({
+                type: "POST",
+                url: {{$manager->getURL('annotation/main/addManualSubcorpus')}},
+               data: {idLU: idLU, idSentence: idSentence, startChar: startChar, endChar: endChar},
+                 dataType: "json",
+                    async: false,
+            });
+            $('#layersPane').html('');
+            manager.doGet({{$manager->getURL('annotation/main/layers')}} + '/' + annotation.idSentence+ '/' + annotation.idAnnotationSet, 'layersPane');
+        }
+
+        annotation.headerContextMenu = null;
+        annotation.createHeaderContextMenu = function (field) {
+            if (!annotation.checkSavedData()) {
+                return;
+            }
+            //console.log('createHeaderContextMenu ' + field);
+            var menu = 'menu' + field;
+            $menu = $('#' + menu);
+            //console.log($menu);
+            if ($menu.length == 0) {
+                $("<div id='" + menu + "'/>").appendTo('body');
+                $menu = $('#' + menu);
+            } else {
+                $menu.html('');
+            }
+            annotation.headerContextMenu = $menu;
+            annotation.headerContextMenu.menu({
+                onClick: function(item){
+                    console.log(item);
+                    if (item.id > 0) {
+                        //console.log(item);
+                        var wf = annotation.words[annotation.chars[item.name]['word']];
+                        if (annotation.lus[item.id].mwe != '0') {
+                            annotation.addMWEManualSubcorpus(wf, item.id, annotation.idSentence);
+                        } else {
+                            annotation.addManualSubcorpus(item.id, annotation.idSentence, wf.startChar, wf.endChar);
+                        }
+                        //console.log(wf);
+                    }
+                }
+            });
+            var wf = annotation.words[annotation.chars[field]['word']];
+            $.ajax({
+                type: "POST",
+                url: {{$manager->getURL('annotation/main/headerMenu')}},
+                data: {wordform: wf.word},
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    //console.log('success');
+                    if (jQuery.isEmptyObject(data)) {
+                        annotation.headerContextMenu.menu('appendItem', {
+                            id: 0,
+                            text: '** No matching lemma **',
+                            name: '0',
+                            iconCls: 'fa fa-caret-right'
+                        });
+                    } else {
+                        console.log(data);
+                        jQuery.each(data, function (i, lu) {
+                            console.log(lu);
+                            annotation.lus[lu.idLU] = lu;
+                            annotation.headerContextMenu.menu('appendItem', {
+                                id: lu.idLU,
+                                text: lu.fullName,
+                                name: field,
+                                iconCls: 'fa fa-caret-right'
+                            });
+                        });
+                    }
+                },
+            });
+        }
+
+        annotation.ASMenu = null;
+        annotation.createASMenu = function (rowIndex, rowData) {
+            //console.log('createASMenu ' + rowIndex);
+            var menu = 'menu' + rowData['idLayer'];
+            $menu = $('#' + menu);
+            //console.log($menu);
+            if ($menu.length == 0) {
+                $("<div id='" + menu + "'/>").appendTo('body');
+                $menu = $('#' + menu);
+            } else {
+                $menu.html('');
+            }
+            annotation.ASMenu = $menu;
+            annotation.ASMenu.menu({
+                onClick: function(item){
+                    //console.log(item);
+                    var data = {idAnnotationSet: item.name, idSentence: annotation.idSentence};
+                    if (item.id == 'addFE') {
+                        $.ajax({type: "POST", url: {{$manager->getURL('annotation/main/addFELayer')}}, data: data, dataType: "json",
+                           success: function (data) {
+                                for (item in data) {
+                                    if (annotation.layers[item] === undefined) {
+                                        annotation.layers[item] = data[item];
+                                    }
+                                }
+                            }
+                        });
+                        $.ajax({type: "POST", url: {{$manager->getURL('annotation/main/getFELabels')}}, data: data, dataType: "json",
+                            success: function (data) {
+                                for (item in data) {
+                                    if (annotation.labelTypes[item] === undefined) {
+                                        annotation.labelTypes[item] = data[item];
+                                    }
+                                }
+                            }
+                        });
+                    } else if (item.id == 'delFE') {
+                        $.ajax({type: "POST", url: {{$manager->getURL('annotation/main/delFELayer')}}, data: data, dataType: "json"});
+                    }
+                    $('#layers').datagrid('reload');
+                }
+            });
+            annotation.ASMenu.menu('appendItem', {
+                id: 'addFE',
+                text: 'Add FE Layer',
+                name: rowData['idAnnotationSet'],
+                iconCls: 'fa fa-caret-right'
+            });
+            annotation.ASMenu.menu('appendItem', {
+                id: 'delFE',
+                text: 'Delete Last FE Layer',
+                name: rowData['idAnnotationSet'],
+                iconCls: 'fa fa-caret-right'
+            });
+        }
+
+        annotation.checkSavedData = function() {
+            console.log('checkSavedData: ' + (annotation.dataIsSaved ? 'true' : 'false'));
+            if (!annotation.dataIsSaved) {
+                $.messager.alert('Warning','Save your data before this operation!','warning');
+                return false;
+            }
+            return true;
+        }
+
+        annotation.dirtyData = function () {
+            console.log('dirtyData');
+            annotation.dataIsSaved = false;
+            $('#layersPane .datagrid-header-inner').css('background-color','#ffcccc');
+        }
+
+        annotation.cleanData = function () {
+            console.log('cleanData');
+            annotation.dataIsSaved = true;
+            $('#layersPane .datagrid-header-inner').css('background-color','#efefef');
+        }
+        // datagrid
+        var frozenColumns = [
+            {{foreach $data->layers['frozenColumns'] as $column}}
+        {field:{{$column['field']}}, title:{{$column['title']}} {{if $column['formatter'] != ''}},formatter:{{$column['formatter']|noescape}} {{/if}} }
+        {{sep}},{{/sep}}
+        {{/foreach}}
+        ];
+        var columns = [
+            {{foreach $data->layers['columns'] as $column}}
+        {field:{{$column['field']}},title:{{$column['title']}},hidden:{{$column['hidden']|noescape}}
+            {{if $column['formatter'] != ''}},formatter:{{$column['formatter']|noescape}} {{/if}}
+            {{if $column['styler'] != ''}},styler:{{$column['styler']|noescape}} {{/if}}
+            {{if $column['resizable'] != ''}},resizable:{{$column['resizable']|noescape}} {{/if}}
+            {{if $column['width'] != ''}},width:{{$column['width']|noescape}} {{/if}}
+        }
+        {{sep}},{{/sep}}
+        {{/foreach}}
+        ];
+
+        var tb = annotation.toolbarNull;
+        if (annotation.canSave) {
+            if (annotation.isMaster) {
+                tb = annotation.toolbarMaster;
+            } else if (annotation.isSenior) {
+                tb = annotation.toolbarSenior;
+            } else {
+                tb = annotation.toolbar;
+            }
+        }
+
+        $('#layers').datagrid({
+            url:{{$manager->getURL('annotation/main/layersData')}} + "/" + {{$data->idSentence}} + "/" + {{$data->idAnnotationSet}},
+                method:'get',
+                collapsible:true,
+                fitColumns: false,
+                autoRowHeight: false,
+                nowrap: true,
+                rowStyler: annotation.rowStyler,
+                showHeader: true,
+                onSelect: annotation.onSelect,
+                onClickCell: annotation.onClickCell,
+                onRowContextMenu: annotation.onRowContextMenu,
+                onHeaderContextMenu: annotation.onHeaderContextMenu,
+                toolbar: tb,
+                frozenColumns: [frozenColumns],
+                columns: [columns],
+                onLoadSuccess: function() {
+                    annotation.initCursor();
+                }
+        });
+
+        $('#dlgNI').dialog({
+            modal:true,
+            closed:true,
+            toolbar:'#dlgNI_tools',
+            border:true,
+            doSize:true
+        });
+
+
+        $('#dlgNISave').linkbutton({
+            iconCls:'icon-save',
+            plain:true,
+            size:null,
+            onClick: annotation.dlgNISave
+        });
+
+        $('#dlgNIClose').linkbutton({
+            iconCls:'icon-cancel',
+            plain:true,
+            size:null,
+            onClick: function() {
+                $('#dlgNI').dialog('close');
+            }
+        });
+
+        $('#pg').propertygrid({
+            showGroup:false,
+            scrollbarSize:18,
+            data: []
+        });
+
+        $('#dlgMWE').dialog({
+            modal:true,
+            closed:true,
+            onClose:annotation.dlgMWEClose,
+            idField:'idWord'
+        });
+
+        $('#mwe').datagrid({
+            scrollbarSize:18
+        });
+
+        $('#dlgAS').dialog({
+            modal:true,
+            closed:true,
+            toolbar:'#dlgAS_tools',
+            border:true,
+            doSize:true,
+            idField:'idAnnotationSet'
+        });
+
+        $('#dlgASSave').linkbutton({
+            iconCls:'icon-save',
+            plain:true,
+            size:null,
+            onClick: annotation.dlgASSave
+        });
+        $('#dlgASClose').linkbutton({
+            iconCls:'icon-cancel',
+            plain:true,
+            size:null,
+            onClick: function() {
+                $('#dlgAS').dialog('close');
+            }
+        });
+
+        $('#dlgASRemove').dialog({
+            modal:true,
+            closed:true,
+            toolbar:'#dlgASRemove_tools',
+            border:true,
+            doSize:true,
+            idField:'idAnnotationSet'
+        });
+
+        $('#dlgASRemoveSave').linkbutton({
+            iconCls:'icon-save',
+            plain:true,
+            size:null,
+            onClick: annotation.dlgASSaveRemove
+        });
+        $('#dlgASRemoveClose').linkbutton({
+            iconCls:'icon-cancel',
+            plain:true,
+            size:null,
+            onClick: function() {
+                $('#dlgASRemove').dialog('close');
+            }
+        });
+
+        $('#dlgASComments').dialog({
+            modal:true,
+            closed:true,
+            toolbar:'#dlgASComments_tools',
+            border:true,
+            doSize:true,
+            idField:'idAnnotationSet',
+            onLoad: function() {
+                manager._handleResponse['parse']('#dlgASComments');
+            }
+        });
+
+        $('#dlgASCommentsSave').linkbutton({
+            iconCls:'icon-save',
+            plain:true,
+            size:null,
+            onClick: annotation.dlgASCommentsSave
+        });
+
+        $('#dlgASCommentsClose').linkbutton({
+            iconCls:'icon-cancel',
+            plain:true,
+            size:null,
+            onClick: function() {
+                $('#dlgASComments').dialog('close');
+            }
+        });
+
+        $('#dlgValidation').dialog({
+            modal:true,
+            closed:true,
+            toolbar:[{
+                text:'Send',
+                iconCls:'fa fa-envelope-o fa16px',
+                handler: function(){
+                    manager.doPostBack('formValidation');
+                    $('#dlgValidation').dialog('close');
+                }
+            }],
+            onClose: function() {
+                //$('#dlgValidation').dialog('destroy', true);
+            }
+        });
+
+        $('#asGrid').datagrid({
+            scrollbarSize:18
+        });
+
+        $('#asGridRemove').datagrid({
+            scrollbarSize:18
+        });
+
+        $('#dlgCxn').dialog({
+            modal:true,
+            closed:true,
+            onClose:annotation.dlgCxnClose,
+            idField:'idConstruction'
+        });
+
+        $('#cxnGrid').datagrid({
+            scrollbarSize:18
+        });
+
+        $('#feedback').textbox({
+            multiline:true,
+            width: 250,
+            height: 100
+        });
+
+        annotation.showMessage = function(element, msg) {
+            if (!element.children("div.datagrid-mask").length) {
+                $("<div class=\"datagrid-mask\" style=\"display:block\"></div>").appendTo(element);
+                var msg = $("<div class=\"datagrid-mask-msg\" style=\"display:block;left:50%\"></div>").html(msg).appendTo(element);
+                msg._outerHeight(40);
+                msg.css({marginLeft: (-msg.outerWidth() / 2), lineHeight: (msg.height() + "px")});
+            }
+        }
+
+        annotation.hideMessage = function(element) {
+            element.children("div.datagrid-mask-msg").remove();
+            element.children("div.datagrid-mask").remove();
+        }
+
+        annotation.pushTopDialog = function (element) {
+            annotation.topDialog = element;
+        }
+
+        annotation.popTopDialog = function () {
+            annotation.topDialog = '';
+        }
+
+        $( "body" ).keypress(function( event ) {
+            event = event||window.event // IE support
+            var c = event.which;
+            var ctrlDown = event.ctrlKey||event.metaKey; // Mac support
+            // Check for Alt+Gr (http://en.wikipedia.org/wiki/AltGr_key)
+            if (ctrlDown && event.altKey) {
+            } else if (ctrlDown && c==115) { // ctrl-s
+                event.preventDefault();
+                annotation.save();
+            }
+        });
+
+
+        $( "body" ).keydown(function( event ) {
+            console.log('keydown');
+            console.log(event);
+            var c = event.which;
+            switch(c) {
+                case 27: { // esc
+                    if (annotation.topDialog !== '') {
+                        $(annotation.topDialog).dialog('close');
+                        annotation.popTopDialog();
+                    } else {
+                        annotation.initCursor();
+                    }
+                }
+                case 46: {// del
+                    if (annotation.currentSelection.rowIndex >= 0) {
+                        annotation.setFields(annotation.currentSelection, '');
+                        annotation.showCursor();
+                    }
+                    event.stopPropagation();
+                    break;
+                }
+                case 37: {// left
+                    if (annotation.currentSelection.rowIndex >= 0) {
+                        var prev = annotation.currentSelection.start - 1;
+                        var field = 'wf' + prev;
+                        if (typeof annotation.chars[field] != 'undefined') {
+                            if (annotation.chars[field]['char'] == ' ') {
+                                var prev = annotation.currentSelection.start - 2;
+                                var field = 'wf' + prev;
+                            }
+                            if (typeof annotation.chars[field] != 'undefined') {
+                                //annotation.clearSelection(annotation.currentSelection.rowIndex);
+                                annotation.markSelection(annotation.currentSelection.rowIndex, field);
+                            }
+                        }
+                    }
+                    event.stopPropagation();
+                    break;
+                }
+                case 39: {// right
+                    if (annotation.currentSelection.rowIndex >= 0) {
+                        var next = annotation.currentSelection.end + 1;
+                        var field = 'wf' + next;
+                        if (typeof annotation.chars[field] != 'undefined') {
+                            if (annotation.chars[field]['char'] == ' ') {
+                                var next = annotation.currentSelection.end + 2;
+                                var field = 'wf' + next;
+                            }
+                            if (typeof annotation.chars[field] != 'undefined') {
+                                //annotation.clearSelection(annotation.currentSelection.rowIndex);
+                                annotation.currentSelection.fields = {};
+                                //annotation.currentSelection.start = next;
+                                annotation.markSelection(annotation.currentSelection.rowIndex, field);
+
+                                //var cssClass = '.datagrid-cell-c1-' + field;
+                                //console.log($(cssClass));
+                                var $body = $('.datagrid-view2 div.datagrid-body');
+                                console.log('scrollleft = ' + $($body).scrollLeft());
+                                //console.log($body);
+                                //var $cell = $(cssClass)[annotation.currentSelection.rowIndex + 1];
+                                //console.log('next = ' + next);
+                                var cellLength = (annotation.currentSelection.end + 1) * 12;
+                                console.log('cell length = ' + cellLength);
+                                var bodyWidth = $($body).width();
+                                console.log('body width = ' + bodyWidth);
+                                if (cellLength > bodyWidth) {
+                                    var offset = cellLength - bodyWidth;
+                                    console.log('offset = ' + offset);
+                                    annotation.scrollLeft += offset;
+                                } else {
+                                    annotation.scrollLeft = 0;
+                                }
+                                $($body).animate({scrollLeft:  annotation.scrollLeft}, 1000);
+
+                            }
+                        }
+                    }
+                    event.stopPropagation();
+                    break;
+                }
+                case 38: {// up
+                    if (annotation.currentSelection.rowIndex >= 0) {
+                        var prev = annotation.currentSelection.start - 1;
+                        var field = 'wf' + prev;
+                        if (typeof annotation.chars[field] != 'undefined') {
+                            if (annotation.chars[field]['char'] == ' ') {
+                                var prev = annotation.currentSelection.start - 2;
+                                var field = 'wf' + prev;
+                            }
+                            if (typeof annotation.chars[field] != 'undefined') {
+                                //annotation.clearSelection(annotation.currentSelection.rowIndex);
+                                annotation.markSelection(annotation.currentSelection.rowIndex, field);
+                            }
+                        }
+                    }
+                    event.stopPropagation();
+                    break;
+                }
+                case 40: {// down
+                    if (annotation.currentSelection.rowIndex >= 0) {
+                        var next = annotation.currentSelection.rowIndex + 1;
+                        var row = $('#layers').datagrid('getRows')[next];
+                        if (typeof row != 'undefined') {
+                            if (row.idLayerType == 0) {
+                                var next = annotation.currentSelection.rowIndex + 2;
+                                var row = $('#layers').datagrid('getRows')[next];
+                                if (typeof row != 'undefined') {
+                                    annotation.markSelection(next, field);
+                                }
+                            }
+                        }
+                    }
+                    event.stopPropagation();
+                    break;
+                }
+            }
+        });
+
+        annotation.clock = {
+            min: annotation.timeout,
+            sec: 30
+        }
+
+        annotation.startCountdown = function () {
+            var activeSession = true;
+            if (annotation.clock.sec <= 0 ){
+                annotation.clock.sec = 60;
+                annotation.clock.min -= 1;
+            }
+            //console.log(annotation.clock);
+            if ((annotation.clock.min == 0) && (annotation.clock.sec == 60)){
+                var msg = 'Session will expire in 2 min. ';
+                if (!annotation.dataIsSaved) {
+                    msg = msg + 'Save your work!'
+                }
+                $.messager.alert('Warning', msg);
+            }
+            if (annotation.clock.min <= -1){
+                activeSession = false;
+                $.messager.alert({
+                    title: 'Error',
+                    icon: 'error',
+                    msg: 'Session expired!',
+                    fn: function(){
+                        console.log({{$manager->getURL('mfn/main')}});
+                        window.location = {{$manager->getURL('mfn/main')}};
+                    }
+                });
+            } else {
+                annotation.clock.sec -= 10;
+                if(annotation.clock.sec < 10) {
+                    //seconds = "0" + seconds;
+                }
+                setTimeout("annotation.startCountdown()",10000);
+            }
+        }
+
+        annotation.initCursor = function() {
+            annotation.cursor.rowIndex = 1;
+            annotation.cursor.field = 0;
+            var rows = $('#layers').datagrid("getRows");
+            var row = rows[annotation.cursor.rowIndex];
+            if (typeof row != 'undefined') {
+                if (annotation.currentSelection.rowIndex >= 0) {
+                    annotation.clearSelection(annotation.currentSelection.rowIndex);
+                }
+                if (row.idAnnotationSet > -1) {
+                    var field = 'wf' + annotation.cursor.field;
+                    annotation.markSelection(annotation.cursor.rowIndex, field);
+                }
+            }
+        }
+
+        annotation.showCursor = function() {
+            if (annotation.cursor.rowIndex >= 0) {
+                var field = 'wf' + annotation.cursor.field;
+                annotation.markSelection(annotation.cursor.rowIndex, field);
+            }
+        }
+        //
+        // initialization
+        //
+
+        if (annotation.chronometer == 0) {
+            annotation.startCountdown();
+            annotation.chronometer = 1;
+        }
+
+    });
+</script>

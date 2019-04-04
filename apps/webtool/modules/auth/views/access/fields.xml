@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE view SYSTEM "../../../../public/layouts/view.dtd">
+<view>
+    <fields>
+         <mhiddenfield id="Access::idAccess" />        
+<mnumberfield id="Access::rights" label="Rights" />        
+<mnumberfield id="Access::idGroup" label="IdGroup" />        
+<mnumberfield id="Access::idTransaction" label="IdTransaction" />
+    </fields>
+    <buttons>
+        <mbutton id="btnPost" text="Enviar" action="$this->data->action"/>
+    </buttons>
+    <validators>
+    </validators>
+</view>

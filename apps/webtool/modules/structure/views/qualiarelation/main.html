@@ -1,0 +1,129 @@
+<div id="structureLayout" style="width:100%;height:100%;">
+    <div id="structureNorthPane" data-options="collapsible:false, region:'north', title:'{{_'Qualia Relation'}}'" style="height:70px">
+        <div style="float:left;padding:5px">
+            <input id="relation" name="relation" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Relation'}}">
+        </div>
+    </div>
+    <div id="structureLeftPane" region="west" split="true" style="height: 100%">
+        <ul id="relationsTree"></ul>
+    </div>
+    <div id="structureCenterPane" region="center" style="height: 100%">
+        
+    </div>
+</div>
+<div id="menuRootQualiaRelations" style="display:none; width:140px;">
+    <div onclick="structure.reloadRelations()" data-options="iconCls:'icon-reload'">{{_'Reload Relations'}}</div>
+    <div onclick="structure.newRelation()" data-options="iconCls:'icon-add'">{{_'New Relation'}}</div>
+</div>
+<div id="menuQualiaRelation" style="display:none; width:120px;">
+    <div onclick="structure.editRelation()" data-options="iconCls:'icon-edit'">{{_'Edit Relation'}}</div>
+    <div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
+</div>
+
+{{include $manager->getThemePath('css/graph.css')}}
+{{include 'qualia.css'}}
+
+<script type="text/javascript">
+    var idCenterPane = "structureCenterPane";
+    var structure = {
+        app: {{$manager->getApp()}},
+        isMaster: {{$data->isMaster|noescape}},
+        isAnno: {{$data->isAnno|noescape}},
+        node: null
+    };
+    $(function () {
+        $('#structureLayout').layout({
+            fit:true
+        });
+
+        structure.currentParent = null;
+
+        structure.showRelations = function () {
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('report/qualiarelation/showRelations')}}, 'structureCenterPane');
+        }
+
+        structure.reloadTree = function () {
+            $('#structureCenterPane').html('');
+            $('#relationsTree').tree('reload');
+        }
+
+        structure.reloadRelations = function () {
+            $('#structureCenterPane').html('');
+            var node = $('#relationsTree').tree('getSelected');
+            console.log(node);
+            if (node) {
+                if (node.id == 'root') {
+                    $('#relationsTree').tree('reload');
+                } else {
+                    $('#relationsTree').tree('reload', node.target);
+                }
+            }
+        }
+
+        structure.newRelation = function () {
+            var nodeId = structure.node.id;
+            manager.doGet({{$manager->getURL('structure/qualiarelation/formNewRelation')}} + '/' + nodeId,'structureCenterPane');
+        }
+
+        structure.editRelation = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/qualiarelation/formUpdateRelation')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.editEntry = function (entry) {
+            if ($.type(entry) === "undefined") {
+                entry = structure.node.entry;
+            }
+            manager.doAction('^' + structure.app + '/structure/entry/formUpdate/' + entry + '?onClose=structure.reloadTree()');
+            structure.reloadRelations();
+        }
+
+        structure.contextMenuQualia = function(e, node) {
+            e.preventDefault();
+            console.log(node);
+            structure.node = node;
+            var $menu = '';
+            if (structure.isMaster) {
+                $(this).tree('select', node.target);
+                if (node.id == 'root') {
+                    $menu = $('#menuRootQualiaRelations');
+                } else if (node.id.charAt(0) == 'r') {
+                    $menu = $('#menuQualiaRelation');
+                }
+                if ($menu != '') {
+                    $menu.menu('show', {
+                        left: e.pageX,
+                        top: e.pageY
+                    });
+                }
+            }
+        }
+
+        $('#menuRootQualiaRelations').menu({});
+        $('#menuQualiaRelation').menu({});
+
+        $('#relation').textbox({
+            //buttonText:{{_'Search'}},
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Relation'}},
+            onClickButton: function() {
+                $('#relationsTree').tree({queryParams: {relation: $('#relation').textbox('getValue')}});
+            }
+        });
+
+        $('#relationsTree').tree({
+            url: {{$manager->getURL('structure/qualiarelation/relationTree')}},
+            onClick: function (node) {
+                console.log(node);
+                if (node.id.charAt(0) == 'r') {
+                    structure.showRelation(node.id.substr(1));
+                }
+            },
+            onContextMenu: structure.contextMenuQualia
+        });
+    });
+</script>

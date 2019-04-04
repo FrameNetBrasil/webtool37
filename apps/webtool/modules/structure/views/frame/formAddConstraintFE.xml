@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formAddConstraintFE" style="height:250px;">
+        <property title="$this->data->title" onClose="structure.reloadFrame();"/>
+        <fields>
+            <div>
+                <mhiddenfield id="idFrameElement" value="$this->data->idFrameElement"/>
+                <mlabel text="$this->data->fe"/>
+            </div>
+            <maccordion id="aa" style="width:400px;height:210px;">
+                <div title="FE > Frame" style="overflow:auto;padding:10px;">
+                    <label>Minimum 2 letters to search</label>
+                    <include component="MLookupFrame.php" id="idFrame"/>
+                </div>
+                <div title="FE > Semantic Type" style="overflow:auto;padding:10px;">
+                    <include component="MLookupSemanticType.php" id="idSemanticType"/>
+                </div>
+                <div title="FE &lt; Qualia &gt; FE" style="overflow:auto;padding:10px;">
+                    <div><mlabel text="Qualia Relation"/></div>
+                    <include component="MLookupQualiaRelation.php" id="relation"/>
+                    <div><mlabel text="FE"/></div>
+                    <include component="MLookupFEQualia.php" id="idFEQualia"/>
+                </div>
+                <div title="FE &lt; Metonymy &gt; FE" style="overflow:auto;padding:10px;">
+                    <div><mlabel text="FE"/></div>
+                    <include component="MLookupFEMetonymy.php" id="idFEMetonymy"/>
+                </div>
+                <div title="FE &lt; Metonymy &gt; LU" style="overflow:auto;padding:10px;">
+                    <div><label>Frame.LU (minimum 3 letters of Frame name to search)</label></div>
+                    <include component="MLookupLU.php" id="idLUMetonymy"/>
+                </div>
+            </maccordion>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseCxn" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true"
+                         action="$this->data->close"/>
+            <mlinkbutton id="lbSaveCxn" iconCls="icon-save" text="{{_M('Save')}}" plain="true"
+                         action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

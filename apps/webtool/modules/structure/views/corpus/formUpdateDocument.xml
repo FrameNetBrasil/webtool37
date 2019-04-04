@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formUpdateDocument">
+        <property title="$this->data->title" onClose="structure.reloadCorpus();"/>
+        <fields>
+            <mhiddenfield id="document_idDocument" value="$this->data->id"/>
+            <mtextfield id="document_entry" label="Entry:" prefix="doc_" width="250px"/>
+            <include component="MLookupGenre.php" id="document_idGenre" label="Genre"/>
+            <mtextfield id="document_author" label="Author:" width="250px"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseDocument" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveDocument" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+        <data load="$this->data->object"/>
+    </mformdialog>
+</view>

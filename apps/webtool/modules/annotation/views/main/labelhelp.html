@@ -1,0 +1,15 @@
+<div id="layersPane" class="easyui-panel" title="Label Help"
+     style="width:100%; height:100%;padding:10px;background:#fafafa;">
+    {{var $layer = "";}}
+    <ul>
+        {{foreach $data->labels as $label}}
+        {{if ($label['layer'] != $layer) }}
+    </ul>
+    {{var $layer = $label['layer'] }}
+    <p><b>{{$layer}}</b></p>
+    <ul>
+        {{/if}}
+        <li><span style="color:#{{$label['rgbFg']}};background-color:#{{$label['rgbBg']}};">{{$label['name']}}</span></li>
+        <p>{{$label['definition']}}<br>{{$label['example']|noescape}}</p>
+        {{/foreach}}
+</div>

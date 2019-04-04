@@ -1,0 +1,142 @@
+<div style="width:100%">
+    <div id="alerts"></div>
+    <div  class="btn-toolbar" data-role="editor-toolbar" role="toolbar"  data-target="#{{$control->id}}">
+        <div class="btn-group">
+            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" title="Font">
+                <i class="fa fa-font"></i>
+                <b class="caret"></b>
+            </button>
+            <ul class="dropdown-menu">
+            </ul>
+        </div>
+        <div class="btn-group">
+            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <i class="fa fa-text-height"></i>&nbsp;
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a data-edit="fontSize 5" style="font-size:20px">Huge</a></li>
+                <li><a data-edit="fontSize 3" style="font-size:12px">Normal</a></li>
+                <li><a data-edit="fontSize 1" style="font-size:9px">Small</a></li>
+            </ul>
+        </div>
+        <div class="btn-group">
+            <button type="button"  class="btn" data-edit="bold" title="Bold (Ctrl/Cmd+B)"><i class="fa fa-bold"></i></button>
+            <button type="button"  class="btn" data-edit="italic" title="Italic (Ctrl/Cmd+I)"><i class="fa fa-italic"></i></button>
+            <button type="button"  class="btn" data-edit="strikethrough" title="Strikethrough"><i class="fa fa-strikethrough"></i></button>
+            <button type="button"  class="btn" data-edit="underline" title="Underline (Ctrl/Cmd+U)"><i class="fa fa-underline"></i></button>
+        </div>
+        <div class="btn-group">
+            <button type="button"  class="btn" data-edit="insertunorderedlist" title="Bullet list"><i class="fa fa-list-ul"></i></button>
+            <button type="button"  class="btn" data-edit="insertorderedlist" title="Number list"><i class="fa fa-list-ol"></i></button>
+            <button type="button"  class="btn" data-edit="outdent" title="Reduce indent (Shift+Tab)"><i class="fa fa-indent"></i></button>
+            <button type="button"  class="btn" data-edit="indent" title="Indent (Tab)"><i class="fa fa-outdent"></i></button>
+        </div>
+        <div class="btn-group">
+            <button type="button"  class="btn" data-edit="justifyleft" title="Align Left (Ctrl/Cmd+L)"><i class="fa fa-align-left"></i></button>
+            <button type="button"  class="btn" data-edit="justifycenter" title="Center (Ctrl/Cmd+E)"><i class="fa fa-align-center"></i></button>
+            <button type="button"  class="btn" data-edit="justifyright" title="Align Right (Ctrl/Cmd+R)"><i class="fa fa-align-right"></i></button>
+            <button type="button"  class="btn" data-edit="justifyfull" title="Justify (Ctrl/Cmd+J)"><i class="fa fa-align-justify"></i></button>
+        </div>
+        <div class="btn-group">
+            <button type="button"  class="btn dropdown-toggle" data-toggle="dropdown" title="Hyperlink"><i class="fa fa-link"></i></button>
+            <div class="dropdown-menu input-append">
+                <input class="span2" placeholder="URL" type="text" data-edit="createLink"/>
+                <button class="btn" type="button">Add</button>
+            </div>
+            <button type="button"  class="btn" data-edit="unlink" title="Remove Hyperlink"><i class="fa fa-cut"></i></button>
+
+        </div>
+
+        <div class="btn-group">
+            <button type="button"  class="btn" title="Insert picture (or just drag & drop)" id="pictureBtn"><i class="fa fa-file-picture-o"></i></button>
+            <input type="file" data-role="magic-overlay" data-target="#pictureBtn" data-edit="insertImage" />
+        </div>
+        <div class="btn-group">
+            <button type="button"  class="btn" data-edit="undo" title="Undo (Ctrl/Cmd+Z)"><i class="fa fa-undo"></i></button>
+            <button type="button"  class="btn" data-edit="redo" title="Redo (Ctrl/Cmd+Y)"><i class="fa fa-repeat"></i></button>
+        </div>
+        <input type="text" data-edit="inserttext" id="voiceBtn" x-webkit-speech="">
+    </div>
+    <div {{$painter->getAttributes($control)|noescape}}>
+    Usando o plugin<span style="background-color: transparent;"> <a href="http://mindmup.github.io/bootstrap-wysiwyg/">http://mindmup.github.io/bootstrap-wysiwyg/</a></span>
+    </div>
+    <input type="hidden" id="{{$control->id}}_html" name="{{$control->id}}_html" />
+</div>
+<style type="text/css">
+#{{$control->id}} {
+    background-color: white;
+    border: 1px solid rgb(204, 204, 204);
+    border-collapse: separate;
+    border-radius: 3px;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.075) inset;
+    box-sizing: content-box;
+    max-height: 250px;
+    outline: medium none;
+    overflow: scroll;
+    padding: 4px;
+}       
+</style>       
+<script>
+    $(function () {
+        function initToolbarBootstrapBindings() {
+            //var fonts = ['Serif', 'Sans', 'Arial', 'Arial Black', 'Courier',
+            //    'Courier New', 'Comic Sans MS', 'Helvetica', 'Impact', 'Lucida Grande', 'Lucida Sans', 'Tahoma', 'Times',
+            //    'Times New Roman', 'Verdana'];
+            // Apenas algumas fontes para o tema Exemplos
+            var fonts = ['Serif', 'Sans', 'Arial', 'Courier New', 'Comic Sans MS', 'Lucida Sans', 'Times New Roman', 'Verdana'];
+            var fontTarget = $('[title=Font]').siblings('.dropdown-menu');
+            $.each(fonts, function (idx, fontName) {
+                fontTarget.append($('<li><a data-edit="fontName ' + fontName + '" style="font-family:\'' + fontName + '\'">' + fontName + '</a></li>'));
+            });
+            $('a[title]').tooltip({container: 'body'});
+            $('.dropdown-menu input').click(function () {
+                return false;
+            })
+                .change(function () {
+                    $(this).parent('.dropdown-menu').siblings('.dropdown-toggle').dropdown('toggle');
+                })
+                .keydown('esc', function () {
+                    this.value = '';
+                    $(this).change();
+                });
+
+            $('[data-role=magic-overlay]').each(function () {
+                var overlay = $(this), target = $(overlay.data('target'));
+                overlay.css('opacity', 0).css('position', 'absolute').offset(target.offset()).width(target.outerWidth()).height(target.outerHeight());
+            });
+            if ("onwebkitspeechchange"  in document.createElement("input")) {
+                var editorOffset = $({{$control->jId}}).offset();
+                $('#voiceBtn').css('position', 'absolute').offset({top: editorOffset.top, left: editorOffset.left + $({{$control->jId}}).innerWidth() - 35});
+            } else {
+                $('#voiceBtn').hide();
+            }
+        }
+        ;
+        function showErrorAlert(reason, detail) {
+            var msg = '';
+            if (reason === 'unsupported-file-type') {
+                msg = "Unsupported format " + detail;
+            }
+            else {
+                console.log("error uploading file", reason, detail);
+            }
+            $('<div class="alert"> <button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>File upload error</strong> ' + msg + ' </div>').prependTo('#alerts');
+        }
+        ;
+        initToolbarBootstrapBindings();
+        $('.dropdown-toggle').dropdown();
+        
+        // copia o HTML do editor para um campo hidden, que é submetido junto com os demais dados do formulário
+        {{$control->id|noescape}}_submit = function() {
+            console.log('on editor submit');
+            var hidden_input = $('#{{$control->id|noescape}}_html');
+            var html_content = $({{$control->jId}}).html();
+            hidden_input.val( html_content );
+            return true;
+        };
+
+        $({{$control->jId}}).wysiwyg({fileUploadError: showErrorAlert});
+    });
+</script>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formUpdateGenericLabel">
+        <property title="$this->data->title"  onClose="structure.reloadGenericLabel();"/>
+        <fields>
+            <mhiddenfield id="genericlabel_idLayerType" value="$this->data->idLayerType"/>
+            <mhiddenfield id="genericlabel_idGenericLabel" value="$this->data->idGenericLabel"/>
+            <mlabel text="$this->data->layerType" label="LayerType:"/>
+            <mtextfield id="genericlabel_name" label="Name:" width="250px"/>
+            <mtextfield id="genericlabel_definition" label="Definition:" width="250px"/>
+            <meditor id="genericlabel_example" label="Example:" height="150px"/>
+            <include component="MLookupColor.php" id="genericlabel_idColor" label="Color"/>
+            <include component="MLanguage.php" id="genericlabel_idLanguage" label="Language"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseGL" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveGL" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+        <data load="$this->data"/>
+    </mformdialog>
+</view>

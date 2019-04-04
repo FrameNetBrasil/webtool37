@@ -1,0 +1,47 @@
+/*
+Arquivo: controls/mform.css
+Autor: Maestro
+Descrição: 
+    Estilos do controle MForm.
+Version: 2.0
+Licença: GNU General Public License
+Licença URI: license.txt
+*/
+
+.mFormLabel {
+
+}
+.mFormLabelHorizontal {
+
+}
+.mFormButton {
+
+}
+.mFormControl {
+
+}
+.mFormButtons {
+    background-color: #f7f7f9;
+    border-top: 1px solid #e1e1e8;
+    padding: 5px;
+}
+.mFormOuter {
+    padding:5px;
+}
+.mFormInner {
+    margin:  5px;
+    padding: 10px 0px 0px 0px;
+}
+.mFormContainer {
+    display: table;
+    border-collapse: separate;   
+    border-spacing: 5px;
+    width:100%;
+}
+.mFormRow {
+    display: table-row;
+}
+.mFormColumn {
+  display: table-cell;
+  vertical-align:top;
+}

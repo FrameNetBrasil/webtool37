@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formNewLemma" >
+        <property title="{{_M('New Lemma')}}" />
+        <options modal="true"/>
+        <fields>
+            <mhiddenfield id="lemma_idLanguage" value = "$this->data->idLanguage"/>
+            <mhiddenfield id="lemma_name" value = "$this->data->lemma"/>
+            <mhiddenfield id="lemma_idPOS" value = "$this->data->idPOS"/>
+            <mhiddenfield id="lu_idFrame" value = "$this->data->lu->idFrame"/>
+            <mhiddenfield id="lexemes" value = ""/>
+            <mlabel text="{{'New lemma:  &lt;b&gt;' . $this->data->lemma . '&lt;/b&gt;  [' . $this->data->language . ']' }}"/>
+            <include component="formNewLemmaFields.php"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseLemma" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveLemma" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

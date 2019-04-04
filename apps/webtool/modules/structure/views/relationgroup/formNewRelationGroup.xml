@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formNewRelationGroup">
+        <property title="$this->data->title"  onClose="structure.reload();"/>
+        <fields>
+            <mtextfield id="relationgroup_entry" label="Entry:" prefix="rgp_" width="250px"/> 
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseRelationGroup" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveRelationGroup" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

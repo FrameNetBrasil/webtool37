@@ -1,0 +1,171 @@
+<div id="structureLayout" style="width:100%;height:100%;">
+    <div id="structureNorthPane" data-options="collapsible:false, region:'north', title:'{{_'Lemmas'}}'" style="height:70px">
+        <div style="float:left;padding:5px">
+            <input id="lemma" name="lemma" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Lemma'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <input id="lexeme" name="lexeme" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Lexeme'}}">
+        </div>
+    </div>
+    <div id="structureLeftPane" region="west" split="true" style="height: 100%">
+        <ul id="lemmasTree"></ul>
+    </div>
+    <div id="structureCenterPane" region="center" style="height: 100%">
+        
+    </div>
+</div>
+<div id="menuRootLemmas" style="display:none, width:120px;">
+    <div onclick="structure.reloadLemma()" data-options="iconCls:'icon-reload'">{{_'Reload Lemmas'}}</div>
+    <div onclick="structure.newLemma()" data-options="iconCls:'icon-add'">{{_'New Lemma'}}</div>
+</div>
+<div id="menuLemma" style="display:none, width:120px;">
+    <div onclick="structure.deleteLemma()" data-options="iconCls:'icon-remove'">{{_'Delete Lemma'}}</div>
+    <div onclick="structure.addLexeme()" data-options="iconCls:'icon-add'">{{_'Add Lexeme'}}</div>
+</div>
+<div id="menuLexeme" style="display:none, width:120px;">
+    <div onclick="structure.deleteLexeme()" data-options="iconCls:'icon-remove'">{{_'Remove Lexeme'}}</div>
+</div>
+
+<script type="text/javascript">
+    var idCenterPane = "structureCenterPane";
+    var structure = {
+        app: {{$manager->getApp()}},
+        isMaster: {{$data->isMaster|noescape}},
+        isAnno: {{$data->isAnno|noescape}},
+        node: null
+    };
+    $(function () {
+        $('#structureLayout').layout({
+            fit:true
+        });
+
+        structure.showLemma = function (idLemma) {
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('report/lemma/showLemma')}} + '/' + idLemma, 'structureCenterPane');
+        }
+        structure.newLemma = function () {
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/lemma/formNewLemma')}},'structureCenterPane');
+        }
+
+        structure.editLemma = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/lemma/formUpdateLemma')}} + '/' + id,'structureCenterPane');
+        }
+        
+        structure.deleteLemma = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/lemma/formDeleteLemma')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.reloadLemma = function () {
+            $('#structureCenterPane').html('');
+            var node = $('#lemmasTree').tree('getSelected');
+            if (node) {
+                if (node.id == 'root') {
+                    $('#lemmasTree').tree({queryParams: {lemma: $('#lemma').textbox('getValue')}});
+                } else {
+                    $('#lemmasTree').tree('reload', node.target);
+                }
+            }
+        }
+
+        structure.reloadRoot = function () {
+            $('#structureCenterPane').html('');
+            $('#lemmasTree').tree({queryParams: {lemma: $('#lemma').textbox('getValue')}});
+        }
+
+        structure.reloadParent = function () {
+            $('#structureCenterPane').html('');
+            var node = $('#lemmasTree').tree('getSelected');
+            var parent = $('#lemmasTree').tree('getParent', node.target);
+            console.log(node);
+            console.log(parent);
+            if (node) {
+                $('#lemmasTree').tree('reload', parent.target);
+            }
+        }
+
+        structure.addLexeme = function (idLemma) {
+            if ($.type(idLemma) === "undefined") {
+                idLemma = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/lemma/formNewLexeme')}} + '/' + idLemma,'structureCenterPane');
+        }
+
+        structure.deleteLexeme = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/lemma/formDeleteLexeme')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.contextMenuLemma = function(e, node) {
+            e.preventDefault();
+            console.log(node);
+            structure.node = node;
+            var $menu = '';
+            if (structure.isMaster) {
+                $(this).tree('select', node.target);
+                if (node.id == 'root') {
+                    $menu = $('#menuRootLemmas');
+                } else if (node.id.charAt(0) == 'l') {
+                    $menu = $('#menuLemma');
+                } else if (node.id.charAt(0) == 'x') {
+                    $menu = $('#menuLexeme');
+                }
+                if ($menu != '') {
+                    $menu.menu('show', {
+                        left: e.pageX,
+                        top: e.pageY
+                    });
+                }
+            }
+        }
+
+        $('#menuRootLemmas').menu({});
+        $('#menuLemma').menu({});
+        $('#menuLexeme').menu({});
+
+        $('#lexeme').textbox({
+            //buttonText:{{_'Search'}},
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Lexeme'}},
+            onClickButton: function() {
+                $('#lemmasTree').tree({queryParams: {lexeme: $('#lexeme').textbox('getValue')}});
+            }
+        });
+        $('#lemma').textbox({
+            //buttonText:{{_'Search'}},
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Lemma'}},
+            onClickButton: function() {
+                $('#lemmasTree').tree({queryParams: {lemma: $('#lemma').textbox('getValue')}});
+            }
+        });
+
+        $('#lemmasTree').tree({
+            url: {{$manager->getURL('structure/lemma/lemmaTree')}},
+            onClick: function (node) {
+                console.log(node);
+                if (node.id.charAt(0) == 'l') {
+                    structure.showLemma(node.id.substr(1));
+                }
+                if (node.id.charAt(0) == 'x') {
+                    structure.showLexeme(node.id.substr(1));
+                }
+            },
+            onContextMenu: structure.contextMenuLemma
+        });
+    });
+</script>

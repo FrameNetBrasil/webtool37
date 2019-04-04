@@ -1,0 +1,142 @@
+/*
+Arquivo: main.css
+Autor: Maestro
+Descrição: 
+    Tema para a app Exemplos, distribuída com o Maestro.
+    Define os estilos das tags html.
+Version: 2.0
+Licença: GNU General Public License
+Licença URI: license.txt
+*/
+
+*{
+    font-size:12px;
+}
+html
+{
+    height:100%;
+    overflow:hidden;
+    margin:0;
+    padding:0;
+}
+body
+{
+    font-family:verdana,helvetica,arial,sans-serif;
+    font-size:12px;
+    margin:0;
+    background:#FFF;
+    margin:0;
+    padding:0;
+    color:#000;
+    width:100%;
+    height:100%;
+    text-align:left;
+    border:0 none;
+}
+
+h1
+{
+    font-size:1.1em;
+    font-weight:700;
+    color:#000;
+    margin:0 0 10px;
+}
+
+h2
+{
+    font-size:1em;
+    font-weight:700;
+    color:#000;
+    margin:0 0 0 15px;
+}
+
+h3
+{
+    font-size:1em;
+    font-weight:400;
+    color:#900;
+    margin:0 0 0 35px;
+    display:inline;
+}
+
+h4
+{
+    font-size:10px;
+    font-weight:400;
+    color:#000;
+    margin:0 0 0 45px;
+    padding:0;
+    display:inline;
+}
+
+fieldset
+{
+    margin:0;
+    display:block;
+    border:1px solid silver;
+    padding:3px;
+}
+
+legend
+{
+    font-weight:400;
+    font-size:1em;
+    margin:0;
+}
+
+label
+{
+    font-weight:400;
+    font-size:1em;
+    margin:0;
+    top:0;
+    margin-right: 5px;
+}
+
+code
+{
+    padding:5px;
+}
+
+hr
+{
+    height:1px;
+    color:#CCC;
+}
+
+a
+{
+    cursor:pointer;
+}
+
+input[type="text"],input[type="password"],input[type="url"],input[type="email"],input.text,input.title,textarea,select
+{
+    margin:0;
+}
+
+table
+{
+    border-collapse:collapse;
+    margin-bottom:0;
+}
+
+th,td,caption
+{
+    padding:0;
+}
+/*
+tbody tr:nth-child(2n) td
+{
+    background-color:transparent;
+}
+*/
+select
+{
+    font:inherit;
+}
+
+form
+{
+    display: block;
+}
+

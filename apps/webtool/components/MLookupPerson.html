@@ -1,0 +1,14 @@
+{{define MLookupPerson}}
+$('#{{$id}}').combogrid({
+     panelWidth:180,
+     url: '{{$appURL}}' + '/auth/person/lookupData',
+     idField:'idPerson',
+     textField:'name',
+     mode:'remote',
+     fitColumns:true,
+     columns:[[
+         {field:'idPerson', hidden:true},
+         {field:'name', title:'Name', width:162}
+     ]]
+});
+{{/define}}

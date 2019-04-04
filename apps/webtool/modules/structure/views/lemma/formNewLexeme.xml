@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formNewLexeme" onClose="structure.reloadLemma();">
+        <property title="{{_M('New Lexeme')}}" />
+        <options modal="true"/>
+        <fields>
+            <mhiddenfield id="lexeme_idLemma" value = "$this->data->idLemma"/>
+            <mlabel text="{{'Lemma:  &lt;b&gt;' . $this->data->name . '&lt;/b&gt;  [' . $this->data->language . ']' }}"/>
+            <mlabel text="Select lexeme (minimum 3 chars)"/>
+            <mhcontainer style="padding:5px">
+                <include component="MLookupLexeme.php" id="lexeme_idLexeme" label=""/>
+            </mhcontainer>
+            <mtextfield id="lexeme_lexemeOrder" label="Order:" width="50px"/>
+            <mbooleanfield id="lexeme_breakBefore" label="BreakBefore:" width="50px"/>
+            <mbooleanfield id="lexeme_headWord" label="HeadWord:" width="50px"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseLemma" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveLemma" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

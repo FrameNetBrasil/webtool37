@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="main" title="{{_M('Anno Status')}}" close=">fnbr/main" >
+        <fields>
+            <mdatagrid id="gridFind" query="$this->data->query" pageLength="15" width="350px">
+                <options singleSelect="true"/>
+                <mtoolbar>
+                    <mtextfield id="filter_entry" label="{{_M('Entry')}}" size="15" value="$this->data->entry" placeholder="{{_M('Entry')}}" />
+                    <mlinkbutton id="lbSearch" action="!$('#gridFind').datagrid('filter',event)" iconCls="icon-search" title="{{_M('Search')}}" plain="true"/>
+                </mtoolbar>
+                <mdatagridcolumn field="idAnnotationStatus" visible="false"/>
+                <mdatagridcolumn type="link" field="entry" action="^structure/entry/formUpdate/#entry#|dlgFormObject" title="{{_M('Entry')}}"/>
+                <mdatagridcolumn field="name" title="{{_M('Name')}}"/>
+                <mdatagridcolumn field="idColor" title="{{_M('Color')}}" render="colorBox"/>
+                <mdatagridcolumn type="link" field="colorName" title="{{_M('Change Color')}}" action="^admin/annostatus/formColor/#idAnnotationStatus#|dlgFormObject"/>
+            </mdatagrid>
+        </fields>
+    </mformdialog>
+    <javascript>
+<![CDATA[
+        function colorBox(value,row,index) {
+            return "<span class='fa fa-square' style='color:#" + row['rgbBg'] + "'></span>";
+        }
+
+        function reloadGrid() {
+            $('#gridFind').datagrid('reload');
+        }
+]]>
+    </javascript>
+</view>

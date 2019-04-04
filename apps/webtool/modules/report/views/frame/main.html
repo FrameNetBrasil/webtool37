@@ -1,0 +1,89 @@
+<div id="reportLayout" style="width:100%;height:100%;">
+    <div id="reportNorthPane" data-options="region:'north', title:'{{_'Frames'}}'" style="height:60px">
+        <div style="float:left;padding:5px">
+            <input id="frame" name="frame" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Frame'}}">
+        </div>
+        <!--
+        <div style="float:left;padding:5px">
+            <input id="fe" name="fe" type="text" style="width:200px; padding:5px" placeholder="{{_'Search FE'}}">
+        </div>
+        <div style="float:left;padding:5px" class=""clearfix">
+            <input id="lu" name="lu" type="text" style="width:200px; padding:5px" placeholder="{{_'Search LU'}}">
+        </div>
+        -->
+    </div>
+    <div id="reportLeftPane" region="west" split="true" style="height: 100%">
+        <ul id="framesTree"></ul>
+    </div>
+    <div id="reportCenterPane" region="center" style="height: 100%">
+        
+    </div>
+</div>
+
+<script type="text/javascript">
+    var idCenterPane = "reportCenterPane";
+    var report = {
+        isMaster: {{$data->isMaster|noescape}},
+        node: null
+    };
+    $(function () {
+
+        $('#reportLayout').layout({
+            fit: true
+        });
+        
+        report.reloadFrame = function () {
+            $('#reportCenterPane').html('');
+            //manager.doGet({{$manager->getURL('report/frame/main')}});
+            $('#framesTree').tree('reload');
+        }
+        
+        report.showFrame = function (idFrame) {
+            $('#reportCenterPane').html('');
+            manager.doGet({{$manager->getURL('report/frame/showFrame')}} + '/' + idFrame, 'reportCenterPane');
+        }
+
+        report.showLU = function (idLU) {
+            $('#reportCenterPane').html('');
+            manager.doGet({{$manager->getURL('report/lu/showLU')}} + '/' + idLU, 'reportCenterPane');
+        }
+/*
+        $('#lu').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search LU'}},
+            onClickButton: function() {
+                $('#framesTree').tree({queryParams: {lu: $('#lu').textbox('getValue')}});
+            }
+        });
+        $('#fe').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search FE'}},
+            onClickButton: function() {
+                $('#framesTree').tree({queryParams: {fe: $('#fe').textbox('getValue')}});
+            }
+        });
+*/
+        $('#frame').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Frame'}},
+            onClickButton: function() {
+                $('#framesTree').tree({queryParams: {frame: $('#frame').textbox('getValue')}});
+            }
+        });
+        $('#framesTree').tree({
+            url: {{$manager->getURL('report/frame/frameTree')}},
+            onSelect: function (node) {
+                console.log(node);
+                if (node.id.charAt(0) == 'f') {
+                    report.showFrame(node.id.substr(1));
+                }
+                if (node.id.charAt(0) == 'l') {
+                    report.showLU(node.id.substr(1));
+                }
+            }
+        });
+    });
+</script>

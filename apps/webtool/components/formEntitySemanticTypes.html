@@ -1,0 +1,82 @@
+{{var $toolbar = 'toolbar' . $data->idEntity}}
+{{var $lbAdd = 'lbAddST' . $data->idEntity}}
+{{var $lbDel = 'lbDelST' . $data->idEntity}}
+{{var $cb = 'idSemanticType'}}
+{{var $cbDomain = 'idDomainST'}}
+{{var $grid = 'grid' . $data->idEntity}}
+
+<input type="hidden" id='idEntity' name='idEntity' value={{$data->idEntity}} />
+<input type="hidden" id='idGrid' name='idGrid' value={{$grid}} />
+<input type="hidden" id='toRemove' name='toRemove' value='' />
+<table id={{$grid}}></table>
+<div id={{$toolbar}}>
+    <input id={{$cbDomain}} name={{$cbDomain}}>
+    <input id={{$cb}} name={{$cb}}>
+    <a id={{$lbAdd}} href="#"></a>
+    <a id={{$lbDel}} href="#"></a>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#' + {{$cb}}).combobox({
+            url: {{manager::getAppURL('', 'data/semantictype/lookupData/?rowsOnly=1&idDomain=0')}},
+            valueField:'idSemanticType',
+            textField:'name',
+            prompt: 'Semantic Type',
+            panelWidth: 250
+        });
+                
+        $('#' + {{$cbDomain}}).combobox({
+            url: {{manager::getAppURL('', 'data/domain/lookupData/?rowsOnly=1')}},
+            valueField:'idDomain',
+            textField:'name',
+            prompt: 'Domain',
+            panelWidth: 250,
+            onSelect: function(row){
+               var url = {{manager::getAppURL('', 'data/semantictype/lookupData/?rowsOnly=1&idDomain=')}} + row.idDomain;
+               $('#' + {{$cb}}).combobox('reload', url);
+            }
+        });
+
+        $('#' + {{$grid}}).datagrid({
+            url: {{manager::getAppURL('', 'structuresemantictype/listEntitySemanticTypes/' . $data->idEntity)}},
+            idField:'idSemanticType',
+            width: 450,
+            height: 250,
+            title: 'Semantic Types',
+            showHeader:false,
+            checkOnSelect: false,
+            toolbar: '#' + {{$toolbar}},
+            columns:[[
+                {field: 'ck', checkbox: true},
+                {field: 'idSemanticType', hidden:true},
+                {field: 'idEntity', hidden:true},
+                {field: 'name', title:'Type',width:'100%'}
+            ]]
+        });
+
+        $('#' + {{$lbAdd}}).linkbutton({
+            onClick: function(){
+                manager.doAction("@structure/semantictype/addEntitySemanticType|{{$data->form|noescape}}");
+            },    
+            iconCls: "icon-add",
+            title: 'Add new SemanticType',
+            text: "Add",
+            width: 60,
+            plain: true
+        });
+
+        $('#' + {{$lbDel}}).linkbutton({
+            onClick: function(){
+                var rows = $('#' + {{$grid}}).datagrid('getChecked');
+                $('#toRemove').attr('value','json:' + JSON.stringify(rows));
+                manager.doAction("@structure/semantictype/delEntitySemanticType|{{$data->form|noescape}}");
+            },    
+            iconCls: "icon-remove",
+            title: 'Remove SemanticType',
+            text: "Del",
+            width: 60,
+            plain: true
+        });
+
+    });
+</script>

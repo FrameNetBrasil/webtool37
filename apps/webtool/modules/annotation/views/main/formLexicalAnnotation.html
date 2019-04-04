@@ -1,0 +1,55 @@
+<div id="annoLayout" style="width:100%;height:100%;">
+    <div id="annoLeftPane" region="west" split="true" title="Frames" style="height: 100%">
+        <div style="padding:5px"><input id="lu" name="lu" type="text" style="width:200px; padding:5px" placeholder="{{_'Search LU'}}"></div>
+            <ul id="framesTree"></ul>
+    </div>
+    <div id="annoCenterPane" region="center" title="{{_'Lexical Annotation'}}" style="height: 100%">
+        <div class="easyui-layout" style="width:100%;height:100%;">
+            <div id="sentencesPane" region="center" style="width:100%;height:100%"   split="true" data-options="border:1"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var annotation = {
+        type: 'l',
+        isMaster: {{$data->isMaster|noescape}},
+        isSenior: {{$data->isSenior|noescape}},
+        rgbColors: {{$data->colors|noescape}},
+        layerType: {{$data->layerType|noescape}},
+        instantiationType: {{$data->instantiationType|noescape}},
+        instantiationTypeObj: {{$data->instantiationTypeObj|noescape}}
+    };
+
+    annotation.showSubCorpus = function (subCorpus) {
+        $('#layersPane').html('');
+        manager.doGet({{$manager->getURL('annotation/main/sentences')}} + '/' + subCorpus,'sentencesPane');
+    }
+
+    $(function () {
+
+        $('#annoLayout').layout({
+            fit:true
+        });
+        
+        $('#lu').textbox({
+            buttonText:{{_'Search LU'}},
+            //iconCls:'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search LU'}},
+            onClickButton: function() {
+                $('#framesTree').tree({queryParams: {lu: $('#lu').textbox('getValue')}});
+            }
+        });
+        
+        $('#framesTree').tree({
+            url: {{$manager->getURL('annotation/main/frameTree')}},
+            onSelect: function (node) {
+                console.log(node);
+                if (node.id.charAt(0) == 's') {
+                    annotation.showSubCorpus(node.id.substr(1));
+                }
+            }
+        });
+    });
+</script>

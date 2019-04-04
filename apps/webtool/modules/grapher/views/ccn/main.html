@@ -1,0 +1,150 @@
+<div id="grapherLayout" style="width:100%;height:100%;">
+    <div data-options="region:'north',title:'Grapher: Constructicon'">
+    </div>
+    <div data-options="region:'west',split:true,title:'CxN'" style="width:250px;padding:10px;">
+        <input id="cxn" name="cxn" type="text" style="width:200px; padding:5px">
+        <ul id="cxnTree"></ul>
+    </div>
+    <div id="grapherCenterPane" data-options="region:'center'" style="width: 100%">
+        <div id="grapherPanel" style="height: 95%">
+            <div id="grapherToolbar">
+                <div id="grToolBar" class="datagrid-toolbar">
+                    <form id="formGrapher" name="formGrapher">
+                        <input type="hidden" id="rt" name="rt"/>
+                        <span>Relation Type:  </span>
+                        <input id="relationEntry" style="width:150px"/>  
+                        <a id="btnReload" href="#">Reload last</a>
+                    </form>
+                </div>
+            </div>
+            <div id="grapherArea" style="width:100%; height:95%;"></div>            
+        </div>
+    </div>
+</div>
+
+<style>
+    /****
+    Flags by language name (description on table Language)
+     */
+    .fnbrFlagPortuguese {
+        width:16px;
+        height:16px;
+        background: url({{$manager->getStaticURL($manager->getApp(), 'images/br.png')|noescape}}) no-repeat center center;
+    }
+
+    .fnbrFlagEnglish {
+        width:16px;
+        height:16px;
+        background: url({{$manager->getStaticURL($manager->getApp(), 'images/en.png')|noescape}}) no-repeat center center;
+    }
+
+    .fnbrFlagSwedish {
+        width:16px;
+        height:16px;
+        background: url({{$manager->getStaticURL($manager->getApp(), 'images/se.png')|noescape}}) no-repeat center center;
+    }
+</style>
+
+{{include $manager->getThemePath('css/graph.css')}}
+
+{{include 'grapher_d3_v5.js'}}
+
+<script type="text/javascript">
+
+    $(function () {
+        $('#grapherLayout').layout({
+            fit:true
+        });
+        grapher.instance = new grapher.graph("grapherArea");
+
+        grapher.reload = function () {
+            $('#grapherCenterPane').html('');
+            $('#cxnTree').tree('reload');
+        }
+
+        grapher.show = function (idEntity, update) {
+            console.log('show...');
+            var isUpdate = (typeof update !== undefined) ? update : false;
+            grapher.currentEntity = idEntity;
+            var chosen = {};
+            var rt = $('#relationEntry').combogrid('getValues');
+            $.each(rt, function(index, r) {
+                chosen[r] = r;
+            });
+            manager.doAjax({{$manager->getURL('api/grapher/getRelations')}}, function(data) {
+                //console.log(data);
+                var links = JSON.parse(data);
+                if (!isUpdate) {
+                    grapher.instance.clear();
+                }
+                //grapher.instance.clearLinks();
+                $.each(links, function(index, link) {
+                    //console.log(link);
+                    if (chosen[link.type]) {
+                       grapher.instance.addLink(link);
+                    }
+                });
+                grapher.instance.update();
+            }, {idEntity: idEntity, chosen: chosen, level: 2});
+        }
+
+        $('#cxn').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search'}},
+            onClickButton: function() {
+                $('#cxnTree').tree({queryParams: {cxn: $('#cxn').textbox('getValue')}});
+            }
+        });
+
+        $('#grapherPanel').panel({
+            height:'100%',
+            width:'100%',
+        });
+
+        $('#relationEntry').combogrid({
+            data: grapher.relationData,
+            border:false,
+            idField:'id',
+            panelHeight: 'auto',
+            showHeader:false,
+            textField: 'label',
+            multiple:true,
+            columns:[[
+                {field:'idRt', checkbox:true},
+                {field:'id', hidden:true},
+                {field:'label', width:170, formatter: function(value, row){
+                    var s = '<span style="font-weight:bold;color:' + row.color + ';">' + row.label + '</span><br/>';
+                    return s;
+                }}
+            ]]
+        });
+        var g = $('#relationEntry').combogrid('grid'); // get datagrid object
+        var rows = g.datagrid('getRows');
+        $.each(rows, function(index, row) {
+            if (row.default) {
+                var rowIndex = g.datagrid('getRowIndex', row);
+                g.datagrid('checkRow', rowIndex);
+            }
+        });
+        
+        $('#btnReload').linkbutton({
+            iconCls: 'icon-reload',
+            plain: true,
+            onClick: function() {
+                if (grapher.currentEntity) {
+                    grapher.show(grapher.currentEntity);
+                }
+            }
+        });
+        
+        $('#cxnTree').tree({
+            url: {{$manager->getURL('grapher/ccn/cxnTree')}},
+                onSelect: function (node) {
+                if (node.id.charAt(0) == 'c') {
+                    grapher.show(node.id.substr(1));
+                }
+            }
+        });
+    });
+</script>

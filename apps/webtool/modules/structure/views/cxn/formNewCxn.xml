@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<view>
+    <mdialog id="formNewCxnDialog" state="open" onClose="structure.reloadCxn();">
+        <property title="$this->data->title"/>
+        <tools>
+            <mlinkbutton id="lbSaveCxn" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+        <mform id="formNewCxn">
+            <fields>
+                <mtextfield id="cxn_name" width="250px" label="Name"/>
+                <mbooleanfield id="cxn_abstract" label="Abstract" value="0"/>
+                <include component="MLanguage.php" id="cxn_idLanguage" label="Language"/>
+            </fields>
+            <data load="$this->data->object"/>
+        </mform>
+    </mdialog>
+</view>

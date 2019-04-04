@@ -1,0 +1,280 @@
+<div id="structureLayout" style="width:100%;height:100%;">
+    <div id="structureNorthPane" data-options="collapsible:false, region:'north', title:'{{_'Qualia'}}'" style="height:70px">
+        <div style="float:left;padding:5px">
+           <input id="idQualiaType" name="idQualiaType" placeholder="{{_'Qualia Type'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <input id="frame" name="frame" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Frame'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <input id="fe" name="fe" type="text" style="width:200px; padding:5px" placeholder="{{_'Search FE'}}">
+        </div>
+        <div style="float:left;padding:5px" class=""clearfix">
+            <input id="lu" name="lu" type="text" style="width:200px; padding:5px" placeholder="{{_'Search LU'}}">
+        </div>
+    </div>
+    <div id="structureLeftPane" region="west" split="true" style="height: 100%">
+        <ul id="framesTree"></ul>
+    </div>
+    <div id="structureCenterPane" region="center" style="height: 100%">
+        
+    </div>
+</div>
+<div id="menuQualiaRootFrames" style="display:none, width:120px;">
+    <div onclick="structure.reloadFrame()" data-options="iconCls:'icon-reload'">{{_'Reload Frames'}}</div>
+    <div onclick="structure.showStructure()" data-options="iconCls:'icon-more'">{{_'Show Structure'}}</div>
+    <div onclick="structure.showRelations()" data-options="iconCls:'icon-more'">{{_'Show Relations'}}</div>
+</div>
+<div id="menuQualiaFrame" style="display:none, width:120px;">
+    <div onclick="structure.frameQualiaFormal()" data-options="iconCls:'icon-edit'">{{_'Formal'}}</div>
+    <div onclick="structure.frameQualiaAgentive()" data-options="iconCls:'icon-edit'">{{_'Agentive'}}</div>
+    <div onclick="structure.frameQualiaTelic()" data-options="iconCls:'icon-edit'">{{_'Telic'}}</div>
+    <div onclick="structure.frameQualiaConstitutive()" data-options="iconCls:'icon-edit'">{{_'Constitutive'}}</div>
+</div>
+<div id="menuQualiaLU" style="display:none, width:120px;">
+    <div onclick="structure.luQualiaFormal()" data-options="iconCls:'icon-edit'">{{_'Formal'}}</div>
+    <div onclick="structure.luQualiaAgentive()" data-options="iconCls:'icon-edit'">{{_'Agentive'}}</div>
+    <div onclick="structure.luQualiaTelic()" data-options="iconCls:'icon-edit'">{{_'Telic'}}</div>
+    <div onclick="structure.luQualiaConstitutive()" data-options="iconCls:'icon-edit'">{{_'Constitutive'}}</div>
+</div>
+<div id="menuQualiaQualia" style="display:none, width:120px;">
+    <div onclick="structure.frameDeleteQualia()" data-options="iconCls:'icon-remove'">{{_'Delete Qualia'}}</div>
+</div>
+<div id="menuQualiaQualiaRelation" style="display:none, width:120px;">
+    <div onclick="structure.luChangeQualia()" data-options="iconCls:'icon-edit'">{{_'Change Qualia Structure'}}</div>
+    <div onclick="structure.luDeleteQualia()" data-options="iconCls:'icon-remove'">{{_'Delete Qualia Relation'}}</div>
+</div>
+
+{{include $manager->getThemePath('css/graph.css')}}
+
+<script type="text/javascript">
+    var idCenterPane = "structureCenterPane";
+    var structure = {
+        app: {{$manager->getApp()}},
+        isMaster: {{$data->isMaster|noescape}},
+        isAnno: {{$data->isAnno|noescape}},
+        node: null
+    };
+    $(function () {
+        $('#structureLayout').layout({
+            fit:true
+        });
+
+        structure.currentParent = null;
+
+        structure.showStructure = function () {
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('report/qualia/showStructure')}}, 'structureCenterPane');
+        }
+
+        structure.showRelations = function () {
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('report/qualia/showRelations')}}, 'structureCenterPane');
+        }
+
+        structure.reloadFrame = function () {
+            $('#structureCenterPane').html('');
+            var node = $('#framesTree').tree('getSelected');
+            if (node) {
+                $('#framesTree').tree('reload', node.target);
+            }
+        }
+
+        structure.reloadParent = function () {
+            $('#structureCenterPane').html('');
+            var node = $('#framesTree').tree('getSelected') || structure.node;
+            console.log(node);
+            if (node) {
+                $('#framesTree').tree('select', node.target);
+                var parent = $('#framesTree').tree('getParent', node.target) || structure.currentParent;
+                structure.currentParent = parent;
+                console.log(parent);
+                if (parent) {
+                    $('#framesTree').tree('reload', parent.target);
+                }
+            }
+        }
+
+        // Qualia
+
+        structure.frameQualiaFormal = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/qualia/formQualiaFormal')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.frameQualiaAgentive = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/qualia/formQualiaAgentive')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.frameQualiaTelic = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/qualia/formQualiaTelic')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.frameQualiaConstitutive = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/qualia/formQualiaConstitutive')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.frameDeleteQualia = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/qualia/formDeleteQualia')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.luQualiaFormal = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/qualia/formLUQualiaFormal')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.luQualiaAgentive = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/qualia/formLUQualiaAgentive')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.luQualiaTelic = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/qualia/formLUQualiaTelic')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.luQualiaConstitutive = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/qualia/formLUQualiaConstitutive')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.luChangeQualia = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/qualia/formChangeQualiaStructure')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.luDeleteQualia = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/qualia/formDeleteQualiaRelation')}} + '/' + id,'structureCenterPane');
+        }
+
+
+        // end Qualia
+
+
+        structure.contextMenuQualia = function(e, node) {
+            e.preventDefault();
+            console.log(node);
+            structure.node = node;
+            var $menu = '';
+            if (structure.isMaster) {
+                $(this).tree('select', node.target);
+                if (node.id == 'root') {
+                    $menu = $('#menuQualiaRootFrames');
+                } else if (node.id.charAt(0) == 'f') {
+                    $menu = $('#menuQualiaFrame');
+                } else if (node.id.charAt(0) == 'l') {
+                    $menu = $('#menuQualiaLU');
+                } else if (node.id.charAt(0) == 'q') {
+                    $menu = $('#menuQualiaQualia');
+                } else if (node.id.charAt(0) == 'y') {
+                    $menu = $('#menuQualiaQualiaRelation');
+                }
+                if ($menu != '') {
+                    $menu.menu('show', {
+                        left: e.pageX,
+                        top: e.pageY
+                    });
+                }
+            }
+        }
+
+        $('#menuQualiaRootFrames').menu({});
+        $('#menuQualiaFrame').menu({});
+        $('#menuQualiaLU').menu({});
+        $('#menuQualiaQualia').menu({});
+        $('#menuQualiaQualiaRelation').menu({});
+
+        $('#lu').textbox({
+            //buttonText:{{_'Search'}},
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search LU'}},
+            onClickButton: function() {
+                $('#framesTree').tree({queryParams: {lu: $('#lu').textbox('getValue')}});
+            }
+        });
+        $('#fe').textbox({
+            //buttonText:{{_'Search'}},
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search FE'}},
+            onClickButton: function() {
+                $('#framesTree').tree({queryParams: {fe: $('#fe').textbox('getValue')}});
+            }
+        });
+        $('#frame').textbox({
+            //buttonText:{{_'Search'}},
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Frame'}},
+            onClickButton: function() {
+                $('#framesTree').tree({queryParams: {frame: $('#frame').textbox('getValue')}});
+            }
+        });
+
+        $('#idQualiaType').combobox({
+            data: JSON.parse({{$data->qualiaType}}),
+            prompt: {{_'Select Qualia Type'}},
+            valueField:'idQualiaType',
+            textField:'name',
+            onSelect: function() {
+                $('#framesTree').tree({queryParams: {idQualiaType: $('#idQualiaType').combobox('getValue')}});
+            },
+            onChange: function() {
+                $('#framesTree').tree({queryParams: {idQualiaType: $('#idQualiaType').combobox('getValue')}});
+            }
+        });
+
+        $('#framesTree').tree({
+            url: {{$manager->getURL('structure/qualia/frameTree')}},
+            onClick: function (node) {
+                console.log(node);
+                if (node.id.charAt(0) == 'f') {
+                    structure.showFrame(node.id.substr(1));
+                }
+                if (node.id.charAt(0) == 'l') {
+                    structure.showLU(node.id.substr(1));
+                }
+            },
+            onContextMenu: structure.contextMenuQualia
+        });
+    });
+</script>

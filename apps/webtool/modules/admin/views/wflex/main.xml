@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="main" title="{{_M('Wordform-Lexeme')}}" close=">fnbr/main" >
+        <fields>
+            <mdatagrid id="gridFind" query="$this->data->query" pageLength="15" width="350px">
+                <options singleSelect="true"/>
+                <mtoolbar>
+                    <mtextfield id="filter_form" label="{{_M('Wordform')}}" size="15" value="$this->data->form" placeholder="{{_M('Wordform')}}" />
+                    <mtextfield id="filter_lexeme" label="{{_M('Lexeme')}}" size="15" value="$this->data->lexeme" placeholder="{{_M('Lexeme')}}" />
+                    <mlinkbutton id="lbSearch" action="!$('#gridFind').datagrid('filter',event)" iconCls="icon-search" title="{{_M('Search')}}" plain="true"/>
+                    <!--
+                    <mlinkbutton id="lbAdd" action="^admin/genre/formObject|dlgFormObject" iconCls="icon-add" text="{{_M('New')}}" plain="true"/>
+                    -->
+                </mtoolbar>
+                <mdatagridcolumn field="idWordForm" visible="false"/>
+                <mdatagridcolumn field="form" title="{{_M('Form')}}"/>
+                <mdatagridcolumn field="lexeme" title="{{_M('Lexeme')}}"/>
+                <mdatagridcolumn field="POSLexeme" title="{{_M('POS-Lexeme')}}"/>
+                <mdatagridcolumn field="language" title="{{_M('Language')}}"/>
+            </mdatagrid>
+        </fields>
+    </mformdialog>
+    <javascript>
+    </javascript>
+</view>
+

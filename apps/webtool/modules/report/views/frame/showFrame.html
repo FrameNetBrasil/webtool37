@@ -1,0 +1,205 @@
+<div class="reportFrame">
+    <div class="frameName">
+        {{$data->frame->entry->name|noescape}}
+    </div>
+    <div class="divPanel">
+        <div id="panelDefinition" class="easyui-panel" title="{{_'repDefinition'}}" collapsible="false" data-options="fit:true"  style="width:100%;">
+            <div class="text">
+                {{$data->frame->entry->description|noescape}}
+            </div>
+        </div>
+    </div>
+    <div class="divPanel">
+        <div id="panelExample" class="easyui-panel" title={{_'repExample'}} collapsible="true" style="width:100%;">
+            <div class="example">
+            </div>
+        </div>
+    </div>
+    <div class="divPanel">
+
+        <div id="panelFeNuclear" class="easyui-panel" title={{_'repNFE'}} collapsible="false" data-options="fit:true">
+            <table id="feNuclear" class="frameElement">
+                <tbody>
+                    <tr>
+                        <td class="header">FE Core:</td>
+                    </tr>
+                    {{foreach $data->fe['core'] as $fe}}
+                        <tr>
+                            <td class="fe">
+                                <span class="fe_{{$fe['lower']|noescape}}">{{$fe['name']}} [{{$fe['nick']}}]</span>
+                                {{foreach $fe['relations'] as $relation}}
+                                <br><b>{{$relation[0]}}:&nbsp;</b>{{$relation[1]}}
+                                {{/foreach}}
+                            </td>
+                            <td class="fedef">{{$fe['description']|noescape}}</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="example">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fespace">
+                            </td>
+                        </tr>
+                    {{/foreach}}
+                    {{if $data->fe['core_unexpressed']}}
+                    <tr>
+                        <td class="header">FE Core-Unexpressed:</td>
+                    </tr>
+                    {{foreach $data->fe['core_unexpressed'] as $fe}}
+                    <tr>
+                        <td class="fe">
+                            <span class="fe_{{$fe['lower']|noescape}}">{{$fe['name']}} [{{$fe['nick']}}]</span>
+                            {{foreach $fe['relations'] as $relation}}
+                            <br><b>{{$relation[0]}}:&nbsp;</b>{{$relation[1]}}
+                            {{/foreach}}
+                        </td>
+                        <td class="fedef">{{$fe['description']|noescape}}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="example">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="fespace">
+                        </td>
+                    </tr>
+                    {{/foreach}}
+                    {{/if}}
+                </tbody>
+            </table>
+            {{if $data->fecoreset}}
+            <table id="feCoreSet" class="frameElement">
+                <tbody>
+                <tr>
+                    <td class="header">FE Core set(s):</td>
+                </tr>
+                <tr>
+                    <td>{{$data->fecoreset}}</td>
+                </tr>
+                </tbody>
+            </table>
+            {{/if}}
+        </div>
+    </div>
+    <div class="divPanel">
+        <div id="panelFeNonNuclear" class="easyui-panel" title={{_'repNNFE'}} collapsible="true" style="width:100%;">
+            <table id="feNonNuclear" class="frameElement">
+                <tbody>
+                    {{foreach $data->fe['noncore'] as $fe}}
+                        <tr>
+                            <td class="fe">
+                                <span class="fe_{{$fe['lower']|noescape}}">{{$fe['name']}} [{{$fe['nick']}}]</span>
+                                {{foreach $fe['relations'] as $relation}}
+                                <br><b>{{$relation[0]}}:&nbsp;</b>{{$relation[1]}}
+                                {{/foreach}}
+                            </td>
+                            <td class="fedef">{{$fe['description']|noescape}}</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="example">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fespace">
+                            </td>
+                        </tr>
+                    {{/foreach}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="divPanel">
+        <div id="panelRelations" class="easyui-panel" title={{_'repRelations'}} collapsible="true" style="width:100%;">
+            <table class="tableRelations">
+                <tbody>
+                    {{foreach $data->relations as $name => $frames}}
+                        <tr>
+                            <td class="relation">{{_$name}}</td>
+                            <td>
+                            {{foreach $frames as $idFrame => $frame}}
+                                <a id="btnRelation{{$idFrame|noescape}}" href="#" class="easyui-linkbutton" data-options="iconCls:'fa fa12px fa-external-link'" onclick="javascript:showFrame({{$idFrame|noescape}})">{{$frame}}</a>
+                            {{/foreach}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fespace">
+                            </td>
+                        </tr>
+                    {{/foreach}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="divPanel">
+        <div id="panelLU" class="easyui-panel" title={{_'repLU'}} collapsible="true" style="width:100%;">
+            <table class="tableLU">
+                <tbody>
+                <tr>
+                    {{foreach $data->lus as $idLU => $lu}}
+                        <td class="lu"><a id="btnLU{{$idLU|noescape}}" href="#" class="easyui-linkbutton" data-options="iconCls:'fa fa12px fa-external-link'" onclick="javascript:showLU({{$idLU|noescape}})">{{$lu}}</a>
+                        </td>
+                    {{/foreach}}
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div id="windowGrapher" class="easyui-window" title="Grapher"  data-options="closed:true">
+</div>
+
+<script type="text/javascript">
+    $.parser.parse();
+            $('#panelFeNonNuclear').panel('collapse');
+            $('#panelExample').panel('collapse');
+            $('#panelRelations').panel('collapse');
+            $('#windowGrapher').css('visible', false);
+            $('#windowGrapher').window({
+    title: 'Grapher',
+            width: 1000,
+            height: 750,
+            closed: true,
+            collapsible: false,
+            minimizable: false,
+            maximizable: false,
+            cache: false,
+            modal: true
+    });
+            $('#linkGrapher').click(function () {
+    //$('#windowGrapher').load('/maestro/index.php/mfn/report/grapher');
+    //$('#windowGrapher').window('open');
+    //$('#windowGrapher').window('center');
+    $('#' + idCenterPane).html('');
+            $('#centerPane').load('/maestro/index.php/mfn/report/grapher');
+    });
+            $('#langEn').click(function () {
+    $('#windowGrapher').window('close');
+            showReport({{$data->frameName}}, 'en');
+    });
+            $('#langPt').click(function () {
+    $('#windowGrapher').window('close');
+            showReport({{$data->frameName}}, 'pt');
+    });
+
+    function showFrame(idFrame) {
+        manager.doGet({{$manager->getURL('report/frame/showFrame')}} + '/' + idFrame, idCenterPane);
+    }
+
+    function showLU(idLU) {
+        manager.doGet({{$manager->getURL('report/lu/showLU')}} + '/' + idLU, idCenterPane);
+    }
+
+</script>
+<style type="text/css">
+    .fe_target {
+        color: rgb(255, 255, 255); background-color: rgb(0, 0, 0); text-transform:uppercase;
+    }
+    {{foreach $data->fe['styles'] as $style}}
+    .fe_{{$style['fe']|noescape}} {color: #{{$style['rgbFg']}}; background-color: #{{$style['rgbBg']}};}  
+    {{/foreach}}
+
+</style>

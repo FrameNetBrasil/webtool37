@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<view>
+    <fields>
+        <mhiddenfield id="genre_idGenre" />      
+        <mtextfield id="genre_entry" label="Entry:" prefix="gen_" width="250px"/> 
+    </fields>
+</view>

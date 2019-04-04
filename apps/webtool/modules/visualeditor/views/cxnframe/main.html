@@ -1,0 +1,87 @@
+<div id="editorLayout" style="width:100%;height:100%;">
+    <div id="editorNorthPane" data-options="region:'north', title:'{{_'CxN-Frame Relation Editor'}}'" style="height:60px">
+        <div style="float:left;padding:5px">
+            <input id="cxn" name="cxn" type="text" style="width:200px; padding:5px" placeholder="{{_'Search CxN'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <input id="frame" name="frame" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Frame'}}">
+        </div>
+    </div>
+    <div id="editorLeftPane" region="west" split="true" style="height: 100%">
+        <div  style="height: 50%; overflow:scroll">
+            <ul id="cxnTree"></ul>
+        </div>
+        <div  style="height: 50%; overflow:scroll">
+            <ul id="framesTree"></ul>
+        </div>
+    </div>
+    <div id="editorCenterPane" region="center" style="height: 100%">
+        <div id="editorArea"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var editor = {
+        isMaster: {{$data->isMaster|noescape}}
+    };
+    $(function () {
+        $('#editorLayout').layout({
+            fit:true
+        });
+        
+        editor.reloadFrame = function () {
+            $('#editorCenterPane').html('');
+            $('#framesTree').tree('reload');
+        }
+        
+        editor.showFrame = function (idFrame) {
+            $('#editorCenterPane').html('');
+            manager.doGet({{$manager->getURL('visualeditor/cxnframe/test')}} + '/' + idFrame, 'editorCenterPane');
+        }
+
+        $('#cxn').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search CxN'}},
+            onClickButton: function() {
+                $('#cxnTree').tree({queryParams: {cxn: $('#cxn').textbox('getValue')}});
+            }
+        });
+
+        $('#frame').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Frame'}},
+            onClickButton: function() {
+                $('#framesTree').tree({queryParams: {frame: $('#frame').textbox('getValue')}});
+            }
+        });
+
+        $('#editorArea').panel({
+            href: {{$manager->getURL('visualeditor/cxnframe/workingArea')}},
+            height:'100%',
+            width:'100%',
+            border:false
+        });
+        
+        $('#framesTree').tree({
+            url: {{$manager->getURL('visualeditor/cxnframe/frameTree')}},
+            onSelect: function (node) {
+                console.log(node);
+                if (node.id.charAt(0) == 'f') {
+                    editor.editorCXNFR.newEntity(node.id.substr(1));
+                }
+            }
+        });
+
+        $('#cxnTree').tree({
+            url: {{$manager->getURL('visualeditor/cxnframe/cxnTree')}},
+            onSelect: function (node) {
+                console.log(node);
+                if (node.id.charAt(0) == 'c') {
+                    editor.editorCXNFR.newEntity(node.id.substr(1));
+                }
+            }
+        });
+    });
+</script>

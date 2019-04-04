@@ -1,0 +1,106 @@
+    <table id="qualiaRelationGrid" style="width:100%">
+        <thead>
+        <tr>
+            <th data-options="field:'idEntityRelation', hidden:true">idEntityRelation</th>
+            <th data-options="field:'qualiaType'" width="10%">Type</th>
+            <th data-options="field:'lu1'" width="20%">LU1</th>
+            <th data-options="field:'relation'" width="20%">Relation</th>
+            <th data-options="field:'lu2'" width="20%">LU2</th>
+        </tr>
+        </thead>
+    </table>
+    <div id="qualiaRelationGridToolbar" style="display:none;height:40px">
+        <div style="float:left;padding:5px">
+            <input id="qualiaRelationGridIdQualiaType" name="qualiaRelationGridIdQualiaType" placeholder="{{_'Qualia Type'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <input id="qualiaRelationGridLU1" name="lu1" type="text" style="width:200px; padding:5px" placeholder="{{_'Search LU1'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <input id="qualiaRelationGridLU2" name="lu2" type="text" style="width:200px; padding:5px" placeholder="{{_'Search LU2'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <input id="qualiaRelationGridRelation" name="relation" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Relation'}}">
+        </div>
+    </div>
+
+<script type="text/javascript">
+    $(function () {
+
+        $('#qualiaRelationGridLU1').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search LU1'}},
+            onClickButton: function() {
+                $('#qualiaRelationGrid').datagrid('load',{
+                    lu1: $('#qualiaRelationGridLU1').textbox('getValue')
+                });
+            }
+        });
+
+        $('#qualiaRelationGridLU2').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search LU2'}},
+            onClickButton: function() {
+                $('#qualiaRelationGrid').datagrid('load',{
+                    lu2: $('#qualiaRelationGridLU2').textbox('getValue')
+                });
+            }
+        });
+
+        $('#qualiaRelationGridRelation').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Relation'}},
+            onClickButton: function() {
+                $('#qualiaRelationGrid').datagrid('load',{
+                    lu1: $('#qualiaRelationGridRelation').textbox('getValue')
+                });
+            }
+        });
+
+        $('#qualiaRelationGridIdQualiaType').combobox({
+            data: JSON.parse({{$data->qualiaType}}),
+        prompt: {{_'Select Qualia Type'}},
+        valueField:'idQualiaType',
+            textField:'name',
+            onSelect: function() {
+            $('#qualiaRelationGrid').datagrid('load',{
+                idQualiaType: $('#qualiaRelationGridIdQualiaType').combobox('getValue')
+            });
+        },
+        onChange: function() {
+            $('#qualiaRelationGrid').datagrid('load',{
+                idQualiaType: $('#qualiaRelationGridIdQualiaType').combobox('getValue')
+            });
+        }
+    });
+
+
+        $('#qualiaRelationGrid').datagrid({
+            title: 'Qualia Relations',
+            //singleSelect: true,
+            //collapsible: true,
+            fit: true,
+            //nowrap: false,
+            //checkOnSelect: false,
+            //selectOnCheck: false,
+            idField: 'idQualia',
+            toolbar: '#qualiaRelationGridToolbar',
+            url: {{$manager->getURL('data/qualia/lookupRelationForGrid')}},
+            method: 'get',
+            pagination: true,
+            pagePosition: 'bottom',
+            onClickRow: function (index, row) {
+                console.log(index);
+                console.log(row);
+                manager.doAction("^structure/qualia/dialogChangeQualiaStructure" + '/' + row.idEntityRelation);
+            }
+        });
+
+        $('#qualiaRelationGrid').datagrid('getPager').pagination({
+            layout:['list','sep','first','prev','sep','links','sep','next','last','sep','refresh','info']
+        });
+    });
+</script>

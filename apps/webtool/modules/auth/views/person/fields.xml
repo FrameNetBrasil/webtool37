@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!DOCTYPE view SYSTEM "../../../../public/layouts/view.dtd">
+<view>
+    <fields>
+        <mhiddenfield id="person_idPerson" />        
+        <mtextfield id="person_name" label="Name" />   
+        <mtextfield id="person_email" label="Email" />   
+        <mtextfield id="person_nick" label="Nick" />   
+    </fields>
+</view>

@@ -1,0 +1,41 @@
+<form {{$painter->getAttributes($control)|noescape}} >
+    
+{{if ($menubar != '')}}
+		{{$menubar|noescape}}
+{{/if}}
+{{if ($validators != '')}}
+	<div id="divError" style="display:none"></div>
+{{/if}}
+        {{$fields|noescape}}
+{{if ($help != '')}}
+	<div class="mFormHelp">
+		{{$help|noescape}}
+	</div>
+{{/if}}
+</form>
+{{if ($buttons != '')}}
+	<div id="{{$control->id}}_buttons">
+		{{$buttons|noescape}}
+	</div>
+{{/if}}
+{{if ($tools != '')}}
+	<div id="{{$control->id}}_tools">
+		{{$tools|noescape}}
+	</div>
+{{/if}}
+{{if ($validators != '')}}
+<script>
+$(function () {
+
+    $('#{{$control->id|noescape}}').bootstrapValidator({
+        excluded: [':disabled'],
+        container: '#divError',
+        message: 'Este valor não é válido',
+        fields: { 
+            {{$validators|noescape}}
+        }
+    });    
+});
+</script>
+{{/if}}
+

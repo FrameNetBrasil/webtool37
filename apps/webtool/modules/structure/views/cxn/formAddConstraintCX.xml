@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formAddConstraintCX">
+        <property title="$this->data->title"  onClose="structure.reloadCxn();"/>
+        <fields>
+            <mvcontainer>
+                <mhiddenfield id="idConstruction" value="$this->data->idConstruction"/>
+                <mlabel text="$this->data->cxn" />
+            </mvcontainer>
+            <maccordion id="accordionAddConstraintCX" style="width:400px;height:350px;">
+                <div title="CE &lt; Qualia &gt; CE" style="overflow:auto;padding:10px;">
+                    <div><mlabel text="CE"/></div>
+                    <mselection id="idEntityA1" options="$this->data->ces" style="width:250px;"/>
+                    <div><mlabel text="Qualia Relation"/></div>
+                    <include component="MLookupQualiaRelation.php" id="relation"/>
+                    <div><mlabel text="CE"/></div>
+                    <mselection id="idEntityA2" options="$this->data->ces" style="width:250px;"/>
+                </div>
+                <div title="CE &lt; Constraint &gt; CE" style="overflow:auto;padding:10px;">
+                    <div><mlabel text="CE"/></div>
+                    <mselection id="idEntityC1" options="$this->data->ces" style="width:250px;"/>
+                    <div><mlabel text="Constraint"/></div>
+                    <include component="MLookupConstraintConstruction.php" id="constraint"/>
+                    <div><mlabel text="CE"/></div>
+                    <mselection id="idEntityC2" options="$this->data->ces" style="width:250px;"/>
+                </div>
+                <div title="CE &gt; Evokes &gt; Frame" style="overflow:auto;padding:10px;">
+                    <div><mlabel text="CE"/></div>
+                    <mselection id="idEntityCE" options="$this->data->ces" style="width:250px;"/>
+                    <div><mlabel text="Relation"/></div>
+                    <mselection id="relationCEFrame" options="$this->data->relations"/>
+                    <div><mlabel text="Frame"/></div>
+                    <include component="MLookupFrame.php" id="idFrame"/>
+                </div>
+                <div title="Cxn &gt; Evokes &gt; Concept" style="overflow:auto;padding:10px;">
+                    <div><mlabel text="Concept"/></div>
+                    <include component="MLookupConcept.php" id="idConcept"/>
+                    <div><mlabel text="Type"/></div>
+                    <include component="MLookupConceptType.php" id="idConceptType"/>
+                </div>
+            </maccordion>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseCxn" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveCxn" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

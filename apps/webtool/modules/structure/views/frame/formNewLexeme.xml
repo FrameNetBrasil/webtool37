@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formNewLexeme" >
+        <property title="{{_M('New Lexeme')}}" />
+        <options modal="true"/>
+        <fields>
+            <mhiddenfield id="lexeme_idLanguage" value = "$this->data->lemma->idLanguage"/>
+            <mhiddenfield id="lexeme_name" value = "$this->data->lexeme"/>
+            <mlabel text="{{'New lexeme:  &lt;b&gt;' . $this->data->lexeme . '&lt;/b&gt;  [' . $this->data->language . ']' }}"/>
+            <mselection id="lexeme_idPOS" label="POS" options="$this->data->pos"/>
+            <include component="formNewLexemeFields.php" label="Wordforms"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseLexeme" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveLexeme" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

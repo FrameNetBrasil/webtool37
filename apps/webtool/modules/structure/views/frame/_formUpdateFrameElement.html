@@ -1,0 +1,56 @@
+{{import $components . '/MLookupCoreType.html'}}
+{{import $components . '/MLookupColor.html'}}
+<div id="dialogUpdateFrameElement" title="{{$this->data->title}}">
+    <form class="form-horizontal" id="formUpdateFrameElement" name="formUpdateFrameElement" action="{{$manager->getURL('structure/frame/updateFrameElement')}}">
+        <input type="hidden" name="id" value="{{$data->object->idFrameElement}}"/>
+        <input type="hidden" name="frameelement_idFrameElement" value="{{$data->object->idFrameElement}}"/>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <input id="frameelement_entry" name="frameelement_entry"  value="{{$data->object->entry}}"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <input id="frameelement_idCoreType" name="frameelement_idCoreType"  value="{{$data->object->idCoreType}}"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <input id="frameelement_idColor" name="frameelement_idColor"  value="{{$data->object->idColor}}"/>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+
+    $('#frameelement_entry').textbox({width:300, label: 'Entry', prompt:'Entry'});
+    {{include MLookupCoreType, id=>'frameelement_idCoreType'}}
+    {{include MLookupColor, id=>'frameelement_idColor'}}
+
+    $('#dialogUpdateFrameElement').dialog({
+        modal:true,
+        closed:false,
+        toolbar:[
+            {
+                text: 'Save',
+                iconCls: 'icon-save',
+                handler: function () {
+                    manager.doPostBack('formUpdateFrameElement');
+                    $('#dialogUpdateFrameElement').dialog('close');
+                }
+            },
+            {
+                text:'Close',
+                iconCls:'icon-cancel',
+                handler: function(){
+                    $('#dialogUpdateFrameElement').dialog('close');
+                    structure.reloadFrame();
+                }
+            }],
+        onClose: function() {
+        }
+    });
+
+</script>
+

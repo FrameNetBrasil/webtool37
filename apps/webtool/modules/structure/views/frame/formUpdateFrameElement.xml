@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formUpdateFrameElement">
+        <property title="$this->data->title" onClose="structure.reloadFrame();"/>
+        <fields>
+            <mhiddenfield id="frameelement_idFrameElement" value="$this->data->id"/>
+            <mtextfield id="frameelement_entry" label="Entry:" width="250px"/> 
+            <include component="MLookupCoreType.php" id="frameelement_idCoreType" label="Core Type"/>
+            <include component="MLookupColor.php" id="frameelement_idColor" label="Color"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseFrame" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveFrame" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+        <data load="$this->data->object"/>
+    </mformdialog>
+</view>

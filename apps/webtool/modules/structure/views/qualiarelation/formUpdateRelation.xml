@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formUpdateRelation">
+        <property title="$this->data->title" onClose="structure.reloadTree();"/>
+        <fields>
+            <mhiddenfield id="qualia_idQualia" value="$this->data->qualia->idQualia"/>
+            <mtextfield id="qualia_entry" label="Entry:" prefix="qla_" width="250px" value="$this->data->qualia->entry"/>
+            <include component="MLookupQualiaType.php" id="qualia_idTypeInstance" label="Qualia" value="$this->data->qualia->idTypeInstance"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseRelationType" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveRelationType" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+        <data load="$this->data->object"/>
+    </mformdialog>
+</view>

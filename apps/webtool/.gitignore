@@ -1,0 +1,5 @@
+.idea
+.svn
+composer.lock
+vendor/
+conf/conf.php

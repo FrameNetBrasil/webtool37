@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formColor" onClose="reloadGrid();">
+        <property title="$this->data->title"/>
+        <fields>
+            <mhiddenfield id="idAnnotationStatus" value="$this->data->id"/>
+            <include component="MLookupColor.php" id="idColor" label="Color" value="$this->data->idColor"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbSaveColor" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

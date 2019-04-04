@@ -1,0 +1,17 @@
+{{include 'header.html'}}
+<!-- basic preloader: -->
+<div id="loader"><div id="loaderInner" style="direction:ltr;">Carregando.... </div></div>
+
+<div id="appContainer" class="easyui-layout" style="width:100%;height:100%;">
+    <div data-options="region:'north',title:'{{$manager->getOptions('mainTitle')|noescape}}',split:false,border:false,collapsible:false" style="height:55px;background-color:#efefef">
+        <div id="menuPane" class="melement" data-manager="href:'{{$manager->getURL('main/menu')}}'"></div>
+        <div id="userPane" class="melement clearfix" data-manager="href:'{{$manager->getURL('main/userdata')}}'"></div>
+    </div>
+    <div data-options="region:'south',split:false,noheader:true,border:false" style="height:20px;background-color:#efefef">
+        &nbsp;© 2008, 2019 FrameNetBrasil Project
+    </div>
+    <div id="centerPane" data-options="region:'center',split:false,noheader:true,border:false" style="padding:5px;">
+        {{$page->generate('content')|noescape}}
+    </div>
+</div>
+{{include 'footer.html'}}

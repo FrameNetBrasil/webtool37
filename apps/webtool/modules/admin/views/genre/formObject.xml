@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formObject" onClose="jQuery('#gridFind').datagrid('reload');">
+        <property title="$this->data->title" />
+        <options modal="true"/>
+        <include file="fields.xml" />
+        <tools>
+            <mlinkbutton id="lbSave" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+            <mlinkbutton process="$this->data->forUpdate" id="lbDelete" iconCls="icon-remove" text="{{_M('Delete')}}" plain="true" action="$this->data->delete"/>
+        </tools>
+        <data process="$this->data->forUpdate" load="$this->data->object"/>
+    </mformdialog>
+</view>

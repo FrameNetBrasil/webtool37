@@ -1,0 +1,187 @@
+<div id="reportCorpusLayout" style="width:100%;height:100%;">
+    <div id="reportCorpusCenterPane" region="center" style="height: 100%">
+        <div id="reportAnnotationLayout" style="width:100%;height:100%;">
+
+            <div id="reportAnnotationCenterPane" region="center" style="width:100%; height:60%">
+
+                <div class="reportAnnotation" style="width:100%; height:100%">
+                    <table id="annotationSet"  style="width:100%" >
+                        <thead>
+                        <tr>
+                            <th data-options="field:'idAnnotationSet', hidden:true">idAnnotationSet</th>
+                            <th data-options="field:'idSentence',sortable:true" width="5%">idSentence</th>
+                            <th data-options="field:'text' {{if ($data->userLanguage == 'ar')}}, align:'right' {{/if}}" width="95%">Sentence</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div id="reportAnnotationSouthPane" region="south" title="Sentences" data-options="split:true" style="height: 40%; padding: 3px">
+                <div class="text">
+                    <a href="#" class="easyui-linkbutton" onclick="javascript:clearSentences()">Clear Sentences</a>
+                    <a href="#" class="easyui-linkbutton" onclick="javascript:toogleSentenceColors()">Turn Colors On/Off</a>
+                </div>
+                <div id="divLexicalEntrySentences" class="text">
+                    <div id="divSentencesColorOn" style="display:block"></div>
+                    <div id="divSentencesColorOff" style="display:none"></div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var reportCorpus = {
+        app: {{$manager->getApp()}},
+        node: null,
+        idSubCorpus: {{$data->idSubCorpus}}
+    };
+
+    var fes = {};
+
+    $(function () {
+        $('#reportCorpusLayout').layout({
+            fit: true
+        });
+
+        $.parser.parse();
+
+
+        $("#reportAnnotationLayout").layout({
+            fit: true,
+            border: false
+        });
+
+        $('#annotationSet').datagrid({
+            title: {{$data->title}},
+        singleSelect: true,
+            //collapsible: true,
+            fit: true,
+            nowrap: false,
+            checkOnSelect: false,
+            selectOnCheck: false,
+            idField: 'idAnnotationSet',
+            url: {{$manager->getURL('annotation/main/annotationSet')}} + '/' + {{$data->idSubCorpus}},
+        method: 'get',
+            onSelect: function (rowIndex, rowData) {
+            $('#layersPane').html('');
+            console.log(rowData);
+            addAnnotationSets(rowData.idSentence);
+        }
+    });
+
+        function clearSentences() {
+            $("#divSentencesColorOn").html('');
+            $("#divSentencesColorOff").html('');
+        }
+
+        function toogleSentenceColors() {
+            if ($("#divSentencesColorOn").css('display') == 'block') {
+                $("#divSentencesColorOn").css('display', 'none');
+                $("#divSentencesColorOff").css('display', 'block');
+            } else {
+                $("#divSentencesColorOn").css('display', 'block');
+                $("#divSentencesColorOff").css('display', 'none');
+            }
+        }
+
+        function addFESentences(feEntry) {
+            manager.doAjax({{$manager->getURL('api/reportlu/getSentences')}}, function (data) {
+                if (typeof data === 'string' || data instanceof String)
+                    var sentences = JSON.parse(data);
+                else
+                    var sentences = data;
+                $.each(sentences, function(index, sentence ) {
+                    var id = "sentence" + sentence.idSentence;
+                    if ($('#' + id).length) {
+                        //$(sentence.text).replaceAll('#' + id);
+                    } else {
+                        addSentence(id, sentence.text);
+                    }
+                });
+
+            }, {idAS: feAS[feEntry]});
+        }
+
+        function addAnnotationSets(idSentence) {
+            manager.doAjax({{$manager->getURL('api/reportcorpus/getAnnotationSets')}}, function (data) {
+                if (typeof data === 'string' || data instanceof String) {
+                    var sentences = JSON.parse(data);
+                } else {
+                    var sentences = data;
+                }
+                console.log(sentences);
+                $.each(sentences, function(index, sentence ) {
+                    //console.log(sentences.fes);
+                    $.each(sentence.fes, function(i, fe) {
+                        //console.log(fe);
+                        fes[fe.entry] = {name: fe.name};
+                        var cssClass= '<style>.fe_' + fe.entry + '{ background-color: #' + fe.bg + '; color = #' + fe.color + '}</style>';
+                        var style = $(cssClass);
+                        //console.log(cssClass);
+                        $('html > head').append(style);
+                    });
+                    var id = "sentence" + sentence.idAnnotationSet;
+                    if ($('#' + id + '_on').length) {
+                        //$(sentence.text).replaceAll('#' + id);
+                    } else {
+                        addSentence(id, sentence.text, sentence.frame);
+                    }
+                });
+
+            }, {idSentence: idSentence});
+        }
+
+        function addSentence(id, text, frame) {
+            var ban = "<div class=\"ban\"><a href=\"#\" onclick=\"javascript:removeSentence('" + id + "')\"><span class=\"fa12px fa fa-ban\"></span></a></div>";
+            $("#divSentencesColorOn").append( "<div class='sentence' id='" + id + "_on'>" + ban + text + "</div>");
+            var regex = /<span class="fe_([^"]*)"([^>]*)>([^<]*)<\/span>/g;
+            wbText = text.replace(regex, "<span class=\"none\">[<sub>$1</sub>$3]<\/span>");
+            wbText = wbText.replace(/(\[(<sub>target<\/sub>)([^\]]*)\])/g, function target(x0, x1, x2, x3) {
+                return x3.toUpperCase() + "<sup>"+frame+"</sup>";
+            });
+            for(fe in fes) {
+                wbText = wbText.replace(new RegExp(fe, 'g'), fes[fe].name);
+            }
+            $("#divSentencesColorOff").append( "<div class='sentence' id='" + id + "_off'>" + ban + wbText + "</div>");
+            $("#divSentencesColorOn").css('display', 'none');
+            $("#divSentencesColorOff").css('display', 'block');
+        }
+
+        function removeSentence(id) {
+            $('#' + id + '_on').remove();
+            $('#' + id + '_off').remove();
+        }
+    });
+
+</script>
+<style type="text/css">
+
+    #divLexicalEntrySentences {
+        padding: 5px;
+    }
+
+    #divLexicalEntrySentences .sentence {
+        padding: 3px;
+    }
+
+    div.ban {
+        padding: 0px 4px 2px 0px;
+        float: left;
+    }
+
+    div.ban span {
+        color: red;
+    }
+
+    .fe_target {
+        color: rgb(255, 255, 255); background-color: rgb(0, 0, 0); text-transform:uppercase;
+    }
+    {{foreach $data->fe['styles'] as $style}}
+    .fe_{{$style['entry']|noescape}} {color: #{{$style['rgbFg']}}; background-color: #{{$style['rgbBg']}};}
+    {{/foreach}}
+
+</style>

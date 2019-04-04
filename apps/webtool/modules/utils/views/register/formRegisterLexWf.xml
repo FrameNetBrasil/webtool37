@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formRegisterLexWf" title="Register Wordforms+Lexemes"  close=">fnbr/main" >
+        <fields>
+            <mvcontainer>
+                <mspan>Register new Wordform+Lexeme by informing a pair by line,</mspan>
+                <mspan>separated by white space (wordform and lexeme in lowercase, POS in uppercase):</mspan>
+                <mspan>[wordform] [POS] [lexeme]</mspan>
+            </mvcontainer>
+            <mselection id="idLanguage" label="Language" options="$this->data->languages"/>
+            <mmultilinefield id="pairs" label="Lines" height="150px" width="300px"></mmultilinefield>
+        </fields>
+        <buttons>
+            <mbutton id="btnPost" text="{{_M('Send')}}" action="$this->data->action"/>
+        </buttons>
+    </mformdialog>
+</view>

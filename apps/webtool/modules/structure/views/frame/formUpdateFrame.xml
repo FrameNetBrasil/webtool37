@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<view>
+    <mdialog id="formUpdateFrameDialog" state="open">
+        <property title="$this->data->title"/>
+        <tools>
+            <mlinkbutton id="lbSaveFrame" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="!formUpdateFrameSave()"/>
+        </tools>
+        <mform id="formUpdateFrame">
+            <fields>
+                <mhiddenfield id="frame_idFrame"/>
+                <mhiddenfield id="frame_idEntity"/>
+                <mtextfield id="frame_entry" label="Entry" width="250px"/> 
+            </fields>
+            <data load="$this->data->object"/>
+        </mform>
+    </mdialog>
+    <script>
+        function formUpdateFrameSave(){
+            manager.doAjax('structure/frame/updateFrame', function(response){
+                if (response.status == 'error') {
+                    theme.message('error','Error',response.message);
+                } else {
+                    theme.dialog.refresh('formUpdateFrameDialog', {
+                        toolbar: null,
+                        width: 510,
+                        url: 'structure/entry/gridUpdate/' + $('#frame_entry').textbox('getValue')
+                    });
+                }
+            }, 'formUpdateFrame');
+        }
+    </script>
+</view>

@@ -1,0 +1,176 @@
+<div id="valenceLayout" style="width:100%;height:100%;">
+    <div data-options="region:'north',title:'Equivalence through Valence'">
+    </div>
+    <div data-options="region:'west',split:true,title:'Frame'" style="width:250px;padding:10px;">
+        <input id="idDomain" name="idDomain" placeholder="{{_'Domain'}}">
+        <ul id="frameTree"></ul>
+    </div>
+    <div id="valenceCenterPane" data-options="region:'center'" style="width: 100%">
+        <div id="valencePanel" style="height: 95%">
+            <div id="valenceToolbar">
+                <div id="grToolBar" class="datagrid-toolbar">
+                    <form id="formvalence" name="formvalence">
+                        <input type="hidden" id="rt" name="rt"/>
+                        <span>Source Lang:  </span>
+                        <input id="idLanguageSource" style="width:150px"/>
+                        <span>Target Lang:  </span>
+                        <input id="idLanguageTarget" style="width:150px"/>
+                        <a id="btnCombinatorial" href="#">Combinatorial</a>
+                        <a id="btnMaximum" href="#">Maximum</a>
+                    </form>
+                </div>
+            </div>
+            <div id="valenceArea" style="width:100%; height:95%;"></div>            
+        </div>
+    </div>
+</div>
+<style>
+    {{include valence.css}}
+</style>
+<script type="text/javascript">
+
+    $(function () {
+
+        var valence = {
+            isMaster: {{$data->isMaster|noescape}},
+        };
+
+        $('#valenceLayout').layout();
+
+        valence.reload = function () {
+            $('#valenceCenterPane').html('');
+            $('#frameTree').tree('reload');
+        }
+
+        valence.combinatorial = function () {
+            var idLanguageSource = $('#idLanguageSource').combobox('getValue');
+            var idLanguageTarget = $('#idLanguageTarget').combobox('getValue');
+            var checkedNodes = $('#frameTree').tree('getChecked');
+            var idFrame = checkedNodes[0].id;
+            var frameName = checkedNodes[0].text;
+            if (idFrame) {
+                manager.doAjax({{$manager->getURL('service/valence/getCombinatorialScore'). '/json'}}, function(data) {
+                    var result = JSON.parse(data);
+                    console.log(result);
+                    var html = "<div class='frameName'>" + frameName + "</div><table>";
+                    var first = true;
+                    $.each(result, function(luSource, lus) {
+                        if (first) {
+                            html = html + "<tr><th></th>";
+                            $.each(lus, function(luTarget, score) {
+                                html = html + "<th>" + luTarget + "</th>";
+                            });
+                            html = html + "</tr>";
+                            first = false;
+                        }
+                        html = html + "<tr><td class='lu'>" + luSource + "</td>";
+                        $.each(lus, function(luTarget, score) {
+                            html = html + "<td>" + score.score + "</br>" + score.variancia + "</td>";
+                        });
+                        html = html + "</tr>";
+                    });
+                    html = html + "</table>";
+                    $('#valenceArea').html(html);
+                }, {idFrame: idFrame, idLanguageSource: idLanguageSource, idLanguageTarget: idLanguageTarget});
+            }
+        }
+
+        valence.maximum = function () {
+            var idLanguageSource = $('#idLanguageSource').combobox('getValue');
+            var idLanguageTarget = $('#idLanguageTarget').combobox('getValue');
+            var checkedNodes = $('#frameTree').tree('getChecked');
+            var idFrame = checkedNodes[0].id;
+            var frameName = checkedNodes[0].text;
+            if (idFrame) {
+                manager.doAjax({{$manager->getURL('service/valence/getMaximumScore'). '/json'}}, function(data) {
+                    var result = JSON.parse(data);
+                    console.log(result);
+                    var html = "<div class='frameName'>" + frameName + "</div><table>";
+                    var first = true;
+                    $.each(result, function(luSource, lus) {
+                        if (first) {
+                            html = html + "<tr><th></th>";
+                            $.each(lus, function(luTarget, score) {
+                                html = html + "<th>" + luTarget + "</th>";
+                            });
+                            html = html + "</tr>";
+                            first = false;
+                        }
+                        html = html + "<tr><td class='lu'>" + luSource + "</td>";
+                        $.each(lus, function(luTarget, score) {
+                            html = html + "<td>" + score.score + "</br>" + score.variancia + "</td>";
+                        });
+                        html = html + "</tr>";
+                    });
+                    html = html + "</table>";
+                    $('#valenceArea').html(html);
+                }, {idFrame: idFrame, idLanguageSource: idLanguageSource, idLanguageTarget: idLanguageTarget});
+            }
+        }
+
+        $('#valencePanel').panel({
+            height:'100%',
+            width:'100%',
+        });
+
+        $('#idLanguageSource').combobox({
+            data: {{$this->data->languages}},
+            valueField:'idLanguage',
+            textField:'language'
+        });
+
+        $('#idLanguageSource').combobox({
+            data: JSON.parse({{$this->data->languages}}),
+            valueField:'idLanguage',
+            textField:'language'
+        });
+
+        $('#idLanguageTarget').combobox({
+            data: JSON.parse({{$this->data->languages}}),
+            valueField:'idLanguage',
+            textField:'language'
+        });
+
+        $('#btnCombinatorial').linkbutton({
+            iconCls: 'icon-reload',
+            plain: true,
+            onClick: function() {
+                valence.combinatorial();
+            }
+        });
+
+        $('#btnMaximum').linkbutton({
+            iconCls: 'icon-reload',
+            plain: true,
+            onClick: function() {
+                valence.maximum();
+            }
+        });
+
+        $('#idDomain').combobox({
+            data: JSON.parse({{$data->domain}}),
+            prompt: {{_'Select Domain'}},
+            valueField:'idDomain',
+            textField:'name',
+            onSelect: function() {
+            console.log('selected');
+                //$('#framesTree').tree({queryParams: {idDomain: $('#idDomain').combobox('getValue')}});
+            },
+            onChange: function() {
+                console.log('changed');
+                $('#frameTree').tree({queryParams: {idDomain: $('#idDomain').combobox('getValue')}});
+            }
+        });
+
+        $('#frameTree').tree({
+            url: {{$manager->getURL('valence/valence/frameTree')}},
+            checkbox: true,
+            onSelect: function (node) {
+                if (node.id.charAt(0) == 'f') {
+                    //valence.show(node.id.substr(1));
+                }
+            }
+        });
+
+    });
+</script>

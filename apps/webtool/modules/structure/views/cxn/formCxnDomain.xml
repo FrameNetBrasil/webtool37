@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formCxnDomain">
+        <property title="$this->data->title" onClose="structure.reloadCxn();"/>
+        <fields>
+            <include component="formCxnDomain.html"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseCxn" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+        </tools>
+        <data load="$this->data->object"/>
+    </mformdialog>
+</view>

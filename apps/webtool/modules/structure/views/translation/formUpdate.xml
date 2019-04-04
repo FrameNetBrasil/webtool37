@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formUpdate" >
+        <property title="$this->data->title"/>
+        <options modal="true" />
+        <fields>
+            <mdatagrid id="gridUpdateTranslation" query="$this->data->query" pageLength="0" idField="idTranslation" width="500px" orderBy="language">
+                <options singleSelect="true"/>
+                <mdatagridcolumn field="idTranslation" visible="false"/>
+                <mdatagridcolumn type="link" field="language" action="^translation/formUpdateTranslation/#idTranslation#|dlgFormUpdateTranslation" title="{{_M('Lang')}}"  width="10%" />
+                <mdatagridcolumn field="text" title="Text" />
+            </mdatagrid>
+        </fields>
+    </mformdialog>
+</view>

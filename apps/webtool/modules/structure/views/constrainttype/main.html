@@ -1,0 +1,116 @@
+<div id="structureLayout" style="width:100%;height:100%;">
+    <div id="structureNorthPane" data-options="region:'north', title:'{{_'Constraint Type'}}'" style="height:70px">
+        <div style="float:left;padding:5px">
+            <input id="constraintType" name="constraintType" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Constraint Type'}}">
+        </div>
+    </div>
+    <div id="structureLeftPane" region="west" split="true" style="height: 100%">
+        <ul id="constraintTypeTree"></ul>
+    </div>
+    <div id="structureCenterPane" region="center" style="height: 100%">
+        
+    </div>
+</div>
+<div id="menuRootConstraintType" style="display:none, width:120px;">
+<div onclick="structure.reload()" data-options="iconCls:'icon-reload'">{{_'Reload ConstraintType'}}</div>
+<div onclick="structure.newConstraintType()" data-options="iconCls:'icon-add'">{{_'New Constraint Type'}}</div>
+</div>
+<div id="menuConstraintType" style="display:none, width:120px;">
+<div onclick="structure.editConstraintType()" data-options="iconCls:'icon-edit'">{{_'Edit Constraint Type'}}</div>
+<div onclick="structure.delConstraintType()" data-options="iconCls:'icon-remove'">{{_'Delete Constraint Type'}}</div>
+</div>
+
+{{include formNewConstraintType.html}}
+{{include formEditConstraintType.html}}
+
+<script type="text/javascript">
+
+    var structure = {
+        app: {{$manager->getApp()}},
+        isMaster: true,
+        node: null
+    };
+
+    $(function () {
+        $('#structureLayout').layout({
+            fit:true
+        });
+
+        $('#constraintType').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Constraint Type'}},
+            onClickButton: function() {
+                $('#constraintTypeTree').tree({queryParams: {constraintType: $('#constraintType').textbox('getValue')}});
+            }
+        });
+
+        structure.dialog = function(idForm, title) {
+            $(idForm).dialog('resize',{
+                width:'auto',
+                height:'auto'
+            });
+            $(idForm).dialog('doLayout');
+            $(idForm).dialog({'title': title});
+            $(idForm).dialog('open');
+        }
+
+        structure.newConstraintType = function () {
+            structure.dialog("#formNewConstraintType", "New ConstraintType");
+        }
+
+        structure.editConstraintType = function () {
+            structure.dialog("#formEditConstraintType", "Edit ConstraintType");
+        }
+
+        structure.delConstraintType = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/constrainttype/deleteconstrainttype')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.reload = function () {
+            $('#structureCenterPane').html('');
+            $('#constraintTypeTree').tree('reload');
+        }
+
+        structure.contextMenuConstraintType = function(e, node) {
+            console.log(node);
+            if (!structure.isMaster) {
+                return;
+            }
+            e.preventDefault();
+            console.log(node);
+            structure.node = node;
+            var $menu = '';
+            $(this).tree('select',node.target);
+            if (node.id == 'root') {
+                $menu = $('#menuRootConstraintType');
+            } else if (node.id.charAt(0) == 'c') {
+                $menu = $('#menuConstraintType');
+            }
+            if ($menu != '') {
+                $menu.menu('show',{
+                    left: e.pageX,
+                    top: e.pageY
+                });
+            }
+        }
+
+
+        $('#menuRootConstraintType').menu({});
+        $('#menuConstraintType').menu({});
+
+        $('#constraintTypeTree').tree({
+            url: {{$manager->getURL('structure/constrainttype/constraintTypeTree')}},
+            onContextMenu: structure.contextMenuConstraintType
+        });
+
+
+    });
+
+</script>
+
+
+

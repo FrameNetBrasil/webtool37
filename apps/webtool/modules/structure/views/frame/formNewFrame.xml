@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<view>
+    <mdialog id="formNewFrameDialog" state="open" onClose="structure.reloadFrame();">
+        <property title="$this->data->title"/>
+        <tools>
+            <mlinkbutton id="lbSaveFrame" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="!formNewFrameSave()"/>
+        </tools>
+        <mform id="formNewFrame">
+            <fields>
+                <mtextfield id="frame_entry" width="250px" label="Entry" prefix="frm_"/> 
+                <include component="MLookupTemplate.php" id="frame_idTemplate" label="Template (Optional)"/>
+                <mvcontainer> 
+                    <mlabel text="&lt;b&gt;Attention:&lt;/b&gt; if this Frame is templated, answer the question:"/>
+                </mvcontainer> 
+                <mbooleanfield id="inheritsFromBase" label="&lt;b&gt;(1)&lt;/b&gt; Do this frame inherits from Frame_Base?"/> 
+            </fields>
+            <data load="$this->data->object"/>
+        </mform>
+    </mdialog>
+    <script>
+        function formNewFrameSave(){
+            manager.doAjax('structure/frame/newFrame', function(response){
+                if (response.status == 'error') {
+                    theme.message('error','Error',response.message);
+                } else {
+                    theme.dialog.refresh('formNewFrameDialog', {
+                        toolbar: null,
+                        width: 510,
+                        url: 'structure/entry/gridUpdate/frm_' + $('#frame_entry').textbox('getValue')   
+                    });
+                }
+            }, 'formNewFrame');
+        }
+    </script>
+</view>

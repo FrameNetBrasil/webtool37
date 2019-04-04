@@ -1,0 +1,144 @@
+<div id="structureLayout" style="width:100%;height:100%;">
+    <div id="structureNorthPane" data-options="region:'north', title:'{{_'Semantic Types'}}'" style="height:70px">
+        <div style="float:left;padding:5px">
+            <input id="type" name="type" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Type'}}">
+        </div>
+    </div>
+    <div id="structureLeftPane" region="west" split="true" style="height: 100%">
+        <ul id="semanticTypesTree"></ul>
+    </div>
+    <div id="structureCenterPane" region="center" style="height: 100%">
+        
+    </div>
+</div>
+<div id="menuRootSemanticTypes" style="display:none, width:120px;">
+<div onclick="structure.reloadSemanticType()" data-options="iconCls:'icon-reload'">{{_'Reload Semantic Types'}}</div>
+</div>
+<div id="menuDomains" style="display:none, width:120px;">
+<div onclick="structure.newSemanticType()" data-options="iconCls:'icon-add'">{{_'New Semantic Type'}}</div>
+</div>
+<div id="menuSemanticType" style="display:none, width:120px;">
+<div onclick="structure.editSemanticType()" data-options="iconCls:'icon-edit'">{{_'Edit Semantic Type'}}</div>
+<div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
+<div onclick="structure.newSemanticType()" data-options="iconCls:'icon-add'">{{_'New Semantic Type'}}</div>
+<div onclick="structure.delSemanticType()" data-options="iconCls:'icon-remove'">{{_'Delete Semantic Type'}}</div>
+</div>
+<script type="text/javascript">
+    var structure = {
+        app: {{$manager->getApp()}},
+        isMaster: {{$data->isMaster|noescape}},
+        node: null
+    };
+    $(function () {
+        $('#structureLayout').layout({
+            fit:true
+        });
+
+        structure.newSemanticType = function () {
+            var nodeId = structure.node.id;
+            manager.doGet({{$manager->getURL('structure/semantictype/formNewSemanticType')}} + '/' + nodeId,'structureCenterPane');
+        }
+
+        structure.editSemanticType = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/semantictype/formUpdateSemanticType')}} + '/' + id,'structureCenterPane');
+        }
+        
+        structure.delSemanticType = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/semantictype/deleteSemanticType')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.reloadSemanticType = function () {
+            $('#structureCenterPane').html('');
+            $('#semanticTypesTree').tree('reload');
+        }
+        
+        structure.editEntry = function (entry) {
+            if ($.type(entry) === "undefined") {
+                entry = structure.node.entry;
+            }
+            manager.doAction('^' + structure.app + '/structure/entry/formUpdate/' + entry);
+        }
+
+        structure.editEntry = function (entry) {
+            if ($.type(entry) === "undefined") {
+                entry = structure.node.entry;
+            }
+            manager.doAction('^' + structure.app + '/entry/formUpdate/' + entry);
+        }
+
+        structure.showSemanticTypedFrames = function (idSemanticType) {
+            if ($.type(idSemanticType) === "undefined") {
+                idSemanticType = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/semantictype/formSemanticTypedFrames')}} + '/' + idSemanticType,'structureCenterPane');
+        }
+
+        structure.showSemanticTypedFEs = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/semantictype/formSemanticTypedFEs')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.newFrameElement = function (idSemanticType) {
+            if ($.type(idSemanticType) === "undefined") {
+                idSemanticType = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/semantictype/formNewFrameElement')}} + '/' + idSemanticType,'structureCenterPane');
+        }
+
+        structure.editFrameElement = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/semantictype/formUpdateFrameElement')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.contextMenuFrame = function(e, node) {
+            if (!structure.isMaster) {
+                return;
+            }
+            e.preventDefault();
+            console.log(node);
+            structure.node = node;
+            var $menu = '';
+            $(this).tree('select',node.target);
+            if (node.id == 'root') {
+                $menu = $('#menuRootSemanticTypes');
+            } else if (node.id.charAt(0) == 'd') {
+                $menu = $('#menuDomains');
+            } else if (node.id.charAt(0) == 't') {
+                $menu = $('#menuSemanticType');
+            }
+            if ($menu != '') {
+                $menu.menu('show',{
+                    left: e.pageX,
+                    top: e.pageY
+                });
+            }
+        }
+
+        $('#menuRootSemanticTypes').menu({});
+        $('#menuDomains').menu({});
+        $('#menuSemanticType').menu({});
+
+        $('#type').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Type'}},
+            onClickButton: function() {
+                $('#semanticTypesTree').tree({queryParams: {type: $('#type').textbox('getValue')}});
+            }
+        });
+        $('#semanticTypesTree').tree({
+            url: {{$manager->getURL('structure/semantictype/semanticTypeTree')}},
+            onContextMenu: structure.contextMenuFrame
+        });
+    });
+</script>

@@ -1,0 +1,39 @@
+Tipos de generos
+<gen_type:"argumentar"> argue
+<gen_type:"expor"> expose
+<gen_type:"descrever_acoes"> describe_actions
+<gen_type:"narrar"> narrate
+<gen_type:"relatar"> report
+na verdade, o nome dessa tag é Tipos Textuais, ao invés de tipos de gêneros
+
+Gêneros
+
+<genre:"artigo_de_opiniao"> opinion_article
+<genre:"carta_do_leitor"> reader_letter
+<genre:"resenha_critica"> critical_review
+<genre:"editorial"> editorial
+<genre:"ensaio"> essay
+
+<genre:"texto_expositivo"> expositive_text
+<genre:"verbete"> entry
+<genre:"resenha"> review
+<genre:"artigo_enciclopedico"> encyclopedic_article
+<genre:"texto_explicativo"> explanatory_text
+
+<genre:"receita"> recipe
+<genre:"regulamento"> regulation
+<genre:"instruções_de_uso"> instructions
+<genre:"comandos_diversos"> commands
+<genre:"textos_prescritivos"> prescriptive_text
+
+<genre:"conto"> tale
+<genre:"fabula"> fable
+<genre:"lenda"> legend
+<genre:"conto_fantastico"> fantastic_tale
+<genre:"cronica_literaria"> chronic_literary
+
+<genre:"noticia"> news
+<genre:"reportagem"> reporting
+<genre:"autobiografia"> autobiography
+<genre:"relato_de_viagem"> travel_report
+<genre:"relato_historico"> historical_report

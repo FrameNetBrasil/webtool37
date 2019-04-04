@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formImportWS" title="Import WordSketch com Documento">
+        <fields>
+            <mhiddenfield id="idLU" value="$this->data->idLU"/>
+            <mlabel label="Aviso:" text="$this->data->message" bold="true"/>
+            <include component="MLookupCorpus.php" id="idCorpus" label="Corpus"/>
+            <mselection id="tags" label="TreeTagger Tags?" options="$this->data->tags"/>
+            <mtextfield id="subCorpus" label="SubCorpus" size="20"/>
+            <mselection id="idLanguage" label="Língua" options="$this->data->languages"/>
+            <mfilefield id="uploadFile" label="Arquivo com sentenças" text="Selecionar Arquivo" width="300px"/>
+        </fields>    
+        <tools>
+            <mlinkbutton id="lbCloseWS" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveWS" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

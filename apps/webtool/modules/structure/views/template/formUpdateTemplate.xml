@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formUpdateTemplate">
+        <property title="$this->data->title" onClose="structure.reloadTemplate();"/>
+        <fields>
+            <mhiddenfield id="template_idTemplate"/>
+            <mhiddenfield id="template_idEntity"/>
+            <mtextfield id="template_entry" label="Entry" width="250px"/> 
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseTemplate" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveTemplate" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+        <data load="$this->data->object"/>
+    </mformdialog>
+</view>

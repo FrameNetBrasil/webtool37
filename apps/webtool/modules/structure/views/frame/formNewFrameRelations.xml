@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formNewFrame">
+        <property title="$this->data->title"  onClose="structure.reloadFrame();"/>
+        <fields>
+            <mtextfield id="frame_entry" width="250px" label="Entry" prefix="frm_"/> 
+            <include component="MLookupTemplate.php" id="frame_idTemplate" label="Template (Optional)"/>
+            <mvcontainer> 
+                <mlabel text="&lt;b&gt;Attention:&lt;/b&gt; if this Frame is templated, answer the questions below:"/>
+            </mvcontainer> 
+            <mbooleanfield id="inheritsFromBase" label="&lt;b&gt;(1)&lt;/b&gt; Do this frame inherits from Frame_Base?"/> 
+            <mbooleanfield id="replicatesFromBase" label="&lt;b&gt;(2)&lt;/b&gt; If (1)=yes, do this frame replicates Frame_Base relations?"/> 
+            <mlabel text="&lt;b&gt;(3)&lt;/b&gt; if (2)=yes, choose:"/>
+            <mradiobutton id="howRelateA" name="howRelate" value="optionA" text=" Create new frames using templates from related frames."/>  
+            <mradiobutton id="howRelateB" name="howRelate" value="optionB" text=" Relate this Frame with frames related to Frame_Base."/>  
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseFrame" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveFrame" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

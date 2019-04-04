@@ -1,0 +1,152 @@
+/******************************************************************************
+ * Icons and Images
+ ******************************************************************************/
+
+.fnbrIconForm {
+    width:16px;
+    height:16px;
+    background: url(../images/16x16/form.png) no-repeat center center;
+}
+
+.fnbrIconRefresh {
+    width:32px;
+    height:32px;
+    background-image: url(../images/copa/btn_refresh.png);
+    position:absolute;
+    left: 50%;
+    margin-left: -70px;
+    top: 32px;
+    z-index: 999;
+}
+
+.fnbrIconReturn {
+    width:32px;
+    height:32px;
+    background-image: url(../images/copa/btn_return.png);
+    position:absolute;
+    left: 50%;
+    margin-left: 23px;
+    top: 32px;
+    z-index: 999;
+}
+
+.fnbrFlag-- {
+    width:16px;
+    height:16px;
+    background: url(../images/00.png) no-repeat center center;
+}
+
+.fnbrFlagPt {
+    width:16px;
+    height:16px;
+    background: url(../images/br.png) no-repeat center center;
+}
+
+.fnbrFlagEn {
+    width:16px;
+    height:16px;
+    background: url(../images/en.png) no-repeat center center;
+}
+
+.fnbrFlagFr {
+    width:16px;
+    height:16px;
+    background: url(../images/fr.png) no-repeat center center;
+}
+
+.fnbrFlagEs {
+    width:16px;
+    height:16px;
+    background: url(../images/es.png) no-repeat center center;
+}
+
+.fnbrFlagIt {
+    width:16px;
+    height:16px;
+    background: url(../images/it.png) no-repeat center center;
+}
+.fnbrFlagSe {
+    width:16px;
+    height:16px;
+    background: url(../images/se.png) no-repeat center center;
+}
+.fnbrFlagLt {
+    width:16px;
+    height:16px;
+    background: url(../images/lt.png) no-repeat center center;
+}
+.fnbrFlagJp {
+    width:16px;
+    height:16px;
+    background: url(../images/jp.png) no-repeat center center;
+}
+.fnbrFlagDe {
+    width:16px;
+    height:16px;
+    background: url(../images/de.png) no-repeat center center;
+}
+.fnbrFlagIw {
+    width:16px;
+    height:16px;
+    background: url(../images/iw.png) no-repeat center center;
+}
+.fnbrFlagZh {
+    width:16px;
+    height:16px;
+    background: url(../images/zh.png) no-repeat center center;
+}
+.fnbrFlagRu {
+    width:16px;
+    height:16px;
+    background: url(../images/ru.png) no-repeat center center;
+}
+.fnbrFlagKo {
+    width:16px;
+    height:16px;
+    background: url(../images/ko.png) no-repeat center center;
+}
+.fnbrFlagAr {
+    width:16px;
+    height:16px;
+    background: url(../images/ar.png) no-repeat center center;
+}
+.fnbrFlagSq {
+    width:16px;
+    height:16px;
+    background: url(../images/sq.png) no-repeat center center;
+}
+.fnbrFlagFi {
+    width:16px;
+    height:16px;
+    background: url(../images/fi.png) no-repeat center center;
+}
+
+.fnbrFlagHi {
+    width:16px;
+    height:16px;
+    background: url(../images/hi.png) no-repeat center center;
+}
+
+.fnbrFlagUr {
+    width:16px;
+    height:16px;
+    background: url(../images/ur.png) no-repeat center center;
+}
+
+.fnbrFlagEl {
+    width:16px;
+    height:16px;
+    background: url(../images/el.png) no-repeat center center;
+}
+
+.fnbrFlagTe {
+    width:16px;
+    height:16px;
+    background: url(../images/hi.png) no-repeat center center;
+}
+
+.fnbrFlagKn {
+    width:16px;
+    height:16px;
+    background: url(../images/hi.png) no-repeat center center;
+}

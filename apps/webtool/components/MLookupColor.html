@@ -1,0 +1,17 @@
+{{define MLookupColor}}
+$('#{{$id}}').combogrid({
+    panelWidth:220,
+    url: '{{$appURL}}' + '/data/color/lookupData',
+    idField:'idColor',
+    textField:'name',
+    label: 'Color',
+    width: 300,
+    mode:'remote',
+    fitColumns:true,
+    columns:[[
+         {field:'idColor', hidden:true},
+         {field:'name', hidden:true},
+         {field:'decorated', title:'Name', width:202}
+    ]]
+});
+{{/define}}

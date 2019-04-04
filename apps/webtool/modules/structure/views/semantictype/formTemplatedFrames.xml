@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formTemplatedFrames" title="$this->data->title">
+        <fields>
+            <mdatagrid id="gridFind" query="$this->data->query" pageLength="0" width="200px">
+                <options singleSelect="true"/>
+                <mdatagridcolumn field="name" title="{{_M('Name')}}" width="20%"/>
+                <mdatagridcolumn field="description" title="{{_M('Description')}}" width="75%"/>
+            </mdatagrid>
+        </fields>
+    </mformdialog>
+</view>

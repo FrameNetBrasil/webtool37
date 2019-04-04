@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formMail" title="{{_M('Send Email')}}" close=">fnbr/main" >
+        <fields>
+            <mselection id="toUser" label="To User" options="$this->data->users" />
+            <mselection id="toGroup" label="To Group" options="$this->data->groups" />
+            <mtextfield id="subject" label="Subject" width="200px"/>
+            <mmultilinefield id="body" label="Message" width="250px" height="100px"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbSend" iconCls="fa fa-send-o fa16px" text="{{_M('Send')}}" plain="true" action="$this->data->send"/>
+        </tools>
+    </mformdialog>
+</view>

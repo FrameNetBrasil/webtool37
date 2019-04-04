@@ -1,0 +1,154 @@
+<div id="structureLayout" style="width:100%;height:100%;">
+    <div id="structureNorthPane" data-options="region:'north', title:'{{_'Genre Type'}}'" style="height:70px">
+        <div style="float:left;padding:5px">
+            <input id="type" name="type" type="text" style="width:200px; padding:5px" >
+        </div>
+    </div>
+    <div id="structureLeftPane" region="west" split="true" style="height: 100%">
+        <ul id="modelTree"></ul>
+    </div>
+    <div id="structureCenterPane" region="center" style="height: 100%">
+        
+    </div>
+</div>
+<div id="menuRootGenreType" style="display:none, width:120px;">
+    <div onclick="structure.reload()" data-options="iconCls:'icon-reload'">{{_'Reload Genre Types'}}</div>
+    <div onclick="structure.newModel()" data-options="iconCls:'icon-add'">{{_'New Genre Type'}}</div>
+</div>
+<div id="menuModelGenreType" style="display:none, width:120px;">
+    <div onclick="structure.editModel()" data-options="iconCls:'icon-edit'">{{_'Edit Genre Type'}}</div>
+    <div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
+    <div onclick="structure.newGenre()" data-options="iconCls:'icon-add'">{{_'New Genre'}}</div>
+</div>
+<div id="menuGenre" style="display:none, width:120px;">
+    <div onclick="structure.editGenre()" data-options="iconCls:'icon-edit'">{{_'Edit Genre'}}</div>
+    <div onclick="structure.deleteGenre()" data-options="iconCls:'icon-remove'">{{_'Delete Genre'}}</div>
+</div>
+
+</div>
+<script type="text/javascript">
+    var structure = {
+        app: {{$manager->getApp()}},
+        isMaster: {{$data->isMaster|noescape}},
+        node: null
+    };
+    $(function () {
+        $('#structureLayout').layout({
+            fit:true
+        });
+
+        structure.newModel = function () {
+            var nodeId = structure.node.id;
+            manager.doGet({{$manager->getURL('structure/genre/formNewGenreType')}} + '/' + nodeId,'structureCenterPane');
+        }
+
+        structure.editModel = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/genre/formUpdateGenreType')}} + '/' + id,'structureCenterPane');
+        }
+        
+        structure.reload = function () {
+            $('#structureCenterPane').html('');
+            $('#modelTree').tree('reload');
+        }
+
+        structure.reloadGenreType = function () {
+            console.log('reloadGenreType');
+            $('#structureCenterPane').html('');
+            var node = $('#modelTree').tree('getSelected');
+            console.log(node);
+            if (node) {
+                $('#modelTree').tree('reload', node.target);
+            }
+        }
+
+        structure.reloadGenre = function () {
+            console.log('reloadGenre');
+            $('#structureCenterPane').html('');
+            var node = $('#modelTree').tree('getSelected');
+            var parent = $('#modelTree').tree('getParent', node.target);
+            console.log(node);
+            if (node) {
+                $('#modelTree').tree('reload', parent.target);
+            }
+        }
+
+        structure.editEntry = function (entry) {
+            if ($.type(entry) === "undefined") {
+                entry = structure.node.entry;
+            }
+            manager.doAction('^' + structure.app + '/structure/entry/formUpdate/' + entry);
+        }
+
+        structure.newGenre = function (idGenreType) {
+            if ($.type(idGenreType) === "undefined") {
+                idGenreType = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/genre/formNewGenre')}} + '/' + idGenreType,'structureCenterPane');
+        }
+
+        structure.editGenre = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            var parent = $('#modelTree').tree('getParent', structure.node.target);
+            var idParent = parent.id.substr(1);
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/genre/formUpdateGenre')}} + '/' + id + '/' + idParent,'structureCenterPane');
+        }
+
+        structure.deleteGenre = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/genre/formDeleteGenre')}} + '/' + id,'structureCenterPane');
+        }
+
+
+        structure.contextMenuModel = function(e, node) {
+            if (!structure.isMaster) {
+                return;
+            }
+            e.preventDefault();
+            console.log(node);
+            structure.node = node;
+            var $menu = '';
+            $(this).tree('select',node.target);
+            if (node.id == 'root') {
+                $menu = $('#menuRootGenreType');
+            } else if (node.id.charAt(0) == 't') {
+                $menu = $('#menuModelGenreType');
+            } else if (node.id.charAt(0) == 'g') {
+                $menu = $('#menuGenre');
+            }
+            if ($menu != '') {
+                $menu.menu('show',{
+                    left: e.pageX,
+                    top: e.pageY
+                });
+            }
+        }
+
+        $('#menuRootGenreType').menu({});
+        $('#menuModelGenreType').menu({});
+        $('#menuGenre').menu({});
+
+        $('#type').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Type'}},
+            onClickButton: function() {
+                $('#modelTree').tree({queryParams: {type: $('#type').textbox('getValue')}});
+            }
+        });
+
+        $('#modelTree').tree({
+            url: {{$manager->getURL('structure/genre/modelTree')}},
+            onContextMenu: structure.contextMenuModel
+        });
+    });
+</script>

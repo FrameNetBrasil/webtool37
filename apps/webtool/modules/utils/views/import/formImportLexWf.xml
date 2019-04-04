@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formImportLexWf" title="Import Wordforms+Lexemes"  close=">fnbr/main" >
+        <fields>
+            <mvcontainer>
+                <mspan>Importação de arquivos texto simples, com Wordform+Lexeme informado em cada linha,</mspan>
+                <mspan>separados por um espaço em branco (wordform e lexeme em minúsculo, POS em maiúsculo):</mspan>
+                <mspan>[wordform] [POS] [lexeme]</mspan>
+            </mvcontainer>
+            <mselection id="idLanguage" label="Língua" options="$this->data->languages"/>
+            <mfilefield id="uploadFile" label="Arquivo com dados" text="Selecionar Arquivo" width="300px"/>
+        </fields>    
+        <buttons>
+            <mbutton id="btnPost" text="{{_M('Send')}}" action="$this->data->action"/>
+        </buttons>
+    </mformdialog>
+</view>

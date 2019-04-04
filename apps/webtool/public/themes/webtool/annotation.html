@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta name="Generator" content="Maestro 3.0; http://maestro.org.br">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>FNBr Webtool [dev]</title>
+    <meta name="description" content="Framenet Brasil 3.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Carrega o icone da aplicação -->
+    <link rel="icon" type="image/x-icon" href="http://server2.framenetbr.ufjf.br/maestro3/apps/fnbrdev/public/themes/fnbr/favicon.ico">
+
+    <!-- Carrega estilos específicos da aplicação -->
+    <link rel="stylesheet" type="text/css" href="/maestro3/apps/fnbrdev/public/css/style.css">
+
+    <!-- Carrega o jQuery - obrigatório em todos os temas -->
+    <script type="text/javascript" src="/maestro3/apps/fnbrdev/public/scripts/jquery-2.1.1.min.js"></script>
+
+    <!-- Carrega o tema e suas dependências -->
+    <link rel="stylesheet" href="/maestro3/apps/fnbrdev/public/scripts/bootstrap-3.2.0-dist/css/bootstrap.min.css">
+    <script type="text/javascript" src="/maestro3/apps/fnbrdev/public/scripts/bootstrap-3.2.0-dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="http://server2.framenetbr.ufjf.br/maestro3/apps/fnbrdev/public/themes/fnbr/style.css">
+</head>
+{{$page->generate('content')|noescape}}
+{{include 'footer.html'}}

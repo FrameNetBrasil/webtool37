@@ -1,0 +1,17 @@
+/*
+Arquivo: controls.css
+Autor: Maestro
+Descrição: 
+    Tema para a app Exemplos, distribuída com o Maestro.
+    Define os estilos do controles renderizados em classes/painter.php.
+Version: 2.0
+Licença: GNU General Public License
+Licença URI: license.txt
+*/
+
+@CHARSET "UTF-8"; 
+@import url('controls/mcontainer.css'); 
+@import url('controls/mform.css'); 
+@import url('controls/mmenu.css'); 
+@import url('controls/mimage.css'); 
+@import url('controls/micons.css'); 

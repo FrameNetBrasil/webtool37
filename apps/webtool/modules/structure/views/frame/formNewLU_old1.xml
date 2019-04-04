@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formNewLU">
+        <property title="$this->data->title"  onClose="structure.reloadFrame();"/>
+        <fields>
+            <mhiddenfield id="lu_idFrame" value="$this->data->idFrame"/>
+            <mlabel text="$this->data->frame" style="font-weight:bold"/>
+            <mlabel text="Enter lemma (as word.pos) / Language"/>
+            <mhcontainer style="padding:5px">
+                <mtextfield id="lemma" width="200px" value="$this->data->lemma" placeholder="{{_M('Lemma')}}" />
+                <include component="MLanguage.php" id="idLanguage"/>
+            </mhcontainer>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseLU" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveLU" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

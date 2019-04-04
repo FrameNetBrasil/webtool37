@@ -1,0 +1,194 @@
+
+<script type="text/javascript">
+    editor.editorCXNFR = {
+        graph: null,
+        paper: null,
+        entities: [],
+        entityClicked: false,
+        colorRelation: [],
+        colorType: [],
+        labelRelation: [],
+        handling: false,
+        currentRelation: null,
+        linksRemoved: [],
+        count: 0,
+        init: function () {
+            this.graph = new joint.dia.Graph;
+            this.paper = this.newPaper(this.graph, '#editorPaperCXNFR');
+            this.entityClicked = false;
+            this.currentRelation = $('#currentRelation').attr('value');
+            console.log('end init');
+        },
+        newPaper: function (graph, id) {
+            return new joint.dia.Paper({
+                el: $(id),
+                width: '95%',//800,
+                height: '95%',//600,
+                perpendicularLinks: true,
+                gridSize: 1,
+                model: graph,
+                interactive: {
+                    'vertexAdd': false
+                }
+            })
+        },
+        linkOptions: function (evt, linkView, x, y) {
+            if (!this.handling) {
+                this.handling = true;
+                editor.editorCEFE.editCEFE(linkView);
+                this.handling = false;
+            }
+        },
+        blankPointerDown: function (evt, x, y) {
+            this.changeFocus(null);
+        },
+        cellRemoved: function (cell) {
+            if (cell.attributes.type == 'entity.Relation') {
+                console.log('link removed');
+                this.linksRemoved[this.linksRemoved.length] = {
+                    idEntity1: cell.attributes.source.id,
+                    idEntity2: cell.attributes.target.id,
+                    idType: cell.attributes.idType
+                };
+            }
+        },
+        pointerDown: function (view, evt, x, y) {
+            var model = view.model;
+            if (model.attributes.attrs.rect) {
+                if (this.entityClicked) {
+                    var source = this.entityClicked;
+                    var target = model;
+                    if ((source.attributes.idType == 'c') && (target.attributes.idType == 'f')) {
+                        if (source.id != target.id) {
+                            this.connect(source, target, this.currentRelation);
+                        }
+                    }
+                    this.changeFocus(null);
+                } else {
+                    this.changeFocus(model);
+                }
+            }
+        },
+        newEntityAlone: function (idEntity) {
+            console.log('new entity alone ' + idEntity);
+            if (editor.editorCXNFR.entities[idEntity]) {
+                console.log('   already exists ' + idEntity);
+                return;
+            }
+            var entityData = editor.entities[idEntity];
+            var width = entityData.label.length * 10;
+            var entityObj = {
+                    id: entityData.id,
+                    idType: entityData.idType,
+                    position: {x: 10, y: (editor.editorCXNFR.count * 50) + 10},
+                    size: {width: width, height: 30},
+                    attrs: {text: {text: entityData.label}}
+            };
+            editor.editorCXNFR.count++;
+            if (entityData.idType == 'f') {
+                var entity = new joint.shapes.entity.Frame(entityObj);
+            } else { // cxn
+                var entity = new joint.shapes.entity.Cxn(entityObj);
+            }
+            entity.attr('rect/fill', '#FFFFFF');
+            entity.attr('rect/originalFill', '#FFFFFF');
+            this.entities[entity.id] = entity;
+            this.graph.addCell(entity);
+            return entity;
+        },
+        newEntity: function (idEntity) {
+            console.log('new entity ' + idEntity);
+            var entity = editor.editorCXNFR.newEntityAlone(idEntity);
+            this.changeFocus(entity);
+            // load CXN-FR relations
+            this.loadCxnFrameRelation(idEntity);
+        },
+        loadCxnFrameRelation: function(idEntity) {
+            $.ajax({
+                type: "POST", 
+                url: {{$manager->getURL('visualeditor/cxnframe/getCxnFrameRelations')}}, 
+                data: {id: idEntity}, 
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    $.each(data, function(index, relation) {
+                        var id = relation.idEntity1 + '_' + relation.idType + '_' + relation.idEntity2;
+                        editor.relations[id] = relation;
+                    });
+                    console.log(editor.relations);
+                    for (idRelation in editor.relations) {
+                        var relation = editor.relations[idRelation];
+                        editor.editorCXNFR.newEntityAlone(relation.idEntity1);
+                        editor.editorCXNFR.newEntityAlone(relation.idEntity2);
+                        if ((relation.idEntity1 == idEntity) && (editor.editorCXNFR.entities[relation.idEntity2])) {
+                            editor.editorCXNFR.connect(editor.editorCXNFR.entities[relation.idEntity1], editor.editorCXNFR.entities[relation.idEntity2], relation.idType);
+                        }
+                        if ((relation.idEntity2 == idEntity) && (editor.editorCXNFR.entities[relation.idEntity1])) {
+                            editor.editorCXNFR.connect(editor.editorCXNFR.entities[relation.idEntity1], editor.editorCXNFR.entities[relation.idEntity2], relation.idType);
+                        }
+                    }
+                }
+            });    
+        },
+        connect: function (entity1, entity2, idType) {
+            var link = this.newLink(entity1.id, entity2.id, idType);
+            this.graph.addCell(link);
+        },
+        newLink: function (idSource, idTarget, idType) {
+            console.log(idSource);
+            console.log(idTarget);
+            console.log(idType);
+            var link = new joint.shapes.entity.Relation({
+                source: {id: idSource},
+                target: {id: idTarget},
+                idType: idType
+            });
+            link.attr('.connection/stroke', editor.relationEntry[idType].color);
+            link.attr('.marker-target/fill', editor.relationEntry[idType].color);
+            link.attr('.marker-target/stroke', editor.relationEntry[idType].color);
+            return link;
+        },
+        changeRelation: function (relationEntry) {
+            this.currentRelation = relationEntry;
+        },
+        changeFocus: function (model) {
+            if (this.entityClicked) {
+                this.entityClicked.attr('rect/fill', '#FFFFFF');
+            }
+            if (model) {
+                this.entityClicked = model;
+                this.entityClicked.attr('rect/fill', "#CCCCCC");
+            } else {
+                this.entityClicked = null;
+            }
+        },
+        toJSON: function (graph) {
+            var j = graph.toJSON();
+            return JSON.stringify(j);
+        },
+        clearGraph: function() {
+            this.graph.clear();
+            this.linksRemoved = [];
+        },
+        submitCxnFrameRelation: function () {
+            var graph = JSON.parse(this.toJSON(this.graph));
+            var data = {entities:[], relations:[]};
+            $.each(graph.cells, function(index, cell) {
+                if (cell.type == 'entity.Entity') {
+                    data['entities'][data['entities'].length] = {id: cell.id};
+                }
+                if (cell.type == 'entity.Relation') {
+                    data['relations'][data['relations'].length] = {
+                        idType: cell.idType,
+                        idEntity1: cell.source.id,
+                        idEntity2: cell.target.id
+                    };
+                }
+            });
+            console.log(data);
+            $('#graphJson').attr('value','');
+            $('#graphJson').attr('value','json:' + JSON.stringify(data));
+            $('#linksRemoved').attr('value','json:' + JSON.stringify(this.linksRemoved));
+            manager.doPost('graphJson',{{$manager->getURL('visualeditor/cxnframe/saveCxnFrameRelation')}}, 'formEditor');
+        }
+    }
+</script>

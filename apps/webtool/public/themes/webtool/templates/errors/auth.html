@@ -1,0 +1,54 @@
+{{include '../../header.html'}}
+<style>
+    div.containerLogin {
+        height: 10em;
+    }
+    div.containerLogin > .login-page {
+        margin: 0;
+        background: white;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-right: -50%;
+        margin-bottom: -50%;
+        transform: translate(-50%, -50%)
+    }
+    .btn {
+        font-size: 140%;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: 0;
+        background-color: #b30000;
+        color: white;
+    }
+    .btn:hover {
+        background-color: #ff6666;
+    }
+    .btn:focus {
+        outline: none !important;
+    }
+    .btn.btn-lg {
+        /*padding: 20px 30px;*/
+    }
+    .btn:disabled {
+        background-color: #333;
+        color: #666;
+    }
+</style>
+
+
+<div id="appContainer" >
+    <div id="mainPane" class="easyui-panel" title="{{$manager->getOptions('mainTitle')}}" style="height: 100%">
+
+        <div class="containerLogin">
+            <div class="login-page">
+                <div class="login-box auth0-box before">
+                    <img src = {{$manager->getStaticURL($manager->getApp(),'images/fnbr_logo.png')}} />
+                    <p>Signin is necessary to access this page.</p>
+                    <a class="btn btn-primary btn-lg btn-login btn-block" href="{{$result->getGoTo()}}">Go to SignIn</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{{include '../../footer.html'}}

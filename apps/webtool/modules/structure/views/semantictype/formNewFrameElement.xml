@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formNewFrameElement">
+        <property title="$this->data->title"  onClose="structure.reloadTemplate();"/>
+        <fields>
+            <mhiddenfield id="frameelement_idTemplate" value="$this->data->idTemplate"/>
+            <mlabel text="$this->data->template" label="Template:"/>
+            <mtextfield id="frameelement_entry" label="Entry:" prefix="fe_" width="250px"/> 
+            <include component="MLookupCoreType.php" id="frameelement_idCoreType" label="Core Type"/>
+            <include component="MLookupColor.php" id="frameelement_idColor" label="Color"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseFrameElement" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveFrameElement" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

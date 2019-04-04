@@ -1,0 +1,129 @@
+<div id="reportDocumentLayout" style="width:100%;height:100%;">
+    <div id="reportDocumentNorthPane" region="north" style="width:100%; height:40px">
+        <div>
+            <span>Options:</span>
+        </div>
+        <div>
+            <input id="fe" name="fe" type="checkbox">
+            <label for="fe">FE</label>
+        </div>
+        <div>
+            <input id="gf" name="gf" type="checkbox">
+            <label for="gf">GF</label>
+        </div>
+        <div>
+            <input id="pt" name="pt" type="checkbox">
+            <label for="pt">PT</label>
+        </div>
+        <div>
+            <input id="ni" name="ni" type="checkbox">
+            <label for="ni">NI</label>
+        </div>
+
+    </div>
+    <div id="reportDocumentCenterPane" region="center" style="width:100%; height:100%">
+
+        <div class="reportDocument" style="width:100%; height:100%">
+            <table id="reportDocumentGrid" class="easyui-datagrid" data-options="fit:true,border:false">
+                <thead>
+                <tr>
+                    <th data-options="field:'frame',width:80, sortable:true">Frame</th>
+                    <th data-options="field:'lu',width:80,sortable:true">LU</th>
+                    <th data-options="field:'fe',width:50,sortable:true">FE</th>
+                    <th data-options="field:'gf',width:50,sortable:true">GF</th>
+                    <th data-options="field:'pt',width:50,sortable:true">PT</th>
+                    <th data-options="field:'ni',width:50,sortable:true">NI</th>
+                    <th data-options="field:'count',width:50">Count</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $.parser.parse();
+
+    function changeOption() {
+        console.log($('#fe').is(':checked'));
+        console.log($('#gf').is(':checked'));
+        console.log($('#pt').is(':checked'));
+        console.log($('#ni').is(':checked'));
+        var query = {};
+        if($('#fe').is(':checked')) {
+            $('#reportDocumentGrid').datagrid('showColumn', 'fe');
+            query['fe'] = 1;
+        } else {
+            $('#reportDocumentGrid').datagrid('hideColumn', 'fe');
+            query['fe'] = 0;
+        }
+        if($('#gf').is(':checked')) {
+            $('#reportDocumentGrid').datagrid('showColumn', 'gf');
+            query['gf'] = 1;
+        } else {
+            $('#reportDocumentGrid').datagrid('hideColumn', 'gf');
+            query['gf'] = 0;
+        }
+        if($('#pt').is(':checked')) {
+            $('#reportDocumentGrid').datagrid('showColumn', 'pt');
+            query['pt'] = 1;
+        } else {
+            $('#reportDocumentGrid').datagrid('hideColumn', 'pt');
+            query['pt'] = 0;
+        }
+        if($('#ni').is(':checked')) {
+            $('#reportDocumentGrid').datagrid('hideColumn', 'gf');
+            $('#reportDocumentGrid').datagrid('hideColumn', 'pt');
+            $('#reportDocumentGrid').datagrid('showColumn', 'fe');
+            $('#reportDocumentGrid').datagrid('showColumn', 'ni');
+            query['gf'] = 0;
+            query['pt'] = 0;
+            query['fe'] = 1;
+            query['ni'] = 1;
+        } else {
+            $('#reportDocumentGrid').datagrid('hideColumn', 'ni');
+            query['ni'] = 0;
+        }
+        var queryString = "?fe=" + query['fe'] + "&gf=" + query['gf'] + "&pt=" + query['pt'] + "&ni=" + query['ni'];
+        $('#reportDocumentGrid').datagrid({
+            url: {{$manager->getURL('api/reportcorpus/getDataReportDocument')}} +'/' + {{$data->idDocument}} + queryString
+        });
+        $('#reportDocumentGrid').datagrid('reload');
+    }
+
+    $('#fe').change(changeOption);
+    $('#gf').change(changeOption);
+    $('#pt').change(changeOption);
+    $('#ni').change(changeOption);
+
+
+    $("#reportDocumentLayout").layout({
+        fit:true,
+        border:false
+    });
+
+    $("#reportDocumentGrid").datagrid({
+        title: 'Document: {{$data->title|noescape}}',
+        singleSelect: true,
+        fitColumns: true,
+        nowrap: false,
+        checkOnSelect: false,
+        selectOnCheck: false,
+        //idField: 'idCorpus',
+        url: {{$manager->getURL('api/reportcorpus/getDataReportDocument')}} +'/' + {{$data->idDocument}} + "?fe=0&gf=0&pt=0&ni=0",
+        method: 'get'
+    });
+    $('#reportDocumentGrid').datagrid('hideColumn', 'fe');
+    $('#reportDocumentGrid').datagrid('hideColumn', 'gf');
+    $('#reportDocumentGrid').datagrid('hideColumn', 'pt');
+    $('#reportDocumentGrid').datagrid('hideColumn', 'ni');
+
+
+</script>
+<style>
+#reportDocumentNorthPane div {
+    float:left;
+    padding:5px;
+    vertical-align:center;
+}
+</style>

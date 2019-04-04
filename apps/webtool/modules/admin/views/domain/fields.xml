@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<view>
+    <fields>
+        <mhiddenfield id="domain_idDomain" />      
+        <mtextfield id="domain_entry" label="Entry:" prefix="dom_" width="250px"/> 
+    </fields>
+</view>

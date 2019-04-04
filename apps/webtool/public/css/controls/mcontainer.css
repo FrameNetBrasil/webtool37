@@ -1,0 +1,58 @@
+/*
+Arquivo: controls/mcontainer.css
+Autor: Maestro
+Descrição: 
+    Estilos dos controles baseados em MContainer.
+Version: 2.0
+Licença: GNU General Public License
+Licença URI: license.txt
+*/
+
+.mContainerControls {
+    overflow: hidden;
+}
+
+.mContainer {
+    width: 100%;
+    overflow: auto;
+}
+
+.mContainerCell {
+    vertical-align:top;
+    padding-left: 2px;
+    padding-right: 2px;
+    float:left;
+}
+
+.mContainerCell .firstCell {
+    padding-left: 0px;
+}
+
+.mContainerCell .lastCell {
+    padding-right: 0px;
+}
+
+.mContainerRow {
+    width: 100%;
+    padding-bottom: 2px;
+}
+.mHContainer {
+}
+.mHContainer > .cell {
+    float: left;
+    padding-right: 3px;
+    padding-bottom: 2px;
+    width:auto;
+}
+.mHContainer > .clear {
+    clear:both;
+}    
+
+.mVContainer {
+    padding-left: 2em;
+}
+.mVContainerCell > .cell {
+    float: none;
+    width:auto;
+}
+

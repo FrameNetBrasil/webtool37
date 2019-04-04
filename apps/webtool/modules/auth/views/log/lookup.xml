@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE view SYSTEM "../../../../public/layouts/view.dtd">
+<view>
+    <mform title="Pesquisa Log" close="close" enterAction="submit">
+        <fields>
+            <mhcontainer>
+                <mtextfield id="filter0" label="IdLog" value="$this->data->filter0" size="30" />
+                <mbuttonfind />
+            </mhcontainer>
+            <mdatagrid id="lookupTable" query="$this->data->query" pageLength="15">
+                <mdatagridcolumn field="idLog" visible="false"/>
+                <mdatagridhyperlink field="idLog" title="IdLog" width="100%"/>
+            </mdatagrid>
+        </fields>
+    </mform>
+</view>

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formNewGenre">
+        <property title="$this->data->title"  onClose="structure.reloadGenreType();"/>
+        <fields>
+            <mhiddenfield id="genre_idGenreType" value="$this->data->id"/>
+            <mlabel text="$this->data->genreType" label="GenreType:"/>
+            <mtextfield id="genre_entry" label="Entry:" prefix="gen_" width="250px"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseGenre" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveGenre" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

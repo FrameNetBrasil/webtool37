@@ -1,0 +1,390 @@
+<div id="structureLayout" style="width:100%;height:100%;">
+    <div id="structureNorthPane" data-options="collapsible:false, region:'north', title:'{{_'Frames'}}'" style="height:70px">
+        <div style="float:left;padding:5px">
+           <input id="idDomain" name="domain" placeholder="{{_'Domain'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <input id="frame" name="frame" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Frame'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <input id="fe" name="fe" type="text" style="width:200px; padding:5px" placeholder="{{_'Search FE'}}">
+        </div>
+        <div style="float:left;padding:5px" class=""clearfix">
+            <input id="lu" name="lu" type="text" style="width:200px; padding:5px" placeholder="{{_'Search LU'}}">
+        </div>
+    </div>
+    <div id="structureLeftPane" region="west" split="true" style="height: 100%">
+        <ul id="framesTree"></ul>
+    </div>
+    <div id="structureCenterPane" region="center" style="height: 100%">
+        
+    </div>
+</div>
+<div id="menuRootFrames" style="display:none, width:120px;">
+    <div onclick="structure.reloadFrame()" data-options="iconCls:'icon-reload'">{{_'Reload Frames'}}</div>
+    <div onclick="structure.newFrame()" data-options="iconCls:'icon-add'">{{_'New Frame'}}</div>
+</div>
+<div id="menuFrame" style="display:none, width:120px;">
+    <div onclick="structure.editFrame()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
+    <div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Frame'}}</div>
+    <div onclick="structure.deleteFrame()" data-options="iconCls:'icon-remove'">{{_'Delete Frame'}}</div>
+    <div onclick="structure.newFrameElement()" data-options="iconCls:'icon-add'">{{_'New FrameElement'}}</div>
+    <div onclick="structure.newLU()" data-options="iconCls:'icon-add'">{{_'New LU'}}</div>
+    <div onclick="structure.createTemplate()" data-options="iconCls:'icon-add'">{{_'Create Template from Frame'}}</div>
+    <div onclick="structure.frameDomain()" data-options="iconCls:'icon-edit'">{{_'Domains'}}</div>
+    <div onclick="structure.frameStatus()" data-options="iconCls:'icon-edit'">{{_'Status'}}</div>
+    <div onclick="structure.frameSemanticType()" data-options="iconCls:'icon-edit'">{{_'Semantic Types'}}</div>
+</div>
+<div id="menuFrameAnno" style="display:none, width:120px;">
+    <div onclick="structure.newLU()" data-options="iconCls:'icon-add'">{{_'New LU'}}</div>
+</div>
+<div id="menuFrameElement" style="display:none, width:120px;">
+    <div onclick="structure.editFrameElement()" data-options="iconCls:'icon-edit'">{{_'Edit FrameElement'}}</div>
+    <div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
+    <div onclick="structure.deleteFrameElement()" data-options="iconCls:'icon-remove'">{{_'Delete FrameElement'}}</div>
+    <div onclick="structure.feAddConstraint()" data-options="iconCls:'icon-add'">{{_'Add Constraint'}}</div>
+</div>
+<div id="menuFrameConstraint" style="display:none, width:120px;">
+    <div onclick="structure.feDeleteConstraint()" data-options="iconCls:'icon-remove'">{{_'Delete Constraint'}}</div>
+</div>
+<div id="menuLU" style="display:none, width:120px;">
+    <div onclick="structure.editLU()" data-options="iconCls:'icon-edit'">{{_'Edit LU'}}</div>
+    <div onclick="structure.deleteLU()" data-options="iconCls:'icon-remove'">{{_'Delete LU'}}</div>
+    <div onclick="structure.luAddConstraint()" data-options="iconCls:'icon-add'">{{_'Add Constraint'}}</div>
+    <div onclick="structure.importWS()" data-options="iconCls:'icon-edit'">{{_'Import WS'}}</div>
+</div>
+<div id="menuLUAnno" style="display:none, width:120px;">
+    <div onclick="structure.editLU()" data-options="iconCls:'icon-edit'">{{_'Edit LU'}}</div>
+    <div onclick="structure.deleteLU()" data-options="iconCls:'icon-remove'">{{_'Delete LU'}}</div>
+</div>
+<div id="menuLUConstraint" style="display:none, width:120px;">
+    <div onclick="structure.luDeleteConstraint()" data-options="iconCls:'icon-remove'">{{_'Delete Constraint'}}</div>
+</div>
+<div id="menuSubCorpus" style="display:none, width:120px;">
+    <div onclick="structure.deleteSubCorpus()" data-options="iconCls:'icon-remove'">{{_'Delete SubCorpus'}}</div>
+</div>
+
+{{include $manager->getThemePath('css/graph.css')}}
+
+<script type="text/javascript">
+    var idCenterPane = "structureCenterPane";
+    var structure = {
+        app: {{$manager->getApp()}},
+        isMaster: {{$data->isMaster|noescape}},
+        isAnno: {{$data->isAnno|noescape}},
+        node: null
+    };
+    $(function () {
+        $('#structureLayout').layout({
+            fit:true
+        });
+
+        structure.showLU = function (idLU) {
+            $('#reportCenterPane').html('');
+            manager.doGet({{$manager->getURL('report/lu/showLU')}} + '/' + idLU, 'structureCenterPane');
+        }
+
+        structure.showFrame = function (idFrame) {
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('report/frame/showFrame')}} + '/' + idFrame, 'structureCenterPane');
+        }
+        structure.newFrame = function () {
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formNewFrame')}},'structureCenterPane');
+        }
+
+        structure.editFrame = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formUpdateFrame')}} + '/' + id,'structureCenterPane');
+        }
+        
+        structure.deleteFrame = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formDeleteFrame')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.frameSemanticType = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formFrameSemanticType')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.frameDomain = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formFrameDomain')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.frameStatus = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formFrameStatus')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.reloadFrame = function () {
+            $('#structureCenterPane').html('');
+            var node = $('#framesTree').tree('getSelected');
+            if (node) {
+                $('#framesTree').tree('reload', node.target);
+            }
+        }
+
+        structure.reloadFrameParent = function () {
+            $('#structureCenterPane').html('');
+            var node = $('#framesTree').tree('getSelected');
+            var parent = $('#framesTree').tree('getParent', node.target);
+            console.log(node);
+            console.log(parent);
+            if (node) {
+                $('#framesTree').tree('reload', parent.target);
+            }
+        }
+
+        structure.editRelations = function (entry) {
+            if ($.type(entry) === "undefined") {
+                entry = structure.node.entry;
+            }
+            manager.doAction('^' + structure.app + '/structure/frame/formNewFrameRelations/' + entry);
+        }
+        
+        structure.editEntry = function (entry, form) {
+            if ($.type(entry) === "undefined") {
+                entry = structure.node.entry;
+            }
+            manager.doAction('^' + structure.app + '/structure/entry/formUpdate/' + entry);
+            if (form) {
+                $('#' + form + '_dialog').dialog('close');
+            }
+        }
+
+        structure.newFrameElement = function (idFrame) {
+            if ($.type(idFrame) === "undefined") {
+                idFrame = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formNewFrameElement')}} + '/' + idFrame,'structureCenterPane');
+        }
+
+        structure.editFrameElement = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formUpdateFrameElement')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.deleteFrameElement = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formDeleteFrameElement')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.feAddConstraint = function (idFE) {
+            if ($.type(idFE) === "undefined") {
+                idFE = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formAddConstraintFE')}} + '/' + idFE,'structureCenterPane');
+        }
+
+        structure.feDeleteConstraint = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formDeleteConstraintFE')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.newLU = function (idFrame) {
+            if ($.type(idFrame) === "undefined") {
+                idFrame = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doAction('^' + structure.app + '/structure/frame/formNewLU' + '/' + idFrame);
+        }
+
+        structure.editLU = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formUpdateLU')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.deleteLU = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formDeleteLU')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.deleteSubCorpus = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formDeleteSubCorpus')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.luAddConstraint = function (idLU) {
+            console.log(structure.nodeSelected);
+            if ($.type(idLU) === "undefined") {
+                idLU = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formAddConstraintLU')}} + '/' + idLU,'structureCenterPane');
+        }
+
+        structure.luDeleteConstraint = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formDeleteConstraintLU')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.importWS = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formImportWS')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.createTemplate = function (idFrame) {
+            if ($.type(idFrame) === "undefined") {
+                idFrame = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doAction('^' + structure.app + '/structure/frame/createTemplate' + '/' + idFrame);
+        }
+
+
+        structure.contextMenuFrame = function(e, node) {
+            e.preventDefault();
+            console.log(node);
+            structure.node = node;
+            var $menu = '';
+            if (structure.isMaster) {
+                $(this).tree('select', node.target);
+                if (node.id == 'root') {
+                    $menu = $('#menuRootFrames');
+                } else if (node.id.charAt(0) == 'f') {
+                    $menu = $('#menuFrame');
+                } else if (node.id.charAt(0) == 'e') {
+                    $menu = $('#menuFrameElement');
+                } else if (node.id.charAt(0) == 'l') {
+                    $menu = $('#menuLU');
+                } else if (node.id.charAt(0) == 's') {
+                    $menu = $('#menuSubCorpus');
+                } else if (node.id.charAt(0) == 'x') {
+                    $menu = $('#menuFrameConstraint');
+                } else if (node.id.charAt(0) == 'y') {
+                    $menu = $('#menuLUConstraint');
+                }
+                if ($menu != '') {
+                    $menu.menu('show', {
+                        left: e.pageX,
+                        top: e.pageY
+                    });
+                }
+            } else if (structure.isAnno) {
+                $(this).tree('select', node.target);
+                console.log('isAnno');
+                if (node.id.charAt(0) == 'f') {
+                    $menu = $('#menuFrameAnno');
+                } else if (node.id.charAt(0) == 'l') {
+                    $menu = $('#menuLUAnno');
+                } else {
+                    return;
+                }
+                if ($menu != '') {
+                    $menu.menu('show', {
+                        left: e.pageX,
+                        top: e.pageY
+                    });
+                }
+            }
+        }
+
+        $('#menuRootFrames').menu({});
+        $('#menuFrame').menu({});
+        $('#menuFrameElement').menu({});
+        $('#menuLU').menu({});
+        $('#menuSubCorpus').menu({});
+        $('#menuFrameConstraint').menu({});
+        $('#menuLUConstraint').menu({});
+        $('#menuFrameAnno').menu({});
+        $('#menuLUAnno').menu({});
+
+        $('#lu').textbox({
+            //buttonText:{{_'Search'}},
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search LU'}},
+            onClickButton: function() {
+                $('#framesTree').tree({queryParams: {lu: $('#lu').textbox('getValue')}});
+            }
+        });
+        $('#fe').textbox({
+            //buttonText:{{_'Search'}},
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search FE'}},
+            onClickButton: function() {
+                $('#framesTree').tree({queryParams: {fe: $('#fe').textbox('getValue')}});
+            }
+        });
+        $('#frame').textbox({
+            //buttonText:{{_'Search'}},
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Frame'}},
+            onClickButton: function() {
+                $('#framesTree').tree({queryParams: {frame: $('#frame').textbox('getValue')}});
+            }
+        });
+
+        $('#idDomain').combobox({
+            data: JSON.parse({{$data->domain}}),
+            prompt: {{_'Select Domain'}},
+            valueField:'idDomain',
+            textField:'name',
+            onSelect: function() {
+                $('#framesTree').tree({queryParams: {idDomain: $('#idDomain').combobox('getValue')}});
+            },
+            onChange: function() {
+                $('#framesTree').tree({queryParams: {idDomain: $('#idDomain').combobox('getValue')}});
+            }
+        });
+
+        $('#framesTree').tree({
+            url: {{$manager->getURL('structure/frame/frameTree')}},
+            onClick: function (node) {
+                console.log(node);
+                if (node.id.charAt(0) == 'f') {
+                    structure.showFrame(node.id.substr(1));
+                }
+                if (node.id.charAt(0) == 'l') {
+                    structure.showLU(node.id.substr(1));
+                }
+            },
+            onContextMenu: structure.contextMenuFrame
+        });
+    });
+</script>

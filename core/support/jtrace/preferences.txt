@@ -1,0 +1,10 @@
+Todas 1
+Busca 1
+Trace 1
+Uses 1
+SQL 1
+Login 1
+Handler 1
+Profile 1
+Error 1
+Custom 1

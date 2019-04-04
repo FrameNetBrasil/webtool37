@@ -1,0 +1,12 @@
+{
+  "name": "jQuery-Mask-Plugin",
+  "version": "1.10.13",
+  "main": "dist/jquery.mask.js",
+  "ignore": [
+    "deploy.rb",
+    "jquery.mask.json",
+    "Gruntfile.js",
+    "test/*",
+    ".*"
+  ]
+}

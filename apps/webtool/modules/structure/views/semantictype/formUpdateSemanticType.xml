@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formUpdateSemanticType">
+        <property title="$this->data->title" onClose="structure.reloadSemanticType();"/>
+        <fields>
+            <mhiddenfield id="semantictype_idSemanticType"/>
+            <mhiddenfield id="semantictype_idEntity"/>
+            <mtextfield id="semantictype_entry" label="Entry" width="250px"/> 
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseTemplate" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveTemplate" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+        <data load="$this->data->object"/>
+    </mformdialog>
+</view>

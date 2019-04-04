@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formImportTxt" title="Import Simple Text">
+        <fields>
+            <mhiddenfield id="idConstruction" value="$this->data->id"/>
+            <mlabel label="Aviso:" text="$this->data->message" bold="true"/>
+            <mlabel text="$this->data->cxn" label="Cxn:"/>
+            <mtextfield id="subCorpus" label="SubCorpus" size="20"/>
+            <mselection id="idLanguage" label="Língua" options="$this->data->languages"/>
+            <mfilefield id="uploadFile" label="Arquivo com sentenças" text="Selecionar Arquivo" width="300px"/>
+        </fields>    
+        <tools>
+            <mlinkbutton id="lbCloseTxt" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveTxt" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

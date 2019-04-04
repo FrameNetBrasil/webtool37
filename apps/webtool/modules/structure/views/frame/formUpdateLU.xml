@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formUpdateLU">
+        <javascript file="{{ $this->view->getPath() . '/formUpdateLU.js' }}"/>
+        <property title="$this->data->title"  onClose="structure.reloadFrame();"/>
+        <fields>
+            <mhiddenfield id="lu_idLU" value="$this->data->id"/>
+            <mhiddenfield id="lu_idFrame"/>
+            <mmultilinefield id="lu_senseDescription" label="Sense Description" width="350px" height="50px"/> 
+            <include component="MLookupFE.php" id="lu_incorporatedFE" label="Incorporated FE"/>
+            <include component="MLookupSemanticTypeLU.php" id="lu_idSemanticType" label="Semantic Type"/>
+            <mhcontainer>
+                <include component="MLookupBFF.php" id="lu_bff" label="Not the Best Fit Frame because"/>
+                <a id="lbBFFHelp" href="javascript:void(0);">Help</a>
+            </mhcontainer>
+            <mmultilinefield id="lu_bffOther" label="if 'Other' for not the BFF, explain" width="350px" height="50px"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseFrame" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveFrame" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+        <data load="$this->data->object"/>
+    </mformdialog>
+</view>

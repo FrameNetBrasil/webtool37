@@ -1,0 +1,103 @@
+<div id="structureLayout" style="width:100%;height:100%;">
+    <div id="structureNorthPane" data-options="region:'north', title:'{{_'Relation Type'}}'" style="height:70px">
+        <div style="float:left;padding:5px">
+            <input id="type" name="type" type="text" style="width:200px; padding:5px" >
+        </div>
+    </div>
+    <div id="structureLeftPane" region="west" split="true" style="height: 100%">
+        <ul id="modelTree"></ul>
+    </div>
+    <div id="structureCenterPane" region="center" style="height: 100%">
+        
+    </div>
+</div>
+<div id="menuRootRelationType" style="display:none, width:120px;">
+<div onclick="structure.reload()" data-options="iconCls:'icon-reload'">{{_'Reload Relation Types'}}</div>
+<div onclick="structure.newModel()" data-options="iconCls:'icon-add'">{{_'New Relation Type'}}</div>
+</div>
+<div id="menuModelRelationType" style="display:none, width:120px;">
+<div onclick="structure.editModel()" data-options="iconCls:'icon-edit'">{{_'Edit Relation Type'}}</div>
+<div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
+<div onclick="structure.editEntity(1)" data-options="iconCls:'icon-edit'">{{_'Edit Name of Entity1'}}</div>
+<div onclick="structure.editEntity(2)" data-options="iconCls:'icon-edit'">{{_'Edit Name of Entity2'}}</div>
+</div>
+<script type="text/javascript">
+    var structure = {
+        app: {{$manager->getApp()}},
+        isMaster: {{$data->isMaster|noescape}},
+        node: null
+    };
+    $(function () {
+        $('#structureLayout').layout({
+            fit:true
+        });
+
+        structure.newModel = function () {
+            var nodeId = structure.node.id;
+            manager.doGet({{$manager->getURL('structure/relationtype/formNewRelationType')}} + '/' + nodeId,'structureCenterPane');
+        }
+
+        structure.editModel = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/relationtype/formUpdateRelationType')}} + '/' + id,'structureCenterPane');
+        }
+        
+        structure.reload = function () {
+            $('#structureCenterPane').html('');
+            $('#modelTree').tree('reload');
+        }
+        
+        structure.editEntry = function (entry) {
+            if ($.type(entry) === "undefined") {
+                entry = structure.node.entry;
+            }
+            manager.doAction('^' + structure.app + '/structure/entry/formUpdate/' + entry);
+        }
+
+        structure.editEntity = function (entityNumber) {
+            console.log(structure.node);
+            entity = structure.node['nameEntity' + entityNumber];
+            manager.doAction('^' + structure.app + '/translation/formUpdate/' + entity);
+        }
+
+        structure.contextMenuModel = function(e, node) {
+            if (!structure.isMaster) {
+                return;
+            }
+            e.preventDefault();
+            console.log(node);
+            structure.node = node;
+            var $menu = '';
+            $(this).tree('select',node.target);
+            if (node.id == 'root') {
+                $menu = $('#menuRootRelationType');
+            } else if (node.id.charAt(0) == 'm') {
+                $menu = $('#menuModelRelationType');
+            }
+            if ($menu != '') {
+                $menu.menu('show',{
+                    left: e.pageX,
+                    top: e.pageY
+                });
+            }
+        }
+
+        $('#menuRootRelationType').menu({});
+        $('#menuModelRelationType').menu({});
+
+        $('#type').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Type'}},
+            onClickButton: function() {
+                $('#modelTree').tree({queryParams: {type: $('#type').textbox('getValue')}});
+            }
+        });
+        $('#modelTree').tree({
+            url: {{$manager->getURL('structure/relationtype/modelTree')}},
+            onContextMenu: structure.contextMenuModel
+        });
+    });
+</script>

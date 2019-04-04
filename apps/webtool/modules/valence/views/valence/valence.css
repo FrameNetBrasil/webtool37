@@ -1,0 +1,106 @@
+table {
+    margin: 10px;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 5px;
+    text-align: center;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2
+}
+
+th {
+    background-color: #DDD;
+    color: black;
+}
+
+td.lu {
+    background-color: #DDD;
+    color: black;
+    font-weight: bold;
+}
+
+div.frameName {
+    margin: 10px;
+    font: 16px sans-serif;
+    font-weight: bold;
+    pointer-events: none;
+    text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+    color: black;
+}
+
+.link {
+    fill: none;
+    /*stroke: #666;*/
+    stroke-width: 1.5px;
+}
+
+.linkOver {
+    stroke-width: 2.5px;
+}
+
+#licensing {
+    fill: green;
+}
+
+.link.licensing {
+    stroke: green;
+}
+
+.link.resolved {
+    stroke-dasharray: 0,2 1;
+}
+
+text {
+    font: 10px sans-serif;
+    font-weight: bold;
+    pointer-events: none;
+    text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+    color: black;
+}
+
+.nodeSelected {
+    stroke: black;
+    stroke-width: 1px;
+}
+
+.nodeNormal {
+    stroke: #CCC;
+    stroke-width: 1px;
+}
+
+.entity_cxn {
+    fill: #008000;
+    color: #008000;
+}
+
+.entity_frame {
+    fill: #D80000;
+    color: #D80000;
+}
+
+.entity_st {
+    fill: black;
+}
+
+.entity_fe {
+    fill: white;
+    stroke: black;
+}
+
+.entity_ce {
+    fill: white;
+    stroke: black;
+}
+
+.datagrid-row-selected {
+    background: white;
+    color: #000000;
+}    

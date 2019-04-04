@@ -1,0 +1,90 @@
+    <table id="qualiaGrid" style="width:100%">
+    </table>
+    <div id="qualiaGridToolbar" style="display:none;height:40px">
+        <div style="float:left;padding:5px">
+            <input id="qualiaGridIdQualiaType" name="qualiaGridIdQualiaType" placeholder="{{_'Qualia Type'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <input id="qualiaGridFrame" name="frame" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Frame'}}">
+        </div>
+    </div>
+
+{{include 'qualia.css'}}
+
+
+<script type="text/javascript">
+    $(function () {
+
+        $('#qualiaGridFrame').textbox({
+            //buttonText:{{_'Search'}},
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Frame'}},
+        onClickButton: function() {
+            $('#qualiaGrid').datagrid('load',{
+                frame: $('#qualiaGridFrame').textbox('getValue')
+            });
+        }
+    });
+
+        $('#qualiaGridIdQualiaType').combobox({
+            data: JSON.parse({{$data->qualiaType}}),
+        prompt: {{_'Select Qualia Type'}},
+        valueField:'idQualiaType',
+            textField:'name',
+            onSelect: function() {
+            $('#qualiaGrid').datagrid('load',{
+                idQualiaType: $('#qualiaGridIdQualiaType').combobox('getValue')
+            });
+        },
+        onChange: function() {
+            $('#qualiaGrid').datagrid('load',{
+                idQualiaType: $('#qualiaGridIdQualiaType').combobox('getValue')
+            });
+        }
+    });
+
+        var iconFE = {
+            "cty_core": "fa fa-circle",
+            "cty_peripheral": "fa fa-dot-circle-o",
+            "cty_extra-thematic": "fa fa-circle-o",
+            "cty_core-unexpressed": "fas fa-adjust"
+        };
+
+        $('#qualiaGrid').datagrid({
+            title: 'Qualia Structure',
+            //singleSelect: true,
+            //collapsible: true,
+            fit: true,
+            //nowrap: false,
+            //checkOnSelect: false,
+            //selectOnCheck: false,
+            idField: 'idQualia',
+            toolbar: '#qualiaGridToolbar',
+            url: {{$manager->getURL('data/qualia/lookupForGrid')}},
+            method: 'get',
+            columns:[[
+                {field:'idQualia',title:'idQualia', width:0, hidden:true},
+                {field:'qualiaType',title:'<span class="icon-blank fas fa-arrows-alt-h fa16px">&nbsp;</span> Type', width:'10%',
+                    formatter: function(value,row,index){
+                        return '<span class="' + row['qualiaEntry'] + ' icon-blank fas fa-arrows-alt-h fa16px"></span> ' + value;
+                    }
+                },
+                {field:'frame',title:'<span class="entity_frame icon-blank fa fa-square fa16px"></span>&nbsp;Frame', width:'20%'},
+                {field:'fe1',title:'LU1', width:'20%',
+                    formatter: function(value,row,index){
+                        return '<span class="' + iconFE[row['fe1Type']] + ' icon-blank fa16px"></span> ' + value;
+                    }
+                },
+                {field:'info',title:'Info', width:'20%'},
+                {field:'fe2',title:'LU2', width:'20%',
+                    formatter: function(value,row,index){
+                        return '<span class="' + iconFE[row['fe2Type']] + ' icon-blank fa16px"></span> ' + value;
+                    }
+                },
+                {field:'fe1Type',title:'', hidden:true},
+                {field:'fe2Type',title:'', hidden:true}
+            ]]
+        });
+    });
+</script>

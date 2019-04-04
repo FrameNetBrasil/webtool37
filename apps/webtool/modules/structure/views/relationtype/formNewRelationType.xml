@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formNewRelationType">
+        <property title="$this->data->title"  onClose="structure.reload();"/>
+        <fields>
+            <mtextfield id="relationtype_entry" label="Entry:" prefix="rel_" width="250px"/> 
+            <include component="MLookupRelationGroup.php" id="relationtype_idRelationGroup" label="Relation Group" value="$this->data->idRelationGroup"/>
+            <include component="MLookupDomain.php" id="relationtype_idDomain" label="Domain" value="$this->data->idDomain"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseRelationType" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveRelationType" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

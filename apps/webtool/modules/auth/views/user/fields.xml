@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<view>
+    <fields>
+        <mhiddenfield id="user_idUser" />        
+        <mtextfield id="user_login" label="Login" />   
+        <mselection id="user_userLevel" label="Level" options="$this->data->userLevel" />     
+        <include component="MLookupPerson.php" id="user_idPerson" label="Person"/>
+    </fields>
+</view>

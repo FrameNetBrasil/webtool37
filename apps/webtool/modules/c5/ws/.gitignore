@@ -1,0 +1,9 @@
+.idea
+.svn
+composer.lock
+vendor/
+C5/ORM/conf.php
+C5/ORM/commands.txt
+C5/ORM/cli-config.php
+C5/wamp/php_error.log
+C5/Graph/config.yml

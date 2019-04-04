@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<!DOCTYPE view SYSTEM "../../../../public/layouts/view.dtd">
+<view>
+    <mactionpanel id="mainPanel" title="Auth" close=">auth/main" actions="auth" />
+</view>

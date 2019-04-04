@@ -1,0 +1,21 @@
+/*
+Arquivo: controls/mimage.css
+Autor: Maestro
+Descrição: 
+    Estilos de imagens.
+Version: 2.0
+Licença: GNU General Public License
+Licença URI: license.txt
+*/
+
+.mNoImage {
+    background-color: transparent;
+    background-image: url("images/noImage.png");
+    background-repeat: no-repeat;
+    height: 113px;
+    width: 113px;
+    margin: 0;
+    overflow: hidden;
+    display: block;
+}
+

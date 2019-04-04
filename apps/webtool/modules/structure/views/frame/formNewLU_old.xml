@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formNewLU">
+        <property title="$this->data->title"  onClose="structure.reloadFrame();"/>
+        <fields>
+            <mhiddenfield id="lu_idFrame" value="$this->data->idFrame"/>
+            <mlabel text="$this->data->frame"/>
+            <mdatagrid id="gridSearchLemma"  checkbox="true" width="380px" height="180px" query="$this->data->query" idField="idLemma" pageLength="0" >
+                <options singleSelect="true" checkOnSelect="true"/>
+                <mtoolbar>
+                    <msearchfield id="lemma" width="200px" value="$this->data->lemma" searcher="jQuery('#gridSearchLemma').datagrid('filter',name)" placeholder="{{_M('Search Lemma')}}" />
+                    <include component="mlanguage.php" id="idLanguage"/>
+                    <mlinkbutton id="lbAdd" action="@structure/frame/formNewLemma|formNewLU" iconCls="icon-add" text="{{_M('Create New')}}" plain="true"/>
+                </mtoolbar>
+                <mdatagridcolumn field="idLemma" visible="false"/>
+                <mdatagridcolumn field="fullname" title="{{_M('Name')}}" width="300px" />
+            </mdatagrid>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseLU" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveLU" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

@@ -1,0 +1,464 @@
+<style>
+text {
+    font-size: 9px;
+}
+
+.group {
+    fill: #DDD;
+    stroke: white;
+    stroke-width: 2px;
+}
+
+.link {
+    fill: none;
+    /*stroke: #666;*/
+    stroke-width: 1.5px;
+}
+
+.linkOver {
+    stroke-width: 2.5px;
+}
+
+#licensing {
+    fill: green;
+}
+
+.link.licensing {
+    stroke: green;
+}
+
+.link.resolved {
+    stroke-dasharray: 0, 2 1;
+}
+
+.linkInactive {
+    fill: none;
+    stroke: #DDD;
+    stroke-width: 1.5px;
+}
+
+.boxHelp {
+    height: 10px;
+    width: 10px;
+    float: left;
+    margin: 3px;
+}
+
+.textHelp {
+    margin-left: 3px;
+}
+
+.textHelpTitle {
+    margin-left: 3px;
+    margin-top: 15px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.text {
+    font-size: 9px;
+    stroke: white;
+    stroke-width: 0.5;
+}
+.nodeDrag {
+    stroke: #000;
+    stroke-width: 1px;
+}
+
+.nodeSelected {
+    stroke: black;
+    stroke-width: 1px;
+}
+
+.nodeNormal {
+    stroke: #CCC;
+    stroke-width: 1px;
+}
+
+.inactive {
+    fill: lightslategray;
+    color: lightgray;
+    background-color: lightslategray;
+}
+
+.active {
+    fill: lightgray;
+    color: lightgray;
+}
+
+.waiting {
+    fill: lightslategray;
+    color: lightslategray;
+    background-color: lightslategray;
+}
+
+.predictive {
+    fill: BurlyWood;
+    color: BurlyWood;
+    background-color: BurlyWood;
+}
+
+.inhibited {
+    fill: DarkKhaki;
+    color: DarkKhaki;
+    background-color: DarkKhaki;
+}
+
+.constrained {
+    fill: DarkKhaki;
+    color: DarkKhaki;
+    background-color: DarkKhaki;
+}
+
+.entity_word {
+    fill: #D80000;
+    color: #D80000;
+    background-color: #D80000;
+}
+
+.entity_word .inactive {
+    fill: #FFC0CB;
+    color: #D80000;
+}
+
+.entity_cxn {
+    fill: #008000;
+    color: #008000;
+    background-color: #008000;
+}
+
+.entity_pos {
+    fill: #008000;
+    color: #008000;
+    background-color: #008000;
+}
+
+.entity_frame {
+    fill: #D80000;
+    color: #D80000;
+    background-color: #D80000;
+}
+
+.entity_st {
+    fill: black;
+    color: black;
+}
+
+.entity_fe {
+    fill: royalblue;
+    color: royalblue;
+    background-color: royalblue;
+}
+
+.entity_ce {
+    fill: royalblue;
+    color: royalblue;
+    background-color: royalblue;
+}
+
+.entity_matrix {
+    fill: #D80000;
+    color: #D80000;
+}
+
+.entity_attr {
+    fill: royalblue;
+    color: royalblue;
+}
+
+.entity_valence {
+    fill: navy;
+    color: navy;
+}
+
+.entity_valent {
+    fill: navy;
+    color: navy;
+}
+
+.entity_pattern {
+    fill: navy;
+    color: navy;
+}
+
+.entity_gf {
+    fill: navy;
+    color: navy;
+}
+
+.entity_lu {
+    fill: navy;
+    color: navy;
+    background-color: navy;
+}
+
+.entity_lemma {
+    fill: navy;
+    color: navy;
+    background-color: navy;
+}
+
+.entity_lexeme {
+    fill: navy;
+    color: navy;
+    background-color: navy;
+}
+
+.entity_rel {
+    fill: navy;
+    color: navy;
+}
+
+.entity_relation {
+    fill: navy;
+    color: navy;
+    background-color: navy;
+}
+
+.entity_gate {
+    fill: navy;
+    color: navy;
+    background-color: navy;
+}
+
+.entity_relay {
+    fill: navy;
+    color: navy;
+    background-color: navy;
+}
+
+.entity_meaning {
+    fill: darkred;
+    color: darkred;
+}
+
+.entity_constraint {
+    fill: #9B4F0F;
+    color: #9B4F0F;
+    background-color: #9B4F0F;
+}
+
+.entity_constraintbefore {
+    fill: #9B4F0F;
+    color: #9B4F0F;
+    background-color: #9B4F0F;
+}
+
+.entity_constraintmeets {
+    fill: #9B4F0F;
+    color: #9B4F0F;
+    background-color: #9B4F0F;
+}
+
+.entity_constraintrelation {
+    fill: #9B4F0F;
+    color: #9B4F0F;
+    background-color: #9B4F0F;
+}
+
+.entity_same {
+    fill: #9B4F0F;
+    color: #9B4F0F;
+}
+
+.entity_root {
+    fill: black;
+    color: black;
+}
+
+.datagrid-row-selected {
+    background: white;
+    color: #000000;
+}
+
+.optional {
+    stroke-dasharray: 10, 10;
+}
+
+.rel_common {
+    stroke: lightsteelblue;
+}
+
+marker path.rel_common {
+    fill: lightsteelblue;
+}
+
+.rel_elementof {
+    stroke: royalblue;
+}
+
+marker path.rel_elementof {
+    fill: royalblue;
+}
+
+.rel_inheritance {
+    stroke: red;
+}
+
+marker path.rel_inheritance {
+    fill: red;
+}
+
+.rel_perspective_on {
+    stroke: #F9C;
+}
+
+marker path.rel_perspective_on {
+    fill: #F9C;
+}
+
+.rel_inheritance_cxn {
+    stroke: red;
+}
+
+marker path.rel_inheritance_cxn {
+    fill: red;
+}
+
+.rel_argval {
+    stroke: purple;
+}
+
+marker path.rel_argval {
+    fill: purple;
+}
+
+.rel_argument {
+    stroke: purple;
+}
+
+marker path.rel_argument {
+    fill: purple;
+}
+
+.rel_value {
+    stroke: orchid;
+}
+
+marker path.rel_value {
+    fill: orchid;
+}
+
+.rel_constraint {
+    stroke: #9B4F0F;
+}
+
+marker path.rel_constraint {
+    fill: #9B4F0F;
+}
+
+.rel_constraint_frame {
+    stroke: #9B4F0F;
+}
+
+marker path.rel_constraint_frame {
+    fill: #9B4F0F;
+}
+
+
+.rel_constraint_before {
+    stroke: #CFC;
+}
+
+marker path.rel_constraint_before {
+    fill: #CFC;
+}
+
+.rel_evokes {
+    stroke: olive;
+}
+
+marker path.rel_evokes {
+    fill: olive;
+}
+
+.rel_inhibitory {
+    stroke: DarkKhaki;
+}
+
+marker path.rel_inhibitory {
+    fill: DarkKhaki;
+}
+
+.rel_fm {
+    stroke: darkcyan;
+}
+
+marker path.rel_fm {
+    fill: darkcyan;
+}
+
+.rel_pos {
+    stroke: darkcyan;
+}
+
+marker path.rel_pos {
+    fill: darkcyan;
+}
+
+.rel_lu-fe {
+    stroke: darkcyan;
+}
+
+marker path.rel_lu-fe {
+    fill: darkcyan;
+}
+
+
+.rel_identity {
+    stroke: darkgreen;
+}
+
+marker path.rel_identity {
+    fill: darkgreen;
+}
+
+.rel_hasemtype {
+    stroke: navy;
+}
+
+marker path.rel_hasemtype {
+    fill: navy;
+}
+
+.rel_using {
+    stroke: green;
+}
+
+marker path.rel_using {
+    fill: green;
+}
+
+.rel_subframe {
+    stroke: black;
+}
+
+marker path.rel_subframe {
+    fill: black;
+}
+
+.rel_lexicon {
+    stroke: navy;
+}
+
+marker path.rel_lexicon {
+    fill: navy;
+}
+
+.cross table {
+    font-family: Arial, sans-serif;
+    border: 1px solid;
+    border-collapse: collapse;
+}
+
+.cross th {
+    background-color: #0066CC;
+    color: white;
+}
+
+.cross td {
+    border: 1px solid;
+    padding: 5px;
+}
+
+</style>

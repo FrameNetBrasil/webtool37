@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formUpdateTranslation" onClose="jQuery('#gridUpdateTranslation').datagrid('reload');">
+        <property title="$this->data->title" />
+        <options modal="true"/>
+        <fields>
+            <mhiddenfield id="translation_idTranslation" />        
+            <mhiddenfield id="translation_idLanguage" />        
+            <mhiddenfield id="translation_resource" />   
+            <mlabel id="translation_language" label="Language" text="$this->data->language"/>     
+            <mtextfield id="translation_text" label="Text" />        
+        </fields>
+        <tools>
+            <mlinkbutton id="lbSaveTranslation" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+            <mlinkbutton id="lbCloseTranslation" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+        </tools>
+        <data load="$this->data->object"/>
+    </mformdialog>
+</view>

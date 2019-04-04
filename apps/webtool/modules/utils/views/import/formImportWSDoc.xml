@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formImportWSDoc" title="Import WordSketch"  close=">fnbr/main" >
+        <fields>
+            <mvcontainer>
+                <mspan>Importação do arquivo do WordSketch (formato UTF-8).</mspan>
+            </mvcontainer>
+            <!--
+            <include component="MLookupCorpus.php" id="idCorpus" label="Corpus"/>
+            -->
+            <include component="MLookupLU.php" id="idLU" label="LU"/>
+            <mselection id="tags" label="TreeTagger Tags?" options="$this->data->tags"/>
+            <!--
+            <mlookupfieldvalue id="corpus" label="Corpus" width="100px" action="corpus/lookup" related="idCorpus:id,corpus:name"/>
+            <mlookupfieldvalue id="lu" label="Lexical Unit" width="100px" action="lexunit/lookup" related="idLexUnit:id,lu:name"/>
+            -->
+            <include component="MLookupDocument.php" id="idDocument" label="Document"/>
+            <mtextfield id="subCorpus" label="SubCorpus" size="20"/>
+            <mselection id="idLanguage" label="Língua" options="$this->data->languages"/>
+            <mfilefield id="uploadFile" label="Arquivo com sentenças" text="Selecionar Arquivo" width="300px"/>
+        </fields>    
+        <buttons>
+            <mbutton id="btnPost" text="{{_M('Send')}}" action="$this->data->action"/>
+        </buttons>
+    </mformdialog>
+</view>

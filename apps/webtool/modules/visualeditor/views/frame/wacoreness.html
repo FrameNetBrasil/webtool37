@@ -1,0 +1,271 @@
+<form id="formEditor" name="formEditor">
+    <input type="hidden" id="graphJson" name="graphJson" value=""/>
+    <input type="hidden" id="linksRemoved" name="linksRemoved" value=""/>
+</form>
+<div id="workingAreaCoreness">
+    <div id="waToolBarCoreness" class="datagrid-toolbar">
+        <span>Relation Type:  </span>
+        <input id="currentRelationEntry" style="width:150px"/>    
+        <a id="btnPostCoreness" href="#">Save</a>
+        <a id="btnClearCoreness" href="#">Clear</a>
+    </div>
+    <div id="editorPaperCoreness" style="margin-top:5px;margin-left:5px;height:95%"></div>
+</div>
+
+<script type="text/javascript">
+    editor.editorCoreness = {
+        graph: null,
+        paper: null,
+        fes: [],
+        feClicked: false,
+        colorRelation: [],
+        colorType: [],
+        labelRelation: [],
+        handling: false,
+        currentRelation: null,
+        linksRemoved: [],
+        init: function () {
+            this.graph = new joint.dia.Graph;
+            this.paper = this.newPaper(this.graph, '#editorPaperCoreness');
+            this.feClicked = false;
+            this.currentRelation = $('#currentRelationEntry').combobox('getValue');
+            console.log('end init');
+        },
+        newPaper: function (graph, id) {
+            return new joint.dia.Paper({
+                el: $(id),
+                width: '95%',//800,
+                height: '95%',//600,
+                perpendicularLinks: true,
+                gridSize: 1,
+                model: graph,
+                interactive: {
+                    'vertexAdd': false
+                }
+            })
+        },
+        blankPointerDown: function (evt, x, y) {
+            this.changeFocus(null);
+        },
+        cellRemoved: function (cell) {
+            if (cell.attributes.type == 'frame.Relation') {
+                console.log('link removed');
+                this.linksRemoved[this.linksRemoved.length] = {
+                    superFE: cell.attributes.source.id,
+                    subFE: cell.attributes.target.id,
+                    idRelationType: cell.attributes.idType
+                };
+            }
+        },
+        pointerDown: function (view, evt, x, y) {
+            var model = view.model;
+            if (model.attributes.attrs.rect) {
+                if (this.feClicked) {
+                    var source = this.feClicked;
+                    var target = model;
+                    if (source.id != target.id) {
+                        this.connect(source, target, this.currentRelation);
+                    }
+                    this.changeFocus(null);
+                } else {
+                    this.changeFocus(model);
+                }
+            }
+        },
+        newFESet: function (idEntityFrame) {
+            console.log('new frame ' + idEntityFrame);
+            this.loadFECoreRelations(idEntityFrame);
+            var count = 0;
+            $.each(editor.fes[idEntityFrame], function(index, feData) {
+                console.log(feData);
+                var width = feData.name.length * 10;
+                var fe = new joint.shapes.frame.Frame({
+                    id: feData.idEntity,
+                    idType: 1,
+                    position: {x: (10  + ((count%2) * 200)), y: (10 + ((count++ / 2) * 80))},
+                    size: {width: width, height: 30},
+                    attrs: {text: {text: feData.name}}
+                });
+                fe.attr('rect/fill', '#FFFFFF');
+                fe.attr('rect/originalFill', '#FFFFFF');
+                editor.editorCoreness.fes[fe.id] = fe;
+                editor.editorCoreness.graph.addCell(fe);
+                editor.editorCoreness.changeFocus(fe);
+            });
+            for (idRelation in editor.feRelations) {
+                var relation = editor.feRelations[idRelation];
+                if ((editor.editorCoreness.fes[relation.superFE]) && (editor.editorCoreness.fes[relation.subFE])) {
+                    console.log(relation);
+                    editor.editorCoreness.connect((editor.editorCoreness.fes[relation.superFE]), (editor.editorCoreness.fes[relation.subFE]), relation.idType);
+                }
+            }
+        },
+        loadFECoreRelations: function(idEntityFrame) {
+            $.ajax({
+                type: "POST", 
+                url: {{$manager->getURL('visualeditor/frame/getFECore')}}, 
+                data: {id: idEntityFrame}, 
+                dataType: "json",
+                async: false,
+                success: function (data, textStatus, jqXHR) {
+                    editor.fes[idEntityFrame] = data;
+                }
+            });    
+            $.ajax({
+                type: "POST", 
+                url: {{$manager->getURL('visualeditor/frame/getFECoreRelations')}}, 
+                data: {id: idEntityFrame}, 
+                dataType: "json",
+                async: false,
+                success: function (data, textStatus, jqXHR) {
+                    if (data) {
+                        $.each(data, function(index, r) {
+                            var id = r.superFE + '_' + r.idType + '_' + r.subFE;
+                            editor.feRelations[id] = r;
+                        })
+                    }
+                }
+            });    
+        },
+        connect: function (superFE, subFE, idType) {
+            var link = this.newLink(superFE.id, subFE.id, idType);
+            this.graph.addCell(link);
+        },
+        newLink: function (idSource, idTarget, idType) {
+            console.log('--');
+            console.log(idType);
+            console.log(editor.relationEntry);
+            var link = new joint.shapes.frame.Relation({
+                source: {id: idSource},
+                target: {id: idTarget},
+                idType: idType
+            });
+            link.attr('.connection/stroke', editor.relationEntry[idType].color);
+            link.attr('.marker-target/fill', editor.relationEntry[idType].color);
+            link.attr('.marker-target/stroke', editor.relationEntry[idType].color);
+            return link;
+        },
+        changeRelation: function (relationEntry) {
+            this.currentRelation = relationEntry;
+        },
+        changeFocus: function (model) {
+            if (this.feClicked) {
+                this.feClicked.attr('rect/fill', '#FFFFFF');
+            }
+            if (model) {
+                this.feClicked = model;
+                this.feClicked.attr('rect/fill', "#CCCCCC");
+            } else {
+                this.feClicked = null;
+            }
+        },
+        toJSON: function (graph) {
+            var j = graph.toJSON();
+            return JSON.stringify(j);
+        },
+        clearGraph: function() {
+            this.graph.clear();
+            this.linksRemoved = [];
+        },
+        submitFERelation: function () {
+            var graph = JSON.parse(this.toJSON(this.graph));
+            var data = {fes:[], relations:[]};
+            $.each(graph.cells, function(index, cell) {
+                if (cell.type == 'frame.Frame') {
+                    data['fes'][data['fes'].length] = {id: cell.id};
+                }
+                if (cell.type == 'frame.Relation') {
+                    data['relations'][data['relations'].length] = {
+                        idType: cell.idType,
+                        idSource: cell.source.id,
+                        idTarget: cell.target.id
+                    };
+                }
+            });
+            console.log(data);
+            $('#graphJson').attr('value','');
+            $('#graphJson').attr('value','json:' + JSON.stringify(data));
+            $('#linksRemoved').attr('value','json:' + JSON.stringify(this.linksRemoved));
+            manager.doPost('graphJson',{{$manager->getURL('visualeditor/frame/saveFECoreRelation')}}, 'formEditor');
+        }
+    }
+
+    $(function () {
+        /*
+        $(document).keydown(function (event) {
+            if (event.which == 46) { //DELETE
+                event.preventDefault();
+                if (editor.editorFR.frameClicked) {
+                    editor.editorFR.frames[editor.editorFR.frameClicked.id] = null;
+                    editor.editorFR.frameClicked.remove();
+                    editor.editorFR.frameClicked = null;
+                }
+            }
+        });
+        */
+       
+        $('#workingAreaCoreness').panel({
+            title: 'Working Area Coreness',
+            height:'100%',
+            width:'100%',
+            closed: true
+        });
+        
+        $('#workingAreaCoreness').panel('open');
+
+        $('#btnPostCoreness').linkbutton({
+            iconCls: 'icon-search',
+            plain: true,
+            onClick: function() {
+                editor.editorCoreness.submitFERelation();
+            }
+        });
+        
+        $('#btnClearCoreness').linkbutton({
+            iconCls: 'icon-clear',
+            plain: true,
+            onClick: function() {
+                editor.editorCoreness.clearGraph();
+            }
+        });
+        
+        editor.frames = JSON.parse({{$data->frames}});
+        editor.relations = {};//JSON.parse({{$data->relations}});
+        editor.fes = {};//JSON.parse({{$data->fes}});
+        editor.feRelations = {};//JSON.parse({{$data->feRelations}});
+        editor.relationEntry = JSON.parse({{$data->relationEntry}});
+        editor.relationData = [];
+        var i = 0;
+        for (relation in editor.relationEntry) {
+            editor.relationData[i++] = editor.relationEntry[relation];
+        }
+        
+        $('#currentRelationEntry').combobox({
+            data: editor.relationData,
+            valueField: 'id',
+            textField: 'label',
+            panelHeight: 'auto',
+            formatter: function(row){
+                var s = '<span style="font-weight:bold;color:'+row.color+';">' + row.label + '</span><br/>';
+                return s;
+            },
+            onChange: function(newValue, oldValue) {
+                editor.editorCoreness.changeRelation(newValue);
+            }
+        });
+
+        editor.editorCoreness.init();
+        editor.editorCoreness.paper.on('link:options', editor.editorCoreness.linkOptions, editor.editorCoreness);
+        editor.editorCoreness.paper.on('cell:pointerdown', editor.editorCoreness.pointerDown, editor.editorCoreness);
+        editor.editorCoreness.paper.on('blank:pointerdown', editor.editorCoreness.blankPointerDown, editor.editorCoreness);
+        editor.editorCoreness.graph.on('remove', editor.editorCoreness.cellRemoved, editor.editorCoreness);
+    
+    });
+</script>
+<style type="text/css">
+    
+    .flabel {
+        font-size:16px;
+        font-weight: bold;
+    }
+</style>

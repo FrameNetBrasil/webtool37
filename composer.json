@@ -1,0 +1,52 @@
+{
+  "name": "frameworkmaestro/maestro3",
+  "description": "PHP Maestro Framework v.3.0",
+  "license": "GPLv3",
+  "authors": [
+    {
+      "name": "Ely Matos",
+      "email": "admin@ematos.net"
+    }
+  ],
+  "require": {
+    "psr/log": "1.0.0",
+    "phpmailer/phpmailer": "~5.2",
+    "zendframework/zend-session": "2.8.*",
+    "zendframework/zend-config": "2.6.*",
+    "zendframework/zend-validator": "2.8.*",
+    "zendframework/zend-captcha": "2.6.*",
+    "beberlei/assert": "dev-master",
+    "php-di/php-di": "5.2.*",
+    "latte/latte": "2.4.*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "*"
+  },
+  "autoload": {
+    "files": [
+      "core/classes/functions.php"
+    ],
+    "psr-4": {
+      "database\\": "core/classes/database"
+    },
+    "classmap": [
+      "core/classes/manager.php",
+      "core/classes/interfaces",
+      "core/classes/database",
+      "core/classes/services",
+      "core/classes/mvc",
+      "core/classes/results",
+      "core/classes/persistence",
+      "core/classes/extensions",
+      "core/classes/security",
+      "core/classes/types",
+      "core/classes/ui",
+      "core/classes/utils"
+    ]
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "Manager::postAutoloadDump"
+    ]
+  }
+}

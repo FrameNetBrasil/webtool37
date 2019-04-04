@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formLUQualia" onClose="structure.reloadParent();">
+        <property title="$this->data->title" />
+        <options modal="true"/>
+        <fields>
+            <mhiddenfield id="qualia_type" value = "$this->data->qualiaType"/>
+            <mhiddenfield id="qualia_idLU1" value = "$this->data->idLU"/>
+            <mlabel text="$this->data->lu"/>
+            <div><mlabel text="Relation"/></div>
+            <include component="MLookupQualiaFrame.php" id="qualia_idQualia" type="$this->data->qualiaType"/>
+            <div><mlabel text="LU2"/></div>
+            <include component="MLookupLU.php" id="qualia_idLU2"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseQualia" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveQualia" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

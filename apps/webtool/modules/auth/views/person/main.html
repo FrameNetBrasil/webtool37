@@ -1,0 +1,376 @@
+<div id="authPersonLayout" style="width:100%;height:100%;">
+    <div id="authPersonNorthPane" data-options="collapsible:false, region:'north', title:'{{_'Person'}}'" style="height:70px">
+        <div style="float:left;padding:5px">
+           <input id="status" name="Status" placeholder="{{_'Domain'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <input id="frame" name="frame" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Frame'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <input id="fe" name="fe" type="text" style="width:200px; padding:5px" placeholder="{{_'Search FE'}}">
+        </div>
+        <div style="float:left;padding:5px" class=""clearfix">
+            <input id="lu" name="lu" type="text" style="width:200px; padding:5px" placeholder="{{_'Search LU'}}">
+        </div>
+    </div>
+    <div id="authPersonLeftPane" region="west" split="true" style="height: 100%">
+        <ul id="framesTree"></ul>
+    </div>
+    <div id="authPersonCenterPane" region="center" style="height: 100%">
+        
+    </div>
+</div>
+<div id="menuRootFrames" style="display:none, width:120px;">
+    <div onclick="authPerson.reloadFrame()" data-options="iconCls:'icon-reload'">{{_'Reload Frames'}}</div>
+    <div onclick="authPerson.newFrame()" data-options="iconCls:'icon-add'">{{_'New Frame'}}</div>
+</div>
+<div id="menuFrame" style="display:none, width:120px;">
+    <div onclick="authPerson.editFrame()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
+    <div onclick="authPerson.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Frame'}}</div>
+    <div onclick="authPerson.deleteFrame()" data-options="iconCls:'icon-remove'">{{_'Delete Frame'}}</div>
+    <div onclick="authPerson.newFrameElement()" data-options="iconCls:'icon-add'">{{_'New FrameElement'}}</div>
+    <div onclick="authPerson.newLU()" data-options="iconCls:'icon-add'">{{_'New LU'}}</div>
+    <div onclick="authPerson.createTemplate()" data-options="iconCls:'icon-add'">{{_'Create Template from Frame'}}</div>
+    <div onclick="authPerson.frameDomain()" data-options="iconCls:'icon-edit'">{{_'Domains'}}</div>
+    <div onclick="authPerson.frameStatus()" data-options="iconCls:'icon-edit'">{{_'Status'}}</div>
+    <div onclick="authPerson.frameSemanticType()" data-options="iconCls:'icon-edit'">{{_'Semantic Types'}}</div>
+</div>
+<div id="menuFrameAnno" style="display:none, width:120px;">
+    <div onclick="authPerson.newLU()" data-options="iconCls:'icon-add'">{{_'New LU'}}</div>
+</div>
+<div id="menuFrameElement" style="display:none, width:120px;">
+    <div onclick="authPerson.editFrameElement()" data-options="iconCls:'icon-edit'">{{_'Edit FrameElement'}}</div>
+    <div onclick="authPerson.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
+    <div onclick="authPerson.deleteFrameElement()" data-options="iconCls:'icon-remove'">{{_'Delete FrameElement'}}</div>
+    <div onclick="authPerson.feAddConstraint()" data-options="iconCls:'icon-add'">{{_'Add Constraint'}}</div>
+</div>
+<div id="menuFrameConstraint" style="display:none, width:120px;">
+    <div onclick="authPerson.feDeleteConstraint()" data-options="iconCls:'icon-remove'">{{_'Delete Constraint'}}</div>
+</div>
+<div id="menuLU" style="display:none, width:120px;">
+    <div onclick="authPerson.editLU()" data-options="iconCls:'icon-edit'">{{_'Edit LU'}}</div>
+    <div onclick="authPerson.deleteLU()" data-options="iconCls:'icon-remove'">{{_'Delete LU'}}</div>
+    <div onclick="authPerson.luAddConstraint()" data-options="iconCls:'icon-add'">{{_'Add Constraint'}}</div>
+    <div onclick="authPerson.importWS()" data-options="iconCls:'icon-edit'">{{_'Import WS'}}</div>
+</div>
+<div id="menuLUAnno" style="display:none, width:120px;">
+    <div onclick="authPerson.editLU()" data-options="iconCls:'icon-edit'">{{_'Edit LU'}}</div>
+    <div onclick="authPerson.deleteLU()" data-options="iconCls:'icon-remove'">{{_'Delete LU'}}</div>
+</div>
+<div id="menuLUConstraint" style="display:none, width:120px;">
+    <div onclick="authPerson.luDeleteConstraint()" data-options="iconCls:'icon-remove'">{{_'Delete Constraint'}}</div>
+</div>
+<div id="menuSubCorpus" style="display:none, width:120px;">
+    <div onclick="authPerson.deleteSubCorpus()" data-options="iconCls:'icon-remove'">{{_'Delete SubCorpus'}}</div>
+</div>
+
+<script type="text/javascript">
+    var authPerson = {
+        app: {{$manager->getApp()}},
+        isMaster: {{$data->isMaster|noescape}},
+        isAnno: {{$data->isAnno|noescape}},
+        node: null
+    };
+    $(function () {
+        $('#authPersonLayout').layout();
+
+        authPerson.showFrame = function (idFrame) {
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('report/frame/showFrame')}} + '/' + idFrame, 'authPersonCenterPane');
+        }
+        authPerson.newFrame = function () {
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('authPerson/frame/formNewFrame')}},'authPersonCenterPane');
+        }
+
+        authPerson.editFrame = function (id) {
+            if ($.type(id) === "undefined") {
+                id = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('authPerson/frame/formUpdateFrame')}} + '/' + id,'authPersonCenterPane');
+        }
+        
+        authPerson.deleteFrame = function (id) {
+            if ($.type(id) === "undefined") {
+                id = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('authPerson/frame/formDeleteFrame')}} + '/' + id,'authPersonCenterPane');
+        }
+
+        authPerson.frameSemanticType = function (id) {
+            if ($.type(id) === "undefined") {
+                id = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('authPerson/frame/formFrameSemanticType')}} + '/' + id,'authPersonCenterPane');
+        }
+
+        authPerson.frameDomain = function (id) {
+            if ($.type(id) === "undefined") {
+                id = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('authPerson/frame/formFrameDomain')}} + '/' + id,'authPersonCenterPane');
+        }
+
+        authPerson.frameStatus = function (id) {
+            if ($.type(id) === "undefined") {
+                id = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('authPerson/frame/formFrameStatus')}} + '/' + id,'authPersonCenterPane');
+        }
+
+        authPerson.reloadFrame = function () {
+            $('#authPersonCenterPane').html('');
+            var node = $('#framesTree').tree('getSelected');
+            if (node) {
+                $('#framesTree').tree('reload', node.target);
+            }
+        }
+
+        authPerson.reloadFrameParent = function () {
+            $('#authPersonCenterPane').html('');
+            var node = $('#framesTree').tree('getSelected');
+            var parent = $('#framesTree').tree('getParent', node.target);
+            console.log(node);
+            console.log(parent);
+            if (node) {
+                $('#framesTree').tree('reload', parent.target);
+            }
+        }
+
+        authPerson.editRelations = function (entry) {
+            if ($.type(entry) === "undefined") {
+                entry = authPerson.node.entry;
+            }
+            manager.doAction('^' + authPerson.app + '/authPerson/frame/formNewFrameRelations/' + entry);
+        }
+        
+        authPerson.editEntry = function (entry, form) {
+            if ($.type(entry) === "undefined") {
+                entry = authPerson.node.entry;
+            }
+            manager.doAction('^' + authPerson.app + '/entry/formUpdate/' + entry);
+            if (form) {
+                $('#' + form + '_dialog').dialog('close');
+            }
+        }
+
+        authPerson.newFrameElement = function (idFrame) {
+            if ($.type(idFrame) === "undefined") {
+                idFrame = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('authPerson/frame/formNewFrameElement')}} + '/' + idFrame,'authPersonCenterPane');
+        }
+
+        authPerson.editFrameElement = function (id) {
+            if ($.type(id) === "undefined") {
+                id = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('authPerson/frame/formUpdateFrameElement')}} + '/' + id,'authPersonCenterPane');
+        }
+
+        authPerson.deleteFrameElement = function (id) {
+            if ($.type(id) === "undefined") {
+                id = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('authPerson/frame/formDeleteFrameElement')}} + '/' + id,'authPersonCenterPane');
+        }
+
+        authPerson.feAddConstraint = function (idFE) {
+            if ($.type(idFE) === "undefined") {
+                idFE = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('authPerson/frame/formAddConstraintFE')}} + '/' + idFE,'authPersonCenterPane');
+        }
+
+        authPerson.feDeleteConstraint = function (id) {
+            if ($.type(id) === "undefined") {
+                id = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('authPerson/frame/formDeleteConstraintFE')}} + '/' + id,'authPersonCenterPane');
+        }
+
+        authPerson.newLU = function (idFrame) {
+            if ($.type(idFrame) === "undefined") {
+                idFrame = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doAction('^' + authPerson.app + '/authPerson/frame/formNewLU' + '/' + idFrame);
+        }
+
+        authPerson.editLU = function (id) {
+            if ($.type(id) === "undefined") {
+                id = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('authPerson/frame/formUpdateLU')}} + '/' + id,'authPersonCenterPane');
+        }
+
+        authPerson.deleteLU = function (id) {
+            if ($.type(id) === "undefined") {
+                id = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('authPerson/frame/formDeleteLU')}} + '/' + id,'authPersonCenterPane');
+        }
+
+        authPerson.deleteSubCorpus = function (id) {
+            if ($.type(id) === "undefined") {
+                id = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('authPerson/frame/formDeleteSubCorpus')}} + '/' + id,'authPersonCenterPane');
+        }
+
+        authPerson.luAddConstraint = function (idLU) {
+            console.log(authPerson.nodeSelected);
+            if ($.type(idLU) === "undefined") {
+                idLU = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('authPerson/frame/formAddConstraintLU')}} + '/' + idLU,'authPersonCenterPane');
+        }
+
+        authPerson.luDeleteConstraint = function (id) {
+            if ($.type(id) === "undefined") {
+                id = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('authPerson/frame/formDeleteConstraintLU')}} + '/' + id,'authPersonCenterPane');
+        }
+
+        authPerson.importWS = function (id) {
+            if ($.type(id) === "undefined") {
+                id = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doGet({{$manager->getURL('authPerson/frame/formImportWS')}} + '/' + id,'authPersonCenterPane');
+        }
+
+        authPerson.createTemplate = function (idFrame) {
+            if ($.type(idFrame) === "undefined") {
+                idFrame = authPerson.node.id.substr(1);
+            }
+            $('#authPersonCenterPane').html('');
+            manager.doAction('^' + authPerson.app + '/authPerson/frame/createTemplate' + '/' + idFrame);
+        }
+
+        authPerson.contextMenuFrame = function(e, node) {
+            e.preventDefault();
+            console.log(node);
+            authPerson.node = node;
+            var $menu = '';
+            if (authPerson.isMaster) {
+                $(this).tree('select', node.target);
+                if (node.id == 'root') {
+                    $menu = $('#menuRootFrames');
+                } else if (node.id.charAt(0) == 'f') {
+                    $menu = $('#menuFrame');
+                } else if (node.id.charAt(0) == 'e') {
+                    $menu = $('#menuFrameElement');
+                } else if (node.id.charAt(0) == 'l') {
+                    $menu = $('#menuLU');
+                } else if (node.id.charAt(0) == 's') {
+                    $menu = $('#menuSubCorpus');
+                } else if (node.id.charAt(0) == 'x') {
+                    $menu = $('#menuFrameConstraint');
+                } else if (node.id.charAt(0) == 'y') {
+                    $menu = $('#menuLUConstraint');
+                }
+                if ($menu != '') {
+                    $menu.menu('show', {
+                        left: e.pageX,
+                        top: e.pageY
+                    });
+                }
+            } else if (authPerson.isAnno) {
+                $(this).tree('select', node.target);
+                console.log('isAnno');
+                if (node.id.charAt(0) == 'f') {
+                    $menu = $('#menuFrameAnno');
+                } else if (node.id.charAt(0) == 'l') {
+                    $menu = $('#menuLUAnno');
+                } else {
+                    return;
+                }
+                if ($menu != '') {
+                    $menu.menu('show', {
+                        left: e.pageX,
+                        top: e.pageY
+                    });
+                }
+            }
+        }
+
+        $('#menuRootFrames').menu({});
+        $('#menuFrame').menu({});
+        $('#menuFrameElement').menu({});
+        $('#menuLU').menu({});
+        $('#menuSubCorpus').menu({});
+        $('#menuFrameConstraint').menu({});
+        $('#menuLUConstraint').menu({});
+        $('#menuFrameAnno').menu({});
+        $('#menuLUAnno').menu({});
+
+        $('#lu').textbox({
+            //buttonText:{{_'Search'}},
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search LU'}},
+            onClickButton: function() {
+                $('#framesTree').tree({queryParams: {lu: $('#lu').textbox('getValue')}});
+            }
+        });
+        $('#fe').textbox({
+            //buttonText:{{_'Search'}},
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search FE'}},
+            onClickButton: function() {
+                $('#framesTree').tree({queryParams: {fe: $('#fe').textbox('getValue')}});
+            }
+        });
+        $('#frame').textbox({
+            //buttonText:{{_'Search'}},
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Frame'}},
+            onClickButton: function() {
+                $('#framesTree').tree({queryParams: {frame: $('#frame').textbox('getValue')}});
+            }
+        });
+
+        $('#idDomain').combobox({
+            data: JSON.parse({{$data->domain}}),
+            prompt: {{_'Select Domain'}},
+            valueField:'idDomain',
+            textField:'name',
+            onSelect: function() {
+                $('#framesTree').tree({queryParams: {idDomain: $('#idDomain').combobox('getValue')}});
+            },
+            onChange: function() {
+                $('#framesTree').tree({queryParams: {idDomain: $('#idDomain').combobox('getValue')}});
+            }
+        });
+
+        $('#framesTree').tree({
+            url: {{$manager->getURL('authPerson/frame/frameTree')}},
+            onSelect: function (node) {
+                console.log(node);
+                if (node.id.charAt(0) == 'f') {
+                    authPerson.showFrame(node.id.substr(1));
+                }
+            },
+            onContextMenu: authPerson.contextMenuFrame
+        });
+    });
+</script>

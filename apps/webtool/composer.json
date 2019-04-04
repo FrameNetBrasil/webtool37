@@ -1,0 +1,37 @@
+{
+  "name": "FrameNetBrasil/fnbr",
+  "description": "FrameNet Brasil Web Annotation Tool",
+  "license": "GPLv3",
+  "keywords": [
+    "framenet",
+    "annotation",
+    "frames",
+    "constructions"
+  ],
+  "authors": [
+    {
+      "name": "Ely Matos",
+      "email": "admin@ematos.net"
+    }
+  ],
+  "require": {
+    "easyrdf/easyrdf": "*",
+    "ml/json-ld" : "~1.0",
+    "auth0/auth0-php": "~5.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "fnbr\\": "",
+      "fnbr\\auth\\": "modules/auth/"
+    },
+    "classmap": [
+      "../../core/classes/manager.php"
+    ]
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "Manager::createFileMap"
+    ]
+  }
+
+}

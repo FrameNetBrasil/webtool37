@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formImportXMLDoc" title="Import XML Document"  close=">fnbr/main" >
+        <fields>
+            <mvcontainer>
+                <mspan>Importing XML document (tags for paragraphs and sentences only).</mspan>
+            </mvcontainer>
+            <mselection id="idLanguage" label="Língua" options="$this->data->languages"/>
+            <include component="MLookupDocument.php" id="idDocument" label="Document"/>
+            <mfilefield id="uploadFile" label="XML File" text="Choose File" width="300px"/>
+        </fields>    
+        <buttons>
+            <mbutton id="btnPost" text="{{_M('Send')}}" action="$this->data->action"/>
+        </buttons>
+    </mformdialog>
+</view>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formPreferences">
+        <property title="$this->data->title" />
+        <options modal="true"/>
+        <fields>
+            <mhiddenfield id="user_idUser" value="$this->data->id" />  
+            <mhiddenfield id="user_level" value="$this->data->userLevel" />
+            <mhiddenfield id="user_active" value="$this->data->userActive" />
+            <include component="MLanguage.php" id="user_idLanguage" label="Language"/>
+            <mbasegroup label="Junior User"  id="juniorUser" process="$this->data->isBeginner">
+                <mselection id="idJunior" label="Senior" options="$this->data->junior" value="$this->data->idJunior"/>
+            </mbasegroup>
+            <mbasegroup label="Senior User"  id="seniorUser" process="$this->data->isJunior">
+                <mselection id="idSenior" label="Senior" options="$this->data->senior" value="$this->data->idSenior"/>
+            </mbasegroup>
+            <mbasegroup label="Master User"  id="masterUser" process="$this->data->isSenior">
+                <mselection id="idMaster" label="Master" options="$this->data->master" value="$this->data->idMaster"/>
+            </mbasegroup>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbSave" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

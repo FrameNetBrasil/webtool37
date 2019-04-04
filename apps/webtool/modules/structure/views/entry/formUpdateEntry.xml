@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formUpdateEntry" onClose="jQuery('#gridUpdateEntry').datagrid('reload');">
+        <property title="$this->data->title" />
+        <options modal="true"/>
+        <fields>
+            <mhiddenfield id="entry_idEntry" />        
+            <mhiddenfield id="entry_idLanguage" />        
+            <mhiddenfield id="entry_entry" />        
+            <mtextfield id="entry_name" label="Name" />        
+            <mmultilinefield id="entry_description" label="Description" width="300px" height="100px"/>        
+            <mtextfield id="entry_nick" label="Nick" />        
+        </fields>
+        <tools>
+            <mlinkbutton id="lbSaveEntry" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+        <data load="$this->data->object"/>
+    </mformdialog>
+</view>

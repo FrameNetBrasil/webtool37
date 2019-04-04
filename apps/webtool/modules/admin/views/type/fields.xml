@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<view>
+    <fields>
+        <mhiddenfield id="type_idType" />      
+        <mtextfield id="type_entry" label="Entry:" prefix="typ_" width="250px"/> 
+    </fields>
+</view>

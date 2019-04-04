@@ -1,0 +1,88 @@
+<style>
+.link {
+    fill: none;
+    /*stroke: #666;*/
+    stroke-width: 1.5px;
+}
+
+.linkOver {
+    stroke-width: 2.5px;
+}
+
+#licensing {
+    fill: green;
+}
+
+.link.licensing {
+    stroke: green;
+}
+
+.link.resolved {
+    stroke-dasharray: 0,2 1;
+}
+
+text {
+    font: 10px sans-serif;
+    font-weight: bold;
+    pointer-events: none;
+    text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+    color: black;
+}
+
+.nodeSelected {
+    stroke: black;
+    stroke-width: 1px;
+}
+
+.nodeNormal {
+    stroke: #CCC;
+    stroke-width: 1px;
+}
+
+.entity_cxn {
+    fill: #008000;
+    color: #008000;
+}
+
+.entity_frame {
+    fill: #D80000;
+    color: #D80000;
+}
+
+.entity_st {
+    color: white;
+    fill: black;
+}
+
+.entity_fe {
+    color: white;
+    fill: white;
+    stroke: black;
+}
+
+.entity_ce {
+    color: white;
+    fill: white;
+    stroke: black;
+}
+
+.entity_lu {
+    color: gray;
+    fill: gray;
+    stroke: black;
+}
+
+.datagrid-row-selected {
+    background: white;
+    color: #000000;
+}    
+{{foreach $data->relationData as $relation}}
+.{{$relation['id']}} {
+    stroke: {{$relation['color']|noescape}};
+}
+marker path.{{$relation['id']}} {
+    fill: {{$relation['color']|noescape}};
+}
+{{/foreach}}
+
+</style>

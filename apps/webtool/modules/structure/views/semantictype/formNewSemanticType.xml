@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formNewSemanticType">
+        <property title="$this->data->title"  onClose="structure.reloadSemanticType();"/>
+        <fields>
+            <mhiddenfield id="semantictype_idSuperType" value="$this->data->idSuperType"/>
+            <mtextfield id="semantictype_entry" label="Entry" prefix="sty_" width="200px"/> 
+            <include component="MLookupDomain.php" id="semantictype_idDomain" label="Domain" value="$this->data->idDomain" process="{{($this->data->idSuperType == '')}}"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseSemanticType" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveSemanticType" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

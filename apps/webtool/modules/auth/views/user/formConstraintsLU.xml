@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formConstraintsLU">
+        <property title="$this->data->title" />
+        <options modal="true"/>
+        <fields>
+            <mhiddenfield id="user_idUser" value="$this->data->id" />  
+            <include component="MGridFieldLU.php" id="gfLU" action="auth/user/getConstraintsLU"/>      
+        </fields>
+        <tools>
+            <mlinkbutton id="lbSave" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

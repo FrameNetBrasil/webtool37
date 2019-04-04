@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!DOCTYPE view SYSTEM "../../../../public/layouts/view.dtd">
+<view>
+    <mform id="formUpdate" title="Editar" close="{{'auth/Transaction/formObject/'.$this->data->id}}" base="formObject">
+        <include file="fields.xml" />
+        <data load="$this->data" />
+    </mform>
+</view>

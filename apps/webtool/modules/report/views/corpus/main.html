@@ -1,0 +1,110 @@
+<div id="reportCorpusLayout" style="width:100%;height:100%;">
+    <div id="reportCorpusNorthPane" data-options="collapsible:false, region:'north', title:'{{_'Corpus Annotation Report'}}'">
+        <div style="float:left;padding:5px">
+            <input id="corpus" name="corpus" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Corpus'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <input id="document" name="document" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Document'}}">
+        </div>
+    </div>
+    <div id="reportCorpusLeftPane" region="west" split="true" style="height: 100%; width:280px">
+        <ul id="corpusTree"></ul>
+    </div>
+    <div id="reportCorpusCenterPane" region="center" style="height: 100%">
+        
+    </div>
+</div>
+<div id="menuReportRootCorpus" style="display:none, width:120px;">
+    <div onclick="reportCorpus.reloadCorpus()" data-options="iconCls:'icon-reload'">{{_'Reload Corpus'}}</div>
+</div>
+<div id="menuReportCorpus" style="display:none, width:120px;">
+    <div onclick="reportCorpus.reportCorpus()" data-options="iconCls:'fa fa-table fa16px'">{{_'Report Corpus'}}</div>
+</div>
+<div id="menuReportDocument" style="display:none, width:120px;">
+    <div onclick="reportCorpus.reportDocument()" data-options="iconCls:'fa fa-table fa16px'">{{_'Report Document'}}</div>
+    <div onclick="reportCorpus.reportAnnotation()" data-options="iconCls:'fa fa-table fa16px'">{{_'Report Annotation'}}</div>
+</div>
+
+<script type="text/javascript">
+    var reportCorpus = {
+        app: {{$manager->getApp()}},
+        isMaster: {{$data->isMaster|noescape}},
+        node: null
+    };
+    $(function () {
+        $('#reportCorpusLayout').layout({
+            fit:true
+        });
+
+        reportCorpus.reloadCorpus = function () {
+            $('#corpusTree').tree('reload');
+        }
+
+        reportCorpus.reportCorpus = function (id) {
+            if ($.type(id) === "undefined") {
+                id = reportCorpus.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('report/corpus/reportCorpus')}} + '/' + id,'reportCorpusCenterPane');
+        }
+
+        reportCorpus.reportDocument = function (id) {
+            if ($.type(id) === "undefined") {
+                id = reportCorpus.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('report/corpus/reportDocument')}} + '/' + id,'reportCorpusCenterPane');
+        }
+
+        reportCorpus.reportAnnotation = function (id) {
+            if ($.type(id) === "undefined") {
+                id = reportCorpus.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('report/corpus/reportAnnotation')}} + '/' + id,'reportCorpusCenterPane');
+        }
+
+        reportCorpus.contextReportMenu = function(e, node) {
+            e.preventDefault();
+            console.log(node);
+            reportCorpus.node = node;
+            var $menu = '';
+            $(this).tree('select',node.target);
+            if (node.id == 'root') {
+                $menu = $('#menuReportRootCorpus');
+            } else if (node.id.charAt(0) == 'c') {
+                $menu = $('#menuReportCorpus');
+            } else if (node.id.charAt(0) == 'd') {
+                $menu = $('#menuReportDocument');
+            }
+            if ($menu != '') {
+                $menu.menu('show',{
+                    left: e.pageX,
+                    top: e.pageY
+                });
+            }
+        }
+
+        $('#menuReportRootCorpus').menu({});
+        $('#menuReportCorpus').menu({});
+        $('#menuReportDocument').menu({});
+
+        $('#corpus').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Corpus'}},
+            onClickButton: function() {
+                $('#corpusTree').tree({queryParams: {corpus: $('#corpus').textbox('getValue')}});
+            }
+        });
+        $('#document').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Document'}},
+            onClickButton: function() {
+                $('#corpusTree').tree({queryParams: {document: $('#document').textbox('getValue')}});
+            }
+        });
+        $('#corpusTree').tree({
+            url: {{$manager->getURL('structure/corpus/corpusTree')}},
+            onContextMenu: reportCorpus.contextReportMenu
+        });
+    });
+</script>

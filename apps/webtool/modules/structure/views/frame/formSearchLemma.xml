@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formSearchLemma" >
+        <property title="{{_M('Search Lemma')}}" />
+        <options modal="true"/>
+        <fields>
+            <mdatagrid id="gridSearchLemma"  checkbox="true" width="350px" height="150px" query="$this->data->query" idField="idLemma" pageLength="0" >
+                <options checkOnSelect="true"/>
+                <mdatagridcolumn field="idLemma" visible="false"/>
+                <mdatagridcolumn field="fullname" title="{{_M('Name')}}" width="340px" />
+            </mdatagrid>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbSaveLU" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->action"/>
+            <mlinkbutton id="lbCloseLU" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+        </tools>
+    </mformdialog>
+</view>

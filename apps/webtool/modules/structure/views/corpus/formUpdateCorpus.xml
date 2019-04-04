@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formUpdateCorpus">
+        <property title="$this->data->title" onClose="structure.reloadCorpus();"/>
+        <fields>
+            <mhiddenfield id="corpus_idCorpus"/>
+            <mtextfield id="corpus_entry" label="Entry" prefix="crp_" width="250px"/> 
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseFrame" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveFrame" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+        <data load="$this->data->object"/>
+    </mformdialog>
+</view>

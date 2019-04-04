@@ -1,0 +1,7 @@
+@CHARSET "UTF-8";
+@import url('main.css'); /* Estilos das tags html */
+@import url('font-awesome.css');
+@import url('../fonts/oxygen/stylesheet.css');
+@import url('../fonts/opensans_regular_macroman/stylesheet.css');
+@import url('controls.css'); /* Estilos do controles renderizados em classes/painter.php */
+@import url('app.css'); /* Estilos despecificos da aplicação */

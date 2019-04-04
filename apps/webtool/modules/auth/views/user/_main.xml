@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="main" title="{{_M('User')}}" close=">fnbr/main" >
+        <fields>
+            <mdatagrid id="gridFind" query="$this->data->query" pageLength="15" width="600px">
+                <options singleSelect="true"/>
+                <mtoolbar>
+                    <mtextfield id="filter_login" label="{{_M('Login')}}" size="15" value="$this->data->login" placeholder="{{_M('Login')}}" />
+                    <mtextfield id="filter_name" label="{{_M('Name')}}" size="15" value="$this->data->name" placeholder="{{_M('Name')}}" />
+                    <mtextfield id="filter_level" label="{{_M('Level')}}" size="15" value="$this->data->level" placeholder="{{_M('Level')}}" />
+                    <mlinkbutton id="lbSearch" action="!$('#gridFind').datagrid('filter',event)" iconCls="icon-search" title="{{_M('Search')}}" plain="true"/>
+                    <mlinkbutton id="lbAdd" action="^auth/user/formObject|dlgFormObject" iconCls="icon-add" text="{{_M('New')}}" plain="true"/>
+                </mtoolbar>
+                <mdatagridcolumn field="idUser" visible="false"/>
+                <mdatagridcolumn type="icon" icon="pencil-square-o" action="^auth/user/formResetPassword/#idUser#|dlgFormObject" title="" alt="{{_M('Password reset')}}"/>
+                <mdatagridcolumn type="link" field="login" action="^auth/user/formObject/#idUser#|dlgFormObject" title="{{_M('User')}}"/>
+                <mdatagridcolumn field="name" title="{{_M('Name')}}"/>
+                <mdatagridcolumn field="level" title="{{_M('Level')}}"/>
+                <mdatagridcolumn field="email" title="{{_M('Email')}}"/>
+                <mdatagridcolumn type="link" field="constraints" action="^auth/user/formConstraintsLU/#idUser#|dlgFormConstaints" title="{{_M('Constraints LU')}}"/>
+                <mdatagridcolumn type="link" field="preferences" action="^auth/user/formPreferences/#idUser#|dlgFormPreferences" title="{{_M('Preferences')}}"/>
+            </mdatagrid>
+        </fields>
+    </mformdialog>
+</view>

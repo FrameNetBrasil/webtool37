@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="main" title="{{_M('Person')}}" close=">fnbr/main" >
+        <fields>
+            <mdatagrid id="gridFind" query="$this->data->query" pageLength="15" width="560px">
+                <options singleSelect="true"/>
+                <mtoolbar>
+                    <mtextfield id="filter_name" label="{{_M('Name')}}" size="15" value="$this->data->name" placeholder="{{_M('Name')}}" />
+                    <mtextfield id="filter_email" label="{{_M('Email')}}" size="15" value="$this->data->email" placeholder="{{_M('Email')}}" />
+                    <mlinkbutton id="lbSearch" action="!$('#gridFind').datagrid('filter',event)" iconCls="icon-search" title="{{_M('Search')}}" plain="true"/>
+                    <mlinkbutton id="lbAdd" action="^auth/person/formObject|dlgFormObject" iconCls="icon-add" text="{{_M('New')}}" plain="true"/>
+                </mtoolbar>
+                <mdatagridcolumn field="idPerson" visible="false"/>
+                <mdatagridcolumn type="link" field="name" action="^auth/person/formObject/#idPerson#|dlgFormObject" title="{{_M('Name')}}"/>
+                <mdatagridcolumn field="email" title="{{_M('Email')}}"/>
+                <mdatagridcolumn field="nick" title="{{_M('Nick')}}"/>
+            </mdatagrid>
+        </fields>
+    </mformdialog>
+</view>

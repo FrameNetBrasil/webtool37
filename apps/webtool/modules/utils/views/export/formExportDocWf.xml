@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formExportDocWf" title="Export Doc-Wordform"  close=">fnbr/main" >
+        <fields>
+            <mvcontainer>
+                <mspan>Parse the uploaded document and export a wordform file (with missing wf in database).</mspan>
+                <mspan>Document must be a UTF-8 plain text.</mspan>
+            </mvcontainer>
+            <mfilefield id="uploadFile" label="Documento" text="Selecionar Arquivo" width="300px"/>
+        </fields>    
+        <buttons>
+            <mbutton id="btnPost" text="{{_M('Send')}}" action="$this->data->action"/>
+        </buttons>
+    </mformdialog>
+</view>

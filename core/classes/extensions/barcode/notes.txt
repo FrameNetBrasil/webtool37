@@ -1,0 +1,104 @@
+BARCODE GENERATOR (Current Version: 1.3)
+
+AUTHOR: Walter Cattebeke
+DATE: 07/08/2004
+EMAIL: cachiweb@telesurf.com.py
+LICENSE: This code is released under the GPL license. A copy of the file is
+	 provided with this distribution.
+LAST UPDATE: 10/15/2004
+
+OVERVIEW
+This PHP script draws barcode representations of strings. It supports some
+important types of barcode symbology and offers control over almost all aspects
+of barcode generation.
+Use it to embed barcode images in a web page or to write the image to a file.
+It was written with educational purposes but it is very functional to use in
+retail or warehousing applications.
+
+FEATURES
+* Height and width coding symbologies supported.
+* Different barcodes types supported: Currently Code 3 of 9, Interleave 2 of 5,
+  Standard 2 of 5 and Code 93.
+* Different image formats supported: JPG, PNG, GIF, WBMP.
+* Barcode size control: width of bars, height of bars, intercharacter gap, wide
+  to narrow ratio.
+* Barcode style control: inverted barcode, text label, image rotation, check
+  digit.
+
+HOW TO USE
+Main files are core.php and defs.inc. Including core.php in your script should
+be enough to get things going. barCode() prototype is well commented.
+You also have the files test.php and wrapper.php that show you how to use it in
+HTML pages.
+If you know PHP and/or HTML you should figure out by yourself seamlessly.  :)
+
+UPDATES
+Newer versions of this code can be obtained by emailing me. I'll try to update
+the project file at the site where you obtained it.
+This notes.txt file will state any changes made to the project in HISTORY
+section.
+
+NOTES
+* Bar Code specification can be found at http://www.barcodeisland.com/ &
+  http://www.adams1.com/
+* Since it uses GD libraries you need to have them properly installed.
+  http://www.php.net/manual/en/ref.image.php
+  http://www.boutell.com/gd/
+* You also have the limitations of GD libraries (GIF copyright, etc.) --> Patent
+  is free again. GD announced GIF support again.
+* WBMP file format is not working. I dont know why and I preciate if you let me
+  know. ---> It is due to GD version. Get proper version.
+* Get rid of all echo's in defs.inc file if I've forgotten to do so.
+* Royal Mail and postnet (no capable reader) not tested but looked the same as
+  web images and fonts samples.
+
+CONTENT
+The zip project file contents are:
+core.php
+defs.inc
+file.php
+notes.txt
+index.php
+
+HISTORY
+
+10/15/2004 - Version 1.3
+* Height coding symbologies support added
+* Royal mail 4-State and Postnet support added
+* First mail about the script received (from UK)
+
+09/15/2004 - Version 1.1 (no version change)
+* Fixed a bug in Standard 2 of 5 generation.
+
+09/12/2004 - Version 1.1
+* Added support for Standard 2 of 5.
+* Added support for Code 93.
+* Check digit supported
+
+09/10/2004 - Version 1.0
+* Application logic changed !!!!
+* Added support for Interleave 2 of 5.
+* Type of barcode passed as a parameter.
+* Added rotation of image.
+
+09/01/2004 - Version 0.2
+* Added support to include text label into image.
+* Got rid of global variables.
+* Fixed a bug in ImageWidth calculation.
+* Quiet Zone implemented.
+* Improved code comment.
+
+07/08/2004 - Version 0.1
+* The baby was born !!
+
+/****************************************/
+
+Please send me an email with questions, comments, suggestions, improvements or
+just to let me know that you found this useful or nice.
+If you make a lot of money with it you could send me some :)
+Enjoy it !!
+
+
+Walter Cattebeke Vazquez
+Asuncion, Paraguay
+cachiweb@telesurf.com.py

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formImportFrames" title="Import Frames"  close=">fnbr/main" >
+        <fields>
+            <mhcontainer>
+                <mspan>Importa definição de Frames (e FEs associados) a partir do arquivo JSON, gerado pela opção "Export Frames".</mspan>
+            </mhcontainer>
+            <mfilefield id="uploadFile" label="Arquivo de Frames" text="Selecionar Arquivo" width="300px"/>
+        </fields>    
+        <buttons>
+            <mbutton id="btnPost" text="{{_M('Send')}}" action="$this->data->action"/>
+        </buttons>
+    </mformdialog>
+</view>

@@ -1,0 +1,136 @@
+<form id="formEditor" name="formEditor">
+    <input type="hidden" id="graphJson" name="graphJson" value=""/>
+    <input type="hidden" id="linksRemoved" name="linksRemoved" value=""/>
+    <input type="hidden" id="graphcefeJson" name="graphcefeJson" value=""/>
+    <input type="hidden" id="linkscefeRemoved" name="linkscefeRemoved" value=""/>
+    <input type="hidden" id="currentRelation" name="currentRelation" value="rel_evokes"/>
+</form>
+<div id="workingAreaCXNFR">
+    <div id="waToolBarCXNFR" class="datagrid-toolbar">
+        {{if ($data->isMaster) }}
+        <a id="btnPostCXNFR" href="#">Save</a>
+        {{/if}}
+        <a id="btnClearCXNFR" href="#">Clear</a>
+    </div>
+    <div id="editorPaperCXNFR" style="margin-top:5px;margin-left:5px;height:95%"></div>
+</div>
+<div id="workingAreaCEFE">
+    <div id="waToolBarCEFE" class="datagrid-toolbar">
+        {{if ($data->isMaster) }}
+        <a id="btnPostCEFE" href="#">Save</a>
+        {{/if}}
+        <a id="btnClearCEFE" href="#">Clear</a>
+        <a id="btnBackCEFE" href="#">Back to Cxn-Frame</a>
+    </div>
+    <div id="editorPaperCEFE" style="margin-top:5px;margin-left:5px;height:95%"></div>
+</div>
+
+{{include editorcxnfr.html}}
+{{include editorcefe.html}}
+
+<script type="text/javascript">
+
+    $(function () {
+        $(document).keydown(function (event) {
+            if (event.which == 46) { //DELETE
+                event.preventDefault();
+                if (editor.editorCXNFR.entityClicked) {
+                    editor.editorCXNFR.entities[editor.editorCXNFR.entityClicked.id] = null;
+                    editor.editorCXNFR.entityClicked.remove();
+                    editor.editorCXNFR.entityClicked = null;
+                }
+            }
+        });
+
+        $('#workingAreaCXNFR').panel({
+            title: 'Working Area CxN-Frame',
+            height:'100%',
+            width:'100%',
+            closed: true
+        });
+        
+        $('#workingAreaCEFE').panel({
+            title: 'Working Area CE-FE',
+            height:'100%',
+            width:'100%',
+            closed: true
+        });
+        
+        $('#workingAreaCXNFR').panel('open');
+
+        $('#btnPostCXNFR').linkbutton({
+            iconCls: 'icon-save',
+            plain: true,
+            onClick: function() {
+                editor.editorCXNFR.submitCxnFrameRelation();
+            }
+        });
+        
+        $('#btnClearCXNFR').linkbutton({
+            iconCls: 'icon-clear',
+            plain: true,
+            onClick: function() {
+                editor.editorCXNFR.clearGraph();
+            }
+        });
+        
+        $('#btnPostCEFE').linkbutton({
+            iconCls: 'icon-save',
+            plain: true,
+            onClick: function() {
+                editor.editorCEFE.submitCEFERelation();
+            }
+        });
+        
+        $('#btnClearCEFE').linkbutton({
+            iconCls: 'icon-clear',
+            plain: true,
+            onClick: function() {
+                editor.editorCEFE.clearGraph();
+            }
+        });
+
+        $('#btnBackCEFE').linkbutton({
+            iconCls: 'icon-back',
+            plain: true,
+            onClick: function() {
+                $('#graphcefeJson').attr('value','');
+                $('#linkscefeRemoved').attr('value','');
+                $('#workingAreaCEFE').panel('close');
+                $('#workingAreaCXNFR').panel('open');
+            }
+        });
+        
+        editor.entities = JSON.parse({{$data->entities}});
+        editor.relations = {};
+        editor.ces = {};
+        editor.fes = {};
+        editor.CEFERelations = {};
+        editor.relationEntry = JSON.parse({{$data->relationEntry}});
+        editor.relationData = [];
+        var i = 0;
+        for (relation in editor.relationEntry) {
+            editor.relationData[i++] = editor.relationEntry[relation];
+        }
+        
+        editor.editorCXNFR.init();
+        editor.editorCXNFR.paper.on('link:options', editor.editorCXNFR.linkOptions, editor.editorCXNFR);
+        editor.editorCXNFR.paper.on('cell:pointerdown', editor.editorCXNFR.pointerDown, editor.editorCXNFR);
+        editor.editorCXNFR.paper.on('blank:pointerdown', editor.editorCXNFR.blankPointerDown, editor.editorCXNFR);
+        editor.editorCXNFR.graph.on('remove', editor.editorCXNFR.cellRemoved, editor.editorCXNFR);
+    
+        editor.editorCEFE.init();
+        editor.editorCEFE.graph.on('change:source change:target', editor.editorCEFE.changeCEFELink, editor.editorCEFE);
+        editor.editorCEFE.graph.on('remove', editor.editorCEFE.cellRemoved, editor.editorCEFE);
+        editor.editorCEFE.graph.on('add', editor.editorCEFE.cellAdd, editor.editorCEFE);
+        editor.editorCEFE.paper.on('cell:pointerup', editor.editorCEFE.pointerUp, editor.editorCEFE);
+
+    });
+</script>
+<style type="text/css">
+    
+    .flabel {
+        font-size:16px;
+        font-weight: bold;
+    }
+</style>

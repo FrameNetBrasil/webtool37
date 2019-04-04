@@ -1,0 +1,30 @@
+/*
+Arquivo: controls/micons.css
+Autor: Maestro
+Descrição: 
+    Estilos dos icones.
+Version: 2.0
+Licença: GNU General Public License
+Licença URI: license.txt
+*/
+
+/*
+ * Tools Icons
+ */
+.fa-icon {
+    font-size: 14px;
+    text-align: center;
+    vertical-align: middle;
+}
+.icon-find {
+    background: url('images/find.png') no-repeat center center;
+}
+.icon-excel {
+    background: url("images/excel.gif") no-repeat center center;
+}
+.icon-csv {
+    background: url("images/csv.gif") no-repeat center center;
+}
+.icon-pdf {
+    background: url("images/pdf.gif")  no-repeat center center;
+}

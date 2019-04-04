@@ -1,0 +1,55 @@
+{{var $toolbar = 'toolbar' . $data->idFrame}}
+{{var $lbSave = 'lbSaveDomain' . $data->idFrame}}
+{{var $grid = 'grid' . $data->idFrame}}
+
+<input type="hidden" id='idConstruction' name='idConstruction' value={{$data->idConstruction}} />
+<input type="hidden" id='idGrid' name='idGrid' value={{$grid}} />
+<input type="hidden" id='toSave' name='toSave' value='' />
+<table id={{$grid}}></table>
+<div id={{$toolbar}}>
+    <a id={{$lbSave}} href="#"></a>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#' + {{$grid}}).datagrid({
+            url: {{manager::getAppURL('', 'structuredomain/listCxnDomain/' . $data->idConstruction)}},
+            idField:'idConstruction',
+            width: 450,
+            height: 250,
+            title: 'Domains',
+            showHeader:false,
+            //checkOnSelect: false,
+            toolbar: '#' + {{$toolbar}},
+            columns:[[
+                {field: 'ck', checkbox: true},
+                {field: 'idDomain', hidden:true},
+                {field: 'idEntity', hidden:true},
+                {field: 'name', title:'Type',width:'100%'}
+            ]],
+            onLoadSuccess: function(data) {
+                console.log('onload');
+                console.log(data);
+                for (row in data.rows) {
+                    if (data.rows[row].checked) {
+                        console.log('selecting ' + row);
+                        $('#' + {{$grid}}).datagrid('selectRow', row);
+                    }
+                }
+            }
+        });
+
+        $('#' + {{$lbSave}}).linkbutton({
+            onClick: function(){
+                var rows = $('#' + {{$grid}}).datagrid('getChecked');
+                $('#toSave').attr('value','json:' + JSON.stringify(rows));
+                manager.doAction("@data/domain/saveCxnDomain|{{$data->form|noescape}}");
+            },
+            iconCls: "icon-edit",
+            title: 'Save Domains',
+            text: "Save",
+            width: 60,
+            plain: true
+        });
+
+    });
+</script>

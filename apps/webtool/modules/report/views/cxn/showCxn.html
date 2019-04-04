@@ -1,0 +1,72 @@
+<div class="reportCxn">
+    <div class="cxnName">
+        {{$data->cxn->entry->name|noescape}}  [{{$data->cxn->entry->nick|noescape}}]
+    </div>
+    <div class="divPanel">
+        <div id="panelDefinition" class="easyui-panel" title="{{_'repDefinition'}}" collapsible="false" data-options="fit:true"  style="width:100%;">
+            <div class="text">
+                {{$data->cxn->entry->description|noescape}}
+            </div>
+        </div>
+    </div>
+    <div class="divPanel">
+        <div id="panelExample" class="easyui-panel" title={{_'repExample'}} collapsible="true" style="width:100%;">
+            <div class="example">
+            </div>
+        </div>
+    </div>
+    <div class="divPanel">
+
+        <div id="panelCe" class="easyui-panel" title={{_'repCE'}} collapsible="false" data-options="fit:true">
+            <table id="ce" class="cxnElement">
+                <tbody>
+                    {{foreach $data->ce['element'] as $ce}}
+                        <tr>
+                            <td class="ce"><span class="ce_{{$ce['lower']|noescape}}">{{$ce['name']}} [{{$ce['nick']}}]</span></td>
+                            <td class="cedef">{{$ce['description']|noescape}}</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="example">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="cespace">
+                            </td>
+                        </tr>
+                    {{/foreach}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="divPanel">
+        <div id="panelRelations" class="easyui-panel" title={{_'repRelations'}} collapsible="true" style="width:100%;">
+            <table class="tableRelations">
+                <tbody>
+                    {{foreach $data->relations as $name => $cxns}}
+                        <tr>
+                            <td class="relation">{{_$name}}</td>
+                            <td>{{$cxns}}</td>
+                        </tr>
+                        <tr>
+                            <td class="cespace">
+                            </td>
+                        </tr>
+                    {{/foreach}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $.parser.parse();
+    //$('#panelExample').panel('collapse');
+    //$('#panelRelations').panel('collapse');
+</script>
+<style type="text/css">
+    {{foreach $data->ce['styles'] as $style}}
+    .ce_{{$style['ce']|noescape}} {color: #{{$style['rgbFg']}}; background-color: #{{$style['rgbBg']}};}
+    {{/foreach}}
+
+</style>

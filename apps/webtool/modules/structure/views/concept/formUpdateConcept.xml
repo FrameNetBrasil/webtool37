@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formUpdateConcept">
+        <property title="$this->data->title" onClose="structure.reloadConcept();"/>
+        <fields>
+            <mhiddenfield id="concept_idConcept"/>
+            <mhiddenfield id="concept_idEntity"/>
+            <mtextfield id="concept_name" label="Name" width="250px"/>
+            <mmultilinefield id="concept_description" label="Description" width="350px" height="100px"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseTemplate" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveTemplate" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+        <data load="$this->data->object"/>
+    </mformdialog>
+</view>

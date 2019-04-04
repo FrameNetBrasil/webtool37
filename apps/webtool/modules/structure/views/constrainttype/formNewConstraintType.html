@@ -1,0 +1,125 @@
+{{var $prefix = 'formNewConstraintType' }}
+
+<div id="{{$prefix}}">
+    <div id="{{$prefix}}Tools">
+        <a href='#' name="{{$prefix}}Close" id="{{$prefix}}Close">
+            Close
+        </a>
+        <a href='#' name="{{$prefix}}Save" id="{{$prefix}}Save">
+            Save
+        </a>
+    </div>
+    <form id="{{$prefix}}Form" method="post">
+        <div class='mFormContainer'>
+            <div class="mFormRow">
+                <div class="mFormColumn">
+                    <label for="{{$prefix}}_ct_name" class="mFormLabel ">Name</label>
+                </div>
+                <div class="mFormColumn">
+                    <input style="width:250px;" name="ct_name" id="{{$prefix}}_ct_name"/>
+                </div>
+            </div>
+            <div class="mFormRow">
+                <div class="mFormColumn">
+                    <label for="{{$prefix}}_ct_prefix" class="mFormLabel ">Prefix</label>
+                </div>
+                <div class="mFormColumn">
+                    <input style="width:50px;" name="ct_prefix" id="{{$prefix}}_ct_prefix" maxlength="3"/>
+                </div>
+            </div>
+            <div class="mFormRow">
+                <div class="mFormColumn">
+                    <label for="{{$prefix}}_ct_typeEntity1" class="mFormLabel ">Type Entity1</label>
+                </div>
+                <div class="mFormColumn">
+                    <input style="width:50px;" name="ct_typeEntity1" id="{{$prefix}}_ct_typeEntity1" maxlength="2"/>
+                </div>
+            </div>
+            <div class="mFormRow">
+                <div class="mFormColumn">
+                    <label for="{{$prefix}}_ct_typeEntity2" class="mFormLabel ">Type Entity2</label>
+                </div>
+                <div class="mFormColumn">
+                    <input style="width:50px;" name="ct_typeEntity2" id="{{$prefix}}_ct_typeEntity2" maxlength="2"/>
+                </div>
+            </div>
+            <div class="mFormRow">
+                <div class="mFormColumn">
+                    <label for="{{$prefix}}_ct_idTypeInstance" class="mFormLabel ">Type</label>
+                </div>
+                <div class="mFormColumn">
+                    <input style="width:250px;" name="ct_idTypeInstance" id="{{$prefix}}_ct_idTypeInstance"/>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+
+    $(function () {
+
+        {{var $idPrefix = '#formNewConstraintType' }}
+
+        $({{$idPrefix}}).dialog({
+            toolbar: {{$idPrefix}} + 'Tools',
+            border: true,
+            modal: true,
+            closed: true,
+            doSize: true,
+            onClose: function () {
+                structure.reload();
+            }
+        });
+
+        $({{$idPrefix}} + 'Save').linkbutton({
+            iconCls: 'icon-save',
+            plain: true,
+            size: null,
+            onClick: function () {
+                $({{$idPrefix}} + 'Form').submit();
+            }
+        });
+
+        $({{$idPrefix}} + 'Close').linkbutton({
+            iconCls: 'icon-cancel',
+            plain: true,
+            size: null,
+            onClick: function () {
+                $({{$idPrefix}}).dialog('close');
+            }
+        });
+
+        $({{$idPrefix}} + '_ct_name').textbox({});
+        $({{$idPrefix}} + '_ct_prefix').textbox({});
+        $({{$idPrefix}} + '_ct_typeEntity1').textbox({});
+        $({{$idPrefix}} + '_ct_typeEntity2').textbox({});
+
+        $({{$idPrefix}} + '_ct_idTypeInstance').combogrid({
+            panelWidth:180,
+            url: {{$manager->getURL('data/typeinstance/lookupConstraintType')}},
+            idField:'idConstraintType',
+            textField:'name',
+            mode:'remote',
+            fitColumns:true,
+            columns:[[
+                {field:'name', title:'Name', width:162}
+            ]]
+        });
+
+        $({{$idPrefix}} + 'Form').form({
+            url: {{$manager->getURL('structure/constrainttype/newConstraintType')}},
+            onSubmit: function () {
+                // do some check
+                // return false to prevent submit;
+            },
+            success:function (data) {
+                var data = eval('(' + data + ')');
+                if (data.success) {
+                    $.messager.alert('Info', 'ConstraintType created!', 'info');
+                }
+            }
+        });
+
+    });
+</script>

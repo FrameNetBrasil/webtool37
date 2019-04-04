@@ -1,0 +1,13 @@
+N - nome
+A - adjetivo
+NUM - numero
+V - verbo
+ART - artigo
+PRON - pronome
+ADV - adverbio
+PREP - preposição
+C - 
+INTJ - interjeição
+SCON - conjunção subordinativa 
+CCON - conjunção coordenativa
+AVP - Particula adverbial (BNC) (e.g. up, off, out)

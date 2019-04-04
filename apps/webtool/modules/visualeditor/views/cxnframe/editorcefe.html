@@ -1,0 +1,252 @@
+<script type="text/javascript">
+
+    editor.editorCEFE = {
+        graph: null,
+        paper: null,
+        currentFERelation: null,
+        linksRemoved: [],
+        init: function () {
+            this.graph = new joint.dia.Graph;
+            this.paper = this.newPaper(this.graph, '#editorPaperCEFE');
+            this.currentFERelation = $('#currentRelation').attr('value');
+            console.log('end init CEFE');
+        },
+        newPaper: function (graph, id) {
+            return new joint.dia.Paper({
+                el: $(id),
+                width: '95%',//800,
+                height: '95%',//600,
+                perpendicularLinks: true,
+                gridSize: 1,
+                model: graph,
+                defaultLink: new joint.dia.Link({
+                    attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } }
+                }),
+                validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+                    // Prevent linking from input ports.
+                    if (magnetS && magnetS.getAttribute('type') === 'input') return false;
+                    // Prevent linking from output ports to input ports within one element.
+                    if (cellViewS === cellViewT) return false;
+                    // Prevent linking to input ports.
+                    if (magnetT && magnetT.getAttribute('type') === 'input') return false;                    
+                    // Prevent loop linking
+                    return (magnetS !== magnetT);
+                },
+                // Enable link snapping within 75px lookup radius
+                snapLinks: { radius: 75 },                
+                interactive: {
+                    'vertexAdd': false
+                }
+            })
+        },
+        title: function (x, y, text, height) {
+            var width = text.length * 10;
+            var el = new joint.shapes.basic.Text({
+                position: {x: x, y: y},
+                size: {width: width, height: height},
+                attrs: {text: {text: text, 'font-size': 12}}
+            });
+            this.graph.addCell(el);
+        },
+        blankPointerDown: function (evt, x, y) {
+            this.changeFocus(null);
+        },
+        changeCEFELink: function (link) {
+            console.log('changeCEFELink');
+            console.log(link);
+            var targetPort = link.get('target').port;
+            console.log(targetPort);
+            if (targetPort) {
+                var idType = editor.editorCEFE.currentFERelation;
+                link.attr('.connection/stroke', editor.relationEntry[idType].color);
+                link.attr('.marker-target/fill', editor.relationEntry[idType].color);
+                link.attr('.marker-target/stroke', editor.relationEntry[idType].color);
+                link.attr('.marker-target/d', 'M 10 0 L 0 5 L 10 10 z');
+            }
+        },
+        newLinkCEFE: function (idSource, portSource, idTarget, portTarget, idType) {
+            console.log('newLinkCEFE');
+            var link = new joint.shapes.entity.SimpleRelation({
+                source: {id: idSource, port: portSource},
+                target: {id: idTarget, port: portTarget},
+                idType: idType
+            });
+            link.attr('.connection/stroke', editor.relationEntry[idType].color);
+            link.attr('.marker-target/fill', editor.relationEntry[idType].color);
+            link.attr('.marker-target/stroke', editor.relationEntry[idType].color);
+            return link;
+        },
+        cellAdd: function (cell) {
+            console.log('cell add: ' + cell.attributes.type);
+            if (cell.attributes.type == 'link') {
+                cell.attributes.type = 'entity.SimpleRelation'; 
+                cell.attributes.idType = editor.editorCEFE.currentFERelation;
+            }
+        },
+        cellRemoved: function (cell) {
+            console.log('cell remove: ' + cell.attributes.type);
+            if (cell.attributes.type == 'entity.SimpleRelation') {
+                console.log('link removed');
+                console.log(cell);
+                editor.editorCEFE.linksRemoved[editor.editorCEFE.linksRemoved.length] = {
+                    idEntity1: cell.attributes.source.port,
+                    idEntity2: cell.attributes.target.port,
+                    idType: cell.attributes.idType
+                };
+            }
+        },
+        editCEFE: function (linkView) {
+            $('#workingAreaCXNFR').panel('close');
+            $('#workingAreaCEFE').panel('open');
+            editor.editorCEFE.linksRemoved = [];
+            var model = linkView.model;
+            var idType = model.attributes.idType;
+            this.currentFERelation = idType;
+            this.clearGraph();
+            this.title(5, 5, 'Carregando...', 30);
+            var model0 = editor.editorCXNFR.entities[model.attributes.source.id];
+            console.log(model0);
+            var model1 = editor.editorCXNFR.entities[model.attributes.target.id];
+            console.log(model1);
+            var inPort = [];
+            var outPort = [];
+            var nIn = 0;
+            var nOut = 0;
+            var widthIn = 0;
+            var widthOut = 0;
+            this.loadCEFERelations(model0.id, model1.id, idType);
+            //console.log(editor.fes);
+            //console.log(editor.feRelations);
+            console.log(editor.ces);
+            var ces = editor.ces[model0.id];
+            $.each(ces, function(index, ce) {
+                outPort[outPort.length] = ce;
+                ++nOut;
+                if (ce.name.length > widthOut) {
+                    widthOut = ce.name.length;
+                }
+            });
+            console.log(outPort);
+            var fes = editor.fes[model1.id];
+            $.each(fes, function(index, fe) {
+                inPort[inPort.length] = fe;
+                ++nIn;
+                if (fe.name.length > widthIn) {
+                    widthIn = fe.name.length;
+                }
+            });
+            var relations = [];
+            var id = model0.id + '_' + idType + '_' + model1.id;   
+            var CEFERelations = editor.CEFERelations[id];
+            $.each(CEFERelations, function(index, CEFERelation) {
+                relations[relations.length] = CEFERelation;
+            });
+            
+            var frameOutWidth = (widthOut * 10) + 30;
+            var frameInWidth = (widthIn * 10) + 30;
+            var frameOutHeight = (nOut * 25);
+            var frameInHeight = (nIn * 25);
+            var entity1 = new joint.shapes.entity.CxnElement({
+                id: 'cxn' + model0.id,
+                position: {x: 50, y: 70},
+                size: {width: frameOutWidth, height: frameOutHeight},
+                outPorts: outPort,
+                attrs: {
+                    '.flabel': { text: editor.entities[model0.id]['label'], 'ref-x':0, 'ref-y': -15, 'ref':'rect'},
+                    rect: {fill: '#FFFFFF'},
+                }
+            });
+            var entity2Width = (model1.id.length * 10) + 10;
+            var entity2 = new joint.shapes.entity.FrameElement({
+                id: 'frame' + model1.id,
+                position: {x: 480, y: 70},
+                size: {width: frameInWidth, height: frameInHeight},
+                inPorts: inPort,
+                attrs: {
+                    '.flabel': { text: editor.entities[model1.id]['label'], 'ref-x':0, 'ref-y': -15, 'ref':'rect'},
+                    rect: {fill: '#FFFFFF'}
+                }
+            });
+            this.graph.clear();
+            this.title(5, 5, 'Relation type: ' + editor.relationEntry[this.currentFERelation]['label'], 30);
+            this.graph.idEntity1 = model0.id;
+            this.graph.idEntity2 = model1.id;
+            this.graph.idType = this.currentFERelation;
+            this.graph.addCell(entity1);
+            this.graph.addCell(entity2);
+            var link = null;
+            $.each(relations, function (index, r) {
+                link = editor.editorCEFE.newLinkCEFE(entity1.id, r.idEntity1, entity2.id, r.idEntity2, r.idType);
+                //console.log(link);
+                editor.editorCEFE.graph.addCell(link);
+            });
+        },
+        loadCEFERelations: function(idEntity1, idEntity2, idType ) {
+            $.ajax({
+                type: "POST", 
+                url: {{$manager->getURL('visualeditor/cxnframe/getCE')}}, 
+                data: {id: idEntity1}, 
+                dataType: "json",
+                async: false,
+                success: function (data, textStatus, jqXHR) {
+                    editor.ces[idEntity1] = data;
+                }
+            });    
+            $.ajax({
+                type: "POST", 
+                url: {{$manager->getURL('visualeditor/cxnframe/getFE')}}, 
+                data: {id: idEntity2}, 
+                dataType: "json",
+                async: false,
+                success: function (data, textStatus, jqXHR) {
+                    editor.fes[idEntity2] = data;
+                }
+            });    
+            $.ajax({
+                type: "POST", 
+                url: {{$manager->getURL('visualeditor/cxnframe/getCEFERelations')}}, 
+                data: {idEntity1: idEntity1, idEntity2: idEntity2, idType: idType}, 
+                dataType: "json",
+                async: false,
+                success: function (data, textStatus, jqXHR) {
+                    var id = idEntity1 + '_' + idType + '_' + idEntity2;
+                    editor.CEFERelations[id] = data;
+                }
+            });    
+        },
+        toJSON: function (graph) {
+            var j = graph.toJSON();
+            return JSON.stringify(j);
+        },
+        clearGraph: function() {
+            editor.editorCEFE.graph.clear();
+            editor.editorCEFE.linksRemoved = [];
+        },
+        submitCEFERelation: function () {
+            var graph = JSON.parse(this.toJSON(editor.editorCEFE.graph));
+            console.log(graph);
+            var data = {cefe:[], relations:[]};
+            var cefe = {};
+            $.each(graph.cells, function(index, cell) {
+                if (cell.type == 'entity.SimpleRelation') {
+                    cefe[cell.source.port] = cell.source.port;
+                    cefe[cell.target.port] = cell.target.port;
+                    data['relations'][data['relations'].length] = {
+                        idType: editor.editorCEFE.currentFERelation,
+                        idEntity1: cell.source.port,
+                        idEntity2: cell.target.port
+                    };
+                }
+            });
+            $.each(cefe, function(index, element) {
+                data['cefe'][data['cefe'].length] = {id: element};
+            });
+            $('#graphcefeJson').attr('value','');
+            $('#graphcefeJson').attr('value','json:' + JSON.stringify(data));
+            $('#linkscefeRemoved').attr('value','');
+            console.log(editor.editorCEFE.linksRemoved);
+            $('#linkscefeRemoved').attr('value','json:' + JSON.stringify(editor.editorCEFE.linksRemoved));
+            manager.doPost('',{{$manager->getURL('visualeditor/cxnframe/saveCEFERelation')}}, 'formEditor');
+        }
+    }
+</script>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formManager" >
+        <property title="{{_M('Layers Management')}}" />
+        <options modal="true"/>
+        <fields>
+            <mdatagrid id="gridManager"  checkbox="true" width="160px" height="300px" query="$this->data->query" idField="idLayerType" pageLength="0" >
+                <options checkOnSelect="true" onLoadSuccess="function(){selectRecord();}"/>
+                <mdatagridcolumn field="idLayerType" visible="false"/>
+                <mdatagridcolumn field="name" title="{{_M('Name')}}" width="100px" />
+            </mdatagrid>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbSave" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->action"/>
+        </tools>
+    </mformdialog>
+    <javascript> 
+        function selectRecord() {
+        console.log('aaa');
+            var layersToShow = {{$this->data->layersToShow}}; 
+            $.each(layersToShow, function(index, element) {
+        console.log(element);
+            $('#gridManager').datagrid('selectRecord', element);
+            });
+        }
+    </javascript>
+</view>

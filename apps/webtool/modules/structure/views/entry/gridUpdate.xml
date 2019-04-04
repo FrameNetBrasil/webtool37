@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<view>
+    <mform id="formGridUpdateEntry">
+    <mdatagrid id="gridUpdateEntry" query="$this->data->query" pageLength="0" idField="idEntry" width="100%" orderBy="language">
+        <options singleSelect="true"/>
+                <mtoolbar>
+            <mselection id="idLanguage" options="$this->data->undefined"/>
+            <mlinkbutton id="lbNew" action="$this->data->new" iconCls="icon-add" text="{{_M('Add')}}" plain="true"/>
+                </mtoolbar>        
+        <mdatagridcolumn field="idEntry" visible="false"/>
+        <mdatagridcolumn type="link" field="language" action="^structure/entry/formUpdateEntry/#idEntry#|dlgFormUpdateEntry" title="{{_M('Lang')}}"  width="10%" />
+        <mdatagridcolumn field="name" title="Name"  width="25%"/>
+        <mdatagridcolumn field="shortDescription" title="Description" />
+    </mdatagrid>
+    </mform>
+    <javascript>
+<![CDATA[
+    var reloadGridUpdateEntry = function () {
+        $('#gridUpdateEntry').datagrid('reload');
+    }
+]]>
+    </javascript>    
+</view>

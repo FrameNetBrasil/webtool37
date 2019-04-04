@@ -1,0 +1,128 @@
+<div id="structureLayout" style="width:100%;height:100%;">
+    <div id="structureNorthPane" data-options="collapsible:false, region:'north', title:'{{_'Corpus'}}'" style="height:70px">
+        <div style="float:left;padding:5px">
+            <input id="corpus" name="corpus" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Corpus'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <input id="document" name="document" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Document'}}">
+        </div>
+    </div>
+    <div id="structureLeftPane" region="west" split="true" style="height: 100%">
+        <ul id="corpusTree"></ul>
+    </div>
+    <div id="structureCenterPane" region="center" style="height: 100%">
+        
+    </div>
+</div>
+<div id="menuRootCorpus" style="display:none, width:120px;">
+<div onclick="structure.reloadCorpus()" data-options="iconCls:'icon-reload'">{{_'Reload Corpus'}}</div>
+<div onclick="structure.newCorpus()" data-options="iconCls:'icon-add'">{{_'New Corpus'}}</div>
+</div>
+<div id="menuCorpus" style="display:none, width:120px;">
+<div onclick="structure.editCorpus()" data-options="iconCls:'icon-edit'">{{_'Edit Corpus'}}</div>
+<div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
+<div onclick="structure.newDocument()" data-options="iconCls:'icon-add'">{{_'New Document'}}</div>
+</div>
+<div id="menuDocument" style="display:none, width:120px;">
+<div onclick="structure.editDocument()" data-options="iconCls:'icon-edit'">{{_'Edit Document'}}</div>
+<div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
+</div>
+
+<script type="text/javascript">
+    var structure = {
+        app: {{$manager->getApp()}},
+        isMaster: {{$data->isMaster|noescape}},
+        node: null
+    };
+    $(function () {
+        $('#structureLayout').layout({
+            fit:true
+        });
+
+        structure.newCorpus = function () {
+            manager.doGet({{$manager->getURL('structure/corpus/formNewCorpus')}},'structureCenterPane');
+        }
+
+        structure.editCorpus = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/corpus/formUpdateCorpus')}} + '/' + id,'structureCenterPane');
+        }
+        
+        structure.reloadCorpus = function () {
+            $('#corpusTree').tree('reload');
+        }
+        
+        structure.editEntry = function (entry) {
+            if ($.type(entry) === "undefined") {
+                entry = structure.node.entry;
+            }
+            manager.doAction('^' + structure.app + '/structure/entry/formUpdate/' + entry);
+        }
+
+        structure.newDocument = function (idDocument) {
+            if ($.type(idDocument) === "undefined") {
+                idDocument = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/corpus/formNewDocument')}} + '/' + idDocument,'structureCenterPane');
+        }
+
+        structure.editDocument = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            console.log(id);
+            manager.doGet({{$manager->getURL('structure/corpus/formUpdateDocument')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.contextMenuFrame = function(e, node) {
+            if (!structure.isMaster) {
+                return;
+            }
+            e.preventDefault();
+            console.log(node);
+            structure.node = node;
+            var $menu = '';
+            $(this).tree('select',node.target);
+            if (node.id == 'root') {
+                $menu = $('#menuRootCorpus');
+            } else if (node.id.charAt(0) == 'c') {
+                $menu = $('#menuCorpus');
+            } else if (node.id.charAt(0) == 'd') {
+                $menu = $('#menuDocument');
+            }
+            if ($menu != '') {
+                $menu.menu('show',{
+                    left: e.pageX,
+                    top: e.pageY
+                });
+            }
+        }
+
+        $('#menuRootCorpus').menu({});
+        $('#menuCorpus').menu({});
+        $('#menuDocument').menu({});
+
+        $('#corpus').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Corpus'}},
+            onClickButton: function() {
+                $('#corpusTree').tree({queryParams: {corpus: $('#corpus').textbox('getValue')}});
+            }
+        });
+        $('#document').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Document'}},
+            onClickButton: function() {
+                $('#corpusTree').tree({queryParams: {document: $('#document').textbox('getValue')}});
+            }
+        });
+        $('#corpusTree').tree({
+            url: {{$manager->getURL('structure/corpus/corpusTree')}},
+            onContextMenu: structure.contextMenuFrame
+        });
+    });
+</script>

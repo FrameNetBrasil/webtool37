@@ -1,0 +1,31 @@
+<div id="structureLayout" style="width:100%;height:100%;">
+    <div id="structureNorthPane" data-options="region:'north', title:'{{_'Concepts'}}'" style="height:70px">
+        <div style="float:left;padding:5px">
+            <input id="type" name="type" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Type'}}">
+        </div>
+    </div>
+    <div id="structureLeftPane" region="west" split="true" style="height: 100%">
+        <ul id="conceptsTree"></ul>
+    </div>
+    <div id="structureCenterPane" region="center" style="height: 100%">
+        
+    </div>
+</div>
+<div id="menuRootConcepts" style="display:none, width:120px;">
+<div onclick="structure.reloadConcept()" data-options="iconCls:'icon-reload'">{{_'Reload Semantic Types'}}</div>
+<div onclick="structure.newConcept()" data-options="iconCls:'icon-add'">{{_'New Concept'}}</div>
+</div>
+<div id="menuConcept" style="display:none, width:120px;">
+<div onclick="structure.editConcept()" data-options="iconCls:'icon-edit'">{{_'Edit Concept'}}</div>
+<div onclick="structure.newConcept()" data-options="iconCls:'icon-add'">{{_'New Concept'}}</div>
+<div onclick="structure.addConceptElement()" data-options="iconCls:'icon-add'">{{_'Add ConceptElement'}}</div>
+<div onclick="structure.delConcept()" data-options="iconCls:'icon-remove'">{{_'Delete Concept'}}</div>
+</div>
+<div id="menuConceptElement" style="display:none, width:120px;">
+    <div onclick="structure.delConceptElement()" data-options="iconCls:'icon-remove'">{{_'Delete ConceptElement'}}</div>
+</div>
+{{include formAddConceptElement.html}}
+
+{{include scripts/structure.js}}
+{{include scripts/controls.js}}
+

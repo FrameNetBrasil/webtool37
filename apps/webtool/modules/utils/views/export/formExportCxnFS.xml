@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formExportCxnFS" title="Export Cxn to FS"  close=">fnbr/main" >
+        <fields>
+            <mhcontainer>
+                <mspan>Export Constructions using JSON format.</mspan>
+            </mhcontainer>
+            <mvcontainer>
+                <mlabel>Domain</mlabel>
+                <include component="MLookupDomain.php" id="idDomain"/>
+                <mtextfield id="fileName" label="File name" size="20" sufix=".json"/>
+            </mvcontainer>
+        </fields>
+        <buttons>
+            <mbutton id="btnPost" text="{{_M('Get File')}}" action="$this->data->action"/>
+        </buttons>
+    </mformdialog>
+</view>

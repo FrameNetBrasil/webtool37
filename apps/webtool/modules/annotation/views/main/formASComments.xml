@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<view>
+    <mform id="formASComments">
+        <fields>
+            <mhiddenfield id="asc_idAnnotationSet" value="$this->data->id"/>
+            <mhiddenfield id="asc_idASComments"/>
+            <mlabel text="Select the appropriate Extra-Thematic FE that is missing in the frame structure, but present in the sentence being annotated." style="font-style:italic"/>
+            <include component="MLookupExtraThematicFE.php" id="asc_extraThematicFE" label="Missing Extra-Thematic FE"/>
+            <mlabel text="Use the next text box to type in the missing FE, if it is not among the ones listed in the drop down menu above." style="font-style:italic"/>
+            <mtextfield id="asc_extraThematicFEOther" label="Other Extra-Thematic FE" width="350px"/>
+            <mlabel text="Use the next box to insert general comments about this annotation set." style="font-style:italic"/>
+            <mmultilinefield id="asc_comment" label="Comments" width="350px" height="50px"/>
+            <mlabel text="Use the next box to add a note about the occurrence of some particular constructional phenomenon that influences the annotation." style="font-style:italic"/>
+            <mtextfield id="asc_construction" label="Construction" width="350px"/>
+        </fields>
+        <data load="$this->data->object"/>
+    </mform>
+</view>

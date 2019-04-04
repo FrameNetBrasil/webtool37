@@ -1,0 +1,11 @@
+ORM\Model\Frame:
+  type: entity
+  table: frame
+  id:
+    idFrame:
+      type: integer
+  fields:
+    entry:
+      type: string
+    idEntity:
+      type: integer

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<view>
+    <fields>
+        <mhiddenfield id="relationgroup_idRelationGroup" />      
+        <mtextfield id="relationgroup_entry" label="Entry:" prefix="rgp_" width="250px"/> 
+    </fields>
+</view>

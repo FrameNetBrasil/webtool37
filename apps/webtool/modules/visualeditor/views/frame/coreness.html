@@ -1,0 +1,53 @@
+<div id="editorLayout" style="width:100%;height:100%;">
+    <div id="editorNorthPane" data-options="region:'north', title:'{{_'Coreness Editor'}}'" style="height:60px">
+        <div style="float:left;padding:5px">
+            <input id="frame" name="frame" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Frame'}}">
+        </div>
+    </div>
+    <div id="editorLeftPane" region="west" split="true" style="height: 100%">
+        <ul id="framesTree"></ul>
+    </div>
+    <div id="editorCenterPane" region="center" style="height: 100%">
+        <div id="editorArea"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var editor = {
+        isMaster: {{$data->isMaster|noescape}}
+    };
+    $(function () {
+        $('#editorLayout').layout();
+        
+        editor.reloadFrame = function () {
+            $('#editorCenterPane').html('');
+            $('#framesTree').tree('reload');
+        }
+        
+        $('#frame').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Frame'}},
+            onClickButton: function() {
+                $('#framesTree').tree({queryParams: {frame: $('#frame').textbox('getValue')}});
+            }
+        });
+
+        $('#editorArea').panel({
+            href: {{$manager->getURL('visualeditor/frame/wacoreness')}},
+            height:'100%',
+            width:'100%',
+            border:false
+        });
+        
+        $('#framesTree').tree({
+            url: {{$manager->getURL('visualeditor/frame/frameTree')}},
+            onSelect: function (node) {
+                console.log(node);
+                if (node.id.charAt(0) == 'f') {
+                    editor.editorCoreness.newFESet(node.id.substr(1));
+                }
+            }
+        });
+    });
+</script>

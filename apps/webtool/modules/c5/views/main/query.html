@@ -1,0 +1,169 @@
+<div id="structureLayout" style="width:100%;height:100%;">
+    <div id="structureNorthPane" data-options="collapsible:false, region:'north', title:'{{_'C5 Query'}}'" style="height:70px">
+        <div style="float:left;padding:5px">
+            <input id="idDomain" name="domain" placeholder="{{_'Domain'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <input id="cxn" name="cxn" type="text" style="width:200px; padding:5px" placeholder="{{_'Search CxN'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <a id="btnQuery" href="#" class="easyui-linkbutton">Query</a>
+        </div>
+    </div>
+    <div id="structureLeftPane" region="west" split="true" style="height: 100%">
+        <div  style="height: 50%; overflow:scroll">
+            <ul id="cxnTree"></ul>
+        </div>
+        <div  style="height: 50%; overflow:scroll">
+            <ul id="conceptsTree"></ul>
+        </div>
+    </div>
+    <div id="c5Area" region="center" style="height: 100%">
+        <table id="resultGrid"/>
+    </div>
+</div>
+
+<style>
+    /****
+    Flags by language name (description on table Language)
+     */
+    .fnbrFlagPortuguese {
+        width:16px;
+        height:16px;
+        background: url({{$manager->getStaticURL($manager->getApp(), 'images/br.png')|noescape}}) no-repeat center center;
+    }
+
+    .fnbrFlagEnglish {
+        width:16px;
+        height:16px;
+        background: url({{$manager->getStaticURL($manager->getApp(), 'images/en.png')|noescape}}) no-repeat center center;
+    }
+
+    .fnbrFlagSwedish {
+        width:16px;
+        height:16px;
+        background: url({{$manager->getStaticURL($manager->getApp(), 'images/se.png')|noescape}}) no-repeat center center;
+    }
+</style>
+
+{{include grapher.css}}
+
+<script type="text/javascript">
+    var structure = {
+        app: {{$manager->getApp()}},
+        isMaster: {{$data->isMaster|noescape}},
+        nodeSelected: null,
+        node: null,
+        result: []
+    };
+    $(function () {
+        $('#structureLayout').layout({
+            fit:true
+        });
+
+        $('#idDomain').combobox({
+            data: JSON.parse({{$data->domain}}),
+            prompt: {{_'Select Domain'}},
+            valueField:'idDomain',
+            textField:'name',
+            onSelect: function() {
+                $('#cxnTree').tree({queryParams: {idDomain: $('#idDomain').combobox('getValue')}});
+            },
+            onChange: function() {
+                $('#cxnTree').tree({queryParams: {idDomain: $('#idDomain').combobox('getValue')}});
+            }
+        });
+
+        $('#cxn').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Cxn'}},
+            onClickButton: function() {
+                $('#cxnTree').tree({queryParams: {cxn: $('#cxn').textbox('getValue')}});
+            }
+        });
+
+        $('#btnQuery').linkbutton({
+            onClick: function() {
+                if (structure.nodeSelected == null) {
+                    $.messager.alert('C5', 'Select Cxn!','error');
+                } else {
+
+                    var rows = $('#resultGrid').datagrid('getRows');
+                    console.log(rows);
+                    structure.result = [];
+
+                    var idCxn = structure.nodeSelected.id.substr(1);
+                    console.log('node selected = ' + idCxn);
+                    var checkedConcepts = $('#conceptsTree').tree('getChecked');
+                    var idConcept = [];
+                    for(var i = 0; i < checkedConcepts.length; i++){
+                        idConcept.push(checkedConcepts[i].id.substr(1));
+                    }
+
+                    manager.doAjax({{$manager->getURL('api/c5/fullActivationquery')}}, function(data) {
+                        console.log(data);
+                        var r = JSON.parse(data);
+                        for(var i = 0; i < r.length; i++) {
+                            result = {
+                                language: r[i].idLanguage,
+                                cxn: r[i].name,
+                                a: r[i].a
+                            };
+                            structure.result.push(result);
+                        }
+                        $('#resultGrid').datagrid({
+                            data: structure.result
+                        });
+
+                    }, {idCxn: idCxn, idConcept: idConcept});
+
+                }
+            }
+        });
+
+        $('#cxnTree').tree({
+            url: {{$manager->getURL('structure/cxn/cxnTree')}},
+            onSelect: function (node) {
+                if (node.id.charAt(0) == 'c') {
+                    structure.nodeSelected = node;
+                }
+            }
+        });
+
+        $('#conceptsTree').tree({
+            url: {{$manager->getURL('structure/concept/conceptTree')}},
+            checkbox: true
+        });
+
+        $('#resultGrid').datagrid({
+            data: structure.result,
+            collapsible:true,
+            fitColumns: false,
+            autoRowHeight: false,
+            nowrap: true,
+            showHeader: true,
+            columns: [[
+                {field:'language',title:'Language',width:100,
+                    styler: function(value,row,index){
+                        if (value == 1){
+                            return {class:'fnbrFlagPortuguese'}
+                        }
+                        if (value == 2){
+                            return {class:'fnbrFlagEnglish'}
+                        }
+                        if (value == 5){
+                            return {class:'fnbrFlagSwedish'}
+                        }
+                    },
+                    formatter: function(value,row,index){
+                        return '';
+                    }
+                },
+                {field:'cxn',title:'Construction',width:300},
+                {field:'a',title:'A',width:150,align:'right',sortable:true}
+            ]]
+        });
+
+    });
+</script>

@@ -1,0 +1,16 @@
+{{define MLookupCoreType}}
+$('#{{$id}}').combogrid({
+    panelWidth:220,
+    url: '{{$appURL}}' + '/data/typeinstance/lookupCoreType',
+    idField:'idCoreType',
+    textField:'name',
+    label: 'Core Type',
+    width: 300,
+    mode:'remote',
+    fitColumns:true,
+    columns:[[
+        {field:'idCoreType', hidden:true},
+        {field:'name', title:'Name', width:202}
+    ]]
+});
+{{/define}}

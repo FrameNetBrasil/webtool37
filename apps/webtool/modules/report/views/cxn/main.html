@@ -1,0 +1,67 @@
+<div id="reportLayout" style="width:100%;height:100%;">
+    <div id="reportNorthPane" data-options="region:'north', title:'{{_'Frames'}}'" style="height:60px">
+        <div style="float:left;padding:5px">
+            <input id="cxn" name="cxn" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Cxn'}}">
+        </div>
+        <!--
+        <div style="float:left;padding:5px">
+            <input id="ce" name="ce" type="text" style="width:200px; padding:5px" placeholder="{{_'Search CE'}}">
+        </div>
+        -->
+    </div>
+    <div id="reportLeftPane" region="west" split="true" style="height: 100%">
+        <ul id="cxnTree"></ul>
+    </div>
+    <div id="reportCenterPane" region="center" style="height: 100%">
+        
+    </div>
+</div>
+
+<script type="text/javascript">
+    var report = {
+        isMaster: {{$data->isMaster|noescape}},
+        node: null
+    };
+    $(function () {
+
+        $('#reportLayout').layout();
+        
+        report.reloadCxn = function () {
+            $('#reportCenterPane').html('');
+            //manager.doGet({{$manager->getURL('report/frame/main')}});
+            $('#cxnTree').tree('reload');
+        }
+        
+        report.showCxn = function (idCxn) {
+            $('#reportCenterPane').html('');
+            manager.doGet({{$manager->getURL('report/cxn/showCxn')}} + '/' + idCxn, 'reportCenterPane');
+        }
+/*
+        $('#ce').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search CE'}},
+            onClickButton: function() {
+                $('#cxnTree').tree({queryParams: {ce: $('#ce').textbox('getValue')}});
+            }
+        });
+*/
+        $('#cxn').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Cxn'}},
+            onClickButton: function() {
+                $('#cxnTree').tree({queryParams: {cxn: $('#cxn').textbox('getValue')}});
+            }
+        });
+        $('#cxnTree').tree({
+            url: {{$manager->getURL('report/cxn/cxnTree')}},
+            onSelect: function (node) {
+                console.log(node);
+                if (node.id.charAt(0) == 'c') {
+                    report.showCxn(node.id.substr(1));
+                }
+            }
+        });
+    });
+</script>

@@ -1,0 +1,94 @@
+<?php
+/* Copyright [2011, 2013, 2017] da Universidade Federal de Juiz de Fora
+ * Este arquivo é parte do programa Framework Maestro.
+ * O Framework Maestro é um software livre; você pode redistribuí-lo e/ou 
+ * modificá-lo dentro dos termos da Licença Pública Geral GNU como publicada 
+ * pela Fundação do Software Livre (FSF); na versão 2 da Licença.
+ * Este programa é distribuído na esperança que possa ser  útil, 
+ * mas SEM NENHUMA GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer
+ * MERCADO ou APLICAÇÃO EM PARTICULAR. Veja a Licença Pública Geral GNU/GPL 
+ * em português para maiores detalhes.
+ * Você deve ter recebido uma cópia da Licença Pública Geral GNU, sob o título
+ * "LICENCA.txt", junto com este programa, se não, acesse o Portal do Software
+ * Público Brasileiro no endereço www.softwarepublico.gov.br ou escreva para a 
+ * Fundação do Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301, USA.
+ */
+/*
+ *  $Id: Date.php 2367 2007-09-02 20:00:27Z zYne $
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * This software consists of voluntary contributions made by many individuals
+ * and is licensed under the LGPL. For more information, see
+ * <http://www.doctrine-project.org>.
+ */
+
+/**
+ * Doctrine_Validator_Past
+ *
+ * @package     Doctrine
+ * @subpackage  Validator
+ * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link        www.doctrine-project.org
+ * @since       1.0
+ * @version     $Revision$
+ * @author      Roman Borschel <roman@code-factory.org>
+ */
+class Doctrine_Validator_Past extends Doctrine_Validator_Driver
+{
+    /**
+     * checks if the given value is a valid date in the past.
+     *
+     * @param MDate $value
+     * @return boolean
+     */
+    public function validate($value)
+    {
+        if (is_null($value)) {
+            return true;
+        }
+        $e = explode('-', $value->format('Y-m-d'));
+
+        if (count($e) !== 3) {
+            return false;
+        }
+        
+        if (is_array($this->args) && isset($this->args['timezone'])) {
+            switch (strtolower($this->args['timezone'])) {
+                case 'gmt':
+                    $now = gmdate("U") - date("Z");
+                    break;
+                default:
+                    $now = getdate();
+                    break;
+            }
+        } else {
+            $now = getdate();
+        }
+        
+        if ($now['year'] < $e[0]) {
+            return false;
+        } else if ($now['year'] == $e[0]) {
+            if ($now['mon'] < $e[1]) {
+                return false;
+            } else if ($now['mon'] == $e[1]) {
+                return $now['mday'] > $e[2];
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+}

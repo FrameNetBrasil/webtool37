@@ -1,0 +1,30 @@
+<div class="reportCorpus" style="width:100%; height:100%">
+    <table id="reportCorpusGrid" class="easyui-datagrid" data-options="fit:true,border:false" >
+        <thead>
+        <tr>
+            <th data-options="field:'frame',width:100, sortable:true">Frame</th>
+            <th data-options="field:'lu',width:100,sortable:true">LU</th>
+            <th data-options="field:'count',width:50">Count</th>
+            <th data-options="field:'doc',width:100,sortable:true">Doc</th>
+            <th data-options="field:'lang',width:30, align:'center'">Lang</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $.parser.parse();
+
+    $("#reportCorpusGrid").datagrid({
+        title: 'Corpus: {{$data->title|noescape}}',
+        singleSelect: true,
+        fitColumns: true,
+        nowrap: false,
+        checkOnSelect: false,
+        selectOnCheck: false,
+        //idField: 'idCorpus',
+        url: {{$manager->getURL('api/reportcorpus/getDataReportCorpus')}} + '/' + {{$data->idCorpus}},
+        method: 'get'
+    });
+
+</script>

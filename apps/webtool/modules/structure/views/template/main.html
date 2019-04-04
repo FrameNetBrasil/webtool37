@@ -1,0 +1,158 @@
+<div id="structureLayout" style="width:100%;height:100%;">
+    <div id="structureNorthPane" data-options="region:'north', title:'{{_'Templates'}}'" style="height:70px">
+        <div style="float:left;padding:5px">
+            <input id="template" name="template" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Template'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <input id="fe" name="fe" type="text" style="width:200px; padding:5px" placeholder="{{_'Search FE'}}">
+        </div>
+    </div>
+    <div id="structureLeftPane" region="west" split="true" style="height: 100%">
+        <ul id="templatesTree"></ul>
+    </div>
+    <div id="structureCenterPane" region="center" style="height: 100%">
+        
+    </div>
+</div>
+<div id="menuRootTemplates" style="display:none, width:120px;">
+<div onclick="structure.reloadTemplate()" data-options="iconCls:'icon-reload'">{{_'Reload Templates'}}</div>
+<div onclick="structure.newTemplate()" data-options="iconCls:'icon-add'">{{_'New Template'}}</div>
+</div>
+<div id="menuTemplate" style="display:none, width:120px;">
+<div onclick="structure.editTemplate()" data-options="iconCls:'icon-edit'">{{_'Edit Template'}}</div>
+<div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
+<div onclick="structure.showTemplatedFrames()" data-options="iconCls:'icon-filter'">{{_'Templated Frames'}}</div>
+<div onclick="structure.newFrameElement()" data-options="iconCls:'icon-add'">{{_'New FrameElement'}}</div>
+<div onclick="structure.deleteTemplate()" data-options="iconCls:'icon-add'">{{_'Delete Template'}}</div>
+</div>
+<div id="menuFrameElementTemplate" style="display:none, width:120px;">
+<div onclick="structure.editFrameElement()" data-options="iconCls:'icon-edit'">{{_'Edit FrameElement'}}</div>
+<div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
+<div onclick="structure.showTemplatedFEs()" data-options="iconCls:'icon-filter'">{{_'Templated FEs'}}</div>
+</div>
+<script type="text/javascript">
+    var structure = {
+        app: {{$manager->getApp()}},
+        isMaster: {{$data->isMaster|noescape}},
+        node: null
+    };
+    $(function () {
+        $('#structureLayout').layout({
+            fit:true
+        });
+
+        structure.newTemplate = function () {
+            manager.doGet({{$manager->getURL('structure/template/formNewTemplate')}},'structureCenterPane');
+        }
+
+        structure.deleteTemplate = function (idTemplate) {
+            if ($.type(idTemplate) === "undefined") {
+                idTemplate = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/template/formDeleteTemplate')}} + '/' + idTemplate,'structureCenterPane');
+        }
+
+        structure.editTemplate = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/template/formUpdateTemplate')}} + '/' + id,'structureCenterPane');
+        }
+        
+        structure.reloadTemplate = function () {
+            $('#structureCenterPane').html('');
+            $('#templatesTree').tree('reload');
+        }
+        
+        structure.editEntry = function (entry) {
+            if ($.type(entry) === "undefined") {
+                entry = structure.node.entry;
+            }
+            manager.doAction('^' + structure.app + '/structure/entry/formUpdate/' + entry);
+        }
+
+        structure.editEntry = function (entry) {
+            if ($.type(entry) === "undefined") {
+                entry = structure.node.entry;
+            }
+            manager.doAction('^' + structure.app + '/entry/formUpdate/' + entry);
+        }
+
+        structure.showTemplatedFrames = function (idTemplate) {
+            if ($.type(idTemplate) === "undefined") {
+                idTemplate = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/template/formTemplatedFrames')}} + '/' + idTemplate,'structureCenterPane');
+        }
+
+        structure.showTemplatedFEs = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/template/formTemplatedFEs')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.newFrameElement = function (idTemplate) {
+            if ($.type(idTemplate) === "undefined") {
+                idTemplate = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/template/formNewFrameElement')}} + '/' + idTemplate,'structureCenterPane');
+        }
+
+        structure.editFrameElement = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/template/formUpdateFrameElement')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.contextMenuFrame = function(e, node) {
+            if (!structure.isMaster) {
+                return;
+            }
+            e.preventDefault();
+            console.log(node);
+            structure.node = node;
+            var $menu = '';
+            $(this).tree('select',node.target);
+            if (node.id == 'root') {
+                $menu = $('#menuRootTemplates');
+            } else if (node.id.charAt(0) == 't') {
+                $menu = $('#menuTemplate');
+            } else if (node.id.charAt(0) == 'e') {
+                $menu = $('#menuFrameElementTemplate');
+            }
+            if ($menu != '') {
+                $menu.menu('show',{
+                    left: e.pageX,
+                    top: e.pageY
+                });
+            }
+        }
+
+        $('#menuRootTemplates').menu({});
+        $('#menuTemplate').menu({});
+        $('#menuFrameElementTemplate').menu({});
+
+        $('#fe').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search FE'}},
+            onClickButton: function() {
+                $('#templatesTree').tree({queryParams: {fe: $('#fe').textbox('getValue')}});
+            }
+        });
+        $('#template').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Template'}},
+            onClickButton: function() {
+                $('#templatesTree').tree({queryParams: {frame: $('#template').textbox('getValue')}});
+            }
+        });
+        $('#templatesTree').tree({
+            url: {{$manager->getURL('structure/template/templateTree')}},
+            onContextMenu: structure.contextMenuFrame
+        });
+    });
+</script>

@@ -1,0 +1,37 @@
+<div id="grapherLayout" style="width:100%;height:100%;">
+    <div id="grapherCenterPane" data-options="region:'center'" style="width: 100%; height:100%">
+        <div id="grapherPanel" style="height: 95%">
+            <div id="grapherArea" style="width:100%; height:95%;"></div>
+        </div>
+    </div>
+</div>
+{{include $manager->getThemePath('css/graph.css')}}
+
+{{include 'grapher.js'}}
+
+<script type="text/javascript">
+
+    $(function () {
+        $('#grapherLayout').layout({
+            fit:true
+        });
+        grapher.instance = new grapher.graph("grapherArea", grapher.relations);
+
+        grapher.reload = function () {
+            $('#grapherCenterPane').html('');
+        }
+
+        manager.doAjax({{$manager->getURL('api/grapher/getCxnStructure')}}, function(data) {
+            console.log(data);
+            var links = JSON.parse(data);
+            grapher.instance.clearLink();
+            grapher.instance.clearNode();
+            $.each(links, function(index, link) {
+                grapher.instance.addLink(link);
+            });
+        }, {idCxn: {{$data->id}},  chosen: {},  level: 2 });
+    });
+</script>
+
+
+
