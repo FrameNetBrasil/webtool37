@@ -11,7 +11,7 @@ return [
         'template' => 'index'
     ],
     'options' => [
-        'startup' => 'guia',
+        'startup' => 'webtool',
         'dbsession' => false,
         'debug' => true,
         'charset' => 'UTF-8',

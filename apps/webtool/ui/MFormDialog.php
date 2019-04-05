@@ -5,7 +5,7 @@ class MFormDialog extends MForm
 
     public function generateFields()
     {
-        if (count($control->fields->controls) == 1) {
+        if (isset($control->fields->controls) == 1) {
             $style="style=border-spacing:0px;";
         }    
         $fields = "<div class='mFormContainer' {$style}>";
@@ -85,7 +85,7 @@ class MFormDialog extends MForm
         
         // se o form tem fields com validators, define onSubmit
         $validators = '';
-        if (count($this->property->toValidate)) {
+        if (isset($this->property->toValidate)) {
             $this->page->onSubmit("$('#{$this->property->id}').form('validate')", $this->property->id);
             $validators = implode(',', $this->property->bsValidator);
         }

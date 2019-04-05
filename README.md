@@ -33,16 +33,16 @@ $ composer install
 ⋅⋅* Create conf files from dist
 
 ```sh
-$ cd webtool/conf
+$ cd webtool/core/conf
 $ cp conf.dist.php conf.php
 
 $ cd webtool/apps/webtool/conf
 $ cp conf.dist.php conf.php
 ```
 
-⋅⋅* Restore/create the MySQL database from the dump located at webtool/doc/database/webtool_dump.zip
+⋅⋅* Restore/create the MySQL database from the dump located at webtool/apps/webtool/doc/database/webtool_dump.zip
 
-⋅⋅* Configure database access at webtool/apps/webtool/conf.php
+⋅⋅* Configure database access at webtool/apps/webtool/conf/conf.php
 
 ```sh
     'db' => [
@@ -57,7 +57,7 @@ $ cp conf.dist.php conf.php
     ],
 ```
  
-Access the app (e.g. http://localhost/webtool with user = webtool password = test)
+Access the app (e.g. http://localhost/webtool/index.html with user = webtool password = test)
 
 
 ## License
