@@ -57,7 +57,7 @@ $ cp conf.dist.php conf.php
     ],
 ```
  
-Access the app (e.g. http://localhost/webtool/index.html with user = webtool password = test)
+Access the app (e.g. http://localhost/webtool/index.php/webtool/main with user = webtool password = test)
 
 
 ## License
