@@ -58,3 +58,7 @@ core/var/files/*
 # Config Files #
 ################
 core/conf/conf.php
+
+# Customizable index.html #
+###########################
+index.html
