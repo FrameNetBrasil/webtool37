@@ -15,7 +15,7 @@
  */
 
 /**
- * Maestro 2.0 - Manager Core
+ * Maestro 3.0 - Manager Core
  */
 var manager = {
     version: 'Manager 3.0',
@@ -24,7 +24,11 @@ var manager = {
     getApp: function() {
         var re = new RegExp(/\/index\.php\/([^\/]*)\//, "g");
         var matches = re.exec(window.location.href);
-        return matches[1];
+        if (matches == null) {
+            return manager.defaultApp;
+        } else {
+            return matches[1];
+        }
     },
     addAppToAction: function  (action) {
         var app = manager.getApp();
