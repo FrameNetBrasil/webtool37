@@ -460,10 +460,12 @@ HERE;
     public function listSentenceForCONLL() {
         $cmd = <<<HERE
 
-select s.idSentence, s.text
+select distinct s.idSentence, s.text
 FROM document d
   INNER JOIN paragraph p ON (d.idDocument = p.idDocument)
   INNER JOIN sentence s ON (p.idParagraph = s.idParagraph)
+  INNER JOIN annotationset a on (a.idSentence = s.idSentence)
+  INNER JOIN view_labelfecetarget lb on (a.idAnnotationSet = lb.idAnnotationSet)
 where (d.idDocument = {$this->getIdDocument()})
 order by s.idSentence
 
