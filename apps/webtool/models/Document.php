@@ -457,4 +457,53 @@ HERE;
 
     }
 
+    public function listSentenceForCONLL() {
+        $cmd = <<<HERE
+
+select s.idSentence, s.text
+FROM document d
+  INNER JOIN paragraph p ON (d.idDocument = p.idDocument)
+  INNER JOIN sentence s ON (p.idParagraph = s.idParagraph)
+where (d.idDocument = {$this->getIdDocument()})
+order by s.idSentence
+
+HERE;
+        $query = $this->getDb()->getQueryCommand($cmd);
+        return $query;
+    }
+
+    public function listAnnotationSetForCONLL($idSentence) {
+        $idLanguage = \Manager::getSession()->idLanguage;
+
+        $cmd = <<<HERE
+
+select a.idAnnotationSet, lb.layerTypeEntry, lb.startChar, lb.endChar, e1.name frame, e3.name fe, lu.name lu, pos.POS, lx.name lexeme
+FROM annotationset a
+  INNER JOIN view_labelfecetarget lb on (a.idAnnotationSet = lb.idAnnotationSet)
+  INNER JOIN view_subcorpuslu sc ON (a.idSubCorpus = sc.idSubCorpus)
+  INNER JOIN view_lu lu ON (sc.idLU = lu.idLU)
+  INNER JOIN lemma lm on (lu.idLemma = lm.idLemma)
+  INNER JOIN lexemeentry le ON (lm.idLemma = le.idLemma)
+  INNER JOIN lexeme lx on (le.idLexeme = lx.idLexeme)
+  INNER JOIN pos ON (lu.idPOS = pos.idPOS)
+  INNER JOIN frame f on (lu.idFrame = f.idFrame)
+  INNER JOIN entry e1 ON (f.entry = e1.entry)
+  INNER JOIN entry e2 ON (lu.frameEntry = e2.entry)
+  INNER JOIN language l on (lu.idLanguage = l.idLanguage)
+  LEFT JOIN view_frameElement fe on (lb.idFrameElement = fe.idFrameElement)
+  LEFT JOIN entry e3 ON (fe.entry = e3.entry)
+where (l.idlanguage = {$idLanguage})
+and (lb.idLanguage = {$idLanguage})
+and (e1.idLanguage = {$idLanguage})
+and (e2.idLanguage = {$idLanguage})
+and ((e3.idLanguage = {$idLanguage}) or (e3.idLanguage is null))
+and (lb.startChar <> -1)
+and a.idSentence = {$idSentence}
+order by a.idAnnotationset
+
+HERE;
+        $query = $this->getDb()->getQueryCommand($cmd);
+        return $query;
+    }
+
 }

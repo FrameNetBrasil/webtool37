@@ -360,6 +360,115 @@ class DataService extends MService
         }
     }
 
+    public function exportDocumentToCONLL($document) {
+        $lines = '';
+        $lexemeCache = [];
+        $wf = new fnbr\models\ViewWfLexemeLemma();
+        $querySentence = $document->listSentenceForCONLL();
+        $sentences = $querySentence->getResult();
+        foreach($sentences as $sentence) {
+            $words = [];
+            $lexemes = [];
+            $pos = 0;
+            $text = utf8_decode($sentence['text']) . ' ';
+            $n = strlen($text);
+            mdump($text);
+            for($i = 0; $i < $n; $i++) {
+                if (($text{$i} == ' ')
+                    || ($text{$i} == '.')
+                    || ($text{$i} == ',')
+                    || ($text{$i} == ':')
+                    || ($text{$i} == ';')
+                    || ($text{$i} == '-')
+                    || ($text{$i} == '=')
+                    || ($text{$i} == '?')
+                    || ($text{$i} == '!')
+                    || ($text{$i} == '/')
+                    || ($text{$i} == '<')
+                    || ($text{$i} == '>')){
+                    $pos = $i;
+                    if ($text{$i} != ' ') {
+                        $words[$pos] = $text{$i};
+                    }
+                    $pos++;
+                } else {
+                    $words[$pos] .= $text{$i};
+                }
+
+            }
+            foreach($words as $i => $word) {
+                $words[$i] = utf8_encode($word);
+                if(isset($lexemeCache[$word])) {
+                    $lexemes[$i] = $lexemeCache[$word];
+                } else {
+                    $lexeme = $wf->listByFilter((object)['form' => $words[$i]])->asQuery()->getResult()[0];
+                    $lexemes[$i] = $lexemeCache[$word] = [$lexeme['lexeme'], $lexeme['POSLexeme']];
+                }
+            }
+            //mdump($lexemes);
+            $queryAS = $document->listAnnotationSetForCONLL($sentence['idSentence']);
+            // a.idAnnotationSet, lb.layerTypeEntry, lb.startChar, lb.endChar, e1.name frame, e3.name fe, lu.name lu, pos.POS, lx.name lexeme
+            $annotationSets = [];
+            $idAS = 0;
+            $labels = $queryAS->getResult();
+            foreach($labels as $label) {
+                if($label['idAnnotationSet'] != $idAS) {
+                    $idAS = $label['idAnnotationSet'];
+                    $annotationSets[$idAS][9999] = '# ' . $idAS . ' - ' . $sentence['text'] . "\n";
+                }
+                $annotationSets[$idAS][$label['startChar']] = $label;
+            }
+            foreach($annotationSets as $idAS => $annotationSet) {
+                $endChar = -1;
+                $mark = -1;
+                $id = 1;
+                $lines .= $annotationSet[9999];
+                $marking = false;
+                foreach($words as $start => $word) {
+                    $form = $word;
+                    $lexeme = $lexemes[$start][0];
+                    $pos = $lexemes[$start][1];
+                    $sentenceNum = $sentence['idSentence'];
+                    if (isset($annotationSet[$start])) {
+                        $label = $annotationSet[$start];
+                        if ($label['fe'] == '') {
+                            $lu = $label['lu'];
+                            $frame = $label['frame'];
+                            $biofe = 'O';
+                        } else {
+                            $lu = '_';
+                            $frame = '_';
+                            $biofe = 'B-' . $label['fe'];
+                        }
+                        $marking = true;
+                        $endChar = $label['endChar'];
+                        $mark = $start;
+                    } else if ($marking && ($start <= $endChar)) {
+                        $label = $annotationSet[$mark];
+                        if ($label['fe'] == '') {
+                            $lu = $label['lu'];
+                            $frame = $label['frame'];
+                            $biofe = 'O';
+                        } else {
+                            $lu = '_';
+                            $frame = '_';
+                            $biofe = 'I-' . $label['fe'];
+                        }
+                    } else {
+                        $lu = '_';
+                        $frame = '_';
+                        $biofe = 'O';
+                        $marking = false;
+                    }
+                    $lines .= $id++ . "\t" . $form . "\t" . '_' . "\t" . $lexeme . "\t" . $pos . "\t" . "_" . "\t" . $sentenceNum . "\t_\t_\t_\t_\t_\t" . $lu . "\t" . $frame. "\t" . $biofe . "\n";
+                }
+                $lines .= "\n";
+            }
+        }
+        return $lines;
+
+
+    }
 
 
 }

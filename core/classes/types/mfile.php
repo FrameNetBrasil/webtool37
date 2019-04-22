@@ -82,6 +82,7 @@ class MFile extends MType
     {
         $this->name = $name ?: md5($this->value);
         $file = \Manager::getFilesPath($this->name);
+        unlink($file);
         if (!file_exists($file)) {
             $this->saveTo($file);
         }
