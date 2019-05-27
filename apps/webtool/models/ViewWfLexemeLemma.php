@@ -32,6 +32,12 @@ class ViewWfLexemeLemma extends map\ViewWfLexemeLemmaMap {
             if ($filter->lexeme != '') {
                 $criteria->where("lexeme = '{$filter->lexeme}'");
             }
+            if ($filter->arrayForm != '') {
+                $criteria->where("form", "in", $filter->arrayForm);
+            }
+            if ($filter->idLanguage != '') {
+                $criteria->where("idLanguage = {$filter->idLanguage}");
+            }
         }
         return $criteria;
     }
