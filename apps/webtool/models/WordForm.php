@@ -74,6 +74,15 @@ class WordForm extends map\WordFormMap
         return $criteria->asQuery()->chunkResult('i','form');
     }
 
+    public function listLexemes($words)
+    {
+        $idLanguage = \Manager::getSession()->idLanguage;
+        $criteria = $this->getCriteria()->select('form, lexeme.name as lexeme, lexeme.pos.POS as POSLexeme');
+        $criteria->where("form", "in", $words);
+        $criteria->where("lexeme.idLanguage", "=", $idLanguage);
+        return $criteria->asQuery();
+    }
+
     public function save() {
         $timeline = 'wfm_' . md5($this->getForm() . $this->getIdLexeme());
         $this->setTimeLine(Base::newTimeLine($timeline, 'S'));

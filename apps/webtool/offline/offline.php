@@ -4,7 +4,7 @@
 $dir = dirname(__FILE__);
 
 // Path do Maestro
-$dir = strstr($dir, "maestro3", true) . "maestro3";
+$dir = $dir . '/../../..';
 require_once($dir . '/vendor/autoload.php');
 
 // Configuração para tratamento de erros

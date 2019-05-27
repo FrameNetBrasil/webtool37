@@ -259,46 +259,46 @@ class DataService extends MService
                     $result[$i]['ces'][$j]['entries'][] = $e;
                 }
                 $treeEvokes = $ceModel->listEvokesRelations();
-                foreach($treeEvokes as $evokes) {
-                    foreach($evokes as $evoke) {
+                foreach ($treeEvokes as $evokes) {
+                    foreach ($evokes as $evoke) {
                         $result[$i]['ces'][$j]['evokes'][] = $evoke['frameEntry'];
                     }
                 }
                 $treeRelations = $ceModel->listDirectRelations();
-                foreach($treeRelations as $relationEntry => $relations) {
-                    foreach($relations as $relation) {
+                foreach ($treeRelations as $relationEntry => $relations) {
+                    foreach ($relations as $relation) {
                         $result[$i]['ces'][$j]['relations'][] = [$relationEntry, $relation['ceEntry']];
                     }
                 }
 
                 $chain = $cnModel->getChainForExportByIdConstrained($ce['idEntity']);
-                $result[$i]['ces'][$j]['constraints']= $chain;
+                $result[$i]['ces'][$j]['constraints'] = $chain;
             }
             $entries = $entry->listForExport($cxn['entry'])->asQuery()->getResult();
             foreach ($entries as $j => $e) {
                 $result[$i]['entries'][] = $e;
             }
             $treeEvokes = $cxnModel->listEvokesRelations();
-            foreach($treeEvokes as $evokes) {
-                foreach($evokes as $evoke) {
+            foreach ($treeEvokes as $evokes) {
+                foreach ($evokes as $evoke) {
                     $result[$i]['evokes'][] = $evoke['frameEntry'];
                 }
             }
             $treeRelations = $cxnModel->listDirectRelations();
-            foreach($treeRelations as $relationEntry => $relations) {
-                foreach($relations as $relation) {
+            foreach ($treeRelations as $relationEntry => $relations) {
+                foreach ($relations as $relation) {
                     $result[$i]['relations'][] = [$relationEntry, $relation['cxnEntry']];
                 }
             }
             $treeRelations = $cxnModel->listInverseRelations();
-            foreach($treeRelations as $relationEntry => $relations) {
-                foreach($relations as $relation) {
+            foreach ($treeRelations as $relationEntry => $relations) {
+                foreach ($relations as $relation) {
                     $result[$i]['inverse'][] = [$relationEntry, $relation['cxnEntry']];
                 }
             }
 
             $chain = $cnModel->getChainForExportByIdConstrained($cxn['idEntity']);
-            $result[$i]['constraints']= $chain;
+            $result[$i]['constraints'] = $chain;
 
         }
         $json = json_encode($result);
@@ -360,20 +360,87 @@ class DataService extends MService
         }
     }
 
-    public function exportDocumentToCONLL($document) {
+    public function exportDocumentToXML()
+    {
+        $document = new \fnbr\models\Document();
+        $document->getByEntry($this->data->documentEntry);
+        $corpus = $document->getCorpus();
+
+        $xmlStr = <<<HERE
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml-stylesheet type="text/xsl" href="fullText.xsl"?>
+<fullTextAnnotation>
+    <header>
+        <corpus description="{$corpus->getDescription()}" name="{$corpus->getName()}" ID="{$corpus->getId()}">
+            <document></document>
+        </corpus>
+    </header>
+</fullTextAnnotation>
+
+HERE;
+
+        $sxe = simplexml_load_string($xmlStr);
+        $sxe->header->corpus->document->addAttribute('description', $document->getName());
+        $sxe->header->corpus->document->addAttribute('name', $document->getName());
+        $sxe->header->corpus->document->addAttribute('ID', $document->getId());
+        $sentences = $document->listSentenceForXML()->getResult();
+        $i = 0;
+        foreach ($sentences as $sentence) {
+            $s = $sxe->addChild('sentence');
+            $s->addAttribute('ID', $sentence['idSentence']);
+            $t = $s->addChild('text', $sentence['text']);
+            $queryAS = $document->listAnnotationSetForXML($sentence['idSentence']);
+            $idAS = 0;
+            $layer = '';
+            $labels = $queryAS->getResult();
+            foreach ($labels as $label) {
+                if ($label['idAnnotationSet'] != $idAS) {
+                    $idAS = $label['idAnnotationSet'];
+                    $aset = $s->addChild('annotationSet');
+                    $aset->addAttribute('ID', $label['idAnnotationSet']);
+                    $aset->addAttribute('luID', $label['idLU']);
+                    $aset->addAttribute('luName', $label['luName']);
+                    $aset->addAttribute('frameID', $label['idFrame']);
+                    $aset->addAttribute('frameName', $label['frameName']);
+                    $layer = '';
+                }
+                if ($layer != $label['layerTypeEntry']) {
+                    $layer = $label['layerTypeEntry'];
+                    $ly = $aset->addChild('layer');
+                    $ly->addAttribute('name', str_replace('lty_', '', $label['layerTypeEntry']));
+                }
+                $lb = $ly->addChild('label');
+                $lb->addAttribute('ID', $label['idFrameElement'] . $label['idGenericLabel']);
+                $lb->addAttribute('name', $label['feName'] . $label['glName']);
+                $lb->addAttribute('start', $label['startChar']);
+                $lb->addAttribute('end', $label['endChar']);
+            }
+            if ((++$i % 5) == 0) {
+                print_r($i . ' sentence(s)' . "\n");
+            }
+        }
+        file_put_contents($this->data->filename, $sxe->asXML());
+    }
+
+    public function exportDocumentToCONLL($document)
+    {
+        $document = new \fnbr\models\Document();
+        $document->getByEntry($this->data->documentEntry);
+        $idLanguage = 2;//$this->data->idLanguage; //\Manager::getSession()->idLanguage;
+        $count = 0;
         $lines = '';
         $lexemeCache = [];
-        $wf = new fnbr\models\ViewWfLexemeLemma();
+        $wf = new fnbr\models\Wordform();//new fnbr\models\ViewWfLexemeLemma();
         $querySentence = $document->listSentenceForCONLL();
         $sentences = $querySentence->getResult();
-        foreach($sentences as $sentence) {
+        foreach ($sentences as $sentence) {
             $words = [];
             $lexemes = [];
             $pos = 0;
             $text = utf8_decode($sentence['text']) . ' ';
             $n = strlen($text);
             mdump($text);
-            for($i = 0; $i < $n; $i++) {
+            for ($i = 0; $i < $n; $i++) {
                 if (($text{$i} == ' ')
                     || ($text{$i} == '.')
                     || ($text{$i} == ',')
@@ -384,11 +451,17 @@ class DataService extends MService
                     || ($text{$i} == '?')
                     || ($text{$i} == '!')
                     || ($text{$i} == '/')
+                    || ($text{$i} == '\'')
+                    || ($text{$i} == '"')
                     || ($text{$i} == '<')
-                    || ($text{$i} == '>')){
+                    || ($text{$i} == '>')) {
                     $pos = $i;
                     if ($text{$i} != ' ') {
-                        $words[$pos] = $text{$i};
+                        if ($text{$i} == '\'') {
+                            $words[$pos] = '\\\'';
+                        } else {
+                            $words[$pos] = $text{$i};
+                        }
                     }
                     $pos++;
                 } else {
@@ -396,13 +469,20 @@ class DataService extends MService
                 }
 
             }
-            foreach($words as $i => $word) {
+            foreach ($words as $i => $word) {
                 $words[$i] = utf8_encode($word);
-                if(isset($lexemeCache[$word])) {
+            }
+            $queryLx = $wf->listLexemes($words)->treeResult("'form'", 'lexeme,POSLexeme');
+
+            foreach ($words as $i => $word) {
+                if (isset($lexemeCache[$word])) {
                     $lexemes[$i] = $lexemeCache[$word];
                 } else {
-                    $lexeme = $wf->listByFilter((object)['form' => $words[$i]])->asQuery()->getResult()[0];
-                    $lexemes[$i] = $lexemeCache[$word] = [$lexeme['lexeme'], $lexeme['POSLexeme']];
+                    //$lexeme = $wf->listByFilter((object)['form' => $words[$i]])->asQuery()->getResult()[0];
+                    $lexemes[$i] = $lexemeCache[$word] = [
+                        $queryLx[$word]['lexeme'],
+                        $queryLx[$word]['POSLexeme']
+                    ];
                 }
             }
             //mdump($lexemes);
@@ -411,20 +491,20 @@ class DataService extends MService
             $annotationSets = [];
             $idAS = 0;
             $labels = $queryAS->getResult();
-            foreach($labels as $label) {
-                if($label['idAnnotationSet'] != $idAS) {
+            foreach ($labels as $label) {
+                if ($label['idAnnotationSet'] != $idAS) {
                     $idAS = $label['idAnnotationSet'];
                     $annotationSets[$idAS][9999] = '# ' . $idAS . ' - ' . $sentence['text'] . "\n";
                 }
                 $annotationSets[$idAS][$label['startChar']] = $label;
             }
-            foreach($annotationSets as $idAS => $annotationSet) {
+            foreach ($annotationSets as $idAS => $annotationSet) {
                 $endChar = -1;
                 $mark = -1;
                 $id = 1;
                 $lines .= $annotationSet[9999];
                 $marking = false;
-                foreach($words as $start => $word) {
+                foreach ($words as $start => $word) {
                     $form = $word;
                     $lexeme = $lexemes[$start][0];
                     $pos = $lexemes[$start][1];
@@ -460,13 +540,17 @@ class DataService extends MService
                         $biofe = 'O';
                         $marking = false;
                     }
-                    $lines .= $id++ . "\t" . $form . "\t" . '_' . "\t" . $lexeme . "\t" . $pos . "\t" . "_" . "\t" . $sentenceNum . "\t_\t_\t_\t_\t_\t" . $lu . "\t" . $frame. "\t" . $biofe . "\n";
+                    $lines .= $id++ . "\t" . $form . "\t" . '_' . "\t" . $lexeme . "\t" . $pos . "\t" . "_" . "\t" . $sentenceNum . "\t_\t_\t_\t_\t_\t" . $lu . "\t" . $frame . "\t" . $biofe . "\n";
                 }
                 $lines .= "\n";
             }
-        }
-        return $lines;
+            if ((++$count % 5) == 0) {
+                print_r($count . ' sentence(s)' . "\n");
+            }
 
+        }
+        //return $lines;
+        file_put_contents($this->data->filename, $lines);
 
     }
 
