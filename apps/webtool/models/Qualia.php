@@ -88,7 +88,7 @@ HERE;
     {
         $idQualia = $this->getId();
         $cmd = <<<HERE
-        SELECT fe.idFrameElement, concat('lu1: ',e.name) name
+        SELECT r.idEntityRelation, concat('lu1: ',e.name) name
         FROM Qualia q
         JOIN View_Relation r on (r.idEntity1 = q.idEntity)
         JOIN FrameElement fe on (r.idEntity2 = fe.idEntity)
@@ -97,7 +97,7 @@ HERE;
           AND (q.idQualia = {$idQualia})
           AND (e.idLanguage = {$idLanguage})
         UNION
-        SELECT fe.idFrameElement, concat('lu2: ',e.name) name
+        SELECT r.idEntityRelation, concat('lu2: ',e.name) name
         FROM Qualia q
         JOIN View_Relation r on (r.idEntity1 = q.idEntity)
         JOIN FrameElement fe on (r.idEntity2 = fe.idEntity)
@@ -107,7 +107,7 @@ HERE;
           AND (e.idLanguage = {$idLanguage})
 
 HERE;
-        $result = $this->getDb()->getQueryCommand($cmd)->chunkResult('idFrameElement', 'name');
+        $result = $this->getDb()->getQueryCommand($cmd)->chunkResult('idEntityRelation', 'name');
         return $result;
     }
 

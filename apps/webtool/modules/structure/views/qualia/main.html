@@ -44,6 +44,9 @@
     <div onclick="structure.luChangeQualia()" data-options="iconCls:'icon-edit'">{{_'Change Qualia Structure'}}</div>
     <div onclick="structure.luDeleteQualia()" data-options="iconCls:'icon-remove'">{{_'Delete Qualia Relation'}}</div>
 </div>
+<div id="menuQualiaElement" style="display:none, width:120px;">
+    <div onclick="structure.qualiaChangeElement()" data-options="iconCls:'icon-edit'">{{_'Change Element'}}</div>
+</div>
 
 {{include $manager->getThemePath('css/graph.css')}}
 
@@ -186,6 +189,13 @@
         }
 
 
+        structure.qualiaChangeElement = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/qualia/formQualiaChangeElement')}} + '/' + id,'structureCenterPane');
+        }
         // end Qualia
 
 
@@ -206,6 +216,8 @@
                     $menu = $('#menuQualiaQualia');
                 } else if (node.id.charAt(0) == 'y') {
                     $menu = $('#menuQualiaQualiaRelation');
+                } else if (node.id.charAt(0) == 'e') {
+                    $menu = $('#menuQualiaElement');
                 }
                 if ($menu != '') {
                     $menu.menu('show', {
@@ -221,6 +233,7 @@
         $('#menuQualiaLU').menu({});
         $('#menuQualiaQualia').menu({});
         $('#menuQualiaQualiaRelation').menu({});
+        $('#menuQualiaElement').menu({});
 
         $('#lu').textbox({
             //buttonText:{{_'Search'}},

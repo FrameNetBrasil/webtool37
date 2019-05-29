@@ -108,9 +108,9 @@ class StructureFrameService extends MService
         $result = array();
         $qualia = new fnbr\models\Qualia($idQualia);
         $fes = $qualia->listFEs($idLanguage);
-        foreach ($fes as $idFE => $name) {
+        foreach ($fes as $idEntityRelation => $name) {
             $node = array();
-            $node['id'] = 'e' . $idFE;
+            $node['id'] = 'e' . $idEntityRelation;
             $node['text'] = $name;
             $node['state'] = 'closed';
             $node['iconCls'] = 'icon-blank fa12px entity_lu';

@@ -103,7 +103,14 @@ class FrameElement extends map\FrameElementMap
         $result = $criteria->asQuery()->getResult();
         $this->setIdFrame($result[0]['idFrame']);
     }
-    
+
+    public function getByIdEntity($idEntity)
+    {
+        $criteria = $this->getCriteria()->select('*');
+        $criteria->where("idEntity = {$idEntity}");
+        $this->retrieveFromCriteria($criteria);
+    }
+
     public function getByEntry($entry)
     {
         $criteria = $this->getCriteria()->select('*');

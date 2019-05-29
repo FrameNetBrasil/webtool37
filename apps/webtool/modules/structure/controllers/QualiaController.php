@@ -273,4 +273,32 @@ class QualiaController extends MController
 
     }
 
+    public function formQualiaChangeElement()
+    {
+        $this->data->title = 'LU Qualia Element';
+        $this->data->idEntityRelation = $this->data->id;
+        $entityRelation = new fnbr\models\EntityRelation($this->data->idEntityRelation);
+        $frameElement = new fnbr\models\FrameElement();
+        $frameElement->getByIdEntity($entityRelation->getIdEntity2());
+        $frame = $frameElement->getFrame();
+        $this->data->idFrame = $frame->getId();
+        $this->data->close = "!$('#formQualiaChangeElement_dialog').dialog('close');";
+        $this->data->save = "@structure/qualia/qualiaChangeElement|formQualiaChangeElement";
+        $this->render();
+    }
+
+    public function qualiaChangeElement() {
+        try {
+            $entityRelation = new fnbr\models\EntityRelation($this->data->idEntityRelation);
+            $frameElement = new fnbr\models\FrameElement($this->data->idFE);
+            $entityRelation->setIdEntity2($frameElement->getIdEntity());
+            $entityRelation->save();
+            $this->renderPrompt('information', 'OK');
+        } catch (\Exception $e) {
+            $this->renderPrompt('error', $e->getMessage());
+        }
+    }
+
+
+
 }
