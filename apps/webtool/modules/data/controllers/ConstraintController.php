@@ -5,7 +5,7 @@ class ConstraintController extends MController
 
     public function lookupDataByCE()
     {
-        $constraint = new fnbr\models\ConstraintType($this->data->id);
+        $constraint = new fnbr\models\ConstraintInstance($this->data->id);
         $constraintData = $constraint->getConstraintData();
         $constraint->setIdEntity($constraintData->idConstrainedBy);
         $constraints = $constraint->listConstraints();

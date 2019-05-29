@@ -67,7 +67,7 @@ class ConstraintInstance extends map\ConstraintInstanceMap
     public function getConstraintData()
     {
         $view = new ViewConstraint();
-        return $view->getConstraintData($this->getId());
+        return $view->getConstraintData($this->getIdConstraint());
     }
 
     public function listConstraints()

@@ -871,17 +871,19 @@ class StructureCxnService extends MService
             $transaction = Manager::getDatabase(Manager::getConf('fnbr.db'))->beginTransaction();
             if ($data->idConstructionElement != '') {
                 $constraint = Base::createEntity('CN', 'con');
-                $cn = new fnbr\models\ConstraintType($data->idConstraint);
+                //$cn = new fnbr\models\ConstraintType($data->idConstraint);
                 $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);
-                Base::createConstraintInstance($constraint->getIdEntity(), 'con_element', $cn->getId(), $ce->getIdEntity());
+                //Base::createConstraintInstance($constraint->getIdEntity(), 'con_element', $cn->getId(), $ce->getIdEntity());
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_element', $data->idConstraint, $ce->getIdEntity());
             }
             if ($data->idConstruction != '') {
-                $cn = new fnbr\models\ConstraintType($data->idConstraint);
+                //$cn = new fnbr\models\ConstraintType($data->idConstraint);
                 $cxn = new fnbr\models\Construction($data->idConstruction);
                 if ($cxn->getIdEntity() != '') {
                     // constraint 'cxn' Constraint(ele)-CXN
                     $constraintCxn = Base::createEntity('CN', 'con');
-                    Base::createConstraintInstance($constraintCxn->getIdEntity(), 'con_cxn', $cn->getId(), $cxn->getIdEntity());
+                    //Base::createConstraintInstance($constraintCxn->getIdEntity(), 'con_cxn', $cn->getId(), $cxn->getIdEntity());
+                    Base::createConstraintInstance($constraintCxn->getIdEntity(), 'con_cxn', $data->idConstraint, $cxn->getIdEntity());
                     // constraints 'ele' Constraint(CXN)-CE
                     $ces = $cxn->listCE()->asQuery()->getResult();
                     foreach ($ces as $ce) {
@@ -892,39 +894,44 @@ class StructureCxnService extends MService
                     $cn2 = new fnbr\models\ConstraintType($data->idConstruction);
                     // constraint 'cxn' Constraint(ele)-Constraint(CXN)
                     $constraintCxn = Base::createEntity('CN', 'con');
-                    Base::createConstraintInstance($constraintCxn->getIdEntity(), 'con_cxn', $cn->getId(), $cn2->getIdEntity());
+                    Base::createConstraintInstance($constraintCxn->getIdEntity(), 'con_cxn', $data->idConstraint, $cn2->getIdEntity());
                 }
             }
             if ($data->idFrame != '') {
                 $constraint = Base::createEntity('CN', 'con');
-                $cn = new fnbr\models\ConstraintType($data->idConstraint);
+                //$cn = new fnbr\models\ConstraintType($data->idConstraint);
                 $frame = new fnbr\models\Frame($data->idFrame);
                 //Base::createEntityRelation($constraint->getIdEntity(), 'con_frame', $cn->getId(), $frame->getIdEntity());
-                Base::createConstraintInstance($constraint->getIdEntity(), 'rel_evokes', $cn->getId(), $frame->getIdEntity());
+                //Base::createConstraintInstance($constraint->getIdEntity(), 'rel_evokes', $cn->getId(), $frame->getIdEntity());
+                Base::createConstraintInstance($constraint->getIdEntity(), 'rel_evokes', $data->idConstraint, $frame->getIdEntity());
             }
             if ($data->idFrameFamily != '') {
                 $constraint = Base::createEntity('CN', 'con');
-                $cn = new fnbr\models\ConstraintType($data->idConstraint);
+                //$cn = new fnbr\models\ConstraintType($data->idConstraint);
                 $frame = new fnbr\models\Frame($data->idFrameFamily);
-                Base::createConstraintInstance($constraint->getIdEntity(), 'con_framefamily', $cn->getId(), $frame->getIdEntity());
+                //Base::createConstraintInstance($constraint->getIdEntity(), 'con_framefamily', $cn->getId(), $frame->getIdEntity());
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_framefamily', $data->idConstraint, $frame->getIdEntity());
             }
             if ($data->idLexemeCN != '') {
                 $constraint = Base::createEntity('CN', 'con');
-                $cn = new fnbr\models\ConstraintType($data->idConstraint);
+                //$cn = new fnbr\models\ConstraintType($data->idConstraint);
                 $lexeme = new fnbr\models\Lexeme($data->idLexemeCN);
-                Base::createConstraintInstance($constraint->getIdEntity(), 'con_lexeme', $cn->getIdEntity(), $lexeme->getIdEntity());
+                //Base::createConstraintInstance($constraint->getIdEntity(), 'con_lexeme', $cn->getIdEntity(), $lexeme->getIdEntity());
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_lexeme', $data->idConstraint, $lexeme->getIdEntity());
             }
             if ($data->idLemmaCN != '') {
                 $constraint = Base::createEntity('CN', 'con');
-                $cn = new fnbr\models\ConstraintType($data->idConstraint);
+                //$cn = new fnbr\models\ConstraintType($data->idConstraint);
                 $lemma = new fnbr\models\Lemma($data->idLemmaCN);
-                Base::createConstraintInstance($constraint->getIdEntity(), 'con_lemma', $cn->getIdEntity(), $lemma->getIdEntity());
+                //Base::createConstraintInstance($constraint->getIdEntity(), 'con_lemma', $cn->getIdEntity(), $lemma->getIdEntity());
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_lemma', $data->idConstraint, $lemma->getIdEntity());
             }
             if ($data->idLUCN != '') {
                 $constraint = Base::createEntity('CN', 'con');
-                $cn = new fnbr\models\ConstraintType($data->idConstraint);
+                //$cn = new fnbr\models\ConstraintType($data->idConstraint);
                 $lu = new fnbr\models\LU($data->idLUCN);
-                Base::createConstraintInstance($constraint->getIdEntity(), 'con_lu', $cn->getIdEntity(), $lu->getIdEntity());
+                //Base::createConstraintInstance($constraint->getIdEntity(), 'con_lu', $cn->getIdEntity(), $lu->getIdEntity());
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_lu', $data->idConstraint, $lu->getIdEntity());
             }
 
             $transaction->commit();

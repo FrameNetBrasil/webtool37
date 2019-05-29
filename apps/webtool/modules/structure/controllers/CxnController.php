@@ -246,9 +246,10 @@ class CxnController extends MController
     public function formAddConstraintCN()
     {
         $this->data->idConstraint = $this->data->id;
-        $model = new fnbr\models\ConstraintType($this->data->idConstraint);
+        $model = new fnbr\models\ConstraintInstance();
+        $model->getByIdConstraint($this->data->idConstraint);
         $constraintData = $model->getConstraintData();
-        //mdump($constraintData);
+        mdump($constraintData);
         $this->data->showCxnCE = $this->data->showCE = false;
         if ($constraintData->constrainedByType == 'CX') {
             $this->data->showCxnCE = true;
