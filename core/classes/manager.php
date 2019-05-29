@@ -598,11 +598,17 @@ class Manager
         self::$instance->setLog('manager');
         self::$instance->mad = self::$instance->conf['mad']['module'];
         self::$instance->controller = MFrontController::getInstance();
-        $varPath = self::$instance->getOptions('varPath') . '/maestro3';
+        $varPath = self::$instance->getOptions('varPath');
         if (!file_exists($varPath)) {
             mkdir($varPath);
+        }
+        if (!file_exists($varPath . '/templates')) {
             mkdir($varPath . '/templates');
+        }
+        if (!file_exists($varPath . '/files')) {
             mkdir($varPath . '/files');
+        }
+        if (!file_exists($varPath . '/log')) {
             mkdir($varPath . '/log');
         }
     }

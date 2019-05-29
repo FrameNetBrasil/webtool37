@@ -170,7 +170,7 @@ class MLog
     public function getLogFileName($filename)
     {
         $dir = $this->home;
-        $dir .= "/maestro";
+        //$dir .= "/maestro";
         $filename = basename($filename) . '.' . date('Y') . '-' . date('m') . '-' . date('d') . '-' . date('H') . '.log';
         $file = $dir . '/' . $filename;
         return $file;

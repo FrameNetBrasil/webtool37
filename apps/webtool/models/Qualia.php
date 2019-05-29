@@ -143,8 +143,12 @@ HERE;
 
     public function listForGrid($data, $idLanguage = '1')
     {
+        /*
         $whereType = ($data->idQualiaType == '') ? '' : "AND (t.idTypeInstance = {$data->idQualiaType})";
         $whereFrame = ($data->frame == '') ? '' : "AND (upper(e.name) like upper('{$data->frame}%'))";
+
+
+
         $cmd = <<<HERE
 SELECT q.idQualia, eq.name info, t.entry qualiaEntry, et.name qualiaType, e.name frame, e1.name fe1, e2.name fe2, fe1.typeEntry fe1Type, fe2.typeEntry fe2Type
   FROM Qualia q
@@ -172,6 +176,63 @@ SELECT q.idQualia, eq.name info, t.entry qualiaEntry, et.name qualiaType, e.name
         ORDER BY 3,2,4
 
 HERE;
+
+        */
+
+        $whereType = ($data->idQualiaType == '') ? '' : "AND (q.idQualiaType = {$data->idQualiaType})";
+        $whereFrame = ($data->frame == '') ? '' : "AND (upper(f.name) like upper('{$data->frame}%'))";
+
+        $cmd = <<<HERE
+select q.idQualia, q.info, q.qualiaEntry, q.qualiaType, f.frame, fe1.fe fe1, fe1.typeEntry fe1Type,fe2.fe fe2, fe2.typeEntry fe2Type
+from (
+  select q.idQualia, eq.name info, t.entry qualiaEntry, et.name qualiaType, t.idTypeInstance idQualiaType, q.idEntity idEntityQualia
+  FROM Qualia q
+  JOIN Entry eq ON (q.entry = eq.entry)
+  JOIN TypeInstance t ON (q.idTypeInstance = t.idTypeInstance)
+  JOIN Entry et ON (t.entry = et.entry)
+  WHERE (eq.idLanguage = {$idLanguage})
+  AND (et.idLanguage = {$idLanguage})
+
+) q,
+(
+select e.name frame, r.identity1 idEntityQualia
+from view_relation r
+join frame f on (r.idEntity2 = f.idEntity)
+join Entry e on (f.entry = e.entry)
+where (r.relationType = 'rel_qualia_frame')
+and (e.idLanguage = {$idLanguage})
+) f,
+(
+select e.name fe, ti.entry typeEntry, er1.identity1 idEntityQualia
+from entityrelation er1
+join relationtype rt on (er1.idRelationType = rt.idRelationType)
+join frameelement fe on (er1.idEntity2 = fe.idEntity)
+join entityrelation er2 on (er1.idEntity2 = er2.idEntity1)
+join typeinstance ti on (er2.idEntity2 = ti.idEntity)
+join Entry e on (fe.entry = e.entry)
+where (rt.entry = 'rel_qualia_lu1_fe')
+and (e.idLanguage = {$idLanguage})
+) fe1,
+(
+select e.name fe, ti.entry typeEntry, er1.identity1 idEntityQualia
+from entityrelation er1
+join relationtype rt on (er1.idRelationType = rt.idRelationType)
+join frameelement fe on (er1.idEntity2 = fe.idEntity)
+join entityrelation er2 on (er1.idEntity2 = er2.idEntity1)
+join typeinstance ti on (er2.idEntity2 = ti.idEntity)
+join Entry e on (fe.entry = e.entry)
+where (rt.entry = 'rel_qualia_lu2_fe')
+and (e.idLanguage = {$idLanguage})
+) fe2
+where (q.idEntityQualia = f.idEntityQualia)
+and (q.idEntityQualia = fe1.idEntityQualia)
+and (q.idEntityQualia = fe2.idEntityQualia)
+{$whereType} {$whereFrame}
+        ORDER BY 3,2,4
+
+HERE;
+
+
         $query = $this->getDb()->getQueryCommand($cmd);
         return $query;
     }
