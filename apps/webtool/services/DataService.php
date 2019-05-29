@@ -366,6 +366,10 @@ class DataService extends MService
         $document->getByEntry($this->data->documentEntry);
         $corpus = $document->getCorpus();
 
+        $idLanguage = \fnbr\models\Base::getIdLanguage($this->data->language);
+
+        print_r("idlanguage = " . $idLanguage . "\n");
+
         $xmlStr = <<<HERE
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <?xml-stylesheet type="text/xsl" href="fullText.xsl"?>
@@ -389,7 +393,7 @@ HERE;
             $s = $sxe->addChild('sentence');
             $s->addAttribute('ID', $sentence['idSentence']);
             $t = $s->addChild('text', $sentence['text']);
-            $queryAS = $document->listAnnotationSetForXML($sentence['idSentence']);
+            $queryAS = $document->listAnnotationSetForXML($sentence['idSentence'], $idLanguage);
             $idAS = 0;
             $layer = '';
             $labels = $queryAS->getResult();

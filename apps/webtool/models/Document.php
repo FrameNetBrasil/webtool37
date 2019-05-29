@@ -474,9 +474,7 @@ HERE;
         return $query;
     }
 
-    public function listAnnotationSetForXML($idSentence) {
-        $idLanguage = \Manager::getSession()->idLanguage;
-
+    public function listAnnotationSetForXML($idSentence, $idLanguage = 1) {
         $cmd = <<<HERE
 
 select a.idAnnotationSet, lb.layerTypeEntry, lb.startChar, lb.endChar, f.idFrame, e1.name frameName, fe.idFrameElement, e3.name feName, gl.idGenericLabel, gl.name glName, lu.idLU, lu.name luName, pos.POS, lx.name lexeme

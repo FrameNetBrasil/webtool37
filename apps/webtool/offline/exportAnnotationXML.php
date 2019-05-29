@@ -6,9 +6,11 @@ $db = 'webtool';
 
 $documentEntry = $argv[1];
 $fileName = $argv[2];
+$language = $argv[3];
 
 $_REQUEST['documentEntry'] = $documentEntry;
 $_REQUEST['filename'] = $fileName;
+$_REQUEST['language'] = $language;
 // Endereco do servico a ser executado
 $_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'] . "{$app}/api/data/exportDocumentToXML";
 
