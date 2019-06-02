@@ -243,7 +243,7 @@ HERE;
 
         $cmd = <<<HERE
         SELECT r.idEntity2 as idConstraint,
-            e.name  AS name, r.prefix, r.nameEntity2 type
+            e.name  AS name, r.prefix, r.entity2Type type
         FROM View_Relation r
         JOIN SemanticType st ON (r.idEntity2 = st.idEntity)
         JOIN Entry e ON (st.entry = e.entry)
@@ -293,7 +293,7 @@ HERE;
 
         $cmd = <<<HERE
         SELECT r.idEntity2 as idConstraint,
-            relatedLU.name  AS name, r.prefix, r.nameEntity2 type,
+            relatedLU.name  AS name, r.prefix, r.entity2Type type,
             r.relationtype  AS equivalence
         FROM View_Relation r
         JOIN LU relatedLU ON (r.idEntity2 = relatedLU.idEntity)
@@ -301,7 +301,7 @@ HERE;
             AND (r.relationType = 'rel_luequivalence')
         UNION
         SELECT r.idEntity1 as idConstraint,
-            relatedLU.name  AS name, r.prefix, r.nameEntity2 type,
+            relatedLU.name  AS name, r.prefix, r.entity2Type type,
             r.relationtype  AS equivalence
         FROM View_Relation r
         JOIN LU relatedLU ON (r.idEntity1 = relatedLU.idEntity)
@@ -324,7 +324,7 @@ HERE;
 
         $cmd = <<<HERE
         SELECT r.idEntity2 as idConstraint,
-            relatedLU.name  AS name, r.prefix, r.nameEntity2 type,
+            relatedLU.name  AS name, r.prefix, r.entity2Type type,
             r.relationtype  AS metonymy
         FROM View_Relation r
         JOIN LU relatedLU ON (r.idEntity2 = relatedLU.idEntity)
@@ -347,7 +347,7 @@ HERE;
 
         $cmd = <<<HERE
         SELECT r.idEntity2 as idConstraint,
-            relatedLU.name  AS name, r.prefix, r.nameEntity2 type,
+            relatedLU.name  AS name, r.prefix, r.entity2Type type,
             r.relationtype  AS domain
         FROM View_Relation r
         JOIN LU relatedLU ON (r.idEntity2 = relatedLU.idEntity)
@@ -448,7 +448,7 @@ HERE;
         $idLanguage = \Manager::getSession()->idLanguage;
 
         $cmd = <<<HERE
-        SELECT r.idEntity2 as idConstraint,  r.prefix, r.nameEntity2 type,
+        SELECT r.idEntity2 as idConstraint,  r.prefix, r.entity2Type type,
             e.name  AS feName,
             relatedLU.name as luName,
             r.relationtype  AS metonymy
