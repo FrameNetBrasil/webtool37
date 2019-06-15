@@ -121,7 +121,7 @@ class LU extends map\LUMap
 
     public function listForLookupEquivalent($filter = null)
     {
-        $criteria = $this->getCriteria()->select("idLU, concat(frame.entries.name,'.',name) as fullname")->orderBy('frame.entries.name,name');
+        $criteria = $this->getCriteria()->select("idLU, concat(frame.entries.name,'.',name,' [', lemma.language.language, ']' ) as fullname")->orderBy('frame.entries.name,name');
         Base::relation($criteria, 'LU', 'Frame frame', 'rel_evokes');
         $criteria->where("lemma.idLanguage = entry.idLanguage");
         $fullname = $filter ? $filter->fullname : '';

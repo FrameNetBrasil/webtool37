@@ -131,7 +131,7 @@ class Lexeme extends map\LexemeMap {
         if ($idPOS != '') {
             $l = str_replace("'","\'", $fields[2]);
             $lexeme = $this->getCriteria()->select('idLexeme')
-                ->where("(name = '{$l}' collate utf8mb4_general_ci) and (idPOS = {$idPOS}) and (idLanguage = {$idLanguage})")->asQuery()->getResult();
+                ->where("(name = '{$l}' collate utf8mb4_bin) and (idPOS = {$idPOS}) and (idLanguage = {$idLanguage})")->asQuery()->getResult();
             $idLexeme = $lexeme[0]['idLexeme'];
             if ($idLexeme == '') {
                 $this->setPersistent(false);
@@ -142,7 +142,7 @@ class Lexeme extends map\LexemeMap {
             }
             $w = str_replace("'","\'", $fields[0]);
             $wordform = $wf->getCriteria()->select('idWordform')
-                ->where("(form = '{$w}' collate utf8mb4_general_ci) and (idLexeme = {$idLexeme})")->asQuery()->getResult();
+                ->where("(form = '{$w}' collate utf8mb4_bin) and (idLexeme = {$idLexeme})")->asQuery()->getResult();
             $idWordform = $wordform[0]['idWordform'];
             if ($idWordform == '') {
                 $wf->setPersistent(false);
