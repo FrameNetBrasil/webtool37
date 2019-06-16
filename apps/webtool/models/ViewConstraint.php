@@ -293,18 +293,20 @@ HERE;
 
         $cmd = <<<HERE
         SELECT r.idEntity2 as idConstraint,
-            relatedLU.name  AS name, r.prefix, r.entity2Type type,
+            relatedLU.name  AS name, r.prefix, r.entity2Type type, Language.language,
             r.relationtype  AS equivalence
         FROM View_Relation r
-        JOIN LU relatedLU ON (r.idEntity2 = relatedLU.idEntity)
+        JOIN View_LU relatedLU ON (r.idEntity2 = relatedLU.idEntity)
+        JOIN Language on (relatedLU.idLanguage = Language.idLanguage)
         WHERE (r.idEntity1 = {$idEntityLU})
             AND (r.relationType = 'rel_luequivalence')
         UNION
         SELECT r.idEntity1 as idConstraint,
-            relatedLU.name  AS name, r.prefix, r.entity2Type type,
+            relatedLU.name  AS name, r.prefix, r.entity2Type type, Language.language,
             r.relationtype  AS equivalence
         FROM View_Relation r
-        JOIN LU relatedLU ON (r.idEntity1 = relatedLU.idEntity)
+        JOIN View_LU relatedLU ON (r.idEntity1 = relatedLU.idEntity)
+        JOIN Language on (relatedLU.idLanguage = Language.idLanguage)
         WHERE (r.idEntity2 = {$idEntityLU})
             AND (r.relationType = 'rel_luequivalence')
 
@@ -312,7 +314,7 @@ HERE;
         $query = $this->getDb()->getQueryCommand($cmd);
         $constraints = $query->getResult();
         foreach ($constraints as $i => $constraint) {
-            $constraints[$i]['name'] = $constraint['prefix'] . '_' . $constraints[$i]['name'];
+            $constraints[$i]['name'] = $constraint['prefix'] . '_' . $constraints[$i]['name'] . ' [' . $constraints[$i]['language'] . ']';
             $constraints[$i]['type'] = $constraint['type'];
         }
         return $constraints;

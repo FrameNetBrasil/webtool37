@@ -453,7 +453,7 @@ class AnnotationService extends MService
                 'coreType' => $row['coreType']
             ];
         }
-
+mdump($result);
         // UDTree
         $UDTreeLayer = [];
         $UDTreeLayer['none'] = '';

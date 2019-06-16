@@ -137,7 +137,7 @@ class AnnotationSet extends map\AnnotationSetMap
         //$text = utf8_decode($result[0]['text']);
         $text = $result[0]['text'];
         $array = array();
-        $punctuation = " .,;:?/'][\{\}\"!@#$%&*\(\)-_+=";
+        $punctuation = " .,;:?/'][\{\}\"!@#$%&*\(\)-_+=“”";
         $word = "";
 
         mb_internal_encoding("UTF-8"); // this IS A MUST!! PHP has trouble with multibyte when no internal encoding is set!

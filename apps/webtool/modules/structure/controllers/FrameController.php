@@ -405,9 +405,9 @@ class FrameController extends MController
     public function deleteConstraintLU()
     {
         try {
-            list($idLU, $idEntityConstraint) = explode('_', $this->data->id);
-            $model = new fnbr\models\ConstraintType();
-            $model->deleteConstraintLU($idLU, $idEntityConstraint);
+            list($idEntityLU, $idEntityConstraint) = explode('_', $this->data->id);
+            $model = new fnbr\models\ConstraintInstance();
+            $model->deleteConstraintLU($idEntityLU, $idEntityConstraint);
             $this->renderPrompt('information', 'Constraint deleted.', "!structure.reloadFrameParent();");
         } catch (\Exception $e) {
             $this->renderPrompt('error', "Delete Constraint failed.", "!structure.reloadFrame();");
