@@ -26,22 +26,22 @@ class Association extends ArrayObject
 
     public function offsetGet($name)
     {
-        return call_user_func_array(array(parent, __FUNCTION__), func_get_args());
+        return parent::offsetGet($name);
     }
 
     public function offsetSet($name, $value)
     {
-        return call_user_func_array(array(parent, __FUNCTION__), func_get_args());
+        return parent::offsetSet($name, $value);
     }
 
     public function offsetExists($name)
     {
-        return call_user_func_array(array(parent, __FUNCTION__), func_get_args());
+        return parent::offsetExists($name);
     }
 
     public function offsetUnset($name)
     {
-        return call_user_func_array(array(parent, __FUNCTION__), func_get_args());
+        return parent::offsetUnset($name);
     }
 
     public function __construct(Classmap $classMap, $index = NULL)

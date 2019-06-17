@@ -19,6 +19,7 @@
 </div>
 <div id="menuReportCorpus" style="display:none, width:120px;">
     <div onclick="reportCorpus.reportCorpus()" data-options="iconCls:'fa fa-table fa16px'">{{_'Report Corpus'}}</div>
+    <div onclick="reportCorpus.exportXML()" data-options="iconCls:'fa fa-table fa16px'">{{_'Export XML'}}</div>
 </div>
 <div id="menuReportDocument" style="display:none, width:120px;">
     <div onclick="reportCorpus.reportDocument()" data-options="iconCls:'fa fa-table fa16px'">{{_'Report Document'}}</div>
@@ -46,6 +47,13 @@
                 id = reportCorpus.node.id.substr(1);
             }
             manager.doGet({{$manager->getURL('report/corpus/reportCorpus')}} + '/' + id,'reportCorpusCenterPane');
+        }
+
+        reportCorpus.exportXML = function (id) {
+            if ($.type(id) === "undefined") {
+                id = reportCorpus.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('utils/export/formExportXML')}} + '/' + id,'reportCorpusCenterPane');
         }
 
         reportCorpus.reportDocument = function (id) {

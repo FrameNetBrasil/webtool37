@@ -1,7 +1,7 @@
 <?php
 
-use Maestro\Services\MMailer;
-use Maestro\Services\Exception\ERuntimeException;
+//use Maestro\Services\MMailer;
+//use Maestro\Services\Exception\ERuntimeException;
 
 class EmailService extends MService {
 
@@ -23,13 +23,13 @@ class EmailService extends MService {
     public function sendSystemEmail($recipients = '', $subject = '', $body = '') {
         $params = new \stdclass();
         $params->isHTML = true;
-        $params->to = $recipients;
-        $params->subject = $subject;
-        $params->body = $body;
+        $params->To = $recipients;
+        $params->Subject = $subject;
+        $params->Body = $body;
         $mailer = MMailer::getMailer($params);
         if (!$mailer->send()) {
             $msg = 'Message could not be sent.' . 'Mailer Error: ' . $mailer->ErrorInfo;
-            throw new fnbr\models\ERuntimeException($msg);
+            throw new ERuntimeException($msg);
         }
     }
 

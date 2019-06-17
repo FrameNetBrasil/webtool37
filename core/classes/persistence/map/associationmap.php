@@ -269,9 +269,11 @@ class AssociationMap
         } else {
             $criteria->addCriteria($this->toAttributeMap, '=', '?');
         }
-        if (count($this->orderAttributes)) {
-            foreach ($this->orderAttributes as $order) {
-                $criteria->orderBy($order);
+        if (is_array($this->orderAttributes)) {
+            if (count($this->orderAttributes)) {
+                foreach ($this->orderAttributes as $order) {
+                    $criteria->orderBy($order);
+                }
             }
         }
         return $criteria;

@@ -119,4 +119,62 @@ class ExportController extends MController
         }
     }
 
+    public function formExportXML(){
+        try {
+            $this->data->idCorpus = $this->data->id;
+            $corpus = new fnbr\models\Corpus($this->data->idCorpus);
+            $user = fnbr\models\Base::getCurrentUser();
+            $this->data->corpusName = $corpus->getName();
+            $this->data->email = $user->getEmail();
+            $this->data->action = '@utils/export/exportXML';
+            $this->render();
+        } catch (EMException $e) {
+            $this->renderPrompt('error',$e->getMessage());
+        }
+    }
+
+    public function exportXML(){
+        try {
+            $this->data->idCorpus = $this->data->id;
+            $corpus = new fnbr\models\Corpus($this->data->idCorpus);
+            $this->data->idLanguage = Manager::getSession()->idLanguage;
+            $user = fnbr\models\Base::getCurrentUser();
+
+            $execInBackground = realpath(Manager::getAppPath() . "/offline/execinBackground.php");
+            $timeWrapper = realpath(Manager::getAppPath() . "/offline/timewrapper.php");
+            $offline = '"' . addslashes(realpath(Manager::getAppPath() . "/offline/exportCorpusXML.php")) . '"' . ' ' . "{$corpus->getEntry()}" . ' ' . "{$this->data->idLanguage}" . ' ' . $user->getIdUser() . ' ' . $user->getEmail();
+
+            //$loop = React\EventLoop\Factory::create();
+mdump("php {$execInBackground} {$offline}");
+            //$process = new React\ChildProcess\Process("php {$execInBackground} {$offline}", null, null, array());
+            //$process->start($loop);
+exec("php {$execInBackground} {$offline}");
+            //$process->on('exit', function($exitCode, $termSignal) {
+                $this->renderPrompt('information','OK ');
+            //});
+
+            //$loop->run();
+
+            if (substr(php_uname(), 0, 7) == "Windows") {
+                mdump('windows');
+                try {
+                    $commandString = "start /b php.exe {$timeWrapper} " . $offline;
+                    //pclose(popen("start /B php.exe " . ''. $program . ' ' . $argv[2] . ' ' . $argv[3] . ' ' . $argv[4], "r"));
+                    //$commandString =  'php.exe "C:/wamp64/www/webtool/apps/webtool/offline/childTest.php"';
+                    mdump($commandString);
+                    pclose(popen($commandString, "r"));
+                } catch (Exception $e) {
+                    var_dump($e->getMessage());
+                }
+            } else {
+                exec("php {$timeWrapper} " . $offline . " > /dev/null &");
+            }
+
+
+        } catch (EMException $e) {
+            $this->renderPrompt('error',$e->getMessage());
+        }
+    }
+
+
 }

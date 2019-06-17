@@ -1,0 +1,15 @@
+<view>
+    <mformdialog id="formExportXML" title="Export Corpus - XML"  close=">fnbr/main" >
+        <fields>
+            <mhiddenfield id="idCorpus" value="$this->data->idCorpus"/>
+            <mvcontainer>
+                <mlabel text="Exporting annotation from Corpus [{{$this->data->corpusName}}] using XML format."/>
+                <mspan>This is a lengthy operation, so it is executed offline and the user receives a email notification.</mspan>
+                <mlabel text="Email [{{$this->data->email}}]"/>
+            </mvcontainer>
+        </fields>
+        <buttons>
+            <mbutton id="btnPost" text="{{_M('Export XML')}}" action="$this->data->action"/>
+        </buttons>
+    </mformdialog>
+</view>
