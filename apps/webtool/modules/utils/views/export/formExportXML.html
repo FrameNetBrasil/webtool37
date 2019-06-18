@@ -1,0 +1,60 @@
+
+
+<div id="divExportXML" class="easyui-panel" title='Corpus - Export XML' collapsible="false" data-options="fit:true">
+
+    <form id="formExportXML" action="{{$manager->getURL('utils/export/exportXML')}}">
+        <input type="hidden" id="idCorpus" name="idCorpus" value="{{$data->idCorpus}}"/>
+        <input type="hidden" id="documents" name="documents" value=""/>
+    </form>
+
+                    <div class="text">Exporting annotation from Corpus [{{$data->corpusName}}] using XML format.</div>
+                    <div class="text">This is a lengthy operation, so it is executed offline and the user receives a email notification.</div>
+                    <div class="text">Email will be sent to [{{$this->data->email}}]</div>
+
+    <div class="text" style="height:50%"  >
+    <table id="documentGrid" class="easyui-datagrid" style="width:50%; height:100%">
+        <thead>
+        <tr>
+            <th data-options="field:'idDocument',checkbox:true,width:50"></th>
+            <th data-options="field:'document'">Document</th>
+        </tr>
+        </thead>
+    </table>
+    </div>
+    <div class="text">
+        <button id="btnExport">Export XML</button>
+    </div>
+</div>
+
+<style>
+    .text {
+        padding: 8px;
+    }
+</style>
+
+<script type="text/javascript">
+    $.parser.parse();
+
+
+    $("#documentGrid").datagrid({
+        title: 'Select documents - Corpus: ' + {{$data->corpusName}},
+        checkbox: true,
+        url: {{$manager->getURL('api/reportcorpus/getDataDocumentCorpus')}} + '/' + {{$data->idCorpus}},
+        method: 'get'
+    });
+
+    $("#btnExport").linkbutton({
+        onClick: function() {
+            var documents = [];
+            var rowsChecked = $('#documentGrid').datagrid('getChecked');
+            for (c in rowsChecked) {
+                var idDocument = rowsChecked[c].idDocument;
+                documents.push(idDocument);
+            }
+            console.log(documents);
+            $("#documents").attr("value",'json:' + JSON.stringify(documents) );
+            manager.doPostBack('formExportXML');
+        }
+    })
+
+</script>

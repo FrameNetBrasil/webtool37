@@ -135,43 +135,28 @@ class ExportController extends MController
 
     public function exportXML(){
         try {
-            $this->data->idCorpus = $this->data->id;
             $corpus = new fnbr\models\Corpus($this->data->idCorpus);
             $this->data->idLanguage = Manager::getSession()->idLanguage;
             $user = fnbr\models\Base::getCurrentUser();
-
-            $execInBackground = realpath(Manager::getAppPath() . "/offline/execinBackground.php");
+            $documents = "";
+            foreach($this->data->documents as $idDocument) {
+                $documents .= ':' . $idDocument;
+            }
             $timeWrapper = realpath(Manager::getAppPath() . "/offline/timewrapper.php");
-            $offline = '"' . addslashes(realpath(Manager::getAppPath() . "/offline/exportCorpusXML.php")) . '"' . ' ' . "{$corpus->getEntry()}" . ' ' . "{$this->data->idLanguage}" . ' ' . $user->getIdUser() . ' ' . $user->getEmail();
-
-            //$loop = React\EventLoop\Factory::create();
-mdump("php {$execInBackground} {$offline}");
-            //$process = new React\ChildProcess\Process("php {$execInBackground} {$offline}", null, null, array());
-            //$process->start($loop);
-exec("php {$execInBackground} {$offline}");
-            //$process->on('exit', function($exitCode, $termSignal) {
-                $this->renderPrompt('information','OK ');
-            //});
-
-            //$loop->run();
-
+            $offline = '"' . addslashes(realpath(Manager::getAppPath() . "/offline/exportCorpusXML.php")) . '" ' . "{$corpus->getEntry()} {$documents} {$this->data->idLanguage} {$user->getIdUser()} {$user->getEmail()}";
             if (substr(php_uname(), 0, 7) == "Windows") {
-                mdump('windows');
                 try {
                     $commandString = "start /b php.exe {$timeWrapper} " . $offline;
-                    //pclose(popen("start /B php.exe " . ''. $program . ' ' . $argv[2] . ' ' . $argv[3] . ' ' . $argv[4], "r"));
-                    //$commandString =  'php.exe "C:/wamp64/www/webtool/apps/webtool/offline/childTest.php"';
-                    mdump($commandString);
                     pclose(popen($commandString, "r"));
                 } catch (Exception $e) {
-                    var_dump($e->getMessage());
+                    throw new Exception($e->getMessage());
                 }
             } else {
                 exec("php {$timeWrapper} " . $offline . " > /dev/null &");
             }
+            $this->renderPrompt('information',"OK. XML file will be generated. A notification will be sent to {$user->getEmail()}.");
 
-
-        } catch (EMException $e) {
+        } catch (Exception $e) {
             $this->renderPrompt('error',$e->getMessage());
         }
     }

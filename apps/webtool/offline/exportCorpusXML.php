@@ -8,9 +8,10 @@ $app = 'webtool';
 $db = 'webtool';
 
 $corpusEntry = $argv[1];
-$idLanguage = $argv[2];
-$idUser = $argv[3];
-$email = $argv[4];
+$documents = $argv[2];
+$idLanguage = $argv[3];
+$idUser = $argv[4];
+$email = $argv[5];
 
 $dirName = realpath(Manager::getAbsolutePath("apps/{$app}/files")). '/' . $idUser;
 
@@ -19,6 +20,7 @@ if(!file_exists($dirName)) {
 }
 
 $_REQUEST['corpusEntry'] = $corpusEntry;
+$_REQUEST['documents'] = $documents;
 $_REQUEST['idLanguage'] = $idLanguage;
 $_REQUEST['dirName'] = $dirName;
 
@@ -29,12 +31,9 @@ $_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'] . "{$app}/api/data/exportCorpu
 $configFile = Manager::getHome() . "/apps/{$app}/conf/conf.php";
 Manager::loadConf($configFile);
 Manager::setConf('logs.level', 2);
-Manager::setConf('logs.port', 9998);
+Manager::setConf('logs.port', 0);
 
 Manager::setConf('fnbr.db', $db);
-
-// mdump("documentEntry = " . $documentEntry);
-// mdump("fileName = " . $fileName);
 
 Manager::processRequest(true);
 
@@ -45,6 +44,7 @@ try {
         unlink($fileName);
     }
 
+    $i = 0;
     $pd = new \PharData($fileName);
     $scandir = scandir($dirName) ?: [];
     $scandir = array_diff($scandir, ['..', '.']);
@@ -52,17 +52,22 @@ try {
         $pathParts = pathinfo($filePath);
         if ($pathParts['extension'] == 'xml') {
             $pd->addFile($dirName . '/' . $filePath, $filePath);
+            ++$i;
         }
     }
     foreach ($scandir as $filePath) {
         $pathParts = pathinfo($filePath);
         if ($pathParts['extension'] == 'xml') {
-            unlink($dirName . '/' . $filePath);
+            //unlink($dirName . '/' . $filePath);
         }
     }
 
-    $emailService = new EmailService();
-    $emailService->sendSystemEmail($email, 'Webtool: Export Corpus to XML', 'test webtool sending email ' . $fname);
+    if ($i > 0) {
+        $url = Manager::getConf('options.baseURL') . "/apps/webtool/files/{$idUser}/{$fname}";
+
+        $emailService = new EmailService();
+        $emailService->sendSystemEmail($email, 'Webtool: Export Corpus to XML', 'test webtool sending email ' . "<a href='{$url}'>{$fname}</a>");
+    }
 
 
 
