@@ -461,7 +461,7 @@ class MJSON
 
                 // treat as a JSON object
                 if (is_array($var) && count($var) && (array_keys($var) !== range(0, sizeof($var) - 1))) {
-                    $properties = array_map(array(self, 'name_value'), array_keys($var), array_values($var));
+                    $properties = array_map('self::name_value', array_keys($var), array_values($var));
 
                     foreach ($properties as $property) {
                         if (MJSON::isError($property)) {
@@ -473,7 +473,7 @@ class MJSON
                 }
 
                 // treat it like a regular array
-                $elements = array_map(array(self, '_encode'), $var);
+                $elements = array_map('self::_encode', $var);
 
                 foreach ($elements as $element) {
                     if (MJSON::isError($element)) {

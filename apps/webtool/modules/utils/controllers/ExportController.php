@@ -119,4 +119,47 @@ class ExportController extends MController
         }
     }
 
+    public function formExportXML(){
+        try {
+            $this->data->idCorpus = $this->data->id;
+            $corpus = new fnbr\models\Corpus($this->data->idCorpus);
+            $user = fnbr\models\Base::getCurrentUser();
+            $this->data->corpusName = $corpus->getName();
+            $this->data->email = $user->getEmail();
+            $this->data->action = '@utils/export/exportXML';
+            $this->render();
+        } catch (EMException $e) {
+            $this->renderPrompt('error',$e->getMessage());
+        }
+    }
+
+    public function exportXML(){
+        try {
+            $corpus = new fnbr\models\Corpus($this->data->idCorpus);
+            $this->data->idLanguage = Manager::getSession()->idLanguage;
+            $user = fnbr\models\Base::getCurrentUser();
+            $documents = "";
+            foreach($this->data->documents as $idDocument) {
+                $documents .= ':' . $idDocument;
+            }
+            $timeWrapper = realpath(Manager::getAppPath() . "/offline/timewrapper.php");
+            $offline = '"' . addslashes(realpath(Manager::getAppPath() . "/offline/exportCorpusXML.php")) . '" ' . "{$corpus->getEntry()} {$documents} {$this->data->idLanguage} {$user->getIdUser()} {$user->getEmail()}";
+            if (substr(php_uname(), 0, 7) == "Windows") {
+                try {
+                    $commandString = "start /b php.exe {$timeWrapper} " . $offline;
+                    pclose(popen($commandString, "r"));
+                } catch (Exception $e) {
+                    throw new Exception($e->getMessage());
+                }
+            } else {
+                exec("php {$timeWrapper} " . $offline . " > /dev/null &");
+            }
+            $this->renderPrompt('information',"OK. XML file will be generated. A notification will be sent to {$user->getEmail()}.");
+
+        } catch (Exception $e) {
+            $this->renderPrompt('error',$e->getMessage());
+        }
+    }
+
+
 }

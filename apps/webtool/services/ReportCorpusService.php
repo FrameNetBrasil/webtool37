@@ -139,4 +139,20 @@ class ReportCorpusService extends MService
         return $result;
     }
 
+    public function getDataDocumentCorpus()
+    {
+        $idCorpus = $this->data->id;
+        $corpus = new fnbr\models\Corpus($idCorpus);
+        $result = [];
+        $documents = $corpus->getDocuments();
+        foreach($documents as $document) {
+            $result[] = [
+                'idDocument' => $document->getId(),
+                'document' => $document->getName()
+            ];
+        }
+        return $result;
+    }
+
+
 }

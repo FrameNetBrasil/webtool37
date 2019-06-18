@@ -1,20 +1,6 @@
 <?php
 
-/* Copyright [2011, 2013, 2017] da Universidade Federal de Juiz de Fora
- * Este arquivo é parte do programa Framework Maestro.
- * O Framework Maestro é um software livre; você pode redistribuí-lo e/ou
- * modificá-lo dentro dos termos da Licença Pública Geral GNU como publicada
- * pela Fundação do Software Livre (FSF); na versão 2 da Licença.
- * Este programa é distribuído na esperança que possa ser  útil,
- * mas SEM NENHUMA GARANTIA; sem uma garantia implícita de ADEQUAÇÃO a qualquer
- * MERCADO ou APLICAÇÃO EM PARTICULAR. Veja a Licença Pública Geral GNU/GPL
- * em português para maiores detalhes.
- * Você deve ter recebido uma cópia da Licença Pública Geral GNU, sob o título
- * "LICENCA.txt", junto com este programa, se não, acesse o Portal do Software
- * Público Brasileiro no endereço www.softwarepublico.gov.br ou escreva para a
- * Fundação do Software Livre(FSF) Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301, USA.
- */
+use PHPMailer\PHPMailer\PHPMailer;
 
 class MMailer extends MService
 {
@@ -27,21 +13,30 @@ class MMailer extends MService
     {
         $mailer = self::getDecoratedMailer();
 
+        $mailer->SMTPDebug = 2;
         $mailer->IsSMTP(); // telling the class to use SMTP
         $mailer->Host = \Manager::getConf('mailer.smtpServer'); // SMTP server
         $mailer->From = \Manager::getConf('mailer.smtpFrom');
         $mailer->FromName = \Manager::getConf('mailer.smtpFromName');
         $mailer->CharSet = 'utf-8';
         $mailer->WordWrap = 100;
+var_dump($mailer->Host);
+        $mailer->SMTPAuth   = \Manager::getConf('mailer.smtpAuth');                                   // Enable SMTP authentication
+        $mailer->Username   = \Manager::getConf('mailer.smtpFrom');                     // SMTP username
+        $mailer->Password   = \Manager::getConf('mailer.smtpPass');                               // SMTP password
+        //$mailer->SMTPSecure = 'tls';                                  // Enable TLS encryption, `ssl` also accepted
+        $mailer->Port       = 587;
+
+
 
         if ($params !== null) {
             // Preenche os parametros do mailer. Ver atributos publicos da classe PHPMailer
             self::copyPublicAttributes($params, $mailer);
             $mailer->isHTML($params->isHTML);
 
-            self::__AddAddress($params->to, $mailer);
-            self::__AddCC($params->cc, $mailer);
-            self::__AddBCC($params->bcc, $mailer);
+            self::__AddAddress($params->To, $mailer);
+            self::__AddCC($params->CC, $mailer);
+            self::__AddBCC($params->BCC, $mailer);
             self::__AddReplyTo($params->ReplyTo, $mailer);
         }
 
@@ -117,7 +112,7 @@ class MMailer extends MService
      */
     private static function getDecoratedMailer()
     {
-        $dec = new MSimpleDecorator(new \PHPMailer());
+        $dec = new MSimpleDecorator(new PHPMailer());
 
         $callback = function ($mailer) {
             if (\Manager::DEV() && !empty(\Manager::getConf('mailer.smtpTo'))) {

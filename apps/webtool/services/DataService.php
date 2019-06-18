@@ -360,13 +360,32 @@ class DataService extends MService
         }
     }
 
-    public function exportDocumentToXML()
+    public function exportCorpusToXML()
     {
-        $document = new \fnbr\models\Document();
-        $document->getByEntry($this->data->documentEntry);
-        $corpus = $document->getCorpus();
+        var_dump($this->data);
+        $corpus = new \fnbr\models\Corpus();
+        $corpus->getByEntry($this->data->corpusEntry);
+        var_dump(explode(':', $this->data->documents));
+        $documents = array_slice(explode(':', $this->data->documents), 1);
+        var_dump($documents);
+        $i = 0;
+        foreach($documents as $idDocument) {
+            $document = new \fnbr\models\Document($idDocument);
+            var_dump($i . ' - ' . $document->getEntry());
+            $this->data->fileName = $this->data->dirName . '/' . $document->getEntry() . '.xml';
+            $this->exportDocumentToXML($corpus, $document);
+            if (++$i > 2) break;
+        }
+    }
 
-        $idLanguage = \fnbr\models\Base::getIdLanguage($this->data->language);
+    public function exportDocumentToXML($corpus, $document)
+    {
+        //$document = new \fnbr\models\Document();
+        //$document->getByEntry($this->data->documentEntry);
+        //$corpus = $document->getCorpus();
+
+        //$idLanguage = \fnbr\models\Base::getIdLanguage($this->data->language);
+        $idLanguage = $this->data->idLanguage;
 
         print_r("idlanguage = " . $idLanguage . "\n");
 
@@ -423,7 +442,7 @@ HERE;
                 print_r($i . ' sentence(s)' . "\n");
             }
         }
-        file_put_contents($this->data->filename, $sxe->asXML());
+        file_put_contents($this->data->fileName, $sxe->asXML());
     }
 
     public function exportDocumentToCONLL($document)

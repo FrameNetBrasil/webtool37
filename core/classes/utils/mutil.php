@@ -999,9 +999,3 @@ class MDummy
 
 }
 
-class MDataObject
-{
-
-}
-
-?>

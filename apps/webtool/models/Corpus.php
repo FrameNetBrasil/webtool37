@@ -50,6 +50,13 @@ class Corpus extends map\CorpusMap
         return $criteria->asQuery()->getResult()[0]['name'];
     }
 
+    public function getByEntry($entry)
+    {
+        $criteria = $this->getCriteria()->select('*');
+        $criteria->where("entry = '{$entry}'");
+        $this->retrieveFromCriteria($criteria);
+    }
+
     public function listAll()
     {
         $criteria = $this->getCriteria()->select('idCorpus, entries.name as name')->orderBy('entry');

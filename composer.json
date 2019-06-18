@@ -10,7 +10,7 @@
   ],
   "require": {
     "psr/log": "1.0.0",
-    "phpmailer/phpmailer": "~5.2",
+    "phpmailer/phpmailer": "~6.0",
     "zendframework/zend-session": "2.8.*",
     "zendframework/zend-config": "2.6.*",
     "zendframework/zend-validator": "2.8.*",
