@@ -152,7 +152,8 @@ class ExportController extends MController
                     throw new Exception($e->getMessage());
                 }
             } else {
-                exec("php {$timeWrapper} " . $offline . " > /dev/null &");
+                mdump("php {$offline} > /dev/null &");
+                exec("php {$offline} > /dev/null &");
             }
             $this->renderPrompt('information',"OK. XML file will be generated. A notification will be sent to {$user->getEmail()}.");
 

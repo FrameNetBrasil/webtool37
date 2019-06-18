@@ -1,5 +1,5 @@
 {
-  "name": "FrameNetBrasil/fnbr",
+  "name": "fnbr/webtool",
   "description": "FrameNet Brasil Web Annotation Tool",
   "license": "GPLv3",
   "keywords": [
@@ -9,6 +9,10 @@
     "constructions"
   ],
   "authors": [
+    {
+      "name": "Tiago Torrent",
+      "email": "tiago.torrent@gmail.com"
+    },
     {
       "name": "Ely Matos",
       "email": "admin@ematos.net"

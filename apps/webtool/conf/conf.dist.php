@@ -18,7 +18,8 @@ return [
         'templateEngine' => 'latte',
         'defaultPassword' => 'default',
         'pageTitle' => 'FNBr Webtool [github]',
-        'mainTitle' => 'FrameNet Brasil Webtool 3.0 [github]'
+        'mainTitle' => 'FrameNet Brasil Webtool 3.0 [github]',
+        'baseURL' => 'http://localhost/webtool'
     ],
     'ui' => [
         'actions' => 'actions.php',
@@ -53,12 +54,6 @@ return [
         'session' => "Session",
         'transaction' => "Transaction",
         'user' => "User"
-    ],
-    'logs' => [
-        'level' => 0,
-        'handler' => "socket",
-        'peer' => '127.0.0.1',
-        'port' => 0
     ],
     'filters' => [
         'db' => 'fnbr',
