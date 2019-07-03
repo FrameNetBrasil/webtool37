@@ -24,7 +24,7 @@ class LayerMap extends \MBusinessModel {
             'table' => 'layer',
             'attributes' => array(
                 'idLayer' => array('column' => 'idLayer','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
-                'rank' => array('column' => 'rank','type' => 'integer'),
+                'rank' => array('column' => '`rank`','type' => 'integer'),
                 'timeline' => array('column' => 'timeline','type' => 'string'),
                 'idAnnotationSet' => array('column' => 'idAnnotationSet','type' => 'integer'),
                 'idLayerType' => array('column' => 'idLayerType','type' => 'integer'),
