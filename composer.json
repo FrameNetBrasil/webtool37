@@ -1,8 +1,18 @@
 {
-  "name": "frameworkmaestro/maestro3",
-  "description": "PHP Maestro Framework v.3.0",
+  "name": "fnbr/webtool",
+  "description": "FrameNet Brasil Web Annotation Tool",
   "license": "GPLv3",
+  "keywords": [
+    "framenet",
+    "annotation",
+    "frames",
+    "constructions"
+  ],
   "authors": [
+    {
+      "name": "Tiago Torrent",
+      "email": "tiago.torrent@gmail.com"
+    },
     {
       "name": "Ely Matos",
       "email": "admin@ematos.net"

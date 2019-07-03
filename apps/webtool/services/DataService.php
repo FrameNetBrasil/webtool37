@@ -362,19 +362,15 @@ class DataService extends MService
 
     public function exportCorpusToXML()
     {
-        var_dump($this->data);
         $corpus = new \fnbr\models\Corpus();
         $corpus->getByEntry($this->data->corpusEntry);
-        var_dump(explode(':', $this->data->documents));
         $documents = array_slice(explode(':', $this->data->documents), 1);
-        var_dump($documents);
-        $i = 0;
         foreach($documents as $idDocument) {
             $document = new \fnbr\models\Document($idDocument);
-            var_dump($i . ' - ' . $document->getEntry());
+            var_dump(' - ' . $document->getEntry());
             $this->data->fileName = $this->data->dirName . '/' . $document->getEntry() . '.xml';
             $this->exportDocumentToXML($corpus, $document);
-            if (++$i > 2) break;
+            //if (++$i > 2) break;
         }
     }
 

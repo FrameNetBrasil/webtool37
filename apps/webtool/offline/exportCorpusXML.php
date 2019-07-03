@@ -13,31 +13,34 @@ $idLanguage = $argv[3];
 $idUser = $argv[4];
 $email = $argv[5];
 
-$dirName = realpath(Manager::getAbsolutePath("apps/{$app}/files")). '/' . $idUser;
+try {
 
-if(!file_exists($dirName)) {
-    mkdir($dirName);
-}
+    $dirName = realpath(Manager::getAbsolutePath("apps/{$app}/files")) . '/' . $idUser;
 
-$_REQUEST['corpusEntry'] = $corpusEntry;
-$_REQUEST['documents'] = $documents;
-$_REQUEST['idLanguage'] = $idLanguage;
-$_REQUEST['dirName'] = $dirName;
+    if (!file_exists($dirName)) {
+        if (!mkdir($dirName, 0777, true)) {
+            throw new Exception('Fail on folder creation.');
+        }
+    }
+
+    $_REQUEST['corpusEntry'] = $corpusEntry;
+    $_REQUEST['documents'] = $documents;
+    $_REQUEST['idLanguage'] = $idLanguage;
+    $_REQUEST['dirName'] = $dirName;
 
 // Endereco do servico a ser executado
-var_dump($_REQUEST);
-$_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'] . "{$app}/api/data/exportCorpusToXML";
+    $_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'] . "{$app}/api/data/exportCorpusToXML";
 
-$configFile = Manager::getHome() . "/apps/{$app}/conf/conf.php";
-Manager::loadConf($configFile);
-Manager::setConf('logs.level', 2);
-Manager::setConf('logs.port', 0);
+    $configFile = Manager::getHome() . "/apps/{$app}/conf/conf.php";
+    Manager::loadConf($configFile);
+    Manager::setConf('logs.level', 2);
+    Manager::setConf('logs.port', 9999);
+var_dump(Manager::getConf('logs'));
+    Manager::setConf('fnbr.db', $db);
 
-Manager::setConf('fnbr.db', $db);
+    Manager::processRequest(true);
 
-Manager::processRequest(true);
 
-try {
     $fname = $corpusEntry . '_' . date('Ymd') . '_' . date('Hi') . '_xml.zip';
     $fileName = $dirName . '/' . $fname;
     if (file_exists($fileName)) {
@@ -66,9 +69,8 @@ try {
         $url = Manager::getConf('options.baseURL') . "/apps/webtool/files/{$idUser}/{$fname}";
 
         $emailService = new EmailService();
-        $emailService->sendSystemEmail($email, 'Webtool: Export Corpus to XML', 'test webtool sending email ' . "<a href='{$url}'>{$fname}</a>");
+        $emailService->sendSystemEmail($email, 'Webtool: Export Corpus to XML', "The requested XML file is available at <a href='{$url}'>{$fname}</a><br>FNBr Webtool Team");
     }
-
 
 
 } catch (Exception $e) {
