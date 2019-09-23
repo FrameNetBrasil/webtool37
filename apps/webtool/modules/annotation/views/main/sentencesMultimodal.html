@@ -1,0 +1,128 @@
+<form id="formNotifySupervisor" method="post" action={{$manager->getURL('annotation/main/notifySupervisor')}}>
+    <input type="hidden" id="asForSupervisor" name="asForSupervisor" value=""/>
+</form>
+
+<form id="formChangeStatus" method="post" action={{$manager->getURL('annotation/main/changeStatusAS')}}>
+    <input type="hidden" id="asToChange" name="asToChange" value=""/>
+    <input type="hidden" id="asNewStatus" name="asNewStatus" value=""/>
+</form>
+
+<table id="annotationSet"  style="width:100%" >
+    <thead>
+    <tr>
+        <th data-options="field:'idAnnotationSetMM', hidden:true">idAnnotationSet</th>
+        <th data-options="field:'chkSentence'" checkbox="true"></th>
+        <th data-options="field:'idSentenceMM',sortable:true" width="5%">idSentence</th>
+        <th data-options="field:'startTimestamp', align:'right'" width="5%">start</th>
+        <th data-options="field:'endTimestamp', align:'right'" width="5%">end</th>
+        <th data-options="field:'text' {{if ($data->userLanguage == 'ar')}}, align:'right' {{/if}}" width="75%">Sentence</th>
+        <th data-options="field:'status',sortable:true,formatter:asColorBox" width="10%">Status</th>
+    </tr>
+    </thead>
+</table>
+
+<script type="text/javascript">
+    function asColorBox(value,row,index) {
+        return "<span class='fa fa-square' style='width:16px;color:#" + row['rgbBg'] + "'></span><span>" + row['status'] + "</span>";
+    }
+
+    $(function () {
+
+        //annotation.idSubCorpus = {{$data->idSubCorpus}};
+
+        annotation.toolbarAS = [
+            {
+                text:'Notify Supervisor',
+                iconCls:'fa fa-share-square-o fa16px',
+                handler: function(){
+                    var data = JSON.stringify(annotation.annotationSets);
+                    $('#asForSupervisor').val(data);
+                    manager.doPostBack('formNotifySupervisor');
+                }
+            },
+            {
+                text:'Selecteds > IGNORE',
+                iconCls:'fa fa-ban fa16px',
+                handler: function(){
+                    var as = [];
+                    var checked = $('#annotationSet').datagrid('getChecked');
+                    $.each(checked, function(index, row) {
+                        as[as.length] = row.idAnnotationSet;
+                    });
+                    var data = JSON.stringify(as);
+                    $('#asToChange').val(data);
+                    $('#asNewStatus').val('ast_ignore');
+                    manager.doPostBack('formChangeStatus');
+                }
+            },
+            {
+                text:'Selecteds > DOUBT',
+                iconCls:'fa fa-frown-o fa16px',
+                handler: function(){
+                    var as = [];
+                    var checked = $('#annotationSet').datagrid('getChecked');
+                    $.each(checked, function(index, row) {
+                        as[as.length] = row.idAnnotationSet;
+                    });
+                    var data = JSON.stringify(as);
+                    $('#asToChange').val(data);
+                    $('#asNewStatus').val('ast_doubt');
+                    manager.doPostBack('formChangeStatus');
+                }
+            }
+        ];
+
+        annotation.toolbarASMaster = [
+            {
+                text:'Selecteds > IGNORE',
+                iconCls:'fa fa-ban fa16px',
+                handler: function(){
+                    var as = [];
+                    var checked = $('#annotationSet').datagrid('getChecked');
+                    $.each(checked, function(index, row) {
+                        as[as.length] = row.idAnnotationSet;
+                    });
+                    var data = JSON.stringify(as);
+                    $('#asToChange').val(data);
+                    $('#asNewStatus').val('ast_ignore');
+                    manager.doPostBack('formChangeStatus');
+                }
+            },
+            {
+                text:'Selecteds > DOUBT',
+                iconCls:'fa fa-frown-o fa16px',
+                handler: function(){
+                    var as = [];
+                    var checked = $('#annotationSet').datagrid('getChecked');
+                    $.each(checked, function(index, row) {
+                        as[as.length] = row.idAnnotationSet;
+                    });
+                    var data = JSON.stringify(as);
+                    $('#asToChange').val(data);
+                    $('#asNewStatus').val('ast_doubt');
+                    manager.doPostBack('formChangeStatus');
+                }
+            }
+
+        ];
+
+        $('#annotationSet').datagrid({
+            title: {{$data->title}},
+            singleSelect: true,
+            //collapsible: true,
+            fit: true,
+            nowrap: false,
+            checkOnSelect: false,
+            selectOnCheck: false,
+            idField: 'idAnnotationSetMM',
+            toolbar: annotation.isMaster ? annotation.toolbarASMaster : annotation.toolbarAS,
+            url: {{$manager->getURL('annotation/main/annotationSetMultimodal')}} + '/' + {{$data->idDocumentoMM}},
+            method: 'get',
+            onSelect: function (rowIndex, rowData) {
+                $('#layersPane').html('');
+                console.log(rowData);
+                window.open({{$manager->getURL('annotation/main/annotationMultimodal')}} + '/' + rowData.idSentenceMM + '/' + rowData.idAnnotationSetMM + '/' + annotation.type, '_blank');
+            }
+        });
+    });
+</script>

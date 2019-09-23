@@ -22,6 +22,7 @@
 <div onclick="structure.editCorpus()" data-options="iconCls:'icon-edit'">{{_'Edit Corpus'}}</div>
 <div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
 <div onclick="structure.newDocument()" data-options="iconCls:'icon-add'">{{_'New Document'}}</div>
+<div onclick="structure.newDocumentMM()" data-options="iconCls:'icon-add'">{{_'New Document MM'}}</div>
 </div>
 <div id="menuDocument" style="display:none, width:120px;">
 <div onclick="structure.editDocument()" data-options="iconCls:'icon-edit'">{{_'Edit Document'}}</div>
@@ -74,6 +75,13 @@
             }
             console.log(id);
             manager.doGet({{$manager->getURL('structure/corpus/formUpdateDocument')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.newDocumentMM = function (idDocument) {
+            if ($.type(idDocument) === "undefined") {
+                idDocument = structure.node.id.substr(1);
+            }
+            manager.doGet({{$manager->getURL('structure/corpus/formNewDocumentMM')}} + '/' + idDocument,'structureCenterPane');
         }
 
         structure.contextMenuFrame = function(e, node) {

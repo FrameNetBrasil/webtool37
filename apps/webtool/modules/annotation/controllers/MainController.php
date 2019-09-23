@@ -305,4 +305,62 @@ class MainController extends MController
         }
     }
 
+    public function formMultimodalAnnotation()
+    {
+        $annotation = Manager::getAppService('annotation');
+        $this->data->isMaster = Manager::checkAccess('MASTER', A_EXECUTE) ? 'true' : 'false';
+        $this->data->isSenior = Manager::checkAccess('SENIOR', A_EXECUTE) ? 'true' : 'false';
+        $this->data->colors = $annotation->getColor();
+        $this->data->layerType = $annotation->getLayerType();
+        $it = $annotation->getInstantiationType();
+        $this->data->instantiationType = $it['array'];
+        $this->data->instantiationTypeObj = $it['obj'];
+        $this->render();
+    }
+
+    public function multimodalTree()
+    {
+        $annotation = Manager::getAppService('annotation');
+        if ($this->data->id == '') {
+            $json = $annotation->listCorpusMultimodal($this->data->corpus, $this->idLanguage);
+        } elseif ($this->data->id{0} == 'c') {
+            $json = $annotation->listCorpusDocumentMultimodal(substr($this->data->id, 1));
+        }
+        $this->renderJson($json);
+    }
+
+    public function sentencesMultimodal()
+    {
+        $annotation = Manager::getAppService('annotation');
+        $type = $this->data->id{0};
+        if ($type == 'd') {
+            $idDocumentMM = substr($this->data->id, 1);
+            $documentoMM = new fnbr\models\DocumentMM($idDocumentMM);
+            $this->data->idDocumentoMM = $documentoMM->getIdDocument();
+            $this->data->title = $annotation->getDocumentTitle($this->data->idDocumentoMM, $this->idLanguage);
+            /*
+            $document = new fnbr\models\Document($idDocument);
+            $this->data->status = $annotation->getSubCorpusStatus($this->data->idSubCorpus, $this->data->cxn);
+            foreach ($this->data->status->stat as $stat) {
+                $stats .= "({$stat->name}: {$stat->quant})  ";
+            }
+            $this->data->title = $annotation->getSubCorpusTitle($this->data->idSubCorpus, $this->idLanguage, $this->data->cxn) . "  - Stats: {$stats}  -  Status: {$this->data->status->status->msg}";
+            */
+            $this->data->userLanguage = fnbr\models\Base::languages()[fnbr\models\Base::getCurrentUser()->getConfigData('fnbrIdLanguage')];
+            $this->render();
+        }
+    }
+
+    public function annotationSetMultimodal()
+    {
+        $annotation = Manager::getAppService('annotation');
+        if ($this->data->sort) {
+            $sortable = (object)[
+                'field' => $this->data->sort,
+                'order' => $this->data->order
+            ];
+        }
+        $json = $annotation->listAnnotationSetMultimodal($this->data->id, $sortable);
+        $this->renderJson($json);
+    }
 }

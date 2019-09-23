@@ -75,6 +75,18 @@ class CorpusController extends MController
         $this->render();
     }
 
+    public function formNewDocumentMM()
+    {
+        $this->data->idCorpus = $this->data->id;
+        $model = new fnbr\models\Corpus($this->data->idCorpus);
+        $this->data->corpus = $model->getEntry() . '  [' . $model->getName() . ']';
+        $this->data->save = "@structure/corpus/newDocumentMM|formNewDocumentMM";
+        $this->data->close = "!$('#formNewDocumentMM_dialog').dialog('close');";
+        $this->data->title = _M('new Document Multimodal');
+        $this->render();
+    }
+
+
     public function newCorpus()
     {
         try {
@@ -120,6 +132,18 @@ class CorpusController extends MController
             $model->updateEntry($this->data->document->entry);
             $model->setData($this->data->document);
             $model->save($this->data->document);
+            $this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->document->entry}');");
+        } catch (\Exception $e) {
+            $this->renderPrompt('error', $e->getMessage());
+        }
+    }
+
+    public function newDocumentMM()
+    {
+        try {
+            $model = new fnbr\models\DocumentMM();
+            $this->data->document->entry = 'doc_' . $this->data->documentmm->entry;
+            $model->save($this->data->documentmm);
             $this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->document->entry}');");
         } catch (\Exception $e) {
             $this->renderPrompt('error', $e->getMessage());
