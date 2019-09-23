@@ -351,6 +351,16 @@ class MainController extends MController
         }
     }
 
+    public function annotationMultimodal() {
+        Manager::getPage()->setTemplateName('content');
+        $this->data->idAnnotationSetMM = $this->data->id;
+        $annotationSetMM = new \fnbr\models\AnnotationSetMM($this->data->idAnnotationSetMM);
+        $sentenceMM = new \fnbr\models\SentenceMM($annotationSetMM->getIdSentenceMM());
+        $this->data->idSentence = $sentenceMM->getIdSentence();
+        $this->data->idAnnotationSet = $annotationSetMM->getIdAnnotationSet();
+        $this->render();
+    }
+
     public function annotationSetMultimodal()
     {
         $annotation = Manager::getAppService('annotation');
@@ -363,4 +373,19 @@ class MainController extends MController
         $json = $annotation->listAnnotationSetMultimodal($this->data->id, $sortable);
         $this->renderJson($json);
     }
+
+    public function objectsData()
+    {
+        $this->data->idAnnotationSetMM = $this->data->id;
+        $annotation = Manager::getAppService('annotationmm');
+        mdump($this->data);
+        $this->data->objectsData = $annotation->getObjectsData($this->data, $this->idLanguage);
+        $this->renderJson($this->data->objectsData);
+    }
+
+    public function visual() {
+        Manager::getPage()->setTemplateName('content');
+        $this->render();
+    }
+
 }

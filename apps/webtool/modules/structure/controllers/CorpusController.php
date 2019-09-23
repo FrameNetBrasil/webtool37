@@ -142,7 +142,7 @@ class CorpusController extends MController
     {
         try {
             $model = new fnbr\models\DocumentMM();
-            $this->data->document->entry = 'doc_' . $this->data->documentmm->entry;
+            $this->data->documentmm->entry = 'doc_' . $this->data->documentmm->entry;
             $model->save($this->data->documentmm);
             $this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->document->entry}');");
         } catch (\Exception $e) {

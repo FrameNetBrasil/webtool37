@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formImportMultimodalText" title="Import Multimodal Text"  close=">fnbr/main" >
+        <fields>
+            <mvcontainer>
+                <mspan>Importação de arquivos texto simples para anotação multimodal.</mspan>
+                <mspan>Formato: start_timestamp|end_timestamp|text.</mspan>
+            </mvcontainer>
+            <mselection id="idLanguage" label="Língua" options="$this->data->languages"/>
+            <include component="MLookupDocument.php" id="idDocument" label="Document"/>
+            <mfilefield id="uploadFile" label="Arquivo com dados" text="Selecionar Arquivo" width="300px"/>
+        </fields>    
+        <buttons>
+            <mbutton id="btnPost" text="{{_M('Send')}}" action="$this->data->action"/>
+        </buttons>
+    </mformdialog>
+</view>

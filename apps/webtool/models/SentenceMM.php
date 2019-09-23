@@ -13,7 +13,7 @@
 
 namespace fnbr\models;
 
-class SentenceMM extends map\SentenceMap {
+class SentenceMM extends map\SentenceMMMap {
 
     public static function config() {
         return array(
@@ -30,12 +30,6 @@ class SentenceMM extends map\SentenceMap {
             $criteria->where("idSentenceMM LIKE '{$filter->idSentenceMM}%'");
         }
         return $criteria;
-    }
-
-    public function save() {
-        $timeline = 'sen_' . md5($this->getText());
-        $this->setTimeLine(Base::newTimeLine($timeline, 'S'));
-        parent::save();
     }
 
 }

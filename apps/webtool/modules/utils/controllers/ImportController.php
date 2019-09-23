@@ -193,4 +193,25 @@ class ImportController extends MController
         }
     }
 
+    public function formImportMultimodalText()
+    {
+        $language = new fnbr\models\Language();
+        $this->data->languages = $language->listAll()->asQuery()->chunkResult('idLanguage', 'language');
+        $this->data->action = '@utils/import/importMultimodalText';
+        $this->render();
+    }
+
+    public function importMultimodalText()
+    {
+        try {
+            $files = Mutil::parseFiles('uploadFile');
+            $model = new fnbr\models\Document($this->data->idDocument);
+            $model->uploadMultimodalText($this->data, $files[0]);
+            $this->renderPrompt('information', 'Multimodal text loaded successfully.');
+        } catch (EMException $e) {
+            $this->renderPrompt('error', $e->getMessage());
+        }
+    }
+
+
 }

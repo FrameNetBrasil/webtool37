@@ -558,4 +558,113 @@ HERE;
         return $query;
     }
 
+    /**
+     * Upload MultimodalText - plain text (without processing) - UTF8
+     * Format: start_timestamp|end_timestamp|text
+     * @param type $data
+     * @param type $file
+     * @return type
+     * @throws EModelException
+     */
+    public function uploadMultimodalText($data, $file)
+    {
+        // each sentence from multimodal text must be associated two subcorpus/two annotationSet:
+        // 1. for fulltext annotation alone (without video)
+        // 2. for parallel annotation (text + video)
+
+        $idLanguage = $data->idLanguage;
+        $transaction = $this->beginTransaction();
+        try {
+            $this->createSubCorpusMultimodalText($data);
+            $breakParagraph = $breakSentence = false;
+            $p = $paragraphNum = $sentenceNum = 0;
+            $text = '';
+            $filename = (is_object($file) ? $file->getTmpName() : $file);
+            $rows = file($filename);
+            foreach ($rows as $row) {
+                $row = str_replace("\t", " ", $row);
+                $row = str_replace("\n", " ", $row);
+                $row = trim($row);
+                if ($row == '') {
+                    continue;
+                }
+                $parts = explode('|', $row);
+                $data->startTimestamp = $parts[0];
+                $data->endTimestamp = $parts[1];
+                $textSentence = $parts[2];
+
+                $paragraph = $this->createParagraph(++$paragraphNum); // cada linha do arquivo é um paragrafo
+                $words = preg_split('/ /', $textSentence);
+                $wordsSize = count($words);
+                if ($wordsSize == 0) {
+                    continue;
+                }
+                $text = ''; // texto de cada sentença
+                // $break = false;
+                foreach ($words as $word) {
+                    $word = str_replace('"', "'", str_replace('<', '', str_replace('>', '', str_replace('=', ' ', str_replace('$', '', $word)))));
+                    mdump($word);
+                    $text .= $word;
+                    if (preg_match("/\.|\?|!/", $word)) { // quebra de sentença
+                    } else {
+                        $text .= ' ';
+                    }
+                }
+                if (trim($text) != '') {
+                    $sentenceNum++;
+                    mdump($paragraphNum . ' - ' . $sentenceNum . ' - ' . $text);
+                    $sentence = $this->createSentence($paragraph, $sentenceNum, $text, $idLanguage);
+                    $data->idSentence = $sentence->getId();
+                    $sentenceMM = $this->createSentenceMM($data);
+                    $data->idSentenceMM = $sentenceMM->getId();
+                    $this->createAnnotationMultimodalText($data);
+                }
+            }
+            $transaction->commit();
+        } catch (\EModelException $e) {
+            // rollback da transação em caso de algum erro
+            $transaction->rollback();
+            throw new EModelException($e->getMessage());
+        }
+        return $result;
+    }
+
+    public function createSubCorpusMultimodalText($data)
+    {
+        $subCorpus = new SubCorpus();
+        $subCorpus->addManualSubCorpusDocument($data);
+        $data->idSubCorpus = $subCorpus->getId();
+        $subCorpus = new SubCorpus();
+        $subCorpus->addManualSubCorpusMultimodal($data);
+        $data->idSubCorpusMultimodal = $subCorpus->getId();
+    }
+
+    public function createSentenceMM($data)
+    {
+        $sentenceMM = new SentenceMM();
+        $sentenceMM->setData($data);
+        $sentenceMM->save();
+        return $sentenceMM;
+    }
+
+    public function createAnnotationMultimodalText($data)
+    {
+        // each sentence from multimodal text must be associated two annotationSet:
+        // 1. for fulltext annotation alone (without video)
+        // 2. for parallel annotation (text + video)
+        $annotationSet = new AnnotationSet();
+        $annotationSet->setIdSubCorpus($data->idSubCorpus);
+        $annotationSet->setIdSentence($data->idSentence);
+        $annotationSet->setIdAnnotationStatus('ast_manual');
+        $annotationSet->save();
+        $annotationSet = new AnnotationSet();
+        $annotationSet->setIdSubCorpus($data->idSubCorpusMultimodal);
+        $annotationSet->setIdSentence($data->idSentence);
+        $annotationSet->setIdAnnotationStatus('ast_manual');
+        $annotationSet->save();
+        $annotationSetMM = new AnnotationSetMM();
+        $data->idAnnotationSet = $annotationSet->getId();
+        $annotationSetMM->save($data);
+    }
+
 }

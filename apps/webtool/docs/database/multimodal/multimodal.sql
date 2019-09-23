@@ -21,3 +21,51 @@ values (119702, '0:00:35.320', '0:00:37.820');
 insert into annotationsetmm (idSentenceMM) values (1);
 insert into annotationsetmm (idSentenceMM) values (2);
 
+-- empty document 
+
+start transaction;
+
+delete from annotationsetmm
+where idannotationset in (
+  select idAnnotationset from annotationset 
+  where idsentence in (
+    select idsentence from sentence
+    where idparagraph in (
+      select idparagraph from paragraph
+      where iddocument = 409
+    )
+  )
+);
+
+delete from annotationset 
+  where idsentence in (
+    select idsentence from sentence
+    where idparagraph in (
+      select idparagraph from paragraph
+      where iddocument = 409
+    )
+  );
+
+delete from sentencemm
+  where idsentence in (
+    select idsentence from sentence
+    where idparagraph in (
+      select idparagraph from paragraph
+      where iddocument = 409
+    )
+  );
+
+delete from sentence
+    where idparagraph in (
+      select idparagraph from paragraph
+      where iddocument = 409
+    );
+
+delete from paragraph
+      where iddocument = 409;
+
+commit;
+
+
+
+
