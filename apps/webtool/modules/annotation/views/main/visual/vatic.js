@@ -477,7 +477,7 @@ columns: [columns],
          */
 
         let zip = null;
-        let url = {{$manager->getBaseURL() . '/apps/webtool/files/multimodal/videoframes/fnbr1.zip'}}
+        let url = {{$manager->getBaseURL() . '/apps/webtool/files/multimodal/videoframes/fnbr2.zip'}}
         console.log(url);
                 promise = extractFramesFromZipUrl(config, url);
 

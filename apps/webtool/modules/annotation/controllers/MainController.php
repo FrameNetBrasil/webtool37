@@ -389,4 +389,8 @@ class MainController extends MController
         $this->render();
     }
 
+    public function visualPlayer() {
+        Manager::getPage()->setTemplateName('content');
+        $this->render();
+    }
 }

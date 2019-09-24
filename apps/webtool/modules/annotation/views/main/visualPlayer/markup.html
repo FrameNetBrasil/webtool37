@@ -1,0 +1,267 @@
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/compatibility.js')}}"></script>
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/jszip.js')}}"></script>
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/StreamSaver.js')}}"></script>
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/polyfill.js')}}"></script>
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/jsfeat.js')}}"></script>
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/nudged.js')}}"></script>
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/pouchdb.min.js')}}"></script>
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/vatic.js')}}"></script>
+
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), 'scripts/jplayer/jquery.jplayer.min.js')}}"></script>
+
+
+<div id="visualMarkup" style="display:flex; flex-direction: row; height: 50%;">
+    <div id="videoPane" style="width:70%;height:100%;">
+        <div id="doodle">
+        <div id="jp_container_1" class="jp-video " role="application" aria-label="media player">
+            <div class="jp-type-single">
+                <div id="jquery_jplayer_1" class="jp-jplayer"></div>
+                <!--
+                <div class="jp-gui">
+                    <div class="jp-video-play">
+                        <button class="jp-video-play-icon" role="button" tabindex="0">play</button>
+                    </div>
+                    <div class="jp-interface">
+                        <div class="jp-progress">
+                            <div class="jp-seek-bar">
+                                <div class="jp-play-bar"></div>
+                            </div>
+                        </div>
+                        <div class="jp-current-time" role="timer" aria-label="time">&nbsp;</div>
+                        <div class="jp-duration" role="timer" aria-label="duration">&nbsp;</div>
+                        <div class="jp-details">
+                            <div class="jp-title" aria-label="title">&nbsp;</div>
+                        </div>
+                        <div class="jp-controls-holder">
+                            <div class="jp-volume-controls">
+                                <button class="jp-mute" role="button" tabindex="0">mute</button>
+                                <button class="jp-volume-max" role="button" tabindex="0">max volume</button>
+                                <div class="jp-volume-bar">
+                                    <div class="jp-volume-bar-value"></div>
+                                </div>
+                            </div>
+                            <div class="jp-controls">
+                                <button class="jp-play" role="button" tabindex="0">play</button>
+                                <button class="jp-stop" role="button" tabindex="0">stop</button>
+                            </div>
+                            <div class="jp-toggles">
+                                <button class="jp-repeat" role="button" tabindex="0">repeat</button>
+                                <button class="jp-full-screen" role="button" tabindex="0">full screen</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                -->
+                <div class="jp-no-solution">
+                    <span>Update Required</span>
+                    To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+                </div>
+            </div>
+        </div>
+        </div>
+        <div id="slider"></div>
+        <div style="display:flex; flex-direction: row">
+            <!--
+            <label for="speed">Speed multiplier: </label>
+            <input type="text" id="speed" value="1.00" size="4" />
+            -->
+            <input type="hidden" id="speed" value="1.00"/>
+            <a id="btnBackward" class="ui-button"></a>
+            <a id="btnPlay" class="ui-button"></a>
+            <a id="btnPause" class="ui-button"></a>
+            <a id="btnForward" class="ui-button"></a>
+            <a id="btnNewBox" class="ui-button" >New Box</a>
+            <a id="btnUpdateObjects" class="ui-button" >Update Objects</a>
+
+        </div>
+        <div id="objects"></div>
+    </div>
+    <div id="videoTable" style="width:30%;height:100%;padding: 10px;">
+        <table id="objectsGrid" style="width:100%;height:100%;background-color:#CCC">
+        </table>
+    </div>
+</div>
+
+
+<form id="formObjects" method="post" action={{$manager->getURL('annotation/main/putObjects')}}>
+    <input type="hidden" id="type" name="type" value=""/>
+    <input type="hidden" id="dataObjects" name="dataObjects" value=""/>
+</form>
+
+<!--
+<div id="dlgValidation" title="Disapprove: Send Feedback" style="width:280px;height:200px;padding:0px">
+    <form id="formValidation" method="post" action={{$manager->getURL('annotation/main/validation')}}>
+        <input type="hidden" id="validation" name="validation" value=""/>
+        <input type="hidden" id="annotationSets" name="annotationSets" value=""/>
+        <div class="mFormContainer">
+            <div class="mFormRow">
+                <span>Message (optional):</span>
+            </div>
+            <div class="mFormRow">
+                <input type="text" id="feedback" name="feedback" value=""/>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="dlgNI" title="Instantiation Type" style="width:280px;height:200px;padding:0px">
+    <div id="dlgNI_tools">
+        <a href='#' name="dlgNIClose" id="dlgNIClose" >
+            Close
+        </a>
+        <a href='#' name="dlgNISave" id="dlgNISave" >
+            Set NI
+        </a>
+    </div>
+    <table id="pg" style="width:100%;height: 100%"></table>
+</div>
+
+<div id="dlgMWE" title="MultiWord Expression (MWE)" style="width:280px;height:200px;padding:0px">
+    <div>MWE - Choose words</div>
+    <div id="dlgMWE_tools">
+        <a href='#' name="dlgMWEClose" id="dlgMWEClose" >
+            Close
+        </a>
+        <a href='#' name="dlgMWESave" id="dlgMWESave" >
+            Save
+        </a>
+    </div>
+    <input type="hidden" id="mweIdLU" name="mweIdLU" value=""/>
+    <input type="hidden" id="mweIdSentence" name="mweIdSentence" value=""/>
+    <table id="mwe">
+        <thead>
+        <tr>
+            <th field="ck" checkbox="true"></th>
+            <th field="startChar" hidden="true"></th>
+            <th field="endChar" hidden="true"></th>
+            <th field="word" width="180">Word</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+
+<div id="dlgASComments" title="Annotation Set Comments" style="width:550px;height:400px;padding:0px">
+    <div id="dlgASComments_tools">
+        <a href='#' name="dlgASCommentsClose" id="dlgASCommentsClose" >
+            Close
+        </a>
+        <a href='#' name="dlgASCommentsSave" id="dlgASCommentsSave" >
+            Save
+        </a>
+    </div>
+</div>
+
+<div id="dlgASInfo" title="Annotation Set Info" style="width:300px;height:150px;padding:0px">
+    <div id="dlgASInfo_tools">
+        <a href='#' name="dlgASInfoClose" id="dlgASInfoClose" >
+            Close
+        </a>
+    </div>
+    <form class="form-horizontal" style="width:90%">
+        <div class="row">
+            <label class="col-sm-4 control-label">Id:</label>
+            <span class="col-sm-6 form-control-static" id="dlgASInfo_idAnnotationSet"></span>
+        </div>
+        <div class="row">
+            <span class="col-sm-4 control-label" id="dlgASInfo_type"></span>
+            <span class="col-sm-6 form-control-static" id="dlgASInfo_name"></span>
+        </div>
+    </form>
+</div>
+
+<div id="dlgSubCorpus" title="Choose Subcorpus" style="width:400px;height:250px;padding:0px">
+    <div id="dlgSubCorpus_tools">
+        <a href='#' name="dlgSubCorpusClose" id="dlgSubCorpusClose" >
+            Close
+        </a>
+        <a href='#' name="dlgSubCorpusSave" id="dlgSubCorpusSave" >
+            Save
+        </a>
+    </div>
+    <input type="hidden" id="dlgSubCorpusField" name="dlgSubCorpusField" value=""/>
+    <label><strong>Select a Frame.LU and save</strong></label>
+    <div id="dlgSubCorpusList"></div>
+</div>
+
+
+{{if ($data->isMaster)}}
+<div id="dlgAS" title="Hide Annotation Sets" style="width:280px;height:200px;padding:0px">
+    <div id="dlgAS_tools">
+        <a href='#' name="dlgASClose" id="dlgASClose" >
+            Close
+        </a>
+        <a href='#' name="dlgASSave" id="dlgASSave" >
+            Hide Checked AS
+        </a>
+    </div>
+    <table id="asGrid" style="width:100%;height: 100%">
+        <thead>
+        <tr>
+            <th field="ck" checkbox="true"></th>
+            <th field="idAnnotationSet" hidden="true"></th>
+            <th field="name" width="200">AnnotationSet</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+
+<div id="dlgASRemove" title="Remove Annotation Sets" style="width:280px;height:200px;padding:0px">
+    <div id="dlgASRemove_tools">
+        <a href='#' name="dlgASRemoveClose" id="dlgASRemoveClose" >
+            Close
+        </a>
+        <a href='#' name="dlgASRemoveSave" id="dlgASRemoveSave" >
+            Remove Checked AS
+        </a>
+    </div>
+    <table id="asGridRemove" style="width:100%;height: 100%">
+        <thead>
+        <tr>
+            <th field="ck" checkbox="true"></th>
+            <th field="idAnnotationSet" hidden="true"></th>
+            <th field="name" width="200">AnnotationSet</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+
+<div id="dlgCxn" title="Add Construction" style="width:280px;height:200px;padding:0px">
+    <div id="dlgCxn_tools">
+        <a href='#' name="dlgCxnClose" id="dlgCxnClose" >
+            Close
+        </a>
+        <a href='#' name="dlgCxnSave" id="dlgCxnSave" >
+            Save
+        </a>
+    </div>
+    <table id="cxnGrid" style="width:100%;height: 100%" >
+        <thead>
+        <tr>
+            <th field="idConstruction" hidden="true"></th>
+            <th field="name" width="200">Construction</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+
+
+<div id="dlgUDTree" title="UD Tree" class="dlgUDTree" style="width:1000px;height:650px;padding:0px">
+    <div id="dlgUDTree_tools">
+        <a href='#' name="dlgUDTreeRefresh" id="dlgUDTreeRefresh" >
+            Format
+        </a>
+        <a href='#' name="dlgUDTreeSave" id="dlgUDTreeSave" >
+            Save
+        </a>
+        <a href='#' name="dlgUDTreeClose" id="dlgUDTreeClose" >
+            Close
+        </a>
+    </div>
+    <div id="UDTreeCanvas" class="jtk-demo-canvas canvas-wide statemachine-demo jtk-surface jtk-surface-nopan">
+    </div>
+</div>
+
+
+{{/if}}
+
+-->

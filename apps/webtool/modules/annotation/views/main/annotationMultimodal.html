@@ -9,7 +9,7 @@
 <script type="text/javascript">
     $(function () {
         $('#visualPane').panel({
-            href:{{$manager->getURL('annotation/main/visual') . '/' . $this->data->idAnnotationSetMM . '/m'}},
+            href:{{$manager->getURL('annotation/main/visualPlayer') . '/' . $this->data->idAnnotationSetMM . '/m'}},
             onLoad:function(){
                 console.log('loaded visualPane successfully');
             }
