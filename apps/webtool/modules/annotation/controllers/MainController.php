@@ -370,6 +370,7 @@ class MainController extends MController
                 'order' => $this->data->order
             ];
         }
+        $this->data->urlObjects = Manager::getURL('annotation/main/objectsData') . "/" . $this->data->idAnnotationSetMM;
         $json = $annotation->listAnnotationSetMultimodal($this->data->id, $sortable);
         $this->renderJson($json);
     }

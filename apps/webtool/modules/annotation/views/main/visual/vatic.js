@@ -11,65 +11,93 @@ let ctx = canvas.getContext('2d');
 //let downloadFramesButton = document.querySelector('#downloadFrames');
 //let playButton = document.querySelector('#play');
 //let pauseButton = document.querySelector('#pause');
-//let speedInput = document.querySelector('#speed');
+let speedInput = document.querySelector('#speed');
 //let sliderElement = document.querySelector('#slider');
 //let generateXmlButton = document.querySelector('#generateXml');
 
+$('#slider').slider({
+    onSlideStart: function() {
+        console.log('slide start');
+    },
+    onSlideEnd: function() {
+        console.log('slide end ' + this.value);
+        player.seek(this.value)
+    }
+});
+
 let slider = {
-    init: function (min, max, onChange) {
-        //$(sliderElement).slider('option', 'min', min);
-        //$(sliderElement).slider('option', 'max', max);
+    init: function (min, max) {
         $('#slider').slider({
             min: min,
-            max: max
-        });
-        $('#slider').on('slidestop', (e, ui) => {
-            onChange(ui.value);
+            max: max,
+            showTip: true,
         });
         $('#slider').slider('enable');
     },
     setPosition: function (frameNumber) {
+        //console.log('set position ' + frameNumber);
         $('#slider').slider({
             value: frameNumber
         });
     },
     reset: function () {
-        $('#slider').slider({
-            disabled: true
-        });
+        $('#slider').slider('disable');
     }
 };
 
 
 $('#btnPlay').linkbutton({
-    iconCls: 'icon-save',
+    iconCls: 'fa fa-play',
     size: null,
     disable: true,
     onClick: function () {
+        console.log('play clicked');
         playClicked();
     }
 });
 
 $('#btnPause').linkbutton({
-    iconCls: 'icon-save',
+    iconCls: 'fa fa-pause',
     size: null,
     disable: true,
     onClick: function () {
+        console.log('pause clicked');
         pauseClicked();
     }
 });
 
-$('#btnNewBox').linkbutton({
-    iconCls: 'icon-save',
+$('#btnBackward').linkbutton({
+    iconCls: 'fa fa-step-backward',
     size: null,
     disable: true,
     onClick: function () {
-        newBboxElement();
+        player.backward();
+    }
+});
+
+$('#btnForward').linkbutton({
+    iconCls: 'fa fa-step-forward',
+    size: null,
+    disable: true,
+    onClick: function () {
+        player.forward();
+    }
+});
+
+
+
+$('#btnNewBox').linkbutton({
+    iconCls: 'far fa-square',
+    size: null,
+    disable: true,
+    onClick: function () {
+        //newBboxElement();
+        doodle.style.cursor = 'crosshair';
     }
 });
 
 $('#btnUpdateObjects').linkbutton({
-    iconCls: 'icon-save',
+    iconCls: 'fa fa-save',
     size: null,
     disable: true,
     onClick: function () {
@@ -77,18 +105,35 @@ $('#btnUpdateObjects').linkbutton({
     }
 });
 
+/*
 var columns = [
     {field:'idObject', title:'ID'},
     {field:'startFrame', title:'start'},
     {field:'endFrame', title:'end'},
     {field:'frameElement', title:'FE'},
 ];
+*/
+
+var columns = [
+    {field:'idObject', title:'ID'},
+    {field:'visible', title:'Visible', formatter: function(value,row,index){
+        console.log(value);
+        return value[0].outerHTML;
+        }},
+    {field:'hide', title:'Hide Others', formatter: function(value,row,index){
+            console.log(value);
+            return value[0].outerHTML;
+        }},
+    {field:'frameElement', title:'FE'},
+];
+
 
 console.log(columns);
 
 $('#objectsGrid').datagrid({
-    url:{{$manager->getURL('annotation/main/objectsData')}} + "/" + {{$data->idAnnotationSetMM}} + "/" + {{$data->type}},
-method:'get',
+    url:{{$data->urlObjects}},
+    method:'get',
+        title: 'Objects',
     //collapsible:true,
     //fitColumns: false,
     //autoRowHeight: false,
@@ -108,8 +153,26 @@ columns: [columns],
 //}
 });
 
+    function updateObjectsGrid() {
+        let data = [];
+        for (let i = 0; i < annotatedObjectsTracker.annotatedObjects.length; i++) {
+            let annotatedObject = annotatedObjectsTracker.annotatedObjects[i];
+            console.log(annotatedObject);
+            let row = {
+                idObject: annotatedObject.id,
+                visible: annotatedObject.visible,
+                hide: annotatedObject.hide,
+                frameElement: annotatedObject.frameElement,
+            }
+            data.push(row);
+        }
+        $('#objectsGrid').datagrid({
+            data: data
+        })
+        //$('#objectsGrid').datagrid('refresh');
+    }
 
-let config = {
+    let config = {
         // Should be higher than real FPS to not skip real frames
         // Hardcoded due to JS limitations
         fps: 30,
@@ -145,13 +208,15 @@ let config = {
             // playButton.style.display = 'block';
             // pauseButton.disabled = true;
             // pauseButton.style.display = 'none';
-            $('#btnPlay').linkbutton({disable: true});
-            $('#btnPause').linkbutton({disable: true});
+            $('#btnPlay').linkbutton('disable');
+            $('#btnPause').linkbutton('disable');
+            $('#btnBackward').linkbutton('disable');
+            $('#btnForward').linkbutton('disable');
         },
 
         ready: function () {
             this.isReady = true;
-            $('#btnPlay').linkbutton({disable: false});
+            $('#btnPlay').linkbutton('enable');
             //playButton.disabled = false;
         },
 
@@ -159,6 +224,7 @@ let config = {
             if (!this.isReady) {
                 return;
             }
+            console.log('playre.seek = ' + frameNumber);
 
             this.pause();
 
@@ -166,6 +232,14 @@ let config = {
                 this.drawFrame(frameNumber);
                 this.currentFrame = frameNumber;
             }
+        },
+
+        forward: function() {
+            this.seek(this.currentFrame + 1);
+        },
+
+        backward: function() {
+            this.seek(this.currentFrame - 1);
         },
 
         play: function () {
@@ -179,8 +253,10 @@ let config = {
             //playButton.style.display = 'none';
             //pauseButton.disabled = false;
             //pauseButton.style.display = 'block';
-            $('#btnPlay').linkbutton({disable: true});
-            $('#btnPause').linkbutton({disable: false});
+            $('#btnPlay').linkbutton('disable');
+            $('#btnPause').linkbutton('enable');
+            $('#btnBackward').linkbutton('disable');
+            $('#btnForward').linkbutton('disable');
             this.nextFrame();
         },
 
@@ -199,8 +275,12 @@ let config = {
             //pauseButton.style.display = 'none';
             //playButton.disabled = false;
             //playButton.style.display = 'block';
-            $('#btnPlay').linkbutton({disable: false});
-            $('#btnPause').linkbutton({disable: true});
+            $('#btnPlay').linkbutton('enable');
+            $('#btnPause').linkbutton('disable');
+            $('#btnBackward').linkbutton('enable');
+            $('#btnForward').linkbutton('enable');
+            console.log('pause');
+
         },
 
         toogle: function () {
@@ -275,8 +355,8 @@ let config = {
             //playButton.style.display = 'block';
             //pauseButton.disabled = true;
             //pauseButton.style.display = 'none';
-            $('#btnPlay').linkbutton({disable: false});
-            $('#btnPause').linkbutton({disable: true});
+            $('#btnPlay').linkbutton('enable');
+            $('#btnPause').linkbutton('disable');
 
         }
     };
@@ -335,18 +415,21 @@ let config = {
 
 
     function initializeCanvasDimensions(img) {
-        /*
+
        doodle.style.width = img.width + 'px';
        doodle.style.height = img.height + 'px';
        canvas.width = img.width;
        canvas.height = img.height;
-       sliderElement.style.width = img.width + 'px';
-         */
+        $('#slider').slider({width: img.width + 'px'});
+
+        /*
         doodle.style.width = '720' + 'px';
         doodle.style.height = '400' + 'px';
-        canvas.width = '720';
-        canvas.height = '400';
+        canvas.width = 720;//img.width;
+        canvas.height = 400;//img.height;
         $('#slider').slider({width: '720' + 'px'});
+        */
+        console.log('canvas ok');
     }
 
     function extractionFileUploaded() {
@@ -399,19 +482,23 @@ let config = {
                 promise = extractFramesFromZipUrl(config, url);
 
                 promise.then((frames) => {
+                    console.log(frames);
                     //extractionProgressElement.innerHTML = 'Extraction completed. ' + frames.totalFrames() + ' frames captured.';
+                    console.log('Extraction completed. ' + frames.totalFrames() + ' frames captured.');
                     if (frames.totalFrames() > 0) {
                         frames.getFrame(0).then((blob) => {
                             blobToImage(blob).then((img) => {
                                 initializeCanvasDimensions(img);
                                 ctx.drawImage(img, 0, 0);
                                 //videoDimensionsElement.innerHTML = 'Video dimensions determined: ' + img.width + 'x' + img.height;
+                                console.log('Video dimensions determined: ' + img.width + 'x' + img.height);
 
                                 framesManager.set(frames);
+                                console.log('pos framesManager');
                                 slider.init(
                                     0,
                                     framesManager.frames.totalFrames() - 1,
-                                    (frameNumber) => player.seek(frameNumber)
+                                    //(frameNumber) => {console.log(frameNumber); player.seek(frameNumber)}
                                 );
                                 player.ready();
 
@@ -419,7 +506,7 @@ let config = {
                                 //playButton.disabled = false;
                                 //downloadFramesButton.disabled = false;
                                 //generateXmlButton.disabled = false;
-                                $('#btnPlay').linkbutton({disable: false});
+                                $('#btnPlay').linkbutton('enable');
                             });
                         });
                     }
@@ -442,23 +529,43 @@ let config = {
         };
 
         bbox.resizable({
-            containment: 'parent',
-            handles: {
-                n: createHandleDiv('ui-resizable-handle ui-resizable-n'),
-                s: createHandleDiv('ui-resizable-handle ui-resizable-s'),
-                e: createHandleDiv('ui-resizable-handle ui-resizable-e'),
-                w: createHandleDiv('ui-resizable-handle ui-resizable-w')
-            },
-            stop: (e, ui) => {
-                let position = bbox.position();
+            //containment: 'parent',
+
+            //handles: {
+            //    n: createHandleDiv('ui-resizable-handle ui-resizable-n'),
+            //    s: createHandleDiv('ui-resizable-handle ui-resizable-s'),
+            //    e: createHandleDiv('ui-resizable-handle ui-resizable-e'),
+            //    w: createHandleDiv('ui-resizable-handle ui-resizable-w')
+            //},
+
+            handles: "n, e, s, w",
+            //stop: (e, ui) => {
+            onStopResize: (e) => {
+                    let position = bbox.position();
                 onChange(Math.round(position.left), Math.round(position.top), Math.round(bbox.width()), Math.round(bbox.height()));
             }
         });
 
+
+
+        let x = createHandleDiv('handle center-drag');
+        console.log(x);
         bbox.draggable({
-            containment: 'parent',
-            handle: createHandleDiv('handle center-drag'),
-            stop: (e, ui) => {
+            //containment: 'parent',
+            handle: $(x),
+            onDrag: (e) => {
+                var d = e.data;
+                if (d.left < 0){d.left = 0}
+                if (d.top < 0){d.top = 0}
+                if (d.left + $(d.target).outerWidth() > $(d.parent).width()){
+                    d.left = $(d.parent).width() - $(d.target).outerWidth();
+                }
+                if (d.top + $(d.target).outerHeight() > $(d.parent).height()){
+                    d.top = $(d.parent).height() - $(d.target).outerHeight();
+                }
+            },
+            //stop: (e, ui) => {
+            onStopDrag: (e) => {
                 let position = bbox.position();
                 onChange(Math.round(position.left), Math.round(position.top), Math.round(bbox.width()), Math.round(bbox.height()));
             }
@@ -475,6 +582,7 @@ let config = {
     let tmpAnnotatedObject = null;
 
     doodle.onmousemove = function (e) {
+        console.log('onmousemove');
         let ev = e || window.event;
         if (ev.pageX) {
             mouse.x = ev.pageX;
@@ -521,6 +629,7 @@ let config = {
             );
 
             addAnnotatedObjectControls(annotatedObject);
+            updateObjectsGrid();
 
             doodle.style.cursor = 'default';
         } else {
@@ -538,6 +647,8 @@ let config = {
         let dom = document.createElement('div');
         dom.className = 'bbox';
         doodle.appendChild(dom);
+        console.log('new box');
+        console.log(dom);
         return dom;
     }
 
@@ -579,6 +690,7 @@ let config = {
 
         let hideLabel = $('<label>');
         let hide = $('<input type="checkbox" />');
+        annotatedObject.hide = hide;
         hide.change(function () {
             annotatedObject.hideOthers = this.checked;
         });
