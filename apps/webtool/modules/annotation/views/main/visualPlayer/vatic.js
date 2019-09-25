@@ -1,6 +1,33 @@
 <script type="text/javascript">
 $(function () {
-        //extractionFileUploaded();
+    let config = {
+        // Should be higher than real FPS to not skip real frames
+        // Hardcoded due to JS limitations
+        fps: 30,
+
+        // Low rate decreases the chance of losing frames with poor browser performances
+        playbackRate: 0.4,
+
+        // Format of the extracted frames
+        //imageMimeType: 'image/jpeg',
+        //imageExtension: '.jpg',
+
+        // Name of the extracted frames zip archive
+        //framesZipFilename: 'extracted-frames.zip'
+        currentTime: 0
+    };
+
+    let annotation = {
+        editObject: {
+
+        },
+        updateObject() {
+            console.log('update object');
+            console.log(this.editObject);
+        }
+    }
+
+    //extractionFileUploaded();
         //console.log(player);
     /*
     $("#jquery_jplayer_1").jPlayer({
@@ -32,41 +59,36 @@ $(function () {
         fixFlash_mp4_id, // Timeout ID used with fixFlash_mp4
         ignore_timeupdate, // Flag used with fixFlash_mp4
         options = {
-            ready: function (event) {
-                // Hide the volume slider on mobile browsers. ie., They have no effect.
-                //if(event.jPlayer.status.noVolume) {
-                    // Add a class and then CSS rules deal with it.
-                //    $(".jp-gui").addClass("jp-no-volume");
-                //}
-                // Determine if Flash is being used and the mp4 media type is supplied. BTW, Supplying both mp3 and mp4 is pointless.
-                fixFlash_mp4 = event.jPlayer.flash.used && /m4a|m4v/.test(event.jPlayer.options.supplied);
-                // Setup the player with media.
+            ready: function () {
                 $(this).jPlayer("setMedia", {
-                    // mp3: "http://www.jplayer.org/audio/mp3/Miaow-07-Bubble.mp3",
-                    m4v: {{$manager->getBaseURL() . '/apps/webtool/files/multimodal/videos/fnbr1_ed.mp4'}},
-                    //oga: "http://www.jplayer.org/audio/ogg/Miaow-07-Bubble.ogg"
+                    title: "PedroPeloMundo_Se01Ep06Bl01",
+                    //m4v: "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer.m4v",
+                    //ogv: "http://www.jplayer.org/video/ogv/Big_Buck_Bunny_Trailer.ogv",
+                    //poster: "http://www.jplayer.org/video/poster/Big_Buck_Bunny_Trailer_480x270.png"
+                    m4v: {{$manager->getBaseURL() . '/apps/webtool/files/multimodal/videos/PedroPeloMundo_Se01Ep06Bl01.mp4'}},
                 });
             },
             timeupdate: function(event) {
                 if(!ignore_timeupdate) {
-                    myControl.progress.slider("value", event.jPlayer.status.currentPercentAbsolute);
+                    //console.log(event.jPlayer.status.currentTime);
+                    config.currentTime = event.jPlayer.status.currentTime;
+                    myControl.progress.slider("setValue", event.jPlayer.status.currentPercentAbsolute);
                 }
             },
-            /*
-            volumechange: function(event) {
-                if(event.jPlayer.options.muted) {
-                    myControl.volume.slider("value", 0);
-                } else {
-                    myControl.volume.slider("value", event.jPlayer.options.volume);
-                }
-            },
-
-             */
-            swfPath: {{$manager->getBaseURL() . '/apps/webtool/public/scripts/jplayer/'}},
-            supplied: "m4a",
             cssSelectorAncestor: "#jp_container_1",
-            wmode: "window",
-            keyEnabled: true
+            swfPath: {{$manager->getBaseURL() . '/apps/webtool/public/scripts/jplayer/'}},
+            supplied: "m4v",
+            useStateClassSkin: true,
+            autoBlur: false,
+            smoothPlayBar: true,
+            keyEnabled: true,
+            remainingDuration: true,
+            toggleDuration: true,
+            size: {
+                width: "640px",
+                    height:"360px",
+                cssClass: "jp-video-360p"
+            }
         },
         myControl = {
             progress: $('#slider') //$(options.cssSelectorAncestor + " .jp-progress-slider"),
@@ -82,15 +104,36 @@ $(function () {
 
 
     $('#slider').slider({
+        min: 0,
+        max: 100,
+        value : 0,
         onSlideStart: function() {
-            console.log('slide start');
+            //console.log('slide start');
         },
         onSlideEnd: function() {
-            console.log('slide end ' + this.value);
-            player.seek(this.value)
+            //console.log('slide end ' + this.value);
+            var sp = myPlayerData.status.seekPercent;
+            if(sp > 0) {
+                // Apply a fix to mp4 formats when the Flash is used.
+                if(fixFlash_mp4) {
+                    ignore_timeupdate = true;
+                    clearTimeout(fixFlash_mp4_id);
+                    fixFlash_mp4_id = setTimeout(function() {
+                        ignore_timeupdate = false;
+                    },1000);
+                }
+                // Move the play-head to the value and factor in the seek percent.
+                myPlayer.jPlayer("playHead", this.value * (100 / sp));
+            } else {
+                // Create a timeout to reset this slider to zero.
+                setTimeout(function() {
+                    myControl.progress.slider("setValue", 0);
+                }, 0);
+            }
         }
     });
 
+    /*
     let slider = {
         init: function (min, max) {
             $('#slider').slider({
@@ -113,18 +156,14 @@ $(function () {
 
 
     $('#btnPlay').linkbutton({
-        iconCls: 'fa fa-play',
-        size: null,
-        disable: true,
+        disable: false,
         onClick: function () {
             console.log('play clicked');
-            playClicked();
+            //playClicked();
         }
     });
 
     $('#btnPause').linkbutton({
-        iconCls: 'fa fa-pause',
-        size: null,
         disable: true,
         onClick: function () {
             console.log('pause clicked');
@@ -133,8 +172,6 @@ $(function () {
     });
 
     $('#btnBackward').linkbutton({
-        iconCls: 'fa fa-step-backward',
-        size: null,
         disable: true,
         onClick: function () {
             player.backward();
@@ -142,19 +179,16 @@ $(function () {
     });
 
     $('#btnForward').linkbutton({
-        iconCls: 'fa fa-step-forward',
-        size: null,
         disable: true,
         onClick: function () {
             player.forward();
         }
     });
 
-
+*/
 
     $('#btnNewBox').linkbutton({
         iconCls: 'far fa-square',
-        size: null,
         disable: true,
         onClick: function () {
             //newBboxElement();
@@ -164,91 +198,104 @@ $(function () {
 
     $('#btnUpdateObjects').linkbutton({
         iconCls: 'fa fa-save',
-        size: null,
         disable: true,
         onClick: function () {
             generateXml();
         }
     });
 
+    $('#dlgObject').dialog({
+        modal:true,
+        closed:true,
+        toolbar:'#dlgObject_tools',
+        border:true,
+        doSize:true
+    });
+
+    $('#dlgObjectUpdate').linkbutton({
+        iconCls:'icon-save',
+        plain:true,
+        size:null,
+        onClick: annotation.updateObject
+    });
+
+    $('#formObject').form({
+        success:function(data){
+            alert(data)
+        }
+    });
+
     var columns = [
         {field:'idObject', title:'ID'},
-        {field:'visible', title:'Visible', formatter: function(value,row,index){
-                console.log(value);
-                return value[0].outerHTML;
-            }},
-        {field:'hide', title:'Hide Others', formatter: function(value,row,index){
-                console.log(value);
-                return value[0].outerHTML;
-            }},
-        {field:'frameElement', title:'FE'},
+        {field:'visible', title:'Visible', editor:{type:'checkbox',options:{on:'True',off:'False'}}},
+        {field:'hide', title:'Hide Others', editor:{type:'checkbox',options:{on:'True',off:'False'}}},
+        {field:'idFE', title:'FE'},
+        {field:'startTime', title:'Start Time'},
+        {field:'endTime', title:'End Time'},
     ];
 
 
     console.log(columns);
 
     $('#objectsGrid').datagrid({
-        url:{{$data->urlObjects}},
-    method:'get',
+        data: [],
         title: 'Objects',
-        //collapsible:true,
-        //fitColumns: false,
-        //autoRowHeight: false,
-        //nowrap: true,
-        //rowStyler: annotation.rowStyler,
         showHeader: true,
+        columns: [columns],
+        onClickRow: function(index,row) {
+            console.log(row);
+            annotation.editObject = row;
+            $('#dlgObject').dialog('open');
+        },
         onBeforeSelect: function() {return false;},
-//onSelect: annotation.onSelect,
-//onClickCell: annotation.onClickCell,
-//onRowContextMenu: annotation.onRowContextMenu,
-//onHeaderContextMenu: annotation.onHeaderContextMenu,
-//toolbar: tb,
-//frozenColumns: [frozenColumns],
-    columns: [columns],
-//onLoadSuccess: function() {
-//    annotation.initCursor();
-//}
-});
+    });
+
+    class AnnotatedObjectsSet {
+        constructor() {
+            this.currentId = 0;
+            this.annotatedObjects = [];
+        }
+        add(annotatedObject) {
+            this.currentId++;
+            annotatedObject.id = this.currentId;
+            this.annotatedObjects.push(annotatedObject);
+        }
+        remove(annotatedObject) {
+            let j = -1;
+            for (let i = 0; i < this.annotatedObjects.length; i++) {
+                if (this.annotatedObjects[i].id == annotatedObject.id) {
+                    j = i;
+                }
+            }
+            if (j > -1) {
+                this.annotatedObjects.slice(j,1);
+            }
+        }
+    }
+
+    let framesManager = new FramesManager();
+    let annotatedObjectsTracker = new AnnotatedObjectsTracker(framesManager);
+    let annotatedObjectsSet = new AnnotatedObjectsSet();
 
     function updateObjectsGrid() {
         let data = [];
-        for (let i = 0; i < annotatedObjectsTracker.annotatedObjects.length; i++) {
-            let annotatedObject = annotatedObjectsTracker.annotatedObjects[i];
+        for (let i = 0; i < annotatedObjectsSet.annotatedObjects.length; i++) {
+            let annotatedObject = annotatedObjectsSet.annotatedObjects[i];
             console.log(annotatedObject);
             let row = {
                 idObject: annotatedObject.id,
                 visible: annotatedObject.visible,
                 hide: annotatedObject.hide,
-                frameElement: annotatedObject.frameElement,
+                idFE: annotatedObject.idFE,
+                startTime: annotatedObject.startTime,
+                endTime: annotatedObject.endTime,
             }
             data.push(row);
         }
         $('#objectsGrid').datagrid({
             data: data
         })
-        //$('#objectsGrid').datagrid('refresh');
     }
-
-    let config = {
-        // Should be higher than real FPS to not skip real frames
-        // Hardcoded due to JS limitations
-        fps: 30,
-
-        // Low rate decreases the chance of losing frames with poor browser performances
-        playbackRate: 0.4,
-
-        // Format of the extracted frames
-        imageMimeType: 'image/jpeg',
-        imageExtension: '.jpg',
-
-        // Name of the extracted frames zip archive
-        framesZipFilename: 'extracted-frames.zip'
-    };
-
-
-    let framesManager = new FramesManager();
-    let annotatedObjectsTracker = new AnnotatedObjectsTracker(framesManager);
-
 
     let player = {
         currentFrame: 0,
@@ -429,149 +476,7 @@ $(function () {
         annotatedObject.controls.remove();
         $(annotatedObject.dom).remove();
         annotatedObjectsTracker.annotatedObjects.splice(i, 1);
-    }
-
-    //videoFile.addEventListener('change', extractionFileUploaded, false);
-    //zipFile.addEventListener('change', extractionFileUploaded, false);
-    //xmlFile.addEventListener('change', importXml, false);
-    //playButton.addEventListener('click', playClicked, false);
-    //pauseButton.addEventListener('click', pauseClicked, false);
-    //downloadFramesButton.addEventListener('click', downloadFrames, false);
-    //generateXmlButton.addEventListener('click', generateXml, false);
-
-    function playClicked() {
-        player.play();
-    }
-
-    function pauseClicked() {
-        player.pause();
-    }
-
-    /*
-    function downloadFrames() {
-        let zip = new JSZip();
-
-        let processed = 0;
-        let totalFrames = framesManager.frames.totalFrames();
-        for (let i = 0; i < totalFrames; i++) {
-            framesManager.frames.getFrame(i).then((blob) => {
-                zip.file(i + '.jpg', blob);
-
-                processed++;
-                if (processed == totalFrames) {
-                    let writeStream = streamSaver.createWriteStream('extracted-frames.zip').getWriter();
-                    zip.generateInternalStream({type: 'uint8array', streamFiles: true})
-                    .on('data', data => writeStream.write(data))
-                    .on('end', () => writeStream.close())
-                    .resume();
-            }
-        });
-    }
-}
-*/
-
-
-    function initializeCanvasDimensions(img) {
-
-        doodle.style.width = img.width + 'px';
-        doodle.style.height = img.height + 'px';
-        canvas.width = img.width;
-        canvas.height = img.height;
-        $('#slider').slider({width: img.width + 'px'});
-
-        /*
-        doodle.style.width = '720' + 'px';
-        doodle.style.height = '400' + 'px';
-        canvas.width = 720;//img.width;
-        canvas.height = 400;//img.height;
-        $('#slider').slider({width: '720' + 'px'});
-        */
-        console.log('canvas ok');
-    }
-
-    function extractionFileUploaded() {
-
-        //if (this.files.length != 1) {
-        //    return;
-        //}
-
-        //videoFile.disabled = true;
-        //zipFile.disabled = true;
-        //xmlFile.disabled = true;
-        //downloadFramesButton.disabled = true;
-        //generateXmlButton.disabled = true;
-        $('#btnNewBox').linkbutton({disable: false});
-        $('#btnUpdateObjects').linkbutton({disable: true});
-
-        clearAllAnnotatedObjects();
-        slider.reset();
-        player.initialize();
-
-        let promise;
-        /*
-        if (this == videoFile) {
-            let dimensionsInitialized = false;
-
-            promise = extractFramesFromVideo(
-                config,
-                this.files[0],
-                (percentage, framesSoFar, lastFrameBlob) => {
-                    blobToImage(lastFrameBlob).then((img) => {
-                        if (!dimensionsInitialized) {
-                            dimensionsInitialized = true;
-                            initializeCanvasDimensions(img);
-                        }
-                        ctx.drawImage(img, 0, 0);
-
-                        videoDimensionsElement.innerHTML = 'Video dimensions determined: ' + img.width + 'x' + img.height;
-                        extractionProgressElement.innerHTML = (percentage * 100).toFixed(2) + ' % completed. ' + framesSoFar + ' frames extracted.';
-                    });
-                });
-        } else {
-            promise = extractFramesFromZip(config, this.files[0]);
-        }
-
-         */
-
-        let zip = null;
-        let url = {{$manager->getBaseURL() . '/apps/webtool/files/multimodal/videoframes/fnbr2.zip'}}
-        console.log(url);
-        promise = extractFramesFromZipUrl(config, url);
-
-        promise.then((frames) => {
-            console.log(frames);
-            //extractionProgressElement.innerHTML = 'Extraction completed. ' + frames.totalFrames() + ' frames captured.';
-            console.log('Extraction completed. ' + frames.totalFrames() + ' frames captured.');
-            if (frames.totalFrames() > 0) {
-                frames.getFrame(0).then((blob) => {
-                    blobToImage(blob).then((img) => {
-                        initializeCanvasDimensions(img);
-                        ctx.drawImage(img, 0, 0);
-                        //videoDimensionsElement.innerHTML = 'Video dimensions determined: ' + img.width + 'x' + img.height;
-                        console.log('Video dimensions determined: ' + img.width + 'x' + img.height);
-
-                        framesManager.set(frames);
-                        console.log('pos framesManager');
-                        slider.init(
-                            0,
-                            framesManager.frames.totalFrames() - 1,
-                            //(frameNumber) => {console.log(frameNumber); player.seek(frameNumber)}
-                        );
-                        player.ready();
-
-                        //xmlFile.disabled = false;
-                        //playButton.disabled = false;
-                        //downloadFramesButton.disabled = false;
-                        //generateXmlButton.disabled = false;
-                        $('#btnPlay').linkbutton('enable');
-                    });
-                });
-            }
-
-            //videoFile.disabled = false;
-            //zipFile.disabled = false;
-        });
-
+        annotatedObjectsSet.remove(annotatedObject)
     }
 
     function interactify(dom, onChange) {
@@ -586,24 +491,12 @@ $(function () {
         };
 
         bbox.resizable({
-            //containment: 'parent',
-
-            //handles: {
-            //    n: createHandleDiv('ui-resizable-handle ui-resizable-n'),
-            //    s: createHandleDiv('ui-resizable-handle ui-resizable-s'),
-            //    e: createHandleDiv('ui-resizable-handle ui-resizable-e'),
-            //    w: createHandleDiv('ui-resizable-handle ui-resizable-w')
-            //},
-
             handles: "n, e, s, w",
-            //stop: (e, ui) => {
             onStopResize: (e) => {
                 let position = bbox.position();
                 onChange(Math.round(position.left), Math.round(position.top), Math.round(bbox.width()), Math.round(bbox.height()));
             }
         });
-
-
 
         let x = createHandleDiv('handle center-drag');
         console.log(x);
@@ -680,13 +573,13 @@ $(function () {
             interactify(
                 annotatedObject.dom,
                 (x, y, width, height) => {
+                    console.log('annotated object changing');
                     let bbox = new BoundingBox(x, y, width, height);
                     annotatedObject.add(new AnnotatedFrame(player.currentFrame, bbox, true));
                 }
             );
 
             addAnnotatedObjectControls(annotatedObject);
-            updateObjectsGrid();
 
             doodle.style.cursor = 'default';
         } else {
@@ -710,6 +603,7 @@ $(function () {
     }
 
     function addAnnotatedObjectControls(annotatedObject) {
+        /*
         let name = $('<input type="text" value="Name?" />');
         if (annotatedObject.name) {
             name.val(annotatedObject.name);
@@ -783,7 +677,19 @@ $(function () {
 
         annotatedObject.controls = div;
 
+
+
         $('#objects').append(div);
+
+         */
+        annotatedObject.name = '';
+        annotatedObject.visible = true;
+        annotatedObject.hide = false;
+        annotatedObject.idFE = -1;
+        annotatedObject.startTime = config.currentTime;
+        annotatedObject.endTime = config.currentTime;
+        annotatedObjectsSet.add(annotatedObject)
+        updateObjectsGrid();
     }
 
     function generateXml() {
