@@ -17,6 +17,13 @@ class ConstraintType extends map\ConstraintTypeMap
         $this->retrieveFromCriteria($criteria);
     }
 
+    public function listAll()
+    {
+        $criteria = $this->getCriteria()->select('idConstraintType, entry, prefix, typeEntity1, typeEntity2, idTypeInstance, entries.name as name')->orderBy('entries.name');
+        Base::entryLanguage($criteria);
+        return $criteria;
+    }
+
     public function listByFilter($filter)
     {
         $criteria = $this->getCriteria()->select('idConstraintType, entry, prefix, typeEntity1, typeEntity2, idTypeInstance, entries.name as name')->orderBy('entries.name');

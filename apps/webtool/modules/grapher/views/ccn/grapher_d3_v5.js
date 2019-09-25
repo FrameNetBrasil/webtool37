@@ -30,10 +30,13 @@ grapher.graph = function (element) {
 
     var type = {
         cxn: {symbol: d3.symbolCircle, size:260},
+        cx: {symbol: d3.symbolCircle, size:260},
         frame: {symbol: d3.symbolSquare, size:260},
         fe: {symbol: d3.symbolCircle, size:80},
         ce: {symbol: d3.symbolCircle, size:80},
         st: {symbol: d3.symbolTriangle, size:100},
+        ur: {symbol: d3.symbolTriangle, size:100},
+        uv: {symbol: d3.symbolTriangle, size:100},
         concept: {symbol: d3.symbolTriangle, size:100}
     };
     
@@ -105,7 +108,7 @@ grapher.graph = function (element) {
         }
 
     this.addNode = function (node) {
-        console.log('addNode... ' + node.id);
+        console.log('addNode... ' + node.id + ' - ' + node.type);
         node.size = type[node.type].size;
         node.symbol = type[node.type].symbol;
         this.nodes.push(node);

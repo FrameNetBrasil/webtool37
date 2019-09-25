@@ -31,7 +31,9 @@ class Entity extends map\EntityMap
         'LU' => 'lu',
         'PS' => 'pos',
         'SC' => 'subcorpus',
-        'ST' => 'semantictype'
+        'ST' => 'semantictype',
+        'UR' => 'udrelation',
+        'UV' => 'udfeature'
     ];
 
     public static function config()
@@ -83,8 +85,10 @@ class Entity extends map\EntityMap
     public function getName()
     {
         $idLanguage = \Manager::getSession()->idLanguage;
-        $model = self::$entityModel[$this->getType()];
-        $cmd = <<<HERE
+        $type = $this->getType();
+        $model = self::$entityModel[$type];
+        if (($type != 'UR' && ($type != 'UV'))) {
+            $cmd = <<<HERE
         SELECT entry.name
         FROM {$model}
             INNER JOIN entry
@@ -92,6 +96,14 @@ class Entity extends map\EntityMap
         WHERE (entry.idLanguage = {$idLanguage} )
         and ({$model}.idEntity = {$this->getIdEntity()})
 HERE;
+        } else {
+            $cmd = <<<HERE
+        SELECT info as name
+        FROM {$model}
+        WHERE (idEntity = {$this->getIdEntity()})
+HERE;
+
+        }
         $result = $this->getDb()->getQueryCommand($cmd)->getResult();
         return $result[0]['name'];
     }
@@ -128,10 +140,10 @@ HERE;
                 'rel_see_also',
                 'rel_subframe',
                 'rel_using',
-		'rel_evokes',
-	        'rel_inheritance_cxn',
-		'rel_hassemtype',
-	        'rel_elementof'
+                'rel_evokes',
+	            'rel_inheritance_cxn',
+		        'rel_hassemtype',
+	            'rel_elementof'
 		))
            AND (entry.idLanguage = {$idLanguage}  )
         ORDER BY RelationType.entry, entry.name
@@ -173,10 +185,10 @@ HERE;
                 'rel_see_also',
                 'rel_subframe',
                 'rel_using',
-		'rel_evokes',
-	        'rel_inheritance_cxn',
-		'rel_hassemtype',
-	        'rel_elementof'
+		        'rel_evokes',
+	            'rel_inheritance_cxn',
+		        'rel_hassemtype',
+	            'rel_elementof'
 		))
            AND (entry.idLanguage = {$idLanguage}  )
         ORDER BY RelationType.entry, entry.name
@@ -399,15 +411,10 @@ HERE;
         $this->save();
     }
 
-    public function setTimeline()
-    {
-        $timeline = 'ent_' . md5($this->getAlias());
-        parent::setTimeLine(Base::newTimeLine($timeline, 'S'));
-    }
-
     public function save()
     {
-        $this->setTimeline();
+        $timeline = 'ent_' . md5($this->getAlias());
+        $this->setTimeLine(Base::newTimeLine($timeline, 'S'));
         parent::save();
     }
 

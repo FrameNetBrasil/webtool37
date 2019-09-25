@@ -109,6 +109,23 @@ class GrapherService extends MService
             $node['default'] = false;
             $result->$id = $node;
         }
+        // constraints
+        //
+        $constraintType = new \fnbr\models\ConstraintType();
+        $constraints = $constraintType->listAll()->asQuery()->getResult();
+        foreach($constraints as $constraint) {
+            if (in_array($constraint['entry'], ['con_cxn','con_udfeature','con_udrelation'])) {
+                $id = $constraint['entry'];
+                $node = [];
+                $node['id'] = $id;
+                $node['label'] = $constraint['name'];
+                $node['color'] = Manager::getConf("fnbr.color.{$id}");
+                $node['idType'] = 'constraint';
+                $node['default'] = false;
+                $result->$id = $node;
+            }
+        }
+
         return $result;
     }
 
@@ -290,22 +307,31 @@ class GrapherService extends MService
                             $added = array_merge($added, $add);
                         }
                     }
+                    if ($rel['target']->id == $idEntity) {
+                        $idSource = $rel['source']->id;
+                        $add = $this->getEntityConstraintRelations($idSource, $chosen);
+                        $relations = array_merge($relations, $add);
+                        $added = array_merge($added, $add);
+                    }
                 }
 
                 $base = $added;
                 foreach ($base as $rel) {
                     if ($rel['type'] == 'rel_inheritance_cxn') {
-                            $idSource = $rel['source']->id;
-                            $add = $this->getEntityInverseRelations($idSource, $chosen);
-                            $relations = array_merge($relations, $add);
+                        $idSource = $rel['source']->id;
+                        $add = $this->getEntityInverseRelations($idSource, $chosen);
+                        $relations = array_merge($relations, $add);
                     }
                     if ($rel['type'] == 'rel_elementof') {
-                            $idSource = $rel['source']->id;
-                            //$add = $this->getEntityDirectRelations($idSource, $chosen);
-                            //$relations = array_merge($relations, $add);
-                            $add = $this->getEntityInverseRelations($idSource, $chosen);
-                            $relations = array_merge($relations, $add);
+                        $idSource = $rel['source']->id;
+                        $add = $this->getEntityInverseRelations($idSource, $chosen);
+                        $relations = array_merge($relations, $add);
                     }
+                    // constraints
+                    $idSource = $rel['source']->id;
+                    $add = $this->getEntityConstraintRelations($idSource, $chosen);
+                    $relations = array_merge($relations, $add);
+                    //
                 }
 
             }
@@ -882,5 +908,29 @@ class GrapherService extends MService
         return $relations;
     }
 
+    public function getEntityConstraintRelations($idEntity, $chosen)
+    {
+        $entity = new \fnbr\models\Entity($idEntity);
+        $node1 = (object)[
+            'id' => $idEntity,
+            'type' => $entity->getTypeNode(),
+            'name' => $entity->getName()
+        ];
+        $relations = [];
+        $viewConstraint = new \fnbr\models\ViewConstraint();
+        $constraintRelations = $viewConstraint->getByIdConstrained($idEntity);
+        foreach ($constraintRelations as $row) {
+            mdump($row);
+            if ($chosen[$row['relationType']]) {
+                $node0 = (object)[
+                    'id' => $row['idConstrainedBy'],
+                    'type' => strtolower($row['type']),
+                    'name' => $row['name']
+                ];
+                $relations[] = ['source' => $node1, 'type' => $row['relationType'], 'target' => $node0];
+            }
+        }
+        return $relations;
+    }
 
 }
