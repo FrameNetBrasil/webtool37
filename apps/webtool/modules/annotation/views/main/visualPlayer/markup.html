@@ -20,7 +20,7 @@
 
 
 <div id="visualMarkup" style="display:flex; flex-direction: row; height: 50%;">
-    <div id="videoPane" style="width:70%;height:100%;">
+    <div id="videoPane" style="width:50%;height:100%;">
         <div id="doodle">
             <div id="jquery_jplayer_1" class="jp-jplayer" style="width:640px; height:360px"></div>
         </div>
@@ -43,7 +43,7 @@
                 href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
         </div>
     </div>
-    <div id="videoTable" style="width:30%;height:100%;padding: 10px;">
+    <div id="videoTable" style="width:50%;height:100%;padding: 10px;">
         <table id="objectsGrid" style="width:100%;height:100%;background-color:#CCC">
         </table>
         <div id="objects"></div>
@@ -61,16 +61,30 @@
         <a href='#' name="dlgObjectUpdate" id="dlgObjectUpdate">
             Update
         </a>
+        <a href='#' name="dlgObjectEnd" id="dlgObjectEnd">
+            End
+        </a>
     </div>
     <form id="formObject" method="post">
         <div class="mFormContainer">
+            <div class="mFormRow">
+                <span>Current time: <span id="currentTime"></span></span></span>
+            </div>
             <div class="mFormRow">
                 <label for="name">Name:</label>
                 <input class="easyui-textbox" type="text" id="name" name="name"/>
             </div>
             <div class="mFormRow">
-                <label for="email">Email:</label>
-                <input class="easyui-textbox" type="text" id="email" name="email"/>
+                <label for="visible">Visible:</label>
+                <input id="visible" name="visible" type="checkbox" value="1"/>
+            </div>
+            <div class="mFormRow">
+                <label for="lookupFrame">Frame:</label>
+                <input id="lookupFrame" name="lookupFrame"/>
+            </div>
+            <div class="mFormRow">
+                <label for="lookupFE">Frame Element:</label>
+                <input id="lookupFE" name="lookupFE"/>
             </div>
         </div>
     </form>

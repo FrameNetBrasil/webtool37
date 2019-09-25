@@ -23,7 +23,18 @@ $(function () {
         },
         updateObject() {
             console.log('update object');
+            this.editObject.idFE = $('#lookupFE').combogrid('getValue');
+            this.editObject.fe = $('#lookupFrame').combogrid('getText')  + '.' + $('#lookupFE').combogrid('getText');
             console.log(this.editObject);
+            annotatedObjectsSet.set(this.editObject.idObject, this.editObject);
+            updateObjectsGrid();
+            $('#dlgObject').dialog('close');
+        },
+        endObject() {
+            console.log(this.editObject);
+            annotatedObjectsSet.get(this.editObject.idObject).endTime = config.currentTime;
+            updateObjectsGrid();
+            $('#dlgObject').dialog('close');
         }
     }
 
@@ -216,8 +227,60 @@ $(function () {
         iconCls:'icon-save',
         plain:true,
         size:null,
-        onClick: annotation.updateObject
+        onClick: function() {
+            annotation.updateObject();
+        }
     });
+
+    $('#dlgObjectEnd').linkbutton({
+        iconCls:'fa fa-stop',
+        plain:true,
+        size:null,
+        onClick: function() {
+            annotation.endObject();
+        }
+    });
+
+    $('#lookupFE').combogrid({
+        panelWidth:220,
+        url: '',
+        idField:'idFrameElement',
+        textField:'name',
+        mode:'remote',
+        fitColumns:true,
+        columns:[[
+            {field:'idFrameElement', hidden:true},
+            {field:'name', title:'Name', width:202}
+        ]],
+        onChange: function (newValue, oldValue) {
+            if (newValue == '') {
+                $('#lookupFE').combogrid('setValue', '');
+            }
+        }
+    });
+
+    $('#lookupFrame').combogrid({
+        panelWidth:220,
+        url: {{$manager->getBaseURL() . '/index.php/webtool/data/frame/lookupData'}},
+        idField:'idFrame',
+        textField:'name',
+        mode:'remote',
+        fitColumns:true,
+        columns:[[
+            {field:'idFrame', hidden:true},
+            {field:'name', title:'Name', width:202}
+        ]],
+        onChange: function(newValue, oldValue) {
+            console.log('idFrame = ' + newValue + ' - ' + oldValue);
+            if(parseInt(newValue)) {
+                let urlFE = {{$manager->getBaseURL() . '/index.php/webtool/data/frameelement/lookupData'}} + '/' + newValue;
+                console.log('urlFE = ' + urlFE);
+                $('#lookupFE').combogrid({url: urlFE });
+                //$('#lookupFE').combogrid('reload');
+            }
+        }
+    });
+
 
     $('#formObject').form({
         success:function(data){
@@ -229,7 +292,8 @@ $(function () {
         {field:'idObject', title:'ID'},
         {field:'visible', title:'Visible', editor:{type:'checkbox',options:{on:'True',off:'False'}}},
         {field:'hide', title:'Hide Others', editor:{type:'checkbox',options:{on:'True',off:'False'}}},
-        {field:'idFE', title:'FE'},
+        {field:'idFE', title:'idFE'},
+        {field:'fe', title:'FE'},
         {field:'startTime', title:'Start Time'},
         {field:'endTime', title:'End Time'},
     ];
@@ -245,7 +309,9 @@ $(function () {
         onClickRow: function(index,row) {
             console.log(row);
             annotation.editObject = row;
+            $('#formObject').form('load', row);
             $('#dlgObject').dialog('open');
+            document.getElementById('currentTime').innerHTML = config.currentTime;
         },
         onBeforeSelect: function() {return false;},
     });
@@ -259,6 +325,27 @@ $(function () {
             this.currentId++;
             annotatedObject.id = this.currentId;
             this.annotatedObjects.push(annotatedObject);
+        }
+        get(id) {
+            let j = -1;
+            for (let i = 0; i < this.annotatedObjects.length; i++) {
+                if (this.annotatedObjects[i].id == id) {
+                    j = i;
+                }
+            }
+            return (j > -1) ? this.annotatedObjects[j] : null;
+        }
+        set(id, annotatedObject) {
+            let j = -1;
+            for (let i = 0; i < this.annotatedObjects.length; i++) {
+                if (this.annotatedObjects[i].id == id) {
+                    j = i;
+                }
+            }
+            if (j > -1) {
+                console.log('setting');
+                this.annotatedObjects[j] = annotatedObject;
+            }
         }
         remove(annotatedObject) {
             let j = -1;
@@ -287,6 +374,7 @@ $(function () {
                 visible: annotatedObject.visible,
                 hide: annotatedObject.hide,
                 idFE: annotatedObject.idFE,
+                fe: annotatedObject.fe,
                 startTime: annotatedObject.startTime,
                 endTime: annotatedObject.endTime,
             }
@@ -686,9 +774,12 @@ $(function () {
         annotatedObject.visible = true;
         annotatedObject.hide = false;
         annotatedObject.idFE = -1;
+        annotatedObject.fe = '';
         annotatedObject.startTime = config.currentTime;
         annotatedObject.endTime = config.currentTime;
         annotatedObjectsSet.add(annotatedObject)
+        let border = 'color' + annotatedObject.id;
+        annotatedObject.dom.classList.add(border);
         updateObjectsGrid();
     }
 
