@@ -8,7 +8,7 @@ scripts/jointJS/joint.min.css
 scripts/trumbowyg/ui/trumbowyg.css
 scripts/jsplumb/jsplumbtoolkit-defaults.css
 scripts/jsplumb/jsplumbtoolkit-demo.css
-scripts/jplayer/blue.monday/css/jplayer.blue.monday.css
+;scripts/jplayer/blue.monday/css/jplayer.blue.monday.css
 
 ;Carrega os scripts externos usados pelo tema
 scripts/jquery-manager/jquery.manager.core.js

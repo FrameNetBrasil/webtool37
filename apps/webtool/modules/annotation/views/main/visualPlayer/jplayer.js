@@ -1,4 +1,4 @@
-<script type="text/javascript">
+
 $(function () {
     let config = {
         // Should be higher than real FPS to not skip real frames
@@ -76,7 +76,7 @@ $(function () {
                     //m4v: "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer.m4v",
                     //ogv: "http://www.jplayer.org/video/ogv/Big_Buck_Bunny_Trailer.ogv",
                     //poster: "http://www.jplayer.org/video/poster/Big_Buck_Bunny_Trailer_480x270.png"
-                    m4v: {{$manager->getBaseURL() . '/apps/webtool/files/multimodal/videos/PedroPeloMundo_Se01Ep06Bl01.mp4'}},
+                    m4v: {{$manager->getBaseURL() . '/apps/webtool/files/multimodal/videos/fnbr1_ed.mp4'}},
                 });
             },
             timeupdate: function(event) {
@@ -921,4 +921,3 @@ $(function () {
 
 
 });
-</script>

@@ -1,5 +1,10 @@
-{{include 'visualPlayer/vatic.css.latte' }}
+{{include 'visualPlayer/jplayer.webtool.css' }}
 
 {{include visualPlayer/markup.html}}
 
-{{include visualPlayer/vatic.js}}
+    <?php
+echo '<script type="text/javascript">';
+        echo file_get_contents(Manager::getAppPath('views/main/visualPlayer/jplayer.js','annotation'));
+echo '</script>';
+    ?>
+
