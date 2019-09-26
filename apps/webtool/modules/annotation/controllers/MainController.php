@@ -361,6 +361,16 @@ class MainController extends MController
         $this->render();
     }
 
+    public function annotationMultimodalV() {
+        Manager::getPage()->setTemplateName('content');
+        $this->data->idAnnotationSetMM = $this->data->id;
+        $annotationSetMM = new \fnbr\models\AnnotationSetMM($this->data->idAnnotationSetMM);
+        $sentenceMM = new \fnbr\models\SentenceMM($annotationSetMM->getIdSentenceMM());
+        $this->data->idSentence = $sentenceMM->getIdSentence();
+        $this->data->idAnnotationSet = $annotationSetMM->getIdAnnotationSet();
+        $this->render();
+    }
+
     public function annotationSetMultimodal()
     {
         $annotation = Manager::getAppService('annotation');

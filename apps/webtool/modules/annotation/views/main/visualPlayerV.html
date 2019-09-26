@@ -1,0 +1,19 @@
+<style>
+{{$view->includeFile('vue/jplayer.webtool.css')}}
+</style>
+
+{{include vue/markup.html}}
+{{include vue/latte.js}}
+
+<script type="text/javascript">
+    $(function () {
+
+{{$view->includeFile('vue/vars.js')}}
+{{$view->includeFile('vue/jplayer.js')}}
+{{$view->includeFile('vue/vatic.js')}}
+{{$view->includeFile('vue/controls.js')}}
+{{$view->includeFile('vue/grid.js')}}
+{{$view->includeFile('vue/events.js')}}
+
+    });
+</script>

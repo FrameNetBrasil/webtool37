@@ -1,0 +1,39 @@
+<!--
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+-->
+
+
+<div id="vapp" style="width:100%; height:100%;">
+    <div id="mmAnnotationLayout" style="width:100%; height:100%;">
+        <div id="textAnnotation" style="width:100%; height:55%;">
+            <div id="visualPane" class="easyui-panel" title="Visual Annotation" style="width:100%; height:100%;padding:10px;"></div>
+        </div>
+        <div id="textAnnotation" style="width:100%; height:45%">
+            <div id="layersPane" class="easyui-panel" title="Text Annotation" style="width:100%; height:100%;padding:10px;background:#fafafa"></div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(function () {
+
+        $('#visualPane').panel({
+            href:{{$manager->getURL('annotation/main/visualPlayerV') . '/' . $this->data->idAnnotationSetMM . '/m'}},
+            onLoad:function(){
+                console.log('loaded visualPane successfully');
+            }
+        });
+
+        $('#layersPane').panel({
+            href:{{$manager->getURL('annotation/main/layers') . '/' . $this->data->idSentence . '/' . $this->data->idAnnotationSet . '/c'}},
+            onLoad:function(){
+                console.log('loaded layersPane successfully');
+            }
+        });
+
+
+    });
+
+
+
+</script>

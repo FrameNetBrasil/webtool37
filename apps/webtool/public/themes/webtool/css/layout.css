@@ -14,7 +14,7 @@ html {
 }
 
 * {
-    font-size: 12px;
+    /*font-size: 12px;*/
 }
 
 body {
@@ -24,9 +24,10 @@ body {
     right: 0;
     left: 0;
     /*font-family:verdana,helvetica,arial,sans-serif;*/
-    font-family: open_sansregular;
+    /*font-family: open_sansregular;*/
     /*	font-family: tahoma;*/
-    font-size: 12px;
+    /*font-size: 12px;*/
+    font-family: 'Roboto', sans-serif;
 }
 
 label {

@@ -2,9 +2,11 @@
 
 {{include visualPlayer/markup.html}}
 
-    <?php
-echo '<script type="text/javascript">';
-        echo file_get_contents(Manager::getAppPath('views/main/visualPlayer/jplayer.js','annotation'));
-echo '</script>';
-    ?>
+{{include visualPlayer/latte.js}}
+{{include visualPlayer/vars.js}}
+{{include visualPlayer/jplayer.js}}
+{{include visualPlayer/vatic.js}}
+{{include visualPlayer/controls.js}}
+{{include visualPlayer/grid.js}}
+{{include visualPlayer/events.js}}
 
