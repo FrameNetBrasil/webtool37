@@ -4,7 +4,7 @@ let myPlayer = $("#jquery_jplayer_1"),
     fixFlash_mp4_id, // Timeout ID used with fixFlash_mp4
     ignore_timeupdate, // Flag used with fixFlash_mp4
     options = {
-        ready: function () {
+        ready: function (event) {
             console.log('jsplayer ready');
             $(this).jPlayer("setMedia", {
                 title: store.state.model.documentMM.videoTitle,
@@ -15,8 +15,13 @@ let myPlayer = $("#jquery_jplayer_1"),
             if (!ignore_timeupdate) {
                 //console.log(event.jPlayer.status.currentTime);
                 store.commit('currentTime', event.jPlayer.status.currentTime);
-                myControl.progress.slider("setValue", event.jPlayer.status.currentPercentAbsolute);
+                //myControl.progress.slider("setValue", event.jPlayer.status.currentPercentAbsolute);
             }
+        },
+        loadeddata: function (event) {
+            console.log('loaded data');
+            console.log('duration = ' + event.jPlayer.status.duration);
+            store.dispatch('setDuration', event.jPlayer.status.duration);
         },
         cssSelectorAncestor: "#jp_container_1",
         swfPath: store.state.model.swfPath,
@@ -43,10 +48,3 @@ myPlayer.jPlayer(options);
 
 // A pointer to the jPlayer data object
 myPlayerData = myPlayer.data("jPlayer");
-
-myPlayer.jPlayer({
-    loadedData: function (e) {
-        console.log('loaded data');
-        console.log(e);
-    }
-})

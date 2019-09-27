@@ -9,7 +9,14 @@ let store = new Vuex.Store({
         urlLookupFrame: '',
         urlLookupFE: '',
         currentTime: 0,
+        duration: 0,
+        totalFrames: 0,
         annotation: {}
+    },
+    getters: {
+        currentTime(state) {
+            return state.currentTime
+        },
     },
     mutations: {
         fromLatte(state, latte) {
@@ -22,6 +29,12 @@ let store = new Vuex.Store({
         currentTime(state, time) {
             state.currentTime = time;
         },
+        duration(state, value) {
+            state.duration = value;
+        },
+        totalFrames(state, value) {
+            state.totalFrames = value;
+        },
         model(state, model) {
             state.model = model;
         },
@@ -29,6 +42,11 @@ let store = new Vuex.Store({
             state.annotation = annotation;
         }
     },
-    actions: {},
+    actions: {
+        setDuration(context, duration) {
+            context.commit('duration', duration);
+            context.commit('totalFrames', duration * 30); // 30fps
+        }
+    },
 })
 

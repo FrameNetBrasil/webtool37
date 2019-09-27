@@ -1,0 +1,38 @@
+<script>
+    Vue.component('visual-pane', {
+            template: '#visual-pane',
+            props: {
+            },
+            data() {
+                return {
+                    title: 'Visual Annotation',
+                }
+            },
+            computed: {},
+            created() {
+            },
+            methods: {},
+        }
+    );
+</script>
+
+<script type="text/x-template" id="visual-pane">
+    <Panel id="visualAnnotation" style="width:100%; height:55%;" :title="title" :collapsible="false"
+           :border="false">
+        <div id="visualMarkup"
+             style="display:flex; flex-direction: row; height: 100%;padding:10px;background:#fafafa">
+
+            <div id="videoPane" style="width:50%;height:100%;">
+                <video-pane style="width:100%; height:100%;"></video-pane>
+                <controls-pane style="width:100%;"></controls-pane>
+            </div>
+            <div id="videoTable" style="width:50%;height:100%;padding: 10px;">
+                <table id="objectsGrid" width="100%" style="width:100%;height:100%;background-color:#CCC">
+                </table>
+            </div>
+        </div>
+
+
+    </Panel>
+</script>
+

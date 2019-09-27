@@ -2,10 +2,35 @@
     Vue.component('controls-pane', {
             template: '#controls-pane',
             data() {
-                return {}
+                return {
+                    sliderValue: 30,
+                    currentTime: 0,
+                }
             },
-            computed: {},
-            methods: {}
+            computed: {
+                x: () => {
+                    return this.sliderValue;
+                }
+            },
+            created() {
+                console.log(this.sliderValue);
+            },
+            methods: {
+                y: function() {
+                    return this.sliderValue;
+                }
+            },
+            mounted: function () {
+                this.$store.watch(
+                    (state, getters) => getters.currentTime,
+                    (currentTime) => {
+                        this.currentTime = currentTime;
+                        console.log(currentTime);
+                        this.sliderValue = Math.trunc(100 * (currentTime / this.$store.state.duration));
+                        console.log(this.sliderValue);
+                    }
+                )
+            },
         }
     );
 </script>
@@ -18,7 +43,9 @@
                 <LinkButton id="btnPause" class="jp-pause"><i class="fas fa-pause"></i></LinkButton>
                 <LinkButton id="btnNewBox" iconCls="far fa-square">New Box</LinkButton>
             </div>
-            <div id="slider"></div>
+            <Slider id="slider" :showTip="true" :value="y()" class="slider"></Slider>
+            <p>Current value: {{y()}}</p>
+
             <div id="displayTime">
                 <div class="jp-current-time"/>
                 <div class="jp-duration"/>

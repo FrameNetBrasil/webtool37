@@ -121,6 +121,8 @@ class MView extends MBaseView
     }
 
     public function includeFile($file) {
-        echo file_get_contents(dirname($this->viewFile) . '/' . $file);
+        $content = file_get_contents(dirname($this->viewFile) . '/' . $file);
+        echo $content;
+        return null;
     }
 }
