@@ -7,22 +7,19 @@ let myPlayer = $("#jquery_jplayer_1"),
         ready: function () {
             console.log('jsplayer ready');
             $(this).jPlayer("setMedia", {
-                title: vue.$store.state.title,
-                //m4v: "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer.m4v",
-                //ogv: "http://www.jplayer.org/video/ogv/Big_Buck_Bunny_Trailer.ogv",
-                //poster: "http://www.jplayer.org/video/poster/Big_Buck_Bunny_Trailer_480x270.png"
-                m4v: vue.$store.state.m4v,
+                title: store.state.model.documentMM.videoTitle,
+                m4v: store.state.model.documentMM.videoPath,
             });
         },
         timeupdate: function (event) {
             if (!ignore_timeupdate) {
                 //console.log(event.jPlayer.status.currentTime);
-                vue.$store.commit('currentTime', event.jPlayer.status.currentTime);
+                store.commit('currentTime', event.jPlayer.status.currentTime);
                 myControl.progress.slider("setValue", event.jPlayer.status.currentPercentAbsolute);
             }
         },
         cssSelectorAncestor: "#jp_container_1",
-        swfPath: vue.$store.state.swfPath,
+        swfPath: store.state.model.swfPath,
         supplied: "m4v",
         useStateClassSkin: false,
         autoBlur: false,

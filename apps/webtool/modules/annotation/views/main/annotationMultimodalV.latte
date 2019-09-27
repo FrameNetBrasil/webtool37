@@ -1,0 +1,150 @@
+<link rel="stylesheet" type="text/css"
+      href="{{$manager->getAppFileURL($manager->getApp(), 'modules/annotation/views/main/vue/jplayer.webtool.css')}}">
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/compatibility.js')}}"></script>
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/jszip.js')}}"></script>
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/StreamSaver.js')}}"></script>
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/polyfill.js')}}"></script>
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/jsfeat.js')}}"></script>
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/nudged.js')}}"></script>
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/pouchdb.min.js')}}"></script>
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/vatic.js')}}"></script>
+
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/jplayer/jquery.jplayer.min.js')}}"></script>
+<!-- Vue -->
+<!--
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/node_modules/vx-easyui/dist/vx-easyui-min.js')}}"></script>
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/node_modules/vue/dist/vue.js')}}"></script>
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/node_modules/vuex/dist/vuex.js')}}"></script>
+-->
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), '../vue/node_modules/vue/dist/vue.js')}}"></script>
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), '../vue/node_modules/vuex/dist/vuex.js')}}"></script>
+
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/easyui.js')}}"></script>
+
+<!--
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/dist/js/app.b175c38b.js')}}"></script>
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/dist/js/chunk-vendors.d0edf0a5.js')}}"></script>
+-->
+
+<div id="multimodalPane" style="width:100%; height:100%;">
+    <div id="mmAnnotationLayout" style="width:100%; height:100%;">
+        <Panel id="visualAnnotation" style="width:100%; height:55%;" title="Visual Annotation" :collapsible="false"
+               :border="false">
+            <div id="visualMarkup" style="display:flex; flex-direction: row; height: 50%;">
+
+                <div id="videoPane" style="width:50%;height:100%;">
+                    <video-pane style="width:100%; height:100%;padding:10px;background:#fafafa"></video-pane>
+                    <div id="jp_container_1" role="application" aria-label="media player">
+                        <div id="controls">
+                            <div id="btnPlay" class="jp-state-playing jp-play"></div>
+                            <div id="btnPause" class="jp-pause"></div>
+                            <div id="btnNewBox">New Box</div>
+                        </div>
+                        <div id="slider"></div>
+                        <div id="displayTime">
+                            <div class="jp-current-time"/>
+                            <div class="jp-duration"/>
+                        </div>
+                    </div>
+                    <div class="jp-no-solution">
+                        <span>Update Required</span>
+                        To play the media you will need to either update your browser to a recent version or update your
+                        <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+                    </div>
+                </div>
+                <div id="videoTable" style="width:50%;height:100%;padding: 10px;">
+                    <table id="objectsGrid" width="100%" style="width:100%;height:100%;background-color:#CCC">
+                    </table>
+                </div>
+            </div>
+
+
+        </Panel>
+        <div id="textAnnotation" style="width:100%; height:45%">
+            <div id="layersPane" class="easyui-panel" title="Text Annotation"
+                 style="width:100%; height:100%;padding:10px;background:#fafafa"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        {{$view->includeFile('vue/store.js') | noescape}}
+        let model = {
+            idSentence: {{$data->idSentence | noescape}},
+            idAnnotationSet: {{$data->idAnnotationSet | noescape}},
+            idAnnotationSetMM: {{$data->idAnnotationSetMM | noescape}},
+            documentMM: {{$data->documentMM | noescape}},
+            objects: {{$data->objects | noescape}},
+            swfPath: {{$data->swfPath}},
+        };
+        store.commit('model', model);
+        Vue.use(EasyUI);
+        console.log(store);
+        const vapp = new Vue({
+            el: "#multimodalPane",
+            store: store,
+        })
+        $('#layersPane').panel({
+            href: {{$manager->getURL('annotation/main/layers').'/'.$this->data->idSentence.'/'.$this->data->idAnnotationSet.'/c'}},
+            onLoad: function () {
+                console.log('loaded layersPane successfully');
+            }
+        });
+        {{$view->includeFile('vue/jplayer.js') | noescape}}
+    });
+</script>
+{{$view->includeFile('vue/videoPane.html')|noescape}}
+
+<!--
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+-->
+
+<!--
+
+<div id="vapp" style="width:100%; height:100%;">
+    <div id="mmAnnotationLayout" style="width:100%; height:100%;">
+        <div id="textAnnotation" style="width:100%; height:55%;">
+            <div id="visualPane" class="easyui-panel" title="Visual Annotation" style="width:100%; height:100%;padding:10px;"></div>
+        </div>
+        <div id="textAnnotation" style="width:100%; height:45%">
+            <div id="layersPane" class="easyui-panel" title="Text Annotation" style="width:100%; height:100%;padding:10px;background:#fafafa"></div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(function () {
+
+        $('#visualPane').panel({
+            href:{{$manager->getURL('annotation/main/visualPlayerV') . '/' . $this->data->idAnnotationSetMM . '/m'}},
+            onLoad:function(){
+                console.log('loaded visualPane successfully');
+            }
+        });
+
+        $('#layersPane').panel({
+            href:{{$manager->getURL('annotation/main/layers') . '/' . $this->data->idSentence . '/' . $this->data->idAnnotationSet . '/c'}},
+            onLoad:function(){
+                console.log('loaded layersPane successfully');
+            }
+        });
+
+
+    });
+
+
+
+</script>
+-->

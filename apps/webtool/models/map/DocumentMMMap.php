@@ -23,7 +23,7 @@ class DocumentMMMap extends \MBusinessModel {
             'database' => \Manager::getConf('fnbr.db'),
             'table' => 'documentmm',
             'attributes' => array(
-                'idDocumentMM' => array('column' => 'idDocument','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
+                'idDocumentMM' => array('column' => 'idDocumentMM','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
                 'audioPath' => array('column' => 'audioPath','type' => 'string'),
                 'visualPath' => array('column' => 'visualPath','type' => 'string'),
                 'alignPath' => array('column' => 'alignPath','type' => 'string'),

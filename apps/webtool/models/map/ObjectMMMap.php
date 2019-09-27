@@ -22,11 +22,15 @@ class ObjectMMMap extends \MBusinessModel {
             'table' => 'objectmm',
             'attributes' => array(
                 'idObjectMM' => array('column' => 'idObjectMM','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
-                'fileObject' => array('column' => 'fileObject','type' => 'string'),
+                'name' => array('column' => 'name','type' => 'string'),
+                'startTime' => array('startTime' => 'name','type' => 'string'),
+                'endTime' => array('column' => 'endTime','type' => 'string'),
                 'idAnnotationSetMM' => array('column' => 'idAnnotationSetMM','type' => 'integer'),
+                'idFrameElement' => array('column' => 'idFrameElement','type' => 'integer'),
             ),
             'associations' => array(
-                'idAnnotationSetMM' => array('toClass' => 'fnbr\models\AnnotationSet', 'cardinality' => 'oneToOne' , 'keys' => 'idAnnotationSetMM:idAnnotationSetMM'),
+                'annotationsetmm' => array('toClass' => 'fnbr\models\AnnotationSetMM', 'cardinality' => 'oneToOne' , 'keys' => 'idAnnotationSetMM:idAnnotationSetMM'),
+                'frameelement' => array('toClass' => 'fnbr\models\FrameElement', 'cardinality' => 'oneToOne' , 'keys' => 'idFrameElement:idFrameElement'),
             )
         );
     }
@@ -40,18 +44,34 @@ class ObjectMMMap extends \MBusinessModel {
      * 
      * @var string 
      */
-    protected $fileObject;
+    protected $name;
+    /**
+     *
+     * @var string
+     */
+    protected $startTime;
+    /**
+     *
+     * @var string
+     */
+    protected $endTime;
     /**
      *
      * @var string
      */
     protected $idAnnotationSetMM;
+    /**
+     *
+     * @var string
+     */
+    protected $idFrameElement;
 
     /**
      * Associations
      */
     protected $annotationSetMM;
-    
+    protected $frameElement;
+
 
     /**
      * Getters/Setters
@@ -64,19 +84,43 @@ class ObjectMMMap extends \MBusinessModel {
         $this->idObjectMM = $value;
     }
 
-    public function getFileObject() {
-        return $this->fileObject;
+    public function getName() {
+        return $this->name;
     }
 
-    public function setFileObject($value) {
-        $this->fileObject = $value;
+    public function setName($value) {
+        $this->name = $value;
     }
+
+    public function getStartTime() {
+        return $this->startTime;
+    }
+
+    public function setStartTime($value) {
+        $this->startTime = $value;
+    }
+
+    public function getEndTime() {
+        return $this->endTime;
+    }
+
+    public function setEndTime($value) {
+        $this->endTime = $value;
+    }
+
     public function getIdAnnotationSetMM() {
         return $this->idAnnotationSetMM;
     }
 
     public function setIdAnnotationSetMM($value) {
         $this->idAnnotationSetMM = $value;
+    }
+    public function getIdFrameElement() {
+        return $this->idFrameElement;
+    }
+
+    public function setIdFrameElement($value) {
+        $this->idFrameElement = $value;
     }
     /**
      *
@@ -86,14 +130,14 @@ class ObjectMMMap extends \MBusinessModel {
         if (is_null($this->annotationSetMM)){
             $this->retrieveAssociation("anotattionsetmm");
         }
-        return  $this->annotationsetmm;
+        return  $this->annotationSetMM;
     }
     /**
      *
      * @param Association $value
      */
     public function setAnnotationSetMM($value) {
-        $this->annotationsetmm = $value;
+        $this->annotationSetMM = $value;
     }
     /**
      *
@@ -101,6 +145,30 @@ class ObjectMMMap extends \MBusinessModel {
      */
     public function getAssociationAnnotationSetMM() {
         $this->retrieveAssociation("annotationsetmm");
+    }
+    /**
+     *
+     * @return Association
+     */
+    public function getFrameElement() {
+        if (is_null($this->frameElement)){
+            $this->retrieveAssociation("frameelement");
+        }
+        return  $this->frameElement;
+    }
+    /**
+     *
+     * @param Association $value
+     */
+    public function setFrameElement($value) {
+        $this->frameElement = $value;
+    }
+    /**
+     *
+     * @return Association
+     */
+    public function getAssociationFrameElement() {
+        $this->retrieveAssociation("frameelement");
     }
 
 }

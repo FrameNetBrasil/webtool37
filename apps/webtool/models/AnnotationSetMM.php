@@ -21,13 +21,26 @@ class AnnotationSetMM extends map\AnnotationSetMMMap
     {
         return array(
             'log' => array(),
-            'validators' => array(
-            ),
+            'validators' => array(),
             'converters' => array()
         );
     }
 
-    public function save($data) {
+    public function getDocumentData()
+    {
+        $document = $this->getSentenceMM()->getSentence()->getParagraph()->getDocument();
+        $documentMM = $document->getDocumentMM()[0];
+        $data = (object)[
+            'idDocumentMM' => $documentMM->getId(),
+            'idDocument' => $document->getId(),
+            'videoTitle' => $document->getName(),
+            'videoPath' => \Manager::getBaseURL() . '/apps/webtool/files/multimodal/videos/' . $documentMM->getVisualPath()
+        ];
+        return $data;
+    }
+
+    public function save($data)
+    {
         $this->setData($data);
         parent::save();
     }

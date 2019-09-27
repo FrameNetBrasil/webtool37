@@ -82,6 +82,11 @@ class MView extends MBaseView
         return $this->processTemplate();
     }
 
+    protected function processLatte()
+    {
+        return $this->processTemplate();
+    }
+
     protected function processJS()
     {
         return $this->processTemplate();

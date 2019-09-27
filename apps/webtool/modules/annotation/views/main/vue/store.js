@@ -2,6 +2,7 @@
 //console.log(base);
 let store = new Vuex.Store({
     state: {
+        model: {},
         title: '',
         m4v: '',
         swfPath: '',
@@ -20,6 +21,9 @@ let store = new Vuex.Store({
         },
         currentTime(state, time) {
             state.currentTime = time;
+        },
+        model(state, model) {
+            state.model = model;
         },
         annotation(state, annotation) {
             state.annotation = annotation;

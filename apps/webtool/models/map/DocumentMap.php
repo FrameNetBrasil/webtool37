@@ -80,7 +80,8 @@ class DocumentMap extends \MBusinessModel {
     protected $paragraphs;
     protected $timelines;
     protected $entries;
-    
+    protected $documentmm;
+
 
     /**
      * Getters/Setters
@@ -258,10 +259,10 @@ class DocumentMap extends \MBusinessModel {
      * @return Association
      */
     public function getDocumentMM() {
-        if (is_null($this->entries)){
+        if (is_null($this->documentmm)){
             $this->retrieveAssociation("documentmm");
         }
-        return  $this->entries;
+        return  $this->documentmm;
     }
     /**
      *
