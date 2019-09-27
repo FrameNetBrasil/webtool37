@@ -450,7 +450,7 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
 		$part3 .= $this->_writeRecalcId();
 
 		$part3 .= $this->_writeSupbookInternal();
-		/* TODO: store external SUPBOOK records and XCT and CRN records
+		/* TODO: _store external SUPBOOK records and XCT and CRN records
 		in case of external references for BIFF8 */
 		$part3 .= $this->_writeExternsheetBiff8();
 		$part3 .= $this->_writeAllDefinedNamesBiff8();
@@ -715,7 +715,7 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
 				$formulaData .= pack('Cvvvvv', 0x3B, $i, $rowmin, $rowmax, 0, 255); // tArea3d
 				$formulaData .= pack('C', 0x10); // tList
 
-				// store the DEFINEDNAME record
+				// _store the DEFINEDNAME record
 				$chunk .= $this->writeData($this->_writeDefinedNameBiff8(pack('C', 0x07), $formulaData, $i + 1, true));
 
 			// (exclusive) either repeatColumns or repeatRows
@@ -743,7 +743,7 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
 				// construct formula data manually because parser does not recognize absolute 3d cell references
 				$formulaData = pack('Cvvvvv', 0x3B, $i, $rowmin, $rowmax, $colmin, $colmax);
 
-				// store the DEFINEDNAME record
+				// _store the DEFINEDNAME record
 				$chunk .= $this->writeData($this->_writeDefinedNameBiff8(pack('C', 0x07), $formulaData, $i + 1, true));
 			}
 		}
@@ -775,7 +775,7 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
 					}
 				}
 
-				// store the DEFINEDNAME record
+				// _store the DEFINEDNAME record
 				$chunk .= $this->writeData($this->_writeDefinedNameBiff8(pack('C', 0x06), $formulaData, $i + 1, true));
 			}
 		}
@@ -1356,7 +1356,7 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
 
 					// 1. space remaining is less than minimum space needed
 					if ($space_remaining < $min_space_needed) {
-						// we close the block, store the block data
+						// we close the block, _store the block data
 						$recordDatas[] = $recordData;
 
 						// and start new record data block where we start writing the string
@@ -1372,7 +1372,7 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
 							--$effective_space_remaining;
 						}
 
-						// one block fininshed, store the block data
+						// one block fininshed, _store the block data
 						$recordData .= substr($string, 0, $effective_space_remaining);
 
 						$string = substr($string, $effective_space_remaining); // for next cycle in while loop

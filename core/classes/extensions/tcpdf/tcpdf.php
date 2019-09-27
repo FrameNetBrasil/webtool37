@@ -698,7 +698,7 @@ class TCPDF {
 	// variables for html parser
 
 	/**
-	 * HTML PARSER: array to store current link and rendering styles.
+	 * HTML PARSER: array to _store current link and rendering styles.
 	 * @protected
 	 */
 	protected $HREF = array();
@@ -945,42 +945,42 @@ class TCPDF {
 	protected $gradients = array();
 
 	/**
-	 * Array used to store positions inside the pages buffer (keys are the page numbers).
+	 * Array used to _store positions inside the pages buffer (keys are the page numbers).
 	 * @protected
 	 * @since 3.2.000 (2008-06-26)
 	 */
 	protected $intmrk = array();
 
 	/**
-	 * Array used to store positions inside the pages buffer (keys are the page numbers).
+	 * Array used to _store positions inside the pages buffer (keys are the page numbers).
 	 * @protected
 	 * @since 5.7.000 (2010-08-03)
 	 */
 	protected $bordermrk = array();
 
 	/**
-	 * Array used to store page positions to track empty pages (keys are the page numbers).
+	 * Array used to _store page positions to track empty pages (keys are the page numbers).
 	 * @protected
 	 * @since 5.8.007 (2010-08-18)
 	 */
 	protected $emptypagemrk = array();
 
 	/**
-	 * Array used to store content positions inside the pages buffer (keys are the page numbers).
+	 * Array used to _store content positions inside the pages buffer (keys are the page numbers).
 	 * @protected
 	 * @since 4.6.021 (2009-07-20)
 	 */
 	protected $cntmrk = array();
 
 	/**
-	 * Array used to store footer positions of each page.
+	 * Array used to _store footer positions of each page.
 	 * @protected
 	 * @since 3.2.000 (2008-07-01)
 	 */
 	protected $footerpos = array();
 
 	/**
-	 * Array used to store footer length of each page.
+	 * Array used to _store footer length of each page.
 	 * @protected
 	 * @since 4.0.014 (2008-07-29)
 	 */
@@ -1127,7 +1127,7 @@ class TCPDF {
 	protected $premode = false;
 
 	/**
-	 * Array used to store positions of graphics transformation blocks inside the page buffer.
+	 * Array used to _store positions of graphics transformation blocks inside the page buffer.
 	 * keys are the page numbers
 	 * @protected
 	 * @since 4.4.002 (2008-12-09)
@@ -1233,7 +1233,7 @@ class TCPDF {
 	protected $objcopy;
 
 	/**
-	 * Array used to store the lengths of cache files.
+	 * Array used to _store the lengths of cache files.
 	 * @protected
 	 * @since 4.5.029 (2009-03-19)
 	 */
@@ -2273,7 +2273,7 @@ class TCPDF {
 			}
 		}
 		$this->SetAutoPageBreak($autopagebreak, $bottommargin);
-		// store page dimensions
+		// _store page dimensions
 		$this->pagedim[$this->page]['w'] = $this->wPt;
 		$this->pagedim[$this->page]['h'] = $this->hPt;
 		$this->pagedim[$this->page]['wk'] = $this->w;
@@ -2715,7 +2715,7 @@ class TCPDF {
 		if (!is_array($brd)) {
 			return;
 		}
-		// store current cell padding
+		// _store current cell padding
 		$cp = $this->cell_padding;
 		// select border mode
 		if (isset($brd['mode'])) {
@@ -3649,7 +3649,7 @@ class TCPDF {
 			if (!isset($this->theadMargins['top'])) {
 				$this->theadMargins['top'] = $this->tMargin;
 			}
-			// store end of header position
+			// _store end of header position
 			if (!isset($this->columns[0]['th'])) {
 				$this->columns[0]['th'] = array();
 			}
@@ -4030,7 +4030,7 @@ class TCPDF {
 	 * @since 2.4.000 (2008-03-06)
 	 */
 	public function GetArrStringWidth($sa, $fontname='', $fontstyle='', $fontsize=0, $getarray=false) {
-		// store current values
+		// _store current values
 		if (!TCPDF_STATIC::empty_string($fontname)) {
 			$prev_FontFamily = $this->FontFamily;
 			$prev_FontStyle = $this->FontStyle;
@@ -4748,7 +4748,7 @@ class TCPDF {
 	 */
 	public function Annotation($x, $y, $w, $h, $text, $opt=array('Subtype'=>'Text'), $spaces=0) {
 		if ($this->inxobj) {
-			// store parameters for later use on template
+			// _store parameters for later use on template
 			$this->xobjects[$this->xobjid]['annotations'][] = array('x' => $x, 'y' => $y, 'w' => $w, 'h' => $h, 'text' => $text, 'opt' => $opt, 'spaces' => $spaces);
 			return;
 		}
@@ -5812,7 +5812,7 @@ class TCPDF {
 				$w = ($this->w - $this->x - $this->rMargin - $mc_margin['R']);
 			}
 		}
-		// store original margin values
+		// _store original margin values
 		$lMargin = $this->lMargin;
 		$rMargin = $this->rMargin;
 		if ($this->rtl) {
@@ -6182,9 +6182,9 @@ class TCPDF {
 	 * This method return the estimated height needed for printing a simple text string using the Multicell() method.
 	 * Generally, if you want to know the exact height for a block of content you can use the following alternative technique:
 	 * @pre
-	 *  // store current object
+	 *  // _store current object
 	 *  $pdf->startTransaction();
-	 *  // store starting values
+	 *  // _store starting values
 	 *  $start_y = $pdf->GetY();
 	 *  $start_page = $pdf->getPage();
 	 *  // call your printing functions with your parameters
@@ -6878,7 +6878,7 @@ class TCPDF {
 			}
 			// scale image dimensions proportionally to fit within the ($w, $h) box
 			if ((($w * $pixh) / ($h * $pixw)) < 1) {
-				// store current height
+				// _store current height
 				$oldh = $h;
 				// calculate new height
 				$h = $w * $pixh / $pixw;
@@ -6899,7 +6899,7 @@ class TCPDF {
 					}
 				}
 			} else {
-				// store current width
+				// _store current width
 				$oldw = $w;
 				// calculate new width
 				$w = $h * $pixw / $pixh;
@@ -7313,7 +7313,7 @@ class TCPDF {
 			$this->gdgammacache['#'.$c] = (((127 - $colors['alpha']) / 127) * 255);
 			// correct gamma
 			$this->gdgammacache['#'.$c] = (pow(($this->gdgammacache['#'.$c] / 255), 2.2) * 255);
-			// store the latest values on cache to improve performances
+			// _store the latest values on cache to improve performances
 			if (count($this->gdgammacache) > 8) {
 				// remove one element from the cache array
 				array_shift($this->gdgammacache);
@@ -8139,7 +8139,7 @@ class TCPDF {
 						$annots .= ' >>';
 						$this->_out($this->_getobj($radio_button_obj_id)."\n".$annots."\n".'endobj');
 						$this->form_obj_id[] = $radio_button_obj_id;
-						// store object id to be used on Parent entry of Kids
+						// _store object id to be used on Parent entry of Kids
 						$this->radiobutton_groups[$n][$pl['txt']] = $radio_button_obj_id;
 					}
 					$formfield = false;
@@ -8709,7 +8709,7 @@ class TCPDF {
 					// create new annotation object
 					$this->_out($this->_getobj($annot_obj_id)."\n".$annots."\n".'endobj');
 					if ($formfield AND !isset($this->radiobutton_groups[$n][$pl['txt']])) {
-						// store reference of form object
+						// _store reference of form object
 						$this->form_obj_id[] = $annot_obj_id;
 					}
 				}
@@ -9416,7 +9416,7 @@ class TCPDF {
 	protected function _putinfo() {
 		$oid = $this->_newobj();
 		$out = '<<';
-		// store current isunicode value
+		// _store current isunicode value
 		$prev_isunicode = $this->isunicode;
 		if ($this->docinfounicode) {
 			$this->isunicode = true;
@@ -9476,7 +9476,7 @@ class TCPDF {
 	 */
 	protected function _putXMP() {
 		$oid = $this->_newobj();
-		// store current isunicode value
+		// _store current isunicode value
 		$prev_isunicode = $this->isunicode;
 		$this->isunicode = true;
 		$prev_encrypted = $this->encrypted;
@@ -10403,7 +10403,7 @@ class TCPDF {
 				$this->SetLink($url, $lnky, $page);
 			}
 		}
-		// store current settings
+		// _store current settings
 		$prevcolor = $this->fgcolor;
 		$prevstyle = $this->FontStyle;
 		if (empty($color)) {
@@ -10830,7 +10830,7 @@ class TCPDF {
 				$signature = base64_decode($signature);
 				// convert signature to hex
 				$hexsignature = current(unpack('H*', $signature));
-				// store signature on recipients array
+				// _store signature on recipients array
 				$this->encryptdata['Recipients'][] = $hexsignature;
 				// The bytes of each item in the Recipients array of PKCS#7 objects in the order in which they appear in the array
 				$recipient_bytes .= $signature;
@@ -12845,7 +12845,7 @@ class TCPDF {
 		} else {
 			$opt['as'] = 'Off';
 		}
-		// store readonly flag
+		// _store readonly flag
 		if (!isset($this->radiobutton_groups[$this->page][$name]['#readonly#'])) {
 			$this->radiobutton_groups[$this->page][$name]['#readonly#'] = false;
 		}
@@ -16445,7 +16445,7 @@ class TCPDF {
 						$dom[($dom[$key]['parent'])]['content'] = str_replace('<thead>', '', $dom[($dom[$key]['parent'])]['content']);
 						$dom[($dom[$key]['parent'])]['content'] = str_replace('</thead>', '', $dom[($dom[$key]['parent'])]['content']);
 					}
-					// store header rows on a new table
+					// _store header rows on a new table
 					if (($dom[$key]['value'] == 'tr') AND ($dom[($dom[$key]['parent'])]['thead'] === true)) {
 						if (TCPDF_STATIC::empty_string($dom[($dom[($dom[$key]['parent'])]['parent'])]['thead'])) {
 							$dom[($dom[($dom[$key]['parent'])]['parent'])]['thead'] = $csstagarray.$a[$dom[($dom[($dom[$key]['parent'])]['parent'])]['elkey']];
@@ -16872,9 +16872,9 @@ class TCPDF {
 							// rows on thead block are printed as a separate table
 						} else {
 							$dom[$key]['thead'] = false;
-							// store the number of rows on table element
+							// _store the number of rows on table element
 							++$dom[($dom[$key]['parent'])]['rows'];
-							// store the TR elements IDs on table element
+							// _store the TR elements IDs on table element
 							array_push($dom[($dom[$key]['parent'])]['trids'], $key);
 						}
 					}
@@ -17045,7 +17045,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 	 */
 	public function writeHTML($html, $ln=true, $fill=false, $reseth=false, $cell=false, $align='') {
 		$gvars = $this->getGraphicVars();
-		// store current values
+		// _store current values
 		$prev_cell_margin = $this->cell_margin;
 		$prev_cell_padding = $this->cell_padding;
 		$prevPage = $this->page;
@@ -17137,7 +17137,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 		$key = 0;
 		while ($key < $maxel) {
 			if ($dom[$key]['tag'] AND $dom[$key]['opening'] AND $dom[$key]['hide']) {
-				// store the node key
+				// _store the node key
 				$hidden_node_key = $key;
 				if ($dom[$key]['self']) {
 					// skip just this self-closing tag
@@ -17169,7 +17169,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 				if (isset($dom[($dom[$key]['parent'])]['attribute']['nobr']) AND ($dom[($dom[$key]['parent'])]['attribute']['nobr'] == 'true')) {
 					$dom[$key]['attribute']['nobr'] = false;
 				} else {
-					// store current object
+					// _store current object
 					$this->startTransaction();
 					// save this method vars
 					$this_method_vars['html'] = $html;
@@ -17607,7 +17607,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 									// restore special characters
 									$lnstring[1][$kk] = str_replace('#!#OP#!#', '(', $lnstring[1][$kk]);
 									$lnstring[1][$kk] = str_replace('#!#CP#!#', ')', $lnstring[1][$kk]);
-									// store number of spaces on the strings
+									// _store number of spaces on the strings
 									$lnstring[2][$kk] = substr_count($lnstring[1][$kk], $spacestr);
 									// count total spaces on line
 									$ns += $lnstring[2][$kk];
@@ -17987,7 +17987,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 						if (!isset($dom[$table_el]['cols'])) {
 							$dom[$table_el]['cols'] = $dom[$trid]['cols'];
 						}
-						// store border info
+						// _store border info
 						$tdborder = 0;
 						if (isset($dom[$key]['border']) AND !empty($dom[$key]['border'])) {
 							$tdborder = $dom[$key]['border'];
@@ -18124,12 +18124,12 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 						if (isset($dom[$parentid]['bgcolor']) AND ($dom[$parentid]['bgcolor'] !== false)) {
 							$dom[$trid]['cellpos'][($cellid - 1)]['bgcolor'] = $dom[$parentid]['bgcolor'];
 						}
-						// store border info
+						// _store border info
 						if (isset($tdborder) AND !empty($tdborder)) {
 							$dom[$trid]['cellpos'][($cellid - 1)]['border'] = $tdborder;
 						}
 						$prevLastH = $this->lasth;
-						// store some info for multicolumn mode
+						// _store some info for multicolumn mode
 						if ($this->rtl) {
 							$this->colxshift['x'] = $this->w - $this->x - $this->rMargin;
 						} else {
@@ -18368,7 +18368,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 				}
 				$this->textindent = 0;
 				if (strlen($strrest) > 0) {
-					// store the remaining string on the previous $key position
+					// _store the remaining string on the previous $key position
 					$this->newline = true;
 					if ($strrest == $dom[$key]['value']) {
 						// used to avoid infinite loop
@@ -18660,7 +18660,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 						}
 					}
 				}
-				// store current margins and page
+				// _store current margins and page
 				$dom[$key]['old_cell_padding'] = $this->cell_padding;
 				if (isset($tag['attribute']['cellpadding'])) {
 					$pad = $this->getHTMLUnitToUnits($tag['attribute']['cellpadding'], 1, 'px');
@@ -20752,7 +20752,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 		}
 		if (!in_array($font, $this->fontkeys)) {
 			$this->fontkeys[] = $font;
-			// store object ID for current font
+			// _store object ID for current font
 			++$this->n;
 			$this->font_obj_ids[$font] = $this->n;
 			$this->setFontSubBuffer($font, 'n', $this->n);
@@ -21748,7 +21748,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 				// print table header
 				$this->writeHTML($this->thead, false, false, false, false, '');
 				$this->y += $xshift['s']['V'];
-				// store end of header position
+				// _store end of header position
 				if (!isset($this->columns[$col]['th'])) {
 					$this->columns[$col]['th'] = array();
 				}
@@ -22177,7 +22177,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 		$this->xobjid = 'XT'.$this->n;
 		// object ID
 		$this->xobjects[$this->xobjid] = array('n' => $this->n);
-		// store current graphic state
+		// _store current graphic state
 		$this->xobjects[$this->xobjid]['gvars'] = $this->getGraphicVars();
 		// initialize data
 		$this->xobjects[$this->xobjid]['intmrk'] = 0;
@@ -22760,9 +22760,9 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 			}
 			$this->img_rb_x = $ximg + $w;
 		}
-		// store current graphic vars
+		// _store current graphic vars
 		$gvars = $this->getGraphicVars();
-		// store SVG position and scale factors
+		// _store SVG position and scale factors
 		$svgoffset_x = ($ximg - $ox) * $this->k;
 		$svgoffset_y = -($y - $oy) * $this->k;
 		if (isset($view_box[2]) AND ($view_box[2] > 0) AND ($view_box[3] > 0)) {
@@ -22780,7 +22780,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 		$svgscale_y = $h / $oh;
 		// scaling and alignment
 		if ($aspect_ratio_align != 'none') {
-			// store current scaling values
+			// _store current scaling values
 			$svgscale_old_x = $svgscale_x;
 			$svgscale_old_y = $svgscale_y;
 			// force uniform scaling
@@ -22832,7 +22832,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 				}
 			}
 		}
-		// store current page break mode
+		// _store current page break mode
 		$page_break_mode = $this->AutoPageBreak;
 		$page_break_margin = $this->getBreakMargin();
 		$cell_padding = $this->cell_padding;
@@ -23309,7 +23309,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 					}
 				}
 			}
-			// store current origin point
+			// _store current origin point
 			$x0 = $x;
 			$y0 = $y;
 			switch (strtoupper($cmd)) {
@@ -24250,7 +24250,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 				$textstrokewidth = $this->textstrokewidth;
 				$this->setTextRenderingMode($this->svgtextmode['stroke'], true, false);
 				if ($name == 'text') {
-					// store current coordinates
+					// _store current coordinates
 					$tmpx = $this->x;
 					$tmpy = $this->y;
 				}

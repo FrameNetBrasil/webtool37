@@ -1,18 +1,21 @@
 Vue.component('edit-post', {
-    template: `
-<form @submit.prevent="savePost">
-    <label>Title:</label>
-    <input type="text" v-model="post.title"/><br>
-    <label>Description:</label>
-    <textarea rows="10" cols="50" v-model="post.body"></textarea><br>
-    <input type="submit">
-</form>
-`,
-    computed: mapState(['post']),
-    methods: {
-        savePost() {
-            this.$store.dispatch('persistPost')
-            this.$root.hideEdit()
+        template: '#edit-post',
+        data() {
+            return {
+                post: 'teste',
+            }
+        },
+        computed: {
+            a() {
+                return 1;
+            }
+        },
+        methods: {
+            savePost() {
+                console.log(vue.$store.state.currentTime);
+            }
         }
     }
-})
+);
+
+

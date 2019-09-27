@@ -14,16 +14,16 @@ $('#objectsGrid').datagrid({
     ]],
     toolbar: [
         {
-            text:'<u>S</u>ave',
-            iconCls:'fa fa-folder-o fa16px',
-            handler: function(){
+            text: '<u>S</u>ave',
+            iconCls: 'fa fa-folder-o fa16px',
+            handler: function () {
                 annotation.save();
             }
         },
         {
-            text:'<u>R</u>efresh',
-            iconCls:'fa fa-refresh fa16px',
-            handler: function(){
+            text: '<u>R</u>efresh',
+            iconCls: 'fa fa-refresh fa16px',
+            handler: function () {
                 annotation.refresh();
             }
         },

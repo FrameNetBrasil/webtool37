@@ -1639,7 +1639,7 @@ class PHPExcel_Writer_Excel5_Worksheet extends PHPExcel_Writer_Excel5_BIFFwriter
 	 * references in a worksheet.
 	 *
 	 * Excel only stores references to external sheets that are used in formulas.
-	 * For simplicity we store references to all the sheets in the workbook
+	 * For simplicity we _store references to all the sheets in the workbook
 	 * regardless of whether they are used or not. This reduces the overall
 	 * complexity and eliminates the need for a two way dialogue between the formula
 	 * parser the worksheet objects.
@@ -1658,7 +1658,7 @@ class PHPExcel_Writer_Excel5_Worksheet extends PHPExcel_Writer_Excel5_BIFFwriter
 
 	/**
 	 * Writes the Excel BIFF EXTERNSHEET record. These references are used by
-	 * formulas. A formula references a sheet name via an index. Since we store a
+	 * formulas. A formula references a sheet name via an index. Since we _store a
 	 * reference to all of the external worksheets the EXTERNSHEET index is the same
 	 * as the worksheet index.
 	 *
@@ -2339,7 +2339,7 @@ class PHPExcel_Writer_Excel5_Worksheet extends PHPExcel_Writer_Excel5_BIFFwriter
 		// Calculate the vertices of the image and write the OBJ record
 		$this->_positionImage($col, $row, $x, $y, $width, $height);
 
-		// Write the IMDATA record to store the bitmap data
+		// Write the IMDATA record to _store the bitmap data
 		$record	  = 0x007f;
 		$length	  = 8 + $size;
 		$cf		  = 0x09;
@@ -2654,7 +2654,7 @@ class PHPExcel_Writer_Excel5_Worksheet extends PHPExcel_Writer_Excel5_BIFFwriter
 
 	/**
 	 * Store the window zoom factor. This should be a reduced fraction but for
-	 * simplicity we will store all fractions with a numerator of 100.
+	 * simplicity we will _store all fractions with a numerator of 100.
 	 */
 	private function _writeZoom()
 	{

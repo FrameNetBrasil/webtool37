@@ -1,6 +1,7 @@
 ﻿##
 ## PHPExcel
-##
+##
+
 ## Copyright (c) 2006 - 2011 PHPExcel
 ##
 ## This library is free software; you can redistribute it and/or
@@ -410,8 +411,8 @@ CODE			= KODE				##	Returnerer en numerisk kode for det første tegn i en teksts
 CONCATENATE		= SAMMENKÆDNING			##	Sammenkæder adskillige tekstelementer til ét tekstelement
 DOLLAR			= KR				##	Konverterer et tal til tekst ved hjælp af valutaformatet kr. (kroner)
 EXACT			= EKSAKT			##	Kontrollerer, om to tekstværdier er identiske
-FIND			= FIND				##	Søger efter en tekstværdi i en anden tekstværdi (der skelnes mellem store og små bogstaver)
-FINDB			= FINDB				##	Søger efter en tekstværdi i en anden tekstværdi (der skelnes mellem store og små bogstaver)
+FIND			= FIND				##	Søger efter en tekstværdi i en anden tekstværdi (der skelnes mellem _store og små bogstaver)
+FINDB			= FINDB				##	Søger efter en tekstværdi i en anden tekstværdi (der skelnes mellem _store og små bogstaver)
 FIXED			= FAST				##	Formaterer et tal som tekst med et fast antal decimaler
 JIS			= JIS				##	Ændrer engelske tegn i halv bredde (enkelt-byte) eller katakana i en tegnstreng til tegn i fuld bredde (dobbelt-byte)
 LEFT			= VENSTRE			##	Returnerer tegnet længst til venstre i en tekstværdi
@@ -428,11 +429,11 @@ REPLACEB		= ERSTATB			##	Erstatter tegn i tekst
 REPT			= GENTAG			##	Gentager tekst et givet antal gange
 RIGHT			= HØJRE				##	Returnerer tegnet længste til højre i en tekstværdi
 RIGHTB			= HØJREB			##	Returnerer tegnet længste til højre i en tekstværdi
-SEARCH			= SØG				##	Søger efter en tekstværdi i en anden tekstværdi (der skelnes ikke mellem store og små bogstaver)
-SEARCHB			= SØGB				##	Søger efter en tekstværdi i en anden tekstværdi (der skelnes ikke mellem store og små bogstaver)
+SEARCH			= SØG				##	Søger efter en tekstværdi i en anden tekstværdi (der skelnes ikke mellem _store og små bogstaver)
+SEARCHB			= SØGB				##	Søger efter en tekstværdi i en anden tekstværdi (der skelnes ikke mellem _store og små bogstaver)
 SUBSTITUTE		= UDSKIFT			##	Udskifter gammel tekst med ny tekst i en tekststreng
 T			= T				##	Konverterer argumenterne til tekst
 TEXT			= TEKST				##	Formaterer et tal og konverterer det til tekst
 TRIM			= FJERN.OVERFLØDIGE.BLANKE	##	Fjerner mellemrum fra tekst
-UPPER			= STORE.BOGSTAVER		##	Konverterer tekst til store bogstaver
+UPPER			= STORE.BOGSTAVER		##	Konverterer tekst til _store bogstaver
 VALUE			= VÆRDI				##	Konverterer et tekstargument til et tal

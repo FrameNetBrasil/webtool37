@@ -3011,7 +3011,7 @@ var jsfeat = jsfeat || { REVISION: 'ALPHA' };
                     x = (w + 1)|0;
                     trow0[0] = trow0[1]; trow0[x] = trow0[w];
                     trow1[0] = trow1[1]; trow1[x] = trow1[w];
-                    // do horizontal convolution, interleave the results and store them
+                    // do horizontal convolution, interleave the results and _store them
                     for(x = 0; x <= w-4; x+=4) {
                         a = trow1[x+2], b = trow1[x+1], c = trow1[x+3], d = trow1[x+4],
                         e = trow0[x+2], f = trow0[x+3];
@@ -3080,7 +3080,7 @@ var jsfeat = jsfeat || { REVISION: 'ALPHA' };
                     x = (w + 1)|0;
                     trow0[0] = trow0[1]; trow0[x] = trow0[w];
                     trow1[0] = trow1[1]; trow1[x] = trow1[w];
-                    // do horizontal convolution, interleave the results and store them
+                    // do horizontal convolution, interleave the results and _store them
                     for(x = 0; x <= w-4; x+=4) {
                         a = trow1[x+2], b = trow1[x+1], c = trow1[x+3], d = trow1[x+4],
                         e = trow0[x+2], f = trow0[x+3];

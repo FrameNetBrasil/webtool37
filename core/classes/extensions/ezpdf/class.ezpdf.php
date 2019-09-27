@@ -772,7 +772,7 @@ class Cezpdf extends Cpdf
             'colNum' => 1
             );
 
-        // store the current margins
+        // _store the current margins
         $this->ez['columns']['margins'] = array
             (
             $this->ez['leftMargin'],
@@ -781,7 +781,7 @@ class Cezpdf extends Cpdf
             $this->ez['bottomMargin']
             );
 
-        // and store the settings for the columns
+        // and _store the settings for the columns
         $this->ez['columns']['options'] = $options;
         // then reset the margins to suit the new columns
         // safe enough to assume the first column here, but start from the current y-position

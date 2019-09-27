@@ -277,7 +277,7 @@
         },
         stringCase: {
             'default': 'Venligst fyll inn dette feltet kun med små bokstaver',
-            upper: 'Venligst fyll inn dette feltet kun med store bokstaver'
+            upper: 'Venligst fyll inn dette feltet kun med _store bokstaver'
         },
         stringLength: {
             'default': 'Vennligst fyll ut dette feltet med en verdi af gyldig længde',

@@ -1842,7 +1842,7 @@ class PHPlot
     {
         header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
         header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . 'GMT');
-        header('Cache-Control: no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0');
+        header('Cache-Control: no-_store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0');
         header('Pragma: no-cache');
         return TRUE;
     }
@@ -3574,7 +3574,7 @@ class PHPlot
             $this->y_label_axis_offset = $gap;
         }
 
-        // Apply the minimum margins and store in the object.
+        // Apply the minimum margins and _store in the object.
         // Do not set margins which were user-defined (see note at top of function).
         if (!isset($this->y_top_margin))
             $this->y_top_margin = max($min_margin, $top_margin);
@@ -6241,7 +6241,7 @@ class PHPlot
         $label_max_width = 0;  // Widest label width, in pixels
         $label_max_height = 0; // Tallest label height, in pixels
         if ($do_labels) {
-            $labels = array(); // Array to store the formatted label strings
+            $labels = array(); // Array to _store the formatted label strings
             $end_angle = $start_angle = $this->pie_start_angle;
             for ($j = 0; $j < $num_slices; $j++) {
                 $slice_weight = $sumarr[$j];
@@ -6561,7 +6561,7 @@ class PHPlot
         $n = $this->num_data_rows;  // Number of X values
         if ($n < 2) return TRUE;    // Require at least 2 rows, for imagefilledpolygon().
 
-        // These arrays store the device X and Y coordinates for all lines:
+        // These arrays _store the device X and Y coordinates for all lines:
         $xd = array();
         $yd = array();
 
@@ -6571,7 +6571,7 @@ class PHPlot
                       . " of Y values for each X");
         }
 
-        // Calculate the Y value for each X, and store the device
+        // Calculate the Y value for each X, and _store the device
         // coordinates into the xd and yd arrays.
         // For stacked area plots, the Y values accumulate.
         for ($row = 0; $row < $n; $row++) {

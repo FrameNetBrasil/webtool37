@@ -7074,7 +7074,7 @@ var configuration_table;
 
 configuration_table = [
   /*      good lazy nice chain */
-  new Config(0, 0, 0, 0, deflate_stored),          /* 0 store only */
+  new Config(0, 0, 0, 0, deflate_stored),          /* 0 _store only */
   new Config(4, 4, 8, 4, deflate_fast),            /* 1 max speed, no lazy matches */
   new Config(4, 5, 16, 8, deflate_fast),           /* 2 */
   new Config(4, 6, 32, 32, deflate_fast),          /* 3 */
@@ -11203,7 +11203,7 @@ function _tr_align(s) {
 
 /* ===========================================================================
  * Determine the best encoding for the current block: dynamic trees, static
- * trees or store, and output the encoded block to the zip file.
+ * trees or _store, and output the encoded block to the zip file.
  */
 function _tr_flush_block(s, buf, stored_len, last)
 //DeflateState *s;

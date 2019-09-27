@@ -23,9 +23,6 @@
         <!-- Carrega o jQuery - obrigatório em todos os temas -->
         <script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), 'scripts/jquery-2.1.1.min.js')}}"></script>
 
-        <!-- Vue -->
-        <script type="module" src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vue/main.js')}}"></script>
-
         <!-- Carrega o tema e suas dependências -->
         {{var $includes = file_get_contents($manager->getThemePath()."/assets.ink")}}
         {{var $lines = explode(PHP_EOL,$includes)}}

@@ -76,7 +76,7 @@ interface Cache
     function delete($id);
 
     /**
-     * Retrieves cached information from data store
+     * Retrieves cached information from data _store
      *
      * The server's statistics array has the following values:
      *
@@ -90,7 +90,7 @@ interface Cache
      * Time that the server is running.
      *
      * - <b>memory_usage</b>
-     * Memory used by this server to store items.
+     * Memory used by this server to _store items.
      *
      * - <b>memory_available</b>
      * Memory allowed to use for storage.

@@ -1,7 +1,70 @@
+<!-- Vue -->
+<!--
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/node_modules/vx-easyui/dist/vx-easyui-min.js')}}"></script>
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/node_modules/vue/dist/vue.js')}}"></script>
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/node_modules/vuex/dist/vuex.js')}}"></script>
+-->
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/node_modules/vue/dist/vue.js')}}"></script>
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/node_modules/vuex/dist/vuex.js')}}"></script>
+
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/easyui.js')}}"></script>
+
+<!--
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/dist/js/app.b175c38b.js')}}"></script>
+<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/dist/js/chunk-vendors.d0edf0a5.js')}}"></script>
+-->
+
+
+
+<div id="vapp" style="width:100%; height:100%;">
+    <div id="mmAnnotationLayout" style="width:100%; height:100%;">
+        <div id="visualAnnotation" style="width:100%; height:55%;">
+            <Panel title="Visual Annotation" :collapsible="false" :border="false" :bodyStyle="{padding:'20px'}" style="height:100%">
+
+            </Panel>
+        </div>
+        <div id="textAnnotation" style="width:100%; height:45%">
+            <div id="layersPane" class="easyui-panel" title="Text Annotation"  style="width:100%; height:100%;padding:10px;background:#fafafa"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        //let EasyUI = window["vx-easyui"];
+        console.log(Vue);
+        console.log(Vuex);
+        {{$view->includeFile('vue/store.js')|noescape}}
+
+        Vue.use(EasyUI);
+        console.log(store);
+
+        const vapp = new Vue({
+            el: "#vapp",
+            store: store,
+        })
+
+        console.log(vapp);
+
+        $('#layersPane').panel({
+            href:{{$manager->getURL('annotation/main/layers') . '/' . $this->data->idSentence . '/' . $this->data->idAnnotationSet . '/c'}},
+            onLoad:function(){
+                console.log('loaded layersPane successfully');
+            }
+        });
+
+
+
+    });
+
+
+</script>
+
 <!--
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 -->
 
+<!--
 
 <div id="vapp" style="width:100%; height:100%;">
     <div id="mmAnnotationLayout" style="width:100%; height:100%;">
@@ -37,3 +100,4 @@
 
 
 </script>
+-->

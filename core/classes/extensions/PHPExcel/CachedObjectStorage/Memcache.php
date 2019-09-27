@@ -72,7 +72,7 @@ class PHPExcel_CachedObjectStorage_Memcache extends PHPExcel_CachedObjectStorage
 			if (!$this->_memcache->replace($this->_cachePrefix.$this->_currentObjectID.'.cache',$obj,NULL,$this->_cacheTime)) {
 				if (!$this->_memcache->add($this->_cachePrefix.$this->_currentObjectID.'.cache',$obj,NULL,$this->_cacheTime)) {
 					$this->__destruct();
-					throw new Exception('Failed to store cell '.$this->_currentObjectID.' in MemCache');
+					throw new Exception('Failed to _store cell '.$this->_currentObjectID.' in MemCache');
 				}
 			}
 			$this->_currentCellIsDirty = false;
@@ -203,7 +203,7 @@ class PHPExcel_CachedObjectStorage_Memcache extends PHPExcel_CachedObjectStorage
 				}
 				if (!$this->_memcache->add($newCachePrefix.$cellID.'.cache',$obj,NULL,$this->_cacheTime)) {
 					$this->__destruct();
-					throw new Exception('Failed to store cell '.$cellID.' in MemCache');
+					throw new Exception('Failed to _store cell '.$cellID.' in MemCache');
 				}
 			}
 		}

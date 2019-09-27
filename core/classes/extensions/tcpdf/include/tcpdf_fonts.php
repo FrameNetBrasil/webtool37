@@ -184,7 +184,7 @@ class TCPDF_FONTS {
 			$fmetric['size2'] = $a['size'];
 			$encrypted = substr($font, (12 + $fmetric['size1']), $fmetric['size2']);
 			$data .= $encrypted;
-			// store compressed font
+			// _store compressed font
 			$fmetric['file'] .= '.z';
 			$fp = fopen($outpath.$fmetric['file'], 'wb');
 			fwrite($fp, gzcompress($data));
@@ -359,7 +359,7 @@ class TCPDF_FONTS {
 					// creates a symbolic link to the existing font
 					symlink($fontfile, $outpath.$fmetric['file']);
 				} else {
-					// store compressed font
+					// _store compressed font
 					$fmetric['file'] .= '.z';
 					$fp = fopen($outpath.$fmetric['file'], 'wb');
 					fwrite($fp, gzcompress($font));
@@ -875,7 +875,7 @@ class TCPDF_FONTS {
 				foreach ($ctg as $cid => $gid) {
 					$cidtogidmap = self::updateCIDtoGIDmap($cidtogidmap, $cid, $ctg[$cid]);
 				}
-				// store compressed CIDToGIDMap
+				// _store compressed CIDToGIDMap
 				$fp = fopen($outpath.$fmetric['ctg'], 'wb');
 				fwrite($fp, gzcompress($cidtogidmap));
 				fclose($fp);
@@ -901,7 +901,7 @@ class TCPDF_FONTS {
 		}
 		$pfile .= '$cw=array('.substr($fmetric['cw'], 1).');'."\n";
 		$pfile .= '// --- EOF ---'."\n";
-		// store file
+		// _store file
 		$fp = fopen($outpath.$font_name.'.php', 'w');
 		fwrite($fp, $pfile);
 		fclose($fp);
@@ -2520,7 +2520,7 @@ class TCPDF_FONTS {
 		$ordarray = array();
 		foreach ($chardata as $cd) {
 			$ordarray[] = $cd['char'];
-			// store char values for subsetting
+			// _store char values for subsetting
 			$currentfont['subsetchars'][$cd['char']] = true;
 		}
 		return $ordarray;

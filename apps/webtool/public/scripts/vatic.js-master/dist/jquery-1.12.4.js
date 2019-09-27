@@ -7646,7 +7646,7 @@ function defaultPrefilter( elem, props, opts ) {
 			dataShow = jQuery._data( elem, "fxshow", {} );
 		}
 
-		// store state if its toggle - enables .stop().toggle() to "reverse"
+		// _store state if its toggle - enables .stop().toggle() to "reverse"
 		if ( toggle ) {
 			dataShow.hidden = !hidden;
 		}
@@ -8930,7 +8930,7 @@ jQuery.fn.extend( {
 				className = getClass( this );
 				if ( className ) {
 
-					// store className if set
+					// _store className if set
 					jQuery._data( this, "__className__", className );
 				}
 

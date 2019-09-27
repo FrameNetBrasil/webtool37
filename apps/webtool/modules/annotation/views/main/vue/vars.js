@@ -1,4 +1,4 @@
-// store object in memory before save to database
+// _store object in memory before save to database
 class AnnotatedObjectsSet {
     constructor() {
         this.currentId = 0;

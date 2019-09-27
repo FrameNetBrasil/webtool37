@@ -226,7 +226,7 @@ class TCPDF_PARSER {
 				$index = $obj_num.'_'.intval($matches[2][0]);
 				// check if object already exist
 				if (!isset($xref['xref'][$index])) {
-					// store object offset position
+					// _store object offset position
 					$xref['xref'][$index] = intval($matches[1][0]);
 				}
 				++$obj_num;
@@ -458,7 +458,7 @@ class TCPDF_PARSER {
 						$index = $obj_num.'_'.$row[2];
 						// check if object already exist
 						if (!isset($xref['xref'][$index])) {
-							// store object offset position
+							// _store object offset position
 							$xref['xref'][$index] = $row[1];
 						}
 						break;

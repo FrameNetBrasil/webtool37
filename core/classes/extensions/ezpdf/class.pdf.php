@@ -150,7 +150,7 @@ class Cpdf
     */
     public $procsetObjectId;
     /**
-    * store the information about the relationship between font families
+    * _store the information about the relationship between font families
     * this used so that the code knows which font is the bold version of another font, etc.
     * the value of this array is initialised in the constuctor function.
     */
@@ -194,13 +194,13 @@ class Cpdf
     */
     public $nCallback = 0;
     /**
-    * store label->id pairs for named destinations, these will be used to replace internal links
+    * _store label->id pairs for named destinations, these will be used to replace internal links
     * done this way so that destinations can be defined after the location that links to them
     */
     public $destinations = array(
         );
     /**
-    * store the stack for the transaction commands, each item in here is a record of the values of all the 
+    * _store the stack for the transaction commands, each item in here is a record of the values of all the
     * variables within the class, so that the user can rollback at will (from each 'start' command)
     * note that this includes the objects array, so these can be large.
     */
@@ -1875,7 +1875,7 @@ class Cpdf
         $this->numObj++;
         $this->o_page($this->numObj, 'new');
 
-        // need to store the first page id as there is no way to get it to the user during 
+        // need to _store the first page id as there is no way to get it to the user during
         // startup
         $this->firstPageId = $this->currentContents;
     }
@@ -3418,7 +3418,7 @@ class Cpdf
 
         // $justification can be set to 'left','right','center','centre','full'
 
-        // need to store the initial text state, as this will change during the width calculation
+        // need to _store the initial text state, as this will change during the width calculation
         // but will need to be re-set before printing, so that the chars work out right
         $store_currentTextState = $this->currentTextState;
 
@@ -4287,7 +4287,7 @@ class Cpdf
         $this->o_destination($this->numObj, 'new',
                              array('page' => $this->currentPage, 'type' => $style, 'p1' => $a, 'p2' => $b, 'p3' => $c));
         $id = $this->numObj;
-        // store the label->idf relationship, note that this means that labels can be used only once
+        // _store the label->idf relationship, note that this means that labels can be used only once
         $this->destinations["$label"] = $id;
     }
 
@@ -4356,7 +4356,7 @@ class Cpdf
     public function transaction($action){
       switch ($action){
         case 'start':
-          // store all the data away into the checkpoint variable
+          // _store all the data away into the checkpoint variable
           $data = get_object_vars($this);
           $this->checkpoint = $data;
           unset($data);
@@ -4404,7 +4404,7 @@ class Cpdf
         switch ($action)
             {
             case 'start':
-                // store all the data away into the checkpoint variable
+                // _store all the data away into the checkpoint variable
                 $this->checkpoint = clone $this;
 
                 break;

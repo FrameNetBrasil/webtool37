@@ -1,8 +1,11 @@
 import Vue from 'vue'
-import App from './App.vue'
+import Vuex from 'vuex'
+Vue.use(Vuex);
 
-Vue.config.productionTip = false
+import 'vx-easyui/dist/themes/material-teal/easyui.css';
+import 'vx-easyui/dist/themes/icon.css';
+import 'vx-easyui/dist/themes/vue.css';
+import EasyUI from 'vx-easyui';
+Vue.use(EasyUI);
 
-new Vue({
-  render: h => h(App),
-}).$mount('#app')
+Vue.config.productionTip = false;

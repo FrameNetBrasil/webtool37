@@ -1022,7 +1022,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * Set compile directory
      *
-     * @param  string $compile_dir directory to store compiled templates in
+     * @param  string $compile_dir directory to _store compiled templates in
      * @return Smarty current Smarty instance for chaining
      */
     public function setCompileDir($compile_dir)
@@ -1048,7 +1048,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * Set cache directory
      *
-     * @param  string $cache_dir directory to store cached templates in
+     * @param  string $cache_dir directory to _store cached templates in
      * @return Smarty current Smarty instance for chaining
      */
     public function setCacheDir($cache_dir)
