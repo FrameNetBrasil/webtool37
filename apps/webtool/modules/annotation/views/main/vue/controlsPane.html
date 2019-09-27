@@ -1,0 +1,34 @@
+<script>
+    Vue.component('controls-pane', {
+            template: '#controls-pane',
+            data() {
+                return {}
+            },
+            computed: {},
+            methods: {}
+        }
+    );
+</script>
+
+<script type="text/x-template" id="controls-pane">
+    <div>
+        <div id="jp_container_1" role="application" aria-label="media player">
+            <div id="controls">
+                <LinkButton id="btnPlay" class="jp-state-playing jp-play"><i class="fas fa-play"></i></LinkButton>
+                <LinkButton id="btnPause" class="jp-pause"><i class="fas fa-pause"></i></LinkButton>
+                <LinkButton id="btnNewBox" iconCls="far fa-square">New Box</LinkButton>
+            </div>
+            <div id="slider"></div>
+            <div id="displayTime">
+                <div class="jp-current-time"/>
+                <div class="jp-duration"/>
+            </div>
+        </div>
+        <div class="jp-no-solution">
+            <span>Update Required</span>
+            To play the media you will need to either update your browser to a recent version or update your
+            <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+        </div>
+    </div>
+</script>
+
