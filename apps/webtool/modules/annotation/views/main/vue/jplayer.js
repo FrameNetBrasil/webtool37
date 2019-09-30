@@ -18,6 +18,14 @@ let myPlayer = $("#jquery_jplayer_1"),
                 //myControl.progress.slider("setValue", event.jPlayer.status.currentPercentAbsolute);
             }
         },
+        play: function (event) {
+            console.log('play');
+            store.commit('currentState', 'playing');
+        },
+        pause: function (event) {
+            console.log('pause');
+            store.commit('currentState', 'paused');
+        },
         loadeddata: function (event) {
             console.log('loaded data');
             console.log('duration = ' + event.jPlayer.status.duration);

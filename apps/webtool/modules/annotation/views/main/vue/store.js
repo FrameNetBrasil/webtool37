@@ -9,6 +9,7 @@ let store = new Vuex.Store({
         urlLookupFrame: '',
         urlLookupFE: '',
         currentTime: 0,
+        currentState: 'paused',
         duration: 0,
         totalFrames: 0,
         annotation: {}
@@ -16,6 +17,12 @@ let store = new Vuex.Store({
     getters: {
         currentTime(state) {
             return state.currentTime
+        },
+        currentState(state) {
+            return state.currentState
+        },
+        duration(state) {
+            return state.duration
         },
     },
     mutations: {
@@ -28,6 +35,9 @@ let store = new Vuex.Store({
         },
         currentTime(state, time) {
             state.currentTime = time;
+        },
+        currentState(state, value) {
+            state.currentState = value;
         },
         duration(state, value) {
             state.duration = value;
