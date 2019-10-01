@@ -1,19 +1,181 @@
 <script>
     Vue.component('video-pane', {
             template: '#video-pane',
+            props: ['newBoxFrame'],
             data() {
                 return {
+                    framesManager: new FramesManager(),
+                    annotatedObjectsTracker: null,
 
+                    mouse: {
+                        x: 0,
+                        y: 0,
+                        startX: 0,
+                        startY: 0
+                    },
+                    tempAnnotatedObject: null,
+                    boxFrame: null,
                 }
             },
             computed: {},
-            methods: {}
+            created() {
+                this.annotatedObjectsTracker = new AnnotatedObjectsTracker(this.framesManager)
+            },
+            methods: {
+                clearAllAnnotatedObjects() {
+                    for (let i = 0; i < this.annotatedObjectsTracker.annotatedObjects.length; i++) {
+                        this.clearAnnotatedObject(i);
+                    }
+                },
+                clearAnnotatedObject(i) {
+                    let annotatedObject = this.annotatedObjectsTracker.annotatedObjects[i];
+                    annotatedObject.controls.remove();
+                    $(annotatedObject.dom).remove();
+                    this.annotatedObjectsTracker.annotatedObjects.splice(i, 1);
+                    //annotatedObjectsSet.remove(annotatedObject)
+                },
+                addAnnotatedObjectControls(annotatedObject) {
+                    annotatedObject.name = '';
+                    annotatedObject.visible = true;
+                    annotatedObject.hide = false;
+                    annotatedObject.idFE = -1;
+                    annotatedObject.fe = '';
+                    //annotatedObject.startTime = config.currentTime;
+                    //annotatedObject.endTime = config.currentTime;
+                    //let border = 'color' + annotatedObject.id;
+                    //annotatedObject.dom.classList.add(border);
+                    this.annotatedObjectsTracker.annotatedObjects.push(annotatedObject);
+                    this.$emit('newObject', this.annotatedObjectsTracker);
+                },
+                newBboxElement() {
+                    let dom = document.createElement('div');
+                    dom.className = 'bbox';
+                    this.$refs.doodle.appendChild(dom);
+                    console.log('new box');
+                    console.log(dom);
+                    return dom;
+                },
+                interactify(dom, onChange) {
+                    let bbox = $(dom);
+                    bbox.addClass('bbox');
+
+                    let createHandleDiv = (className) => {
+                        let handle = document.createElement('div');
+                        handle.className = className;
+                        bbox.append(handle);
+                        return handle;
+                    };
+
+                    bbox.resizable({
+                        handles: "n, e, s, w",
+                        onStopResize: (e) => {
+                            let position = bbox.position();
+                            onChange(Math.round(position.left), Math.round(position.top), Math.round(bbox.width()), Math.round(bbox.height()));
+                        }
+                    });
+
+                    let x = createHandleDiv('handle center-drag');
+                    console.log(x);
+                    bbox.draggable({
+                        //containment: 'parent',
+                        handle: $(x),
+                        onDrag: (e) => {
+                            var d = e.data;
+                            if (d.left < 0) {
+                                d.left = 0
+                            }
+                            if (d.top < 0) {
+                                d.top = 0
+                            }
+                            if (d.left + $(d.target).outerWidth() > $(d.parent).width()) {
+                                d.left = $(d.parent).width() - $(d.target).outerWidth();
+                            }
+                            if (d.top + $(d.target).outerHeight() > $(d.parent).height()) {
+                                d.top = $(d.parent).height() - $(d.target).outerHeight();
+                            }
+                        },
+                        //stop: (e, ui) => {
+                        onStopDrag: (e) => {
+                            let position = bbox.position();
+                            onChange(Math.round(position.left), Math.round(position.top), Math.round(bbox.width()), Math.round(bbox.height()));
+                        }
+                    });
+                },
+
+                onMouseMove(event) {
+                    if (event.pageX) {
+                        this.mouse.x = event.pageX;
+                        this.mouse.y = event.pageY;
+                    } else if (event.clientX) {
+                        this.mouse.x = event.clientX;
+                        this.mouse.y = event.clientY;
+                    }
+                    this.mouse.x -= this.$refs.doodle.offsetLeft;
+                    this.mouse.y -= this.$refs.doodle.offsetTop;
+
+                    if (this.tempAnnotatedObject !== null) {
+                        this.tempAnnotatedObject.width = Math.abs(this.mouse.x - this.mouse.startX);
+                        this.tempAnnotatedObject.height = Math.abs(this.mouse.y - this.mouse.startY);
+                        this.tempAnnotatedObject.x = (this.mouse.x - this.mouse.startX < 0) ? this.mouse.x : this.mouse.startX;
+                        this.tempAnnotatedObject.y = (this.mouse.y - this.mouse.startY < 0) ? this.mouse.y : this.mouse.startY;
+
+                        this.tempAnnotatedObject.dom.style.width = this.tempAnnotatedObject.width + 'px';
+                        this.tempAnnotatedObject.dom.style.height = this.tempAnnotatedObject.height + 'px';
+                        this.tempAnnotatedObject.dom.style.left = this.tempAnnotatedObject.x + 'px';
+                        this.tempAnnotatedObject.dom.style.top = this.tempAnnotatedObject.y + 'px';
+                    }
+
+                },
+                onMouseClick(event) {
+                    let doodle = this.$refs.doodle;
+                    if (doodle.style.cursor != 'crosshair') {
+                        return;
+                    }
+
+                    if (this.tempAnnotatedObject != null) {
+                        let annotatedObject = new AnnotatedObject();
+                        annotatedObject.dom = this.tempAnnotatedObject.dom;
+                        let bbox = new BoundingBox(this.tempAnnotatedObject.x, this.tempAnnotatedObject.y, this.tempAnnotatedObject.width, this.tempAnnotatedObject.height);
+                        annotatedObject.add(new AnnotatedFrame(this.boxFrame, bbox, true));
+                        this.addAnnotatedObjectControls(annotatedObject);
+                        this.tempAnnotatedObject = null;
+
+                        this.interactify(
+                            annotatedObject.dom,
+                            (x, y, width, height) => {
+                                console.log('annotated object changing');
+                                let bbox = new BoundingBox(x, y, width, height);
+                                annotatedObject.add(new AnnotatedFrame(this.boxFrame, bbox, true));
+                            }
+                        );
+
+
+                        doodle.style.cursor = 'default';
+                    } else {
+                        this.mouse.startX = this.mouse.x;
+                        this.mouse.startY = this.mouse.y;
+                        let dom = this.newBboxElement();
+                        dom.style.left = this.mouse.x + 'px';
+                        dom.style.top = this.mouse.y + 'px';
+                        this.tempAnnotatedObject = {
+                            dom: dom
+                        };
+                    }
+                }
+            },
+            watch: {
+                newBoxFrame(value) {
+                    console.log('new box frame = ' + value)
+                    this.boxFrame = value;
+                    this.$refs.doodle.style.cursor = 'crosshair';
+                }
+            }
         }
     );
 </script>
 
 <script type="text/x-template" id="video-pane">
-    <div id="doodle">
+    <div ref="doodle" id="doodle" v-on:mousemove="onMouseMove" v-on:click="onMouseClick">
         <div id="jquery_jplayer_1" class="jp-jplayer" style="width:640px; height:360px"></div>
     </div>
 </script>

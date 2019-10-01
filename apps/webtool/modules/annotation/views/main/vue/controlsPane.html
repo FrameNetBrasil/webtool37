@@ -20,9 +20,26 @@
             methods: {
                 changeValue(v) {
                     if (this.currentState == 'paused') {
-                        console.log(v);
+                        this.$emit('changeValue', v);
                     }
-                }
+                },
+                onForwardClick() {
+                    if (this.currentState == 'paused') {
+                        this.slider.value = this.slider.value + 1;
+                        this.$emit('changeValue', this.slider.value);
+                    }
+                },
+                onBackwardClick() {
+                    if (this.currentState == 'paused') {
+                        this.slider.value = this.slider.value - 1;
+                        this.$emit('changeValue', this.slider.value);
+                    }
+                },
+                onNewBox() {
+                    if (this.currentState == 'paused') {
+                        this.$emit('newBox', this.currentFrame);
+                    }
+                },
             },
             mounted: function () {
                 this.$store.watch(
@@ -30,7 +47,7 @@
                     (duration) => {
                         console.log('====');
                         this.slider.max = Math.trunc(30 * this.$store.state.duration),
-                            this.slider.disable = false;
+                        this.slider.disable = false;
                         console.log(this.slider);
                     }
                 )
@@ -61,9 +78,11 @@
     <div>
         <div id="jp_container_1" role="application" aria-label="media player">
             <div id="controls">
+                <LinkButton id="btnBackward" @click="onBackwardClick"><i class="fas fa-step-backward"></i></LinkButton>
                 <LinkButton id="btnPlay" class="jp-state-playing jp-play"><i class="fas fa-play"></i></LinkButton>
                 <LinkButton id="btnPause" class="jp-pause"><i class="fas fa-pause"></i></LinkButton>
-                <LinkButton id="btnNewBox" iconCls="far fa-square">New Box</LinkButton>
+                <LinkButton id="btnForward" @click="onForwardClick"><i class="fas fa-step-forward"></i></LinkButton>
+                <LinkButton id="btnNewBox" iconCls="far fa-square" @click="onNewBox">New Box</LinkButton>
             </div>
             <Slider ref="sl" :showTip="true" :value="slider.value" :min="slider.min" :max="slider.max"
                     :disable="slider.disable" @input="changeValue"></Slider>

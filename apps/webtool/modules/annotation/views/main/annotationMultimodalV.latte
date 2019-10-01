@@ -20,11 +20,6 @@
 <script type="text/javascript"
         src="{{$manager->getStaticURL($manager->getApp(), 'scripts/jplayer/jquery.jplayer.min.js')}}"></script>
 <!-- Vue -->
-<!--
-<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/node_modules/vx-easyui/dist/vx-easyui-min.js')}}"></script>
-<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/node_modules/vue/dist/vue.js')}}"></script>
-<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/node_modules/vuex/dist/vuex.js')}}"></script>
--->
 <script type="text/javascript"
         src="{{$manager->getStaticURL($manager->getApp(), '../vue/node_modules/vue/dist/vue.js')}}"></script>
 <script type="text/javascript"
@@ -32,22 +27,11 @@
 
 <script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/easyui.js')}}"></script>
 
-<!--
-<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/dist/js/app.b175c38b.js')}}"></script>
-<script type="text/javascript" src="{{$manager->getStaticURL($manager->getApp(), '../vue/dist/js/chunk-vendors.d0edf0a5.js')}}"></script>
--->
 
-<div id="multimodalPane" style="width:100%; height:100%;">
-    <div id="mmAnnotationLayout" style="width:100%; height:100%;">
-        <visual-pane></visual-pane>
-        <div id="textAnnotation" style="width:100%; height:45%">
-            <div id="layersPane" class="easyui-panel" title="Text Annotation"
-                 style="width:100%; height:100%;padding:10px;background:#fafafa"></div>
-        </div>
-    </div>
-</div>
 
 <script type="text/javascript">
+    {{$view->includeFile('vue/vars.js')|noescape}}
+
     $(function () {
         {{$view->includeFile('vue/store.js')|noescape}}
         let model = {
@@ -73,12 +57,22 @@
             }
         });
         */
-        {{$view->includeFile('vue/jplayer.js') | noescape}}
     });
 </script>
 {{$view->includeFile('vue/visualPane.html')|noescape}}
 {{$view->includeFile('vue/videoPane.html')|noescape}}
 {{$view->includeFile('vue/controlsPane.html')|noescape}}
+
+<div id="multimodalPane" style="width:100%; height:100%;">
+    <div id="mmAnnotationLayout" style="width:100%; height:100%;">
+        <visual-pane></visual-pane>
+        <div id="textAnnotation" style="width:100%; height:45%">
+            <div id="layersPane" class="easyui-panel" title="Text Annotation"
+                 style="width:100%; height:100%;padding:10px;background:#fafafa"></div>
+        </div>
+    </div>
+</div>
+
 
 <!--
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>

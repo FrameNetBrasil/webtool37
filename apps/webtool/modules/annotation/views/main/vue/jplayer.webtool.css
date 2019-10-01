@@ -670,12 +670,52 @@ span.jp-artist {
     z-index: 3;
 }
 
+.handle, .ui-resizable-handle {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 1px solid #FFFFFF;
+    background-color: rgba(255, 255, 0, .05);
+    position: absolute;
+}
+
 .center-drag {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
     cursor: move;
 }
+
+.ui-button {
+    margin-right: 5px;
+}
+
+.ui-resizable-n {
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: n-resize;
+}
+
+.ui-resizable-s {
+    left: 50%;
+    bottom: 0%;
+    transform: translate(-50%, 50%);
+    cursor: s-resize;
+}
+
+.ui-resizable-w {
+    top: 50%;
+    transform: translate(-50%, -50%);
+    cursor: w-resize;
+}
+
+.ui-resizable-e {
+    right: 0%;
+    top: 50%;
+    transform: translate(50%, -50%);
+    cursor: e-resize;
+}
+
 
 
 /* RGB */

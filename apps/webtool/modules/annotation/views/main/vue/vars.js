@@ -41,35 +41,3 @@ class AnnotatedObjectsSet {
         }
     }
 }
-
-vue.$store.commit('annotation', {
-    fps: 30,
-    // Low rate decreases the chance of losing frames with poor browser performances
-    playbackRate: 0.4,
-    // currentTime of the video
-    currentTime: 0,
-    annotatedObjectsSet: new AnnotatedObjectsSet(),
-    // object on modal form
-    editObject: {},
-})
-
-let annotation = {
-    // action on modal form: update object & grid
-    updateObject() {
-        console.log('update object');
-        let state = store.state.annotation;
-        state.editObject.idFE = $('#lookupFE').combogrid('getValue');
-        this.editObject.fe = $('#lookupFrame').combogrid('getText') + '.' + $('#lookupFE').combogrid('getText');
-        console.log(this.editObject);
-        this.annotatedObjectsSet.set(this.editObject.idObject, this.editObject);
-        updateObjectsGrid();
-        $('#dlgObject').dialog('close');
-    },
-    // action on modal form: set the endTime of object
-    endObject() {
-        console.log(this.editObject);
-        this.annotatedObjectsSet.get(this.editObject.idObject).endTime = this.currentTime;
-        updateObjectsGrid();
-        $('#dlgObject').dialog('close');
-    }
-}
