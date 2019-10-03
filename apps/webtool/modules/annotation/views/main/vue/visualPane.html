@@ -81,6 +81,10 @@
                     console.log('new Object');
                     //this.annotatedObjectsSet.add(object)
                     console.log(objectsTracker);
+                    this.objects = [];
+                    for (object of objectsTracker.annotatedObjects) {
+                        this.objects.push(object)
+                    }
 
                 },
             },
@@ -89,39 +93,15 @@
 </script>
 
 <script type="text/x-template" id="visual-pane">
-    <Panel id="visualAnnotation" style="width:100%; height:55%;" :title="title" :collapsible="false"
-           :border="false">
-        <div id="visualMarkup"
-             style="display:flex; flex-direction: row; height: 100%;padding:10px;background:#fafafa">
-
-            <div id="videoPane" style="width:50%;height:100%;">
-                <video-pane style="width:100%; height:100%;" :newBoxFrame="newBoxFrame" @newObject="newObject"></video-pane>
-                <controls-pane style="width:100%;" v-on:changeValue="changeValue" v-on:newBox="newBox"></controls-pane>
-            </div>
-            <div id="videoTable" style="width:50%;height:100%;padding: 10px;">
-                <DataGrid id="objectsGrid" ref="objectsGrid" class="f-full"
-                          :data="objects"
-                          emptyMsg="Nenhum registro"
-                          :lazy="true"
-                          :virtualScroll="false"
-                          loadMsg="Carregando...aguarde."
-                          :pagination="false"
-                          selectionMode="single"
-                          style="width:100%;height:100%;background-color:#CCC"
-                >
-
-                    <GridColumn field="idObject" title="ID"></GridColumn>
-                    <GridColumn field="visible" title="Visible"></GridColumn>
-                    <GridColumn field="hide" title="Hide Others"></GridColumn>
-                    <GridColumn field="idFE" title="idFE"></GridColumn>
-                    <GridColumn field="fe" title="FE"></GridColumn>
-                    <GridColumn field="startTime" title="Start Time"></GridColumn>
-                    <GridColumn field="endTime" title="End Time"></GridColumn>
-                </DataGrid>
-            </div>
+    <Panel id="visualAnnotation" :border="false" style="width:100%, height: 100%;margin:10px;background:#fafafa;text-align:center">
+        <div id="videoPane" style="display:inline-block; ">
+            <video-pane  :newBoxFrame="newBoxFrame"
+                        @newObject="newObject"></video-pane>
+            <controls-pane v-on:changeValue="changeValue" v-on:newBox="newBox"></controls-pane>
         </div>
-
-
+        <div id="videoObjects">
+            <grid-pane :objects="objects"></grid-pane>
+        </div>
     </Panel>
 </script>
 

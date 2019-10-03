@@ -116,12 +116,12 @@
             selectOnCheck: false,
             idField: 'idAnnotationSetMM',
             toolbar: annotation.isMaster ? annotation.toolbarASMaster : annotation.toolbarAS,
-            url: {{$manager->getURL('annotation/main/annotationSetMultimodal')}} + '/' + {{$data->idDocumentoMM}},
+            url: {{$manager->getURL('annotation/main/annotationSetMultimodal')}} + '/' + {{$data->idDocument}},
             method: 'get',
             onSelect: function (rowIndex, rowData) {
                 $('#layersPane').html('');
                 console.log(rowData);
-                window.open({{$manager->getURL('annotation/main/annotationMultimodal')}} + '/' + rowData.idAnnotationSetMM + '/' + annotation.type, '_blank');
+                window.open({{$manager->getURL('annotation/main/annotationMultimodalV')}} + '/' + rowData.idAnnotationSetMM + '/' + annotation.type, '_blank');
             }
         });
     });

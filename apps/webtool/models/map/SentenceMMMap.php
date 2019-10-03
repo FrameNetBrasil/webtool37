@@ -81,11 +81,11 @@ class SentenceMMMap extends \MBusinessModel {
     }
 
     public function getEndTimestamp() {
-        return $this->startTimestamp;
+        return $this->endTimestamp;
     }
 
     public function setEndTimestamp($value) {
-        $this->startTimestamp = $value;
+        $this->endTimestamp = $value;
     }
 
     public function getIdSentence() {

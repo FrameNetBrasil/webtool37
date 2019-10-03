@@ -14,12 +14,24 @@
                         startY: 0
                     },
                     tempAnnotatedObject: null,
-                    boxFrame: null,
+                    currentTime: 0,
+                    currentFrame: 0,
                 }
             },
             computed: {},
             created() {
                 this.annotatedObjectsTracker = new AnnotatedObjectsTracker(this.framesManager)
+            },
+            mounted() {
+                this.$store.watch(
+                    (state, getters) => getters.currentTime,
+                    (currentTime) => {
+                        this.currentTime = currentTime;
+                        this.currentFrame = Math.trunc(currentTime * 30);
+                        this.drawFrame(this.currentFrame);
+                    }
+                )
+
             },
             methods: {
                 clearAllAnnotatedObjects() {
@@ -35,6 +47,7 @@
                     //annotatedObjectsSet.remove(annotatedObject)
                 },
                 addAnnotatedObjectControls(annotatedObject) {
+                    console.log(annotatedObject);
                     annotatedObject.name = '';
                     annotatedObject.visible = true;
                     annotatedObject.hide = false;
@@ -44,8 +57,49 @@
                     //annotatedObject.endTime = config.currentTime;
                     //let border = 'color' + annotatedObject.id;
                     //annotatedObject.dom.classList.add(border);
+                    annotatedObject.idObject = this.annotatedObjectsTracker.annotatedObjects.length;
                     this.annotatedObjectsTracker.annotatedObjects.push(annotatedObject);
                     this.$emit('newObject', this.annotatedObjectsTracker);
+                },
+                drawFrame: function (frameNumber) {
+                    return new Promise((resolve, _) => {
+                        console.log('drawFrame ' + frameNumber);
+                        this.annotatedObjectsTracker.getFrameWithObjects(frameNumber).then((frameWithObjects) => {
+                            //ctx.drawImage(frameWithObjects.img, 0, 0);
+console.log(frameWithObjects);
+                            for (let i = 0; i < frameWithObjects.objects.length; i++) {
+                                let object = frameWithObjects.objects[i];
+                                let annotatedObject = object.annotatedObject;
+                                let annotatedFrame = object.annotatedFrame;
+                                if (annotatedFrame.isVisible()) {
+                                    annotatedObject.dom.style.display = 'block';
+                                    annotatedObject.dom.style.width = annotatedFrame.bbox.width + 'px';
+                                    annotatedObject.dom.style.height = annotatedFrame.bbox.height + 'px';
+                                    annotatedObject.dom.style.left = annotatedFrame.bbox.x + 'px';
+                                    annotatedObject.dom.style.top = annotatedFrame.bbox.y + 'px';
+                                    //annotatedObject.visible.prop('checked', true);
+                                } else {
+                                    annotatedObject.dom.style.display = 'none';
+                                    //annotatedObject.visible.prop('checked', false);
+                                }
+                            }
+
+                            /*
+                            let shouldHideOthers = frameWithObjects.objects.some(o => o.annotatedObject.hideOthers);
+                            if (shouldHideOthers) {
+                                for (let i = 0; i < frameWithObjects.objects.length; i++) {
+                                    let object = frameWithObjects.objects[i];
+                                    let annotatedObject = object.annotatedObject;
+                                    if (!annotatedObject.hideOthers) {
+                                        annotatedObject.dom.style.display = 'none';
+                                    }
+                                }
+                            }
+                             */
+
+                            resolve();
+                        });
+                    });
                 },
                 newBboxElement() {
                     let dom = document.createElement('div');
@@ -136,16 +190,16 @@
                         let annotatedObject = new AnnotatedObject();
                         annotatedObject.dom = this.tempAnnotatedObject.dom;
                         let bbox = new BoundingBox(this.tempAnnotatedObject.x, this.tempAnnotatedObject.y, this.tempAnnotatedObject.width, this.tempAnnotatedObject.height);
-                        annotatedObject.add(new AnnotatedFrame(this.boxFrame, bbox, true));
+                        annotatedObject.add(new AnnotatedFrame(this.currentFrame, bbox, true));
                         this.addAnnotatedObjectControls(annotatedObject);
                         this.tempAnnotatedObject = null;
 
                         this.interactify(
                             annotatedObject.dom,
                             (x, y, width, height) => {
-                                console.log('annotated object changing');
+                                console.log('annotated object changing - box frame ' + this.currentFrame);
                                 let bbox = new BoundingBox(x, y, width, height);
-                                annotatedObject.add(new AnnotatedFrame(this.boxFrame, bbox, true));
+                                annotatedObject.add(new AnnotatedFrame(this.currentFrame, bbox, true));
                             }
                         );
 
@@ -165,8 +219,6 @@
             },
             watch: {
                 newBoxFrame(value) {
-                    console.log('new box frame = ' + value)
-                    this.boxFrame = value;
                     this.$refs.doodle.style.cursor = 'crosshair';
                 }
             }

@@ -28,6 +28,13 @@ class DocumentMM extends map\DocumentMMMap
         );
     }
 
+    public function getByIdDocument($idDocument)
+    {
+        $criteria = $this->getCriteria()->select('*');
+        $criteria->where("idDocument = {$idDocument}");
+        $this->retrieveFromCriteria($criteria);
+    }
+
     public function save($data) {
         $document = new Document();
         $document->setData($data);

@@ -334,9 +334,11 @@ class MainController extends MController
         $annotation = Manager::getAppService('annotation');
         $type = $this->data->id{0};
         if ($type == 'd') {
-            $idDocumentMM = substr($this->data->id, 1);
-            $documentoMM = new fnbr\models\DocumentMM($idDocumentMM);
-            $this->data->idDocumentoMM = $documentoMM->getIdDocument();
+            $this->data->idDocument = substr($this->data->id, 1);
+           // $documentMM = new fnbr\models\DocumentMM();
+           // $documentMM->getByIdDocument($idDocument);
+           // $this->data->idDocumentMM = $documentMM->getIdDocument();
+          //  $this->data->idDocumentMM = $documentMM->getIdDocument();
             $this->data->title = $annotation->getDocumentTitle($this->data->idDocumentoMM, $this->idLanguage);
             /*
             $document = new fnbr\models\Document($idDocument);
@@ -365,6 +367,7 @@ class MainController extends MController
         Manager::getPage()->setTemplateName('content');
         $this->data->idAnnotationSetMM = $this->data->id;
         $annotationSetMM = new \fnbr\models\AnnotationSetMM($this->data->idAnnotationSetMM);
+        $this->data->urlObjects = Manager::getURL('annotation/main/objectsData') . "/" . $this->data->idAnnotationSetMM;
         $sentenceMM = new \fnbr\models\SentenceMM($annotationSetMM->getIdSentenceMM());
         $this->data->idSentence = $sentenceMM->getIdSentence();
         $this->data->idAnnotationSet = $annotationSetMM->getIdAnnotationSet();
@@ -387,8 +390,10 @@ class MainController extends MController
                 'order' => $this->data->order
             ];
         }
-        $this->data->urlObjects = Manager::getURL('annotation/main/objectsData') . "/" . $this->data->idAnnotationSetMM;
-        $json = $annotation->listAnnotationSetMultimodal($this->data->id, $sortable);
+        $idDocument = $this->data->id;
+        $documentMM = new fnbr\models\DocumentMM();
+        $documentMM->getByIdDocument($idDocument);
+        $json = $annotation->listAnnotationSetMultimodal($documentMM->getIdDocumentMM(), $sortable);
         $this->renderJson($json);
     }
 
