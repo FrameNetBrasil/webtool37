@@ -101,6 +101,7 @@ return [
             'formatDateWhere' => '%Y/%m/%e',
             'formatTime' => '%T',
             'charset' => 'utf8mb4',
+            'collate' => 'utf8mb4_bin',
             'sequence' => [
                 'table' => 'Sequence',
                 'name' => 'Name',
