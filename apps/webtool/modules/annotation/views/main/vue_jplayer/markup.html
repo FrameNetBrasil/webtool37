@@ -1,0 +1,91 @@
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/compatibility.js')}}"></script>
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/jszip.js')}}"></script>
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/StreamSaver.js')}}"></script>
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/polyfill.js')}}"></script>
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/jsfeat.js')}}"></script>
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/nudged.js')}}"></script>
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/pouchdb.min.js')}}"></script>
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/vatic.js')}}"></script>
+
+<script type="text/javascript"
+        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/jplayer/jquery.jplayer.min.js')}}"></script>
+
+
+<div id="visualMarkup" style="display:flex; flex-direction: row; height: 50%;">
+    <div id="videoPane" style="width:50%;height:100%;">
+        <div id="doodle">
+            <div id="jquery_jplayer_1" class="jp-jplayer" style="width:640px; height:360px"></div>
+        </div>
+        <div id="jp_container_1" role="application" aria-label="media player">
+            <div id="controls">
+                <div id="btnPlay" class="jp-state-playing jp-play"></div>
+                <div id="btnPause" class="jp-pause"></div>
+                <div id="btnNewBox">New Box</div>
+            </div>
+            <div id="slider"></div>
+            <div id="displayTime">
+                <div class="jp-current-time"/>
+                <div class="jp-duration"/>
+            </div>
+
+        </div>
+        <div class="jp-no-solution">
+            <span>Update Required</span>
+            To play the media you will need to either update your browser to a recent version or update your <a
+                href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+        </div>
+    </div>
+    <div id="videoTable" style="width:50%;height:100%;padding: 10px;">
+        <table id="objectsGrid" width="100%" style="width:100%;height:100%;background-color:#CCC">
+        </table>
+    </div>
+</div>
+
+
+<form id="formObjects" method="post" action={{$manager->getURL('annotation/main/putObjects')}}>
+    <input type="hidden" id="type" name="type" value=""/>
+    <input type="hidden" id="dataObjects" name="dataObjects" value=""/>
+</form>
+
+<div id="dlgObject" title="Edit Object" style="width:400px;height:250px;padding:0px">
+    <div id="dlgObject_tools">
+        <a href='#' name="dlgObjectUpdate" id="dlgObjectUpdate">
+            Update
+        </a>
+        <a href='#' name="dlgObjectEnd" id="dlgObjectEnd">
+            End
+        </a>
+    </div>
+    <form id="formObject" method="post">
+        <div class="mFormContainer">
+            <div class="mFormRow">
+                <span>Current time: <span id="currentTime"></span></span></span>
+            </div>
+            <div class="mFormRow">
+                <label for="name">Name:</label>
+                <input class="easyui-textbox" type="text" id="name" name="name"/>
+            </div>
+            <div class="mFormRow">
+                <label for="visible">Visible:</label>
+                <input id="visible" name="visible" type="checkbox" value="1"/>
+            </div>
+            <div class="mFormRow">
+                <label for="lookupFrame">Frame:</label>
+                <input id="lookupFrame" name="lookupFrame"/>
+            </div>
+            <div class="mFormRow">
+                <label for="lookupFE">Frame Element:</label>
+                <input id="lookupFE" name="lookupFE"/>
+            </div>
+        </div>
+    </form>
+</div>
+

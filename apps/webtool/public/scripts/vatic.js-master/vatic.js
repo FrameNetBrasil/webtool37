@@ -167,7 +167,7 @@ function extractFramesFromZip(config, file) {
 /**
  * Extracts the frame sequence from a previously generated zip file.
  */
-function extractFramesFromZipUrl(config, url) {
+function extractFramesFromZipUrl(config, url, segment) {
     return new Promise((resolve, _) => {
         fetch(url)       // 1) fetch the url
             .then(function (response) {                       // 2) filter on 200 OK
@@ -179,11 +179,13 @@ function extractFramesFromZipUrl(config, url) {
             })
             .then(JSZip.loadAsync)                            // 3) chain with the zip promise
             .then(function (zip) {
+                let first = (segment * 1000);
+                let n = 0;
                 let totalFrames = 0;
-                for (let i = 0; ; i++) {
+                for (let i = first; ; i++, n++) {
                     let file = zip.file(i + config.imageExtension);
                     if (file == null) {
-                        totalFrames = i;
+                        totalFrames = n;
                         break;
                     }
                 }
@@ -214,15 +216,15 @@ function extractFramesFromZipUrl(config, url) {
 class OpticalFlow {
     constructor() {
         this.isInitialized = false;
-        //this.previousPyramid = new jsfeat.pyramid_t(3);
-        //this.currentPyramid = new jsfeat.pyramid_t(3);
+        this.previousPyramid = new jsfeat.pyramid_t(3);
+        this.currentPyramid = new jsfeat.pyramid_t(3);
     }
 
     init(imageData) {
-        //this.previousPyramid.allocate(imageData.width, imageData.height, jsfeat.U8_t | jsfeat.C1_t);
-        //this.currentPyramid.allocate(imageData.width, imageData.height, jsfeat.U8_t | jsfeat.C1_t);
-        //jsfeat.imgproc.grayscale(imageData.data, imageData.width, imageData.height, this.previousPyramid.data[0]);
-        //this.previousPyramid.build(this.previousPyramid.data[0]);
+        this.previousPyramid.allocate(imageData.width, imageData.height, jsfeat.U8_t | jsfeat.C1_t);
+        this.currentPyramid.allocate(imageData.width, imageData.height, jsfeat.U8_t | jsfeat.C1_t);
+        jsfeat.imgproc.grayscale(imageData.data, imageData.width, imageData.height, this.previousPyramid.data[0]);
+        this.previousPyramid.build(this.previousPyramid.data[0]);
         this.isInitialized = true;
     }
 
@@ -235,8 +237,8 @@ class OpticalFlow {
             throw 'not initialized';
         }
 
-        //jsfeat.imgproc.grayscale(imageData.data, imageData.width, imageData.height, this.currentPyramid.data[0]);
-        //this.currentPyramid.build(this.currentPyramid.data[0]);
+        jsfeat.imgproc.grayscale(imageData.data, imageData.width, imageData.height, this.currentPyramid.data[0]);
+        this.currentPyramid.build(this.currentPyramid.data[0]);
 
         // TODO: Move all configuration to config
         let bboxBorderWidth = 1;
@@ -265,7 +267,7 @@ class OpticalFlow {
             throw 'no points to track';
         }
 
-        //jsfeat.optical_flow_lk.track(this.previousPyramid, this.currentPyramid, previousPoints, currentPoints, pointsCount, 30, 30, pointsStatus, 0.01, 0.001);
+        jsfeat.optical_flow_lk.track(this.previousPyramid, this.currentPyramid, previousPoints, currentPoints, pointsCount, 30, 30, pointsStatus, 0.01, 0.001);
 
         let newBboxes = [];
         let p = 0;
@@ -308,9 +310,9 @@ class OpticalFlow {
         }
 
         // Swap current and previous pyramids
-        //let oldPyramid = this.previousPyramid;
-        //this.previousPyramid = this.currentPyramid;
-        //this.currentPyramid = oldPyramid; // Buffer re-use
+        let oldPyramid = this.previousPyramid;
+        this.previousPyramid = this.currentPyramid;
+        this.currentPyramid = oldPyramid; // Buffer re-use
 
         return newBboxes;
     }
@@ -414,7 +416,7 @@ class AnnotatedObjectsTracker {
         this.annotatedObjects = [];
         this.opticalFlow = new OpticalFlow();
         this.lastFrame = -1;
-        //this.ctx = document.createElement('canvas').getContext('2d');
+        this.ctx = document.createElement('canvas').getContext('2d');
 
         this.framesManager.onReset.push(() => {
             this.annotatedObjects = [];
@@ -463,8 +465,8 @@ class AnnotatedObjectsTracker {
 
     track(frameNumber) {
         return new Promise((resolve, _) => {
-            //this.framesManager.frames.getFrame(frameNumber).then((blob) => {
-            //    blobToImage(blob).then((img) => {
+            this.framesManager.frames.getFrame(frameNumber).then((blob) => {
+                blobToImage(blob).then((img) => {
                     let result = [];
                     let toCompute = [];
                     for (let i = 0; i < this.annotatedObjects.length; i++) {
@@ -495,7 +497,7 @@ class AnnotatedObjectsTracker {
                     optionalOpticalFlowInit.then(() => {
                         let newBboxes;
                         if (hasAnyBbox) {
-                            let imageData = null;//this.imageData(img);
+                            let imageData = this.imageData(img);
                             newBboxes = this.opticalFlow.track(imageData, bboxes);
                             this.lastFrame = frameNumber;
                         } else {
@@ -508,16 +510,13 @@ class AnnotatedObjectsTracker {
                             annotatedObject.add(annotatedFrame);
                             result.push({annotatedObject: annotatedObject, annotatedFrame: annotatedFrame});
                         }
-                        let img = null;
                         resolve({img: img, objects: result});
                     });
                 });
-            //});
-        //});
+            });
+        });
     }
 
-
-    /*
     initOpticalFlow(frameNumber) {
         return new Promise((resolve, _) => {
             if (this.lastFrame != -1 && this.lastFrame == frameNumber) {
@@ -532,26 +531,6 @@ class AnnotatedObjectsTracker {
                         resolve();
                     });
                 });
-            }
-        });
-    }
-*/
-
-    initOpticalFlow(frameNumber) {
-        return new Promise((resolve, _) => {
-            if (this.lastFrame != -1 && this.lastFrame == frameNumber) {
-                resolve();
-            } else {
-                this.opticalFlow.reset();
-                //this.framesManager.frames.getFrame(frameNumber).then((blob) => {
-                //    blobToImage(blob).then((img) => {
-                //        let imageData = this.imageData(img);
-                let imageData = null;
-                this.opticalFlow.init(imageData);
-                this.lastFrame = frameNumber;
-                resolve();
-                //    });
-                //});
             }
         });
     }

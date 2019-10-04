@@ -1,0 +1,101 @@
+<script>
+    Vue.component('controls-pane', {
+            template: '#controls-pane',
+            data() {
+                return {
+                    slider: {
+                        min: 0,
+                        max: 0,
+                        value: 0,
+                        disable: true,
+                    },
+                    currentTime: 0,
+                    currentFrame: 0,
+                    currentState: 'paused'
+                }
+            },
+            computed: {},
+            created() {
+            },
+            methods: {
+                changeValue(v) {
+                    if (this.currentState == 'paused') {
+                        this.$emit('changeValue', v);
+                    }
+                },
+                onForwardClick() {
+                    if (this.currentState == 'paused') {
+                        this.slider.value = this.slider.value + 1;
+                        this.$emit('changeValue', this.slider.value);
+                    }
+                },
+                onBackwardClick() {
+                    if (this.currentState == 'paused') {
+                        this.slider.value = this.slider.value - 1;
+                        this.$emit('changeValue', this.slider.value);
+                    }
+                },
+                onNewBox() {
+                    if (this.currentState == 'paused') {
+                        this.$emit('newBox', this.currentFrame);
+                    }
+                },
+            },
+            mounted: function () {
+                this.$store.watch(
+                    (state, getters) => getters.duration,
+                    (duration) => {
+                        console.log('====');
+                        this.slider.max = Math.trunc(30 * this.$store.state.duration),
+                        this.slider.disable = false;
+                        console.log(this.slider);
+                    }
+                )
+                this.$store.watch(
+                    (state, getters) => getters.currentState,
+                    (currentState) => {
+                        this.currentState = currentState;
+                    }
+                )
+                this.$store.watch(
+                    (state, getters) => getters.currentTime,
+                    (currentTime) => {
+                        this.currentTime = currentTime;
+                        //console.log(currentTime);
+                        //this.sliderValue = Math.trunc(100 * (currentTime / this.$store.state.duration));
+                        this.currentFrame = Math.trunc(currentTime * 30);
+                        this.slider.value = this.currentFrame;
+                        this.$refs.sl.setValue(this.currentFrame);
+                        //console.log(this.currentFrame);
+                    }
+                )
+            },
+        }
+    );
+</script>
+
+<script type="text/x-template" id="controls-pane">
+    <div>
+        <div id="jp_container_1" role="application" aria-label="media player">
+            <div id="controls">
+                <LinkButton id="btnBackward" @click="onBackwardClick"><i class="fas fa-step-backward"></i></LinkButton>
+                <LinkButton id="btnPlay" class="jp-state-playing jp-play"><i class="fas fa-play"></i></LinkButton>
+                <LinkButton id="btnPause" class="jp-pause"><i class="fas fa-pause"></i></LinkButton>
+                <LinkButton id="btnForward" @click="onForwardClick"><i class="fas fa-step-forward"></i></LinkButton>
+                <LinkButton id="btnNewBox" iconCls="far fa-square" @click="onNewBox">New Box</LinkButton>
+            </div>
+            <Slider ref="sl" :showTip="true" :value="slider.value" :min="slider.min" :max="slider.max"
+                    :disable="slider.disable" @input="changeValue"></Slider>
+            <div id="displayTime">
+                <div class="jp-current-time"/>
+                <div class="jp-duration"/>
+            </div>
+        </div>
+        <div class="jp-no-solution">
+            <span>Update Required</span>
+            To play the media you will need to either update your browser to a recent version or update your
+            <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+        </div>
+    </div>
+</script>
+

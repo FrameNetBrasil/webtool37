@@ -34,7 +34,8 @@ class AnnotationSetMM extends map\AnnotationSetMMMap
             'idDocumentMM' => $documentMM->getId(),
             'idDocument' => $document->getId(),
             'videoTitle' => $document->getName(),
-            'videoPath' => \Manager::getBaseURL() . '/apps/webtool/files/multimodal/videos/' . $documentMM->getVisualPath()
+            'videoPath' => \Manager::getBaseURL() . '/apps/webtool/files/multimodal/videos/' . $documentMM->getVisualPath(),
+            'framesPath' => str_replace('.mp4', '', \Manager::getBaseURL() . '/apps/webtool/files/multimodal/videoframes/' . $documentMM->getVisualPath()),
         ];
         return $data;
     }

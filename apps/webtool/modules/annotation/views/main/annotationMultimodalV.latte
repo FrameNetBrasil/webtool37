@@ -1,5 +1,5 @@
 <link rel="stylesheet" type="text/css"
-      href="{{$manager->getAppFileURL($manager->getApp(), 'modules/annotation/views/main/vue/jplayer.webtool.css')}}">
+      href="{{$manager->getAppFileURL($manager->getApp(), 'modules/annotation/views/main/vue/vatic.webtool.css')}}">
 
 <script type="text/javascript"
         src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/dist/compatibility.js')}}"></script>
@@ -18,8 +18,6 @@
 <script type="text/javascript"
         src="{{$manager->getStaticURL($manager->getApp(), 'scripts/vatic.js-master/vatic.js')}}"></script>
 
-<script type="text/javascript"
-        src="{{$manager->getStaticURL($manager->getApp(), 'scripts/jplayer/jquery.jplayer.min.js')}}"></script>
 <!-- Vue -->
 <script type="text/javascript"
         src="{{$manager->getStaticURL($manager->getApp(), '../vue/node_modules/vue/dist/vue.js')}}"></script>
@@ -30,8 +28,6 @@
 
 
 <script type="text/javascript">
-    {{$view->includeFile('vue/vars.js')|noescape}}
-
     $(function () {
         {{$view->includeFile('vue/store.js')|noescape}}
         let model = {
@@ -39,6 +35,7 @@
             idAnnotationSet: {{$data->idAnnotationSet|noescape}},
             idAnnotationSetMM: {{$data->idAnnotationSetMM|noescape}},
             documentMM: {{$data->documentMM|noescape}},
+            segments: {{$data->segments|noescape}},
             objects: {{$data->objects|noescape}},
             swfPath: {{$data->swfPath}},
         };

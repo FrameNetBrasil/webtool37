@@ -5,77 +5,53 @@
             data() {
                 return {
                     title: 'Visual Annotation',
+                    videoTitle: this.$store.state.model.documentMM.videoTitle,
+                    segments: this.$store.state.model.segments,
+                    currentSegment: 0,
+                    framesRange: {
+                        first: 0,
+                        last: 0
+                    },
                     player: null,
                     playerData: null,
                     ignore_timeupdate: false,
                     options: {},
                     objects: [],
-                    newBoxFrame: null,
-                    annotatedObjectsSet: new AnnotatedObjectsSet(),
+                    newObjectFrame: null,
                 }
             },
             computed: {},
             created() {
             },
             mounted() {
+                console.log(this.segments);
                 let that = this;
-                this.player = $("#jquery_jplayer_1");
-                this.options = {
-                    store: that.$store,
-                    ready: function (event) {
-                        console.log('jsplayer ready');
-                        $(this).jPlayer("setMedia", {
-                            title: that.$store.state.model.documentMM.videoTitle,
-                            m4v: that.$store.state.model.documentMM.videoPath,
-                        });
-                    },
-                    timeupdate: function (event) {
-                        if (!that.ignore_timeupdate) {
-                            //console.log(event.jPlayer.status.currentTime);
-                            that.$store.commit('currentTime', event.jPlayer.status.currentTime);
-                            //myControl.progress.slider("setValue", event.jPlayer.status.currentPercentAbsolute);
-                        }
-                    },
-                    play: function (event) {
-                        console.log('play');
-                        that.$store.commit('currentState', 'playing');
-                    },
-                    pause: function (event) {
-                        console.log('pause');
-                        that.$store.commit('currentState', 'paused');
-                    },
-                    loadeddata: function (event) {
-                        console.log('loaded data');
-                        console.log('duration = ' + event.jPlayer.status.duration);
-                        that.$store.dispatch('setDuration', event.jPlayer.status.duration);
-                    },
-                    cssSelectorAncestor: "#jp_container_1",
-                    swfPath: that.$store.state.model.swfPath,
-                    supplied: "m4v",
-                    useStateClassSkin: false,
-                    autoBlur: false,
-                    smoothPlayBar: true,
-                    keyEnabled: true,
-                    remainingDuration: true,
-                    toggleDuration: true,
-                    size: {
-                        width: "640px",
-                        height: "360px",
-                        cssClass: "jp-video-360p"
+                $('#segments').combobox({
+                    value: this.currentSegment,
+                    data: this.segments,
+                    onChange: function (value) {
+                        that.changeSegment(value);
                     }
-                }
-                this.player.jPlayer(this.options);
-                // A pointer to the jPlayer data object
-                this.playerData = this.player.data("jPlayer");
+                })
             },
             methods: {
-                changeValue(value) {
-                    let totalFrames = Math.trunc(30 * this.$store.state.duration);
-                    this.player.jPlayer("playHead", 100 * value / totalFrames);
+                changeSegment(value) {
+                    this.currentSegment = value;
+                    console.log(this.currentSegment);
                 },
-                newBox(currentFrame) {
-                    console.log('newBox');
-                    this.newBoxFrame = currentFrame;
+                framesLoaded(firstFrame, lastFrame) {
+                    console.log('Frames Loaded! ' + firstFrame + ' to ' + lastFrame);
+                    this.framesRange = {
+                        first: firstFrame,
+                        last: lastFrame
+                    }
+                },
+                changeValue(value) {
+
+                },
+                onNewObject(currentFrame) {
+                    console.log('newObject');
+                    this.newObjectFrame = currentFrame;
                 },
                 newObject(objectsTracker) {
                     console.log('new Object');
@@ -93,14 +69,21 @@
 </script>
 
 <script type="text/x-template" id="visual-pane">
-    <Panel id="visualAnnotation" :border="false" style="width:100%, height: 100%;margin:10px;background:#fafafa;text-align:center">
-        <div id="videoPane" style="display:inline-block; ">
-            <video-pane  :newBoxFrame="newBoxFrame"
-                        @newObject="newObject"></video-pane>
-            <controls-pane v-on:changeValue="changeValue" v-on:newBox="newBox"></controls-pane>
-        </div>
-        <div id="videoObjects">
-            <grid-pane :objects="objects"></grid-pane>
+    <Panel id="visualAnnotation" :border="false"
+           style="width:100%;height: 1500px;margin:10px;background:#fafafa;text-align:center">
+        <div id="container" style="display:inline-block; ">
+            <div id="videoSegment" style="margin:8px">
+                <h3>{{videoTitle}}</h3>
+                <input id="segments"></input>
+            </div>
+            <div id="videoPane">
+                <video-pane :segment="currentSegment" :newObjectFrame="newObjectFrame"
+                            @newObject="newObject" @framesLoaded="framesLoaded"></video-pane>
+                <controls-pane v-on:newObject="onNewObject" :framesRange="framesRange"></controls-pane>
+            </div>
+            <div id="videoObjects">
+                <grid-pane :objects="objects"></grid-pane>
+            </div>
         </div>
     </Panel>
 </script>

@@ -378,6 +378,12 @@ class MainController extends MController
         $this->data->swfPath = Manager::getBaseURL() . '/apps/webtool/public/scripts/jplayer/';
         $this->data->urlLookupFrame = Manager::getBaseURL() . '/index.php/webtool/data/frame/lookupData';
         $this->data->urlLookupFE =  Manager::getBaseURL() . '/index.php/webtool/data/frameelement/lookupData';
+        $this->data->segments = json_encode([
+            ['value' => 0, 'text' => 'Segment0'],
+            ['value' => 1, 'text' => 'Segment1'],
+            ['value' => 2, 'text' => 'Segment2'],
+            ['value' => 3, 'text' => 'Segment3'],
+        ]);
         $this->render();
     }
 

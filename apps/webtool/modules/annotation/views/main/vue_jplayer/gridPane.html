@@ -1,0 +1,222 @@
+<script>
+    Vue.component('grid-pane', {
+            template: '#grid-pane',
+            props: ['objects'],
+            data() {
+                return {}
+            },
+            computed: {},
+            created() {
+            },
+            mounted: function () {
+                let frozenColumns = [
+                    {
+                        field: 'visible',
+                        title: '<i class="fas fa-eye"></i>',
+                        editor: {type: 'checkbox', options: {on: 'True', off: 'False'}},
+                        frozen: true,
+                    },
+                    {
+                        field: 'tag',
+                        title: '<i class="fas fa-tag"></i>',
+                        frozen: true,
+                    },
+                    {
+                        field: 'idObject',
+                        title: '#',
+                        frozen: true,
+                    },
+                    {
+                        field: 'idFE',
+                        title: 'idFE',
+                        frozen: true,
+                    },
+                    {
+                        field: 'fe',
+                        title: 'FE',
+                        frozen: true,
+                    },
+                ];
+                let columns = [
+                    {
+                        field: 'timeline',
+                        title: 'Timeline',
+                        formatter: function (value, row, index) {
+                            console.log('columnFormatter');
+                            console.log(value);
+                            console.log(row);
+                            console.log(index);
+                        },
+                    },
+                ];
+                $('#gridObjects').datagrid({
+                    data: [],
+                    title: 'Objects',
+                    showHeader: true,
+                    width: '100%',
+                    frozenColumns: [
+                        frozenColumns
+                    ],
+                    columns: [
+                        columns
+                    ],
+                    toolbar: [
+                        {
+                            text: '<u>S</u>ave',
+                            iconCls: 'fa fa-folder-o fa16px',
+                            handler: function () {
+                                annotation.save();
+                            }
+                        },
+                        {
+                            text: '<u>R</u>efresh',
+                            iconCls: 'fa fa-refresh fa16px',
+                            handler: function () {
+                                annotation.refresh();
+                            }
+                        },
+                    ],
+                    onClickRow: function (index, row) {
+                        console.log(row);
+                        annotation.editObject = row;
+                        $('#formObject').form('load', row);
+                        $('#dlgObject').dialog('open');
+                        document.getElementById('currentTime').innerHTML = config.currentTime;
+                    },
+                    onBeforeSelect: function () {
+                        return false;
+                    },
+                });
+
+                $('#dlgObject').dialog({
+                    modal: true,
+                    closed: true,
+                    toolbar: '#dlgObject_tools',
+                    border: true,
+                    doSize: true
+                });
+
+                $('#dlgObjectUpdate').linkbutton({
+                    iconCls: 'icon-save',
+                    plain: true,
+                    size: null,
+                    onClick: function () {
+                        annotation.updateObject();
+                    }
+                });
+
+                $('#dlgObjectEnd').linkbutton({
+                    iconCls: 'fa fa-stop',
+                    plain: true,
+                    size: null,
+                    onClick: function () {
+                        annotation.endObject();
+                    }
+                });
+
+                $('#lookupFE').combogrid({
+                    panelWidth: 220,
+                    url: '',
+                    idField: 'idFrameElement',
+                    textField: 'name',
+                    mode: 'remote',
+                    fitColumns: true,
+                    columns: [[
+                        {field: 'idFrameElement', hidden: true},
+                        {field: 'name', title: 'Name', width: 202}
+                    ]],
+                    onChange: function (newValue, oldValue) {
+                        if (newValue == '') {
+                            $('#lookupFE').combogrid('setValue', '');
+                        }
+                    }
+                });
+
+                $('#lookupFrame').combogrid({
+                    panelWidth: 220,
+                    url: this.$store.state.urlLookupFrame,
+                    idField: 'idFrame',
+                    textField: 'name',
+                    mode: 'remote',
+                    fitColumns: true,
+                    columns: [[
+                        {field: 'idFrame', hidden: true},
+                        {field: 'name', title: 'Name', width: 202}
+                    ]],
+                    onChange: function (newValue, oldValue) {
+                        console.log('idFrame = ' + newValue + ' - ' + oldValue);
+                        if (parseInt(newValue)) {
+                            let urlFE = this.$store.state.urlLookupFE + '/' + newValue;
+                            console.log('urlFE = ' + urlFE);
+                            $('#lookupFE').combogrid({url: urlFE});
+                            //$('#lookupFE').combogrid('reload');
+                        }
+                    }
+                });
+
+
+                $('#formObject').form({
+                    success: function (data) {
+                        alert(data)
+                    }
+                });
+
+            },
+            methods: {
+                updateObjects() {
+                    $('#gridObjects').datagrid({
+                        data: this.objects
+                    })
+                }
+            },
+            watch: {
+                objects: {
+                    handler: 'updateObjects',
+                    immediate: true
+                }
+            }
+        }
+    );
+</script>
+
+<script type="text/x-template" id="grid-pane">
+    <div style="width:90%">
+        <div ref="gridObjects" id="gridObjects">
+        </div>
+        <div id="dlgObject" title="Edit Object" style="width:400px;height:250px;padding:0px">
+            <div id="dlgObject_tools">
+                <a href='#' name="dlgObjectUpdate" id="dlgObjectUpdate">
+                    Update
+                </a>
+                <a href='#' name="dlgObjectEnd" id="dlgObjectEnd">
+                    End
+                </a>
+            </div>
+            <form id="formObject" method="post">
+                <div class="mFormContainer">
+                    <div class="mFormRow">
+                        <span>Current time: <span id="currentTime"></span></span></span>
+                    </div>
+                    <div class="mFormRow">
+                        <label for="name">Name:</label>
+                        <input class="easyui-textbox" type="text" id="name" name="name"/>
+                    </div>
+                    <div class="mFormRow">
+                        <label for="visible">Visible:</label>
+                        <input id="visible" name="visible" type="checkbox" value="1"/>
+                    </div>
+                    <div class="mFormRow">
+                        <label for="lookupFrame">Frame:</label>
+                        <input id="lookupFrame" name="lookupFrame"/>
+                    </div>
+                    <div class="mFormRow">
+                        <label for="lookupFE">Frame Element:</label>
+                        <input id="lookupFE" name="lookupFE"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</script>
+

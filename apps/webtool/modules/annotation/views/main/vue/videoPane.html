@@ -1,12 +1,11 @@
 <script>
     Vue.component('video-pane', {
             template: '#video-pane',
-            props: ['newBoxFrame'],
+            props: ['newObjectFrame', 'segment'],
             data() {
                 return {
                     framesManager: new FramesManager(),
                     annotatedObjectsTracker: null,
-
                     mouse: {
                         x: 0,
                         y: 0,
@@ -15,23 +14,63 @@
                     },
                     tempAnnotatedObject: null,
                     currentTime: 0,
+                    firstFrame: 0,
+                    lastFrame: 0,
                     currentFrame: 0,
+                    isPlaying: false,
+                    isReady: false,
+                    timeout: null,
+                    ctx: null,
+                    config: {
+                        // Should be higher than real FPS to not skip real frames
+                        // Hardcoded due to JS limitations
+                        fps: 30,
+
+                        // Low rate decreases the chance of losing frames with poor browser performances
+                        playbackRate: 1.0,//0.4,
+
+                        // Format of the extracted frames
+                        imageMimeType: 'image/jpeg',
+                        imageExtension: '.jpg',
+
+                        // Name of the extracted frames zip archive
+                        framesZipFilename: 'extracted-frames.zip'
+                    }
                 }
             },
             computed: {},
             created() {
+                console.log('video segment = ' + this.segment);
                 this.annotatedObjectsTracker = new AnnotatedObjectsTracker(this.framesManager)
             },
             mounted() {
+                this.ctx = this.$refs.canvas.getContext('2d');
                 this.$store.watch(
-                    (state, getters) => getters.currentTime,
-                    (currentTime) => {
-                        this.currentTime = currentTime;
-                        this.currentFrame = Math.trunc(currentTime * 30);
-                        this.drawFrame(this.currentFrame);
+                    (state, getters) => getters.currentFrame,
+                    (currentFrame) => {
+                        this.currentFrame = currentFrame;
+                        if (this.isPlaying) {
+                            this.drawFrame(currentFrame).then(() => {
+                                this.timeout = setTimeout(() => this.nextFrame(), 1000 / (this.config.fps * parseFloat(this.config.playbackRate)));
+                            });
+                        } else {
+                            this.drawFrame(this.currentFrame);
+                        }
                     }
                 )
-
+                this.$store.watch(
+                    (state, getters) => getters.currentState,
+                    (currentState) => {
+                        console.log('changed state to ' + currentState)
+                        if (currentState == 'playing') {
+                            this.play();
+                        }
+                        if (currentState == 'paused') {
+                            this.pause();
+                        }
+                    }
+                )
+                this.extractionFileZip();
             },
             methods: {
                 clearAllAnnotatedObjects() {
@@ -61,12 +100,99 @@
                     this.annotatedObjectsTracker.annotatedObjects.push(annotatedObject);
                     this.$emit('newObject', this.annotatedObjectsTracker);
                 },
+                initialize: function () {
+                    this.currentFrame = 0;
+                    this.isPlaying = false;
+                    this.isReady = false;
+                    this.clearAllAnnotatedObjects();
+                    this.$store.commit('currentState', 'paused');
+                },
+                ready: function () {
+                    this.isReady = true;
+                    //$('#btnPlay').linkbutton('enable');
+                    //playButton.disabled = false;
+                },
+
+                seek: function (frameNumber) {
+                    if (!this.isReady) {
+                        return;
+                    }
+                    console.log('playre.seek = ' + frameNumber);
+
+                    this.pause();
+
+                    if (frameNumber >= 0 && frameNumber < framesManager.frames.totalFrames()) {
+                        this.drawFrame(frameNumber);
+                        this.currentFrame = frameNumber;
+                    }
+                },
+
+                forward: function () {
+                    this.seek(this.currentFrame + 1);
+                },
+
+                backward: function () {
+                    this.seek(this.currentFrame - 1);
+                },
+
+                play: function () {
+                    if (!this.isReady) {
+                        return;
+                    }
+                    this.isPlaying = true;
+                    this.$store.commit('currentState', 'playing');
+                    this.nextFrame();
+                },
+                pause: function () {
+                    if (!this.isReady) {
+                        return;
+                    }
+
+                    this.isPlaying = false;
+                    this.$store.commit('currentState', 'paused');
+                    if (this.timeout != null) {
+                        clearTimeout(this.timeout);
+                        this.timeout = null;
+                    }
+                },
+                toogle: function () {
+                    if (!this.isPlaying) {
+                        this.play();
+                    } else {
+                        this.pause();
+                    }
+                },
+                nextFrame: function () {
+                    if (!this.isPlaying) {
+                        return;
+                    }
+                    if (this.currentFrame == this.lastFrame) {
+                        this.done();
+                        return;
+                    }
+                    this.currentFrame++;
+                    this.$store.commit('currentFrame', this.currentFrame);
+
+                    /*
+                    this.drawFrame(this.currentFrame).then(() => {
+                        this.currentFrame++;
+                        this.$store.commit('currentFrame', this.currentFrame);
+                        this.timeout = setTimeout(() => this.nextFrame(), 1000 / (this.config.fps * parseFloat(this.config.playbackRate.value)));
+                    });
+                    */
+                },
+
+                done: function () {
+                    this.currentFrame = this.firstFrame;
+                    this.isPlaying = false;
+                    this.$store.commit('currentState', 'paused');
+                },
                 drawFrame: function (frameNumber) {
                     return new Promise((resolve, _) => {
                         console.log('drawFrame ' + frameNumber);
                         this.annotatedObjectsTracker.getFrameWithObjects(frameNumber).then((frameWithObjects) => {
-                            //ctx.drawImage(frameWithObjects.img, 0, 0);
-console.log(frameWithObjects);
+                            this.ctx.drawImage(frameWithObjects.img, 0, 0);
+                            console.log(frameWithObjects);
                             for (let i = 0; i < frameWithObjects.objects.length; i++) {
                                 let object = frameWithObjects.objects[i];
                                 let annotatedObject = object.annotatedObject;
@@ -101,6 +227,40 @@ console.log(frameWithObjects);
                         });
                     });
                 },
+                initializeCanvasDimensions: function (img) {
+                    doodle.style.width = img.width + 'px';
+                    doodle.style.height = img.height + 'px';
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                },
+                extractionFileZip: function () {
+                    this.initialize();
+                    let promise;
+                    let zip = null;
+                    let url = this.$store.state.model.documentMM.framesPath + '/' + this.segment + '.zip';
+                    console.log(url);
+                    promise = extractFramesFromZipUrl(this.config, url, this.segment);
+                     promise.then((frames) => {
+                        console.log(frames);
+                        console.log('Extraction completed. ' + frames.totalFrames() + ' frames captured.');
+                        this.firstFrame = this.segment * 1000;
+                        this.lastFrame = this.firstFrame + frames.totalFrames() - 1;
+                        this.currentFrame = this.firstFrame;
+                        if (frames.totalFrames() > 0) {
+                            frames.getFrame(this.firstFrame).then((blob) => {
+                                blobToImage(blob).then((img) => {
+                                    this.initializeCanvasDimensions(img);
+                                    this.ctx.drawImage(img, 0, 0);
+                                    console.log('Video dimensions determined: ' + img.width + 'x' + img.height);
+                                    this.framesManager.set(frames);
+                                    console.log('pos framesManager');
+                                    this.ready();
+                                    this.$emit('framesLoaded', this.firstFrame, this.lastFrame);
+                                });
+                            });
+                        }
+                    });
+                },
                 newBboxElement() {
                     let dom = document.createElement('div');
                     dom.className = 'bbox';
@@ -109,14 +269,19 @@ console.log(frameWithObjects);
                     console.log(dom);
                     return dom;
                 },
-                interactify(dom, onChange) {
+                interactify(annotatedObject, onChange) {
+                    let dom = annotatedObject.dom;
                     let bbox = $(dom);
                     bbox.addClass('bbox');
 
-                    let createHandleDiv = (className) => {
+                    let createHandleDiv = (className, content = null) => {
+                        console.log(content);
                         let handle = document.createElement('div');
                         handle.className = className;
                         bbox.append(handle);
+                        if (content !== null) {
+                            handle.innerHTML = content;
+                        }
                         return handle;
                     };
 
@@ -130,6 +295,9 @@ console.log(frameWithObjects);
 
                     let x = createHandleDiv('handle center-drag');
                     console.log(x);
+                    let i = createHandleDiv('objectId',annotatedObject.idObject);
+
+
                     bbox.draggable({
                         //containment: 'parent',
                         handle: $(x),
@@ -195,7 +363,7 @@ console.log(frameWithObjects);
                         this.tempAnnotatedObject = null;
 
                         this.interactify(
-                            annotatedObject.dom,
+                            annotatedObject,
                             (x, y, width, height) => {
                                 console.log('annotated object changing - box frame ' + this.currentFrame);
                                 let bbox = new BoundingBox(x, y, width, height);
@@ -218,8 +386,12 @@ console.log(frameWithObjects);
                 }
             },
             watch: {
-                newBoxFrame(value) {
+                newObjectFrame(value) {
                     this.$refs.doodle.style.cursor = 'crosshair';
+                },
+                segment(value) {
+                    console.log('segment = ' + value);
+                    this.extractionFileZip();
                 }
             }
         }
@@ -227,8 +399,8 @@ console.log(frameWithObjects);
 </script>
 
 <script type="text/x-template" id="video-pane">
-    <div ref="doodle" id="doodle" v-on:mousemove="onMouseMove" v-on:click="onMouseClick">
-        <div id="jquery_jplayer_1" class="jp-jplayer" style="width:640px; height:360px"></div>
+    <div ref="doodle" id="doodle" @mousemove="onMouseMove" @click="onMouseClick">
+        <canvas ref="canvas" id="canvas"></canvas>
     </div>
 </script>
 
