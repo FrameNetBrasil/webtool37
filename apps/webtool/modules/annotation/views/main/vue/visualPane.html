@@ -8,23 +8,22 @@
                     videoTitle: this.$store.state.model.documentMM.videoTitle,
                     segments: this.$store.state.model.segments,
                     currentSegment: 0,
-                    framesRange: {
-                        first: 0,
-                        last: 0
-                    },
+                    currentScale: 50,
                     player: null,
                     playerData: null,
                     ignore_timeupdate: false,
                     options: {},
                     objects: [],
-                    newObjectFrame: null,
+                    newObject: {
+                        index: 0,
+                        frame: -1
+                    },
                 }
             },
             computed: {},
             created() {
             },
             mounted() {
-                console.log(this.segments);
                 let that = this;
                 $('#segments').combobox({
                     value: this.currentSegment,
@@ -39,21 +38,12 @@
                     this.currentSegment = value;
                     console.log(this.currentSegment);
                 },
-                framesLoaded(firstFrame, lastFrame) {
-                    console.log('Frames Loaded! ' + firstFrame + ' to ' + lastFrame);
-                    this.framesRange = {
-                        first: firstFrame,
-                        last: lastFrame
-                    }
+                onScaleChanged(value) {
+                    console.log('scale changed to ' + value);
+                    this.currentScale = value;
                 },
-                changeValue(value) {
 
-                },
-                onNewObject(currentFrame) {
-                    console.log('newObject');
-                    this.newObjectFrame = currentFrame;
-                },
-                newObject(objectsTracker) {
+                onCreatedNewObject(objectsTracker) {
                     console.log('new Object');
                     //this.annotatedObjectsSet.add(object)
                     console.log(objectsTracker);
@@ -70,20 +60,24 @@
 
 <script type="text/x-template" id="visual-pane">
     <Panel id="visualAnnotation" :border="false"
-           style="width:100%;height: 1500px;margin:10px;background:#fafafa;text-align:center">
-        <div id="container" style="display:inline-block; ">
-            <div id="videoSegment" style="margin:8px">
-                <h3>{{videoTitle}}</h3>
-                <input id="segments"></input>
+           style="width:100%;height:1500px;padding:16px;">
+        <div id="videoSegment" style="margin:8px">
+            <h3>{{videoTitle}}</h3>
+            <input id="segments"></input>
+        </div>
+        <div style="display:flex; flex-direction: row; height: 100%; width: 100%;align-items: flex-start;">
+            <div id="scalePane" style="width:60px">
+                <scale-pane @scaleChanged="onScaleChanged"></scale-pane>
             </div>
-            <div id="videoPane">
-                <video-pane :segment="currentSegment" :newObjectFrame="newObjectFrame"
-                            @newObject="newObject" @framesLoaded="framesLoaded"></video-pane>
-                <controls-pane v-on:newObject="onNewObject" :framesRange="framesRange"></controls-pane>
+            <div style="display:flex; flex-direction: column;padding-left: 16px; width:100%">
+                <video-pane :segment="currentSegment"
+                            :scale="currentScale" @createdNewObject="onCreatedNewObject"
+                ></video-pane>
+                <div id="videoObjects">
+                    <grid-pane :objects="objects"></grid-pane>
+                </div>
             </div>
-            <div id="videoObjects">
-                <grid-pane :objects="objects"></grid-pane>
-            </div>
+        </div>
         </div>
     </Panel>
 </script>

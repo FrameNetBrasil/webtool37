@@ -21,7 +21,9 @@
             methods: {
                 changeValue(v) {
                     if (this.currentState == 'paused') {
-                        this.$store.commit('currentFrame', v);
+                        if ((v >= this.slider.min) && (v <= this.slider.max)) {
+                            this.$store.commit('currentFrame', v);
+                        }
                     }
                 },
                 onForwardClick() {
@@ -52,7 +54,7 @@
                 },
                 onNewObject() {
                     if (this.currentState == 'paused') {
-                        this.$emit('newObject', this.currentFrame);
+                        this.$emit('newObjectClick', this.currentFrame);
                     }
                 },
             },
@@ -115,8 +117,8 @@
 
 <script type="text/x-template" id="controls-pane">
     <div>
-        <div id="jp_container_1" role="application" aria-label="media player">
-            <div id="controls">
+        <div id="jp_container_1" role="application" aria-label="media player" style="text-align:center">
+            <div id="controls" style="display:inline-block;">
                 <LinkButton id="btnBackward" @click="onBackwardClick"><i class="fas fa-step-backward"></i></LinkButton>
                 <LinkButton id="btnPlay" @click="onPlayClick"><i class="fas fa-play"></i></LinkButton>
                 <LinkButton id="btnPause" @click="onPauseClick"><i class="fas fa-pause"></i></LinkButton>
@@ -125,10 +127,7 @@
             </div>
             <Slider ref="sl" :showTip="true" :value="slider.value" :min="slider.min" :max="slider.max"
                     :rule="slider.rule" @input="changeValue"></Slider>
-            <div id="displayTime">
-                <div class="jp-current-time"/>
-                <div class="jp-duration"/>
-            </div>
+
         </div>
     </div>
 </script>

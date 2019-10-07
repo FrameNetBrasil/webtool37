@@ -32,6 +32,7 @@ function blobToImage(blob) {
 /**
  * Extracts the frame sequence of a video file.
  */
+/*
 function extractFramesFromVideo(config, file, progress) {
     let resolve = null;
     let db = null;
@@ -126,7 +127,7 @@ function extractFramesFromVideo(config, file, progress) {
         }
     }
 }
-
+*/
 /**
  * Extracts the frame sequence from a previously generated zip file.
  */
@@ -540,6 +541,8 @@ class AnnotatedObjectsTracker {
         canvas.width = img.width;
         canvas.height = img.height;
         this.ctx.drawImage(img, 0, 0);
-        return this.ctx.getImageData(0, 0, canvas.width, canvas.height);
+        let imageData = this.ctx.getImageData(0, 0, canvas.width, canvas.height);
+        console.log(imageData);
+        return imageData;
     }
 };

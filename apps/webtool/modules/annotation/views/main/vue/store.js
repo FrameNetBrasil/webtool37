@@ -10,7 +10,7 @@ let store = new Vuex.Store({
         currentState: 'paused',
         duration: 0,
         totalFrames: 0,
-        annotation: {}
+        framesRange: {},
     },
     getters: {
         currentFrame(state) {
@@ -21,6 +21,9 @@ let store = new Vuex.Store({
         },
         duration(state) {
             return state.duration
+        },
+        framesRange(state) {
+            return state.framesRange
         },
     },
     mutations: {
@@ -41,7 +44,10 @@ let store = new Vuex.Store({
         },
         annotation(state, annotation) {
             state.annotation = annotation;
-        }
+        },
+        framesRange(state, value) {
+            state.framesRange = value;
+        },
     },
     actions: {
         setDuration(context, duration) {

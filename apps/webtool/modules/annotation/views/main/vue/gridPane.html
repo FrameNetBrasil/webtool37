@@ -3,18 +3,28 @@
             template: '#grid-pane',
             props: ['objects'],
             data() {
-                return {}
+                return {
+                    fieldClicked: '',
+                }
             },
             computed: {},
             created() {
             },
             mounted: function () {
+                let that = this;
                 let frozenColumns = [
                     {
                         field: 'visible',
                         title: '<i class="fas fa-eye"></i>',
-                        editor: {type: 'checkbox', options: {on: 'True', off: 'False'}},
+                        //editor: {type: 'checkbox', options: {on: 'True', off: 'False'}},
                         frozen: true,
+                        formatter: function (value, row, index) {
+                            if (value) {
+                                return "<i style='color:black' class='fas fa-eye'></i>"
+                            } else {
+                                return "<i style='color:#777777' class='fas fa-eye'></i>"
+                            }
+                        },
                     },
                     {
                         field: 'tag',
@@ -46,6 +56,9 @@
                             console.log(value);
                             console.log(row);
                             console.log(index);
+                            console.log(that.$store.state.framesRange)
+                            let last = that.$store.state.framesRange.last + 1;
+                            return "<div style='height:16px; width:" + last + "px; background-color:#CCCCCC'></div>"
                         },
                     },
                 ];
@@ -53,7 +66,8 @@
                     data: [],
                     title: 'Objects',
                     showHeader: true,
-                    width: '100%',
+                    singleSelect: true,
+                    width: 1200,
                     frozenColumns: [
                         frozenColumns
                     ],
@@ -78,10 +92,46 @@
                     ],
                     onClickRow: function (index, row) {
                         console.log(row);
-                        annotation.editObject = row;
-                        $('#formObject').form('load', row);
-                        $('#dlgObject').dialog('open');
-                        document.getElementById('currentTime').innerHTML = config.currentTime;
+                        console.log(that.fieldClicked);
+                        let annotatedObject = row;
+                        if (that.fieldClicked == 'visible') {
+                            $('#gridObjects').datagrid('beginEdit');
+                            annotatedObject.visible = !annotatedObject.visible;
+                            console.log(annotatedObject);
+                            $('#gridObjects').datagrid('updateRow',{
+                                index: index,
+                                row: annotatedObject
+                            });
+                            $('#gridObjects').datagrid('endEdit');
+                            $('#gridObjects').datagrid('refreshRow', index);
+                        }
+                        //annotation.editObject = row;
+                        //$('#formObject').form('load', row);
+                        //$('#dlgObject').dialog('open');
+                        //document.getElementById('currentTime').innerHTML = config.currentTime;
+                    },
+                    onClickCell: function(index,field,value) {
+                            that.fieldClicked = 'visible';
+                            //let changeTo = !value;
+                           // $('#gridObjects').datagrid('selectRow', index);
+                           // console.log($('#gridObjects').datagrid('getSelected'));
+                           // let annotatedObject = $('#gridObjects').datagrid('getSelected');
+                           // console.log(index);
+                           // console.log(annotatedObject);
+                            /*
+                            let bbox;
+                            if (changeTo) {
+                                annotatedObject.dom.style.display = 'block';
+                                let jquery = $(annotatedObject.dom);
+                                let position = jquery.position();
+                                bbox = new BoundingBox(Math.round(position.left), Math.round(position.top), Math.round(jquery.width()), Math.round(jquery.height()));
+                            } else {
+                                annotatedObject.dom.style.display = 'none';
+                                bbox = null;
+                            }
+                            annotatedObject.add(new AnnotatedFrame(player.currentFrame, bbox, true));
+*/
+
                     },
                     onBeforeSelect: function () {
                         return false;
@@ -180,8 +230,8 @@
 </script>
 
 <script type="text/x-template" id="grid-pane">
-    <div style="width:90%">
-        <div ref="gridObjects" id="gridObjects">
+    <div>
+        <div ref="gridObjects" id="gridObjects" >
         </div>
         <div id="dlgObject" title="Edit Object" style="width:400px;height:250px;padding:0px">
             <div id="dlgObject_tools">
