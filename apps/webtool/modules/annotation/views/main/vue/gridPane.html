@@ -52,11 +52,6 @@
                         field: 'timeline',
                         title: 'Timeline',
                         formatter: function (value, row, index) {
-                            console.log('columnFormatter');
-                            console.log(value);
-                            console.log(row);
-                            console.log(index);
-                            console.log(that.$store.state.framesRange)
                             let last = that.$store.state.framesRange.last + 1;
                             return "<div style='height:16px; width:" + last + "px; background-color:#CCCCCC'></div>"
                         },
@@ -91,13 +86,10 @@
                         },
                     ],
                     onClickRow: function (index, row) {
-                        console.log(row);
-                        console.log(that.fieldClicked);
                         let annotatedObject = row;
                         if (that.fieldClicked == 'visible') {
                             $('#gridObjects').datagrid('beginEdit');
                             annotatedObject.visible = !annotatedObject.visible;
-                            console.log(annotatedObject);
                             $('#gridObjects').datagrid('updateRow',{
                                 index: index,
                                 row: annotatedObject

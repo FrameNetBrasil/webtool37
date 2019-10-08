@@ -237,10 +237,11 @@ class OpticalFlow {
         if (!this.isInitialized) {
             throw 'not initialized';
         }
-
+        console.log('----tracking');
+console.log(imageData);
         jsfeat.imgproc.grayscale(imageData.data, imageData.width, imageData.height, this.currentPyramid.data[0]);
         this.currentPyramid.build(this.currentPyramid.data[0]);
-
+console.log(this.currentPyramid)
         // TODO: Move all configuration to config
         let bboxBorderWidth = 1;
 
@@ -269,17 +270,23 @@ class OpticalFlow {
         }
 
         jsfeat.optical_flow_lk.track(this.previousPyramid, this.currentPyramid, previousPoints, currentPoints, pointsCount, 30, 30, pointsStatus, 0.01, 0.001);
+console.log(previousPoints);
+console.log(currentPoints);
 
+        console.log(pointsStatus)
         let newBboxes = [];
         let p = 0;
+
         for (let i = 0; i < bboxes.length; i++) {
+            console.log('i = ' + i);
             let bbox = bboxes[i];
+            console.log(bbox);
             let newBbox = null;
 
             if (bbox != null) {
                 let before = [];
                 let after = [];
-
+console.log('pointsPerObject = ' + pointsPerObject)
                 for (let j = 0; j < pointsPerObject; j++, p++) {
                     if (pointsStatus[p] == 1) {
                         let x = p * 2;
@@ -289,7 +296,7 @@ class OpticalFlow {
                         after.push([currentPoints[x], currentPoints[y]]);
                     }
                 }
-
+console.log(before);
                 if (before.length > 0) {
                     let diff = nudged.estimate('T', before, after);
                     let translation = diff.getTranslation();
@@ -309,6 +316,7 @@ class OpticalFlow {
 
             newBboxes.push(newBbox);
         }
+        console.log('---- end tracking');
 
         // Swap current and previous pyramids
         let oldPyramid = this.previousPyramid;
@@ -355,7 +363,8 @@ class AnnotatedObject {
     }
 
     add(frame) {
-        console.log('adding frame in annotated object');
+        console.debug('adding frame in annotated object ' + this.idObject);
+        console.log(this.frames.length + '  frame number = ' + frame.frameNumber);
         for (let i = 0; i < this.frames.length; i++) {
             if (this.frames[i].frameNumber == frame.frameNumber) {
                 this.frames[i] = frame;
@@ -368,7 +377,6 @@ class AnnotatedObject {
                 return;
             }
         }
-
         this.frames.push(frame);
         this.injectInvisibleFrameAtOrigin();
     }
@@ -428,13 +436,15 @@ class AnnotatedObjectsTracker {
     getFrameWithObjects(frameNumber) {
         return new Promise((resolve, _) => {
             let i = this.startFrame(frameNumber);
-
+console.log('getFrameWithObjects frameNumber = ' + frameNumber + '  i = ' + i);
             let trackNextFrame = () => {
                 this.track(i).then((frameWithObjects) => {
                     if (i == frameNumber) {
+                        console.log('i == frameNumber')
                         resolve(frameWithObjects);
                     } else {
                         i++;
+                        console.log('trackNextFrame i = ' + i)
                         trackNextFrame();
                     }
                 });
@@ -472,20 +482,27 @@ class AnnotatedObjectsTracker {
                     let toCompute = [];
                     for (let i = 0; i < this.annotatedObjects.length; i++) {
                         let annotatedObject = this.annotatedObjects[i];
+                        console.log('track object ' + annotatedObject.idObject + '  frameNumber = ' + frameNumber)
                         let annotatedFrame = annotatedObject.get(frameNumber);
+                        console.log(annotatedFrame);
                         if (annotatedFrame == null) {
                             annotatedFrame = annotatedObject.get(frameNumber - 1);
                             if (annotatedFrame == null) {
                                 throw 'tracking must be done sequentially';
                             }
+                            console.log('to compute');
+                            console.log(annotatedFrame.bbox)
                             toCompute.push({annotatedObject: annotatedObject, bbox: annotatedFrame.bbox});
                         } else {
+                            console.log('pushing');
                             result.push({annotatedObject: annotatedObject, annotatedFrame: annotatedFrame});
                         }
                     }
 
                     let bboxes = toCompute.map(c => c.bbox);
+                    console.log(bboxes)
                     let hasAnyBbox = bboxes.some(bbox => bbox != null);
+                    console.log(hasAnyBbox)
                     let optionalOpticalFlowInit;
                     if (hasAnyBbox) {
                         optionalOpticalFlowInit = this.initOpticalFlow(frameNumber - 1);
@@ -498,13 +515,15 @@ class AnnotatedObjectsTracker {
                     optionalOpticalFlowInit.then(() => {
                         let newBboxes;
                         if (hasAnyBbox) {
+                            console.log('tracking lastFrame = ' + frameNumber)
                             let imageData = this.imageData(img);
                             newBboxes = this.opticalFlow.track(imageData, bboxes);
                             this.lastFrame = frameNumber;
                         } else {
+                            console.log('newBboxes = bboxes');
                             newBboxes = bboxes;
                         }
-
+console.log(newBboxes);
                         for (let i = 0; i < toCompute.length; i++) {
                             let annotatedObject = toCompute[i].annotatedObject;
                             let annotatedFrame = new AnnotatedFrame(frameNumber, newBboxes[i], false);
@@ -520,6 +539,7 @@ class AnnotatedObjectsTracker {
 
     initOpticalFlow(frameNumber) {
         return new Promise((resolve, _) => {
+            console.log('initOpticalFlow lastFrame = ' + this.lastFrame + '   frameNumber = ' + frameNumber);
             if (this.lastFrame != -1 && this.lastFrame == frameNumber) {
                 resolve();
             } else {
@@ -542,7 +562,6 @@ class AnnotatedObjectsTracker {
         canvas.height = img.height;
         this.ctx.drawImage(img, 0, 0);
         let imageData = this.ctx.getImageData(0, 0, canvas.width, canvas.height);
-        console.log(imageData);
         return imageData;
     }
 };

@@ -20,6 +20,10 @@
                         width: 0,
                         height: 0
                     },
+                    currentDimensions: {
+                        width: 0,
+                        height: 0
+                    },
                     tempAnnotatedObject: null,
                     currentTime: 0,
                     firstFrame: 0,
@@ -36,7 +40,7 @@
                         fps: 30,
 
                         // Low rate decreases the chance of losing frames with poor browser performances
-                        playbackRate: 1.0,//0.4,
+                        playbackRate: 0.4,
 
                         // Format of the extracted frames
                         imageMimeType: 'image/jpeg',
@@ -188,6 +192,28 @@
                     this.isPlaying = false;
                     this.$store.commit('currentState', 'paused');
                 },
+                updateCurrentDimensions() {
+                    this.currentDimensions = {
+                        width: this.originalDimensions.width * this.currentScale,
+                        height: this.originalDimensions.height * this.currentScale,
+                    }
+                },
+                toAbsoluteCoord(x, y, width, height) {
+                    return {
+                        x:  Math.round(x / this.currentScale),
+                        y:  Math.round(y / this.currentScale),
+                        width: Math.round(width / this.currentScale),
+                        height:  Math.round(height / this.currentScale)
+                    }
+                },
+                toScaledCoord(x, y, width, height) {
+                    return {
+                        x:  Math.round(x * this.currentScale),
+                        y:  Math.round(y * this.currentScale),
+                        width: Math.round(width * this.currentScale),
+                        height:  Math.round(height * this.currentScale)
+                    }
+                },
                 drawFrame: function (frameNumber) {
                     return new Promise((resolve, _) => {
                         console.log('drawFrame ' + frameNumber);
@@ -199,12 +225,13 @@
                                 let object = frameWithObjects.objects[i];
                                 let annotatedObject = object.annotatedObject;
                                 let annotatedFrame = object.annotatedFrame;
+                                let scaledBox = this.toScaledCoord(annotatedFrame.bbox.x, annotatedFrame.bbox.y, annotatedFrame.bbox.width, annotatedFrame.bbox.height);
                                 if (annotatedFrame.isVisible()) {
                                     annotatedObject.dom.style.display = 'block';
-                                    annotatedObject.dom.style.width = annotatedFrame.bbox.width + 'px';
-                                    annotatedObject.dom.style.height = annotatedFrame.bbox.height + 'px';
-                                    annotatedObject.dom.style.left = annotatedFrame.bbox.x + 'px';
-                                    annotatedObject.dom.style.top = annotatedFrame.bbox.y + 'px';
+                                    annotatedObject.dom.style.width = scaledBox.width + 'px';
+                                    annotatedObject.dom.style.height = scaledBox.height + 'px';
+                                    annotatedObject.dom.style.left = scaledBox.x + 'px';
+                                    annotatedObject.dom.style.top = scaledBox.y + 'px';
                                     //annotatedObject.visible.prop('checked', true);
                                     annotatedObject.visible = true;
                                 } else {
@@ -235,8 +262,8 @@
                     let doodle = this.$refs.doodle;
                     let canvas = this.$refs.canvas;
                     let videoPane = this.$refs.videoPane;
-                    canvas.width = this.originalDimensions.width * this.currentScale;
-                    canvas.height = this.originalDimensions.height * this.currentScale;
+                    canvas.width = this.currentDimensions.width;
+                    canvas.height = this.currentDimensions.height;
                     doodle.style.width = canvas.width + 'px';
                     doodle.style.height = canvas.height + 'px';
                     videoPane.style.width = canvas.width + 'px';
@@ -269,6 +296,7 @@
                                         width: img.width,
                                         height: img.height
                                     }
+                                    this.updateCurrentDimensions();
                                     this.initializeCanvasDimensions();
                                     this.ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, img.width * this.currentScale, img.height * this.currentScale);
                                     console.log('Video dimensions determined: ' + img.width + 'x' + img.height);
@@ -377,7 +405,9 @@
                     if (this.tempAnnotatedObject != null) {
                         let annotatedObject = new AnnotatedObject();
                         annotatedObject.dom = this.tempAnnotatedObject.dom;
-                        let bbox = new BoundingBox(this.tempAnnotatedObject.x, this.tempAnnotatedObject.y, this.tempAnnotatedObject.width, this.tempAnnotatedObject.height);
+                        let absolute = this.toAbsoluteCoord(this.tempAnnotatedObject.x, this.tempAnnotatedObject.y, this.tempAnnotatedObject.width, this.tempAnnotatedObject.height);
+                        console.log(absolute);
+                        let bbox = new BoundingBox(absolute.x, absolute.y, absolute.width, absolute.height);
                         annotatedObject.add(new AnnotatedFrame(this.currentFrame, bbox, true));
                         this.addAnnotatedObjectControls(annotatedObject);
                         this.tempAnnotatedObject = null;
@@ -386,12 +416,13 @@
                             annotatedObject,
                             (x, y, width, height) => {
                                 console.log('annotated object changing - box frame ' + this.currentFrame);
-                                let bbox = new BoundingBox(x, y, width, height);
+                                console.log(x + ' ' + y + ' ' + width + ' ' +  height);
+                                let absolute = this.toAbsoluteCoord(x, y, width, height);
+                                console.log(absolute);
+                                let bbox = new BoundingBox(absolute.x, absolute.y, absolute.width, absolute.height);
                                 annotatedObject.add(new AnnotatedFrame(this.currentFrame, bbox, true));
                             }
                         );
-
-
                         doodle.style.cursor = 'default';
                     } else {
                         this.mouse.startX = this.mouse.x;
@@ -413,7 +444,9 @@
                 scale(value) {
                     console.log('change scale');
                     this.currentScale = value / 100;
+                    this.updateCurrentDimensions();
                     this.initializeCanvasDimensions();
+                    console.log(this.currentDimensions);
                     this.drawFrame(this.currentFrame);
                 },
                 segment(value) {
