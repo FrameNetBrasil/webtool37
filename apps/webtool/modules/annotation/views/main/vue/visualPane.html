@@ -84,16 +84,19 @@
             <div id="scalePane" style="width:60px">
                 <scale-pane @scaleChanged="onScaleChanged"></scale-pane>
             </div>
-            <div style="display:flex; flex-direction: column;padding-left: 16px; width:100%">
+            <div id="videoPane" style="display:flex; flex-direction: column;padding-left: 16px; width:auto">
                 <video-pane :segment="currentSegment"  :reDrawFrame="reDrawFrame"
                             :scale="currentScale" @createdNewObject="onCreatedNewObject"
                 ></video-pane>
                 <div id="dialogObject" style="display:none">
                     <dialog-pane :object="object" @updatedObject="onUpdatedObject"></dialog-pane>
                 </div>
-                <div id="videoObjects">
-                    <grid-pane :objects="objects" :updateGrid="updateGrid"></grid-pane>
-                </div>
+            </div>
+            <div id="toolsPane" style="padding:8px">
+                <tools-pane :updateGrid="updateGrid"></tools-pane>
+            </div>
+            <div id="gridPane" style="width:316px;padding:8px">
+                <grid-pane :objects="objects" :updateGrid="updateGrid"></grid-pane>
             </div>
         </div>
         </div>

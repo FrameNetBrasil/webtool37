@@ -264,12 +264,12 @@
                 initializeCanvasDimensions: function () {
                     let doodle = this.$refs.doodle;
                     let canvas = this.$refs.canvas;
-                    let videoPane = this.$refs.videoPane;
+                    let videoPane = this.$refs.videoPaneContainer;
                     canvas.width = this.currentDimensions.width;
                     canvas.height = this.currentDimensions.height;
                     doodle.style.width = canvas.width + 'px';
                     doodle.style.height = canvas.height + 'px';
-                    videoPane.style.width = canvas.width + 'px';
+                    videoPaneContainer.style.width = canvas.width + 'px';
                 },
                 framesLoaded(firstFrame, lastFrame) {
                     console.log('Frames Loaded! ' + firstFrame + ' to ' + lastFrame);
@@ -468,7 +468,7 @@
 </script>
 
 <script type="text/x-template" id="video-pane">
-    <div ref="videoPane" id="videoPane">
+    <div ref="videoPaneContainer" id="videoPaneContainer">
         <div ref="doodle" id="doodle" @mousemove="onMouseMove" @click="onMouseClick">
             <canvas ref="canvas" id="canvas"></canvas>
         </div>

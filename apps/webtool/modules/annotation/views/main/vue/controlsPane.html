@@ -52,11 +52,6 @@
                         this.$store.commit('currentState', 'paused');
                     }
                 },
-                onNewObject() {
-                    if (this.currentState == 'paused') {
-                        this.$emit('newObjectClick', this.currentFrame);
-                    }
-                },
             },
             mounted: function () {
                 this.$store.watch(
@@ -74,30 +69,6 @@
                         //console.log(this.currentFrame);
                     }
                 )
-                /*
-                this.$store.watch(
-                    (state, getters) => getters.duration,
-                    (duration) => {
-                        console.log('====');
-                        this.slider.max = Math.trunc(30 * this.$store.state.duration),
-                            this.slider.disable = false;
-                        console.log(this.slider);
-                    }
-                )
-                this.$store.watch(
-                    (state, getters) => getters.currentTime,
-                    (currentTime) => {
-                        this.currentTime = currentTime;
-                        //console.log(currentTime);
-                        //this.sliderValue = Math.trunc(100 * (currentTime / this.$store.state.duration));
-                        this.currentFrame = Math.trunc(currentTime * 30);
-                        this.slider.value = this.currentFrame;
-                        this.$refs.sl.setValue(this.currentFrame);
-                        //console.log(this.currentFrame);
-                    }
-                )
-
-                 */
             },
             watch: {
                 framesRange(framesRange) {
@@ -117,17 +88,21 @@
 
 <script type="text/x-template" id="controls-pane">
     <div>
-        <div id="jp_container_1" role="application" aria-label="media player" style="text-align:center">
-            <div id="controls" style="display:inline-block;">
-                <LinkButton id="btnBackward" @click="onBackwardClick"><i class="fas fa-step-backward"></i></LinkButton>
-                <LinkButton id="btnPlay" @click="onPlayClick"><i class="fas fa-play"></i></LinkButton>
-                <LinkButton id="btnPause" @click="onPauseClick"><i class="fas fa-pause"></i></LinkButton>
-                <LinkButton id="btnForward" @click="onForwardClick"><i class="fas fa-step-forward"></i></LinkButton>
-                <LinkButton id="btnNewObject" iconCls="far fa-square" @click="onNewObject">New Object</LinkButton>
+        <div id="jp_container_1" role="application" aria-label="media player" style="text-align:left">
+            <div id="controls">
+                <LinkButton id="btnBackward" :plain="true" :selected="true" @click="onBackwardClick"><i class="fas fa-step-backward"></i></LinkButton>
+                <LinkButton id="btnPlay" :plain="true"  @click="onPlayClick"><i class="fas fa-play"></i></LinkButton>
+                <LinkButton id="btnPause"  :plain="true" @click="onPauseClick"><i class="fas fa-pause"></i></LinkButton>
+                <LinkButton id="btnForward"  :plain="true" @click="onForwardClick"><i class="fas fa-step-forward"></i></LinkButton>
+                <div style="padding:5px"><span>{{slider.value}}</span>&nbsp<span>/</span>&nbsp<span>{{slider.max}}</span></div>
+                <Slider id="sliderVideo" ref="sl" :showTip="false" :value="slider.value" :min="slider.min" :max="slider.max"
+                        @input="changeValue"></Slider>
+
             </div>
+            <!--
             <Slider ref="sl" :showTip="true" :value="slider.value" :min="slider.min" :max="slider.max"
                     :rule="slider.rule" @input="changeValue"></Slider>
-
+            -->
         </div>
     </div>
 </script>

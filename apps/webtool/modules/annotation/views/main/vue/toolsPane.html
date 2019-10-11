@@ -1,0 +1,49 @@
+<script>
+    Vue.component('tools-pane', {
+            template: '#tools-pane',
+            props: [],
+            data() {
+                return {
+                    currentTime: 0,
+                    currentFrame: 0,
+                    currentState: 'paused'
+                }
+            },
+            computed: {},
+            created() {
+            },
+            methods: {
+                onNewObject() {
+                    if (this.currentState == 'paused') {
+                        this.$emit('newObjectClick', this.currentFrame);
+                    }
+                },
+            },
+            mounted: function () {
+                this.$store.watch(
+                    (state, getters) => getters.currentState,
+                    (currentState) => {
+                        this.currentState = currentState;
+                    }
+                )
+                this.$store.watch(
+                    (state, getters) => getters.currentFrame,
+                    (currentFrame) => {
+                        this.currentFrame = currentFrame;
+                        this.slider.value = this.currentFrame;
+                        this.$refs.sl.setValue(this.currentFrame);
+                        //console.log(this.currentFrame);
+                    }
+                )
+            },
+            watch: {}
+        }
+    );
+</script>
+
+<script type="text/x-template" id="tools-pane">
+    <div>
+        <LinkButton id="btnNewObject" iconCls="far fa-square" @click="onNewObject">New Object</LinkButton>
+    </div>
+</script>
+
