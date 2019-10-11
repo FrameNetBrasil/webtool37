@@ -377,7 +377,7 @@ class MainController extends MController
         $this->data->objects = $objectMM->gridDataAsJSON($criteria, true);
         $this->data->swfPath = Manager::getBaseURL() . '/apps/webtool/public/scripts/jplayer/';
         $this->data->urlLookupFrame = Manager::getBaseURL() . '/index.php/webtool/data/frame/lookupData';
-        $this->data->urlLookupFE =  Manager::getBaseURL() . '/index.php/webtool/data/frameelement/lookupData';
+        $this->data->urlLookupFE =  Manager::getBaseURL() . '/index.php/webtool/data/frameelement/lookupDataDecorated';
         $this->data->segments = json_encode([
             ['value' => 0, 'text' => 'Segment0'],
             ['value' => 1, 'text' => 'Segment1'],

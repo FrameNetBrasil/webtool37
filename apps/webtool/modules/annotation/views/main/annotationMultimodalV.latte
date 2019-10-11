@@ -38,6 +38,8 @@
             segments: {{$data->segments|noescape}},
             objects: {{$data->objects|noescape}},
             swfPath: {{$data->swfPath}},
+            urlLookupFrame: {{$data->urlLookupFrame}},
+            urlLookupFE: {{$data->urlLookupFE}},
         };
         store.commit('model', model);
         Vue.use(EasyUI);
@@ -63,6 +65,7 @@
 {{$view->includeFile('vue/visualPane.html')|noescape}}
 {{$view->includeFile('vue/videoPane.html')|noescape}}
 {{$view->includeFile('vue/controlsPane.html')|noescape}}
+{{$view->includeFile('vue/dialogPane.html')|noescape}}
 {{$view->includeFile('vue/gridPane.html')|noescape}}
 {{$view->includeFile('vue/scalePane.html')|noescape}}
 

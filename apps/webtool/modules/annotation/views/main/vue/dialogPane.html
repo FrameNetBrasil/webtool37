@@ -1,0 +1,153 @@
+<script>
+    Vue.component('dialog-pane', {
+            template: '#dialog-pane',
+            props: ['object'],
+            data() {
+                return {
+                    model: this.$store.state.model,
+                    fe: {},
+                    o: {},
+                }
+            },
+            computed: {
+                title: function() {
+                    return (this.object ? "Annotated Object #" + this.object.idObject : 'aa' )
+                },
+                currentFrame: function() {
+                    return this.$store.state.currentFrame
+                }
+            },
+            created() {
+            },
+            mounted: function () {
+                let that = this;
+
+                $('#dlgObject').dialog({
+                    modal: true,
+                    closed: true,
+                    title: this.title,
+                    toolbar: '#dlgObject_tools',
+                    border: true,
+                    doSize: true
+                });
+
+                $('#dlgObjectUpdate').linkbutton({
+                    iconCls: 'icon-save',
+                    plain: true,
+                    size: null,
+                    onClick: function () {
+                        that.o.color = '#' + that.fe.rgbBg;
+                        that.o.idFE = that.fe.idFrameElement;
+                        that.o.fe = that.fe.name;
+                        that.$emit('updatedObject', that.o);
+                        $('#dlgObject').dialog('close');
+                    }
+                });
+
+                $('#lookupFE').combogrid({
+                    panelWidth: 220,
+                    url: that.model.urlLookupFE,
+                    idField: 'idFrameElement',
+                    textField: 'name',
+                    mode: 'remote',
+                    fitColumns: true,
+                    columns: [[
+                        {field: 'idFrameElement', hidden: true},
+                        {field: 'name', title: 'Name', width: 202, styler: function(value,row,index){
+                              return 'background-color:#' + row.rgbBg + ';color:#'+ row.rgbFg;
+                        }}
+                    ]],
+                    onChange: function (newValue, oldValue) {
+                        if (newValue == '') {
+                            $('#lookupFE').combogrid('setValue', '');
+                        }
+                    },
+                    onClickRow: function (index, row) {
+                        console.log(row);
+                        that.fe = row;
+                    }
+                });
+
+                $('#lookupFrame').combogrid({
+                    panelWidth: 220,
+                    url: that.model.urlLookupFrame,
+                    urlFE: that.model.urlLookupFE,
+                    idField: 'idFrame',
+                    textField: 'name',
+                    mode: 'remote',
+                    fitColumns: true,
+                    columns: [[
+                        {field: 'idFrame', hidden: true},
+                        {field: 'name', title: 'Name', width: 202}
+                    ]],
+                    onChange: function (newValue, oldValue) {
+                        console.log('idFrame = ' + newValue + ' - ' + oldValue);
+                        if (parseInt(newValue)) {
+                            //let urlFE = this.urlFE + '/' + newValue;
+                            //console.log('urlFE = ' + urlFE);
+                            //$('#lookupFE').combogrid({url: urlFE});
+                            //$('#lookupFE').combogrid('reload');
+                            that.combogridFE(newValue);
+                        }
+                    }
+                });
+
+
+                $('#formObject').form({
+                    success: function (data) {
+                        alert(data)
+                    }
+                });
+
+            },
+            methods: {
+                openDialog: function(object) {
+                    this.o = object;
+                    $('#dlgObject').dialog({title: this.title});
+                    $('#dlgObject').dialog('doLayout');
+                    $('#dlgObject').dialog('open');
+                },
+                combogridFE: function(idFrame) {
+                    let urlFE = this.model.urlLookupFE + '/' + idFrame;
+                    console.log('urlFE = ' + urlFE);
+                    $('#lookupFE').combogrid({url: urlFE});
+                }
+            },
+            watch: {
+                object: {
+                    handler: 'openDialog',
+                    immediate: false
+                }
+            }
+        }
+    );
+</script>
+
+<script type="text/x-template" id="dialog-pane">
+    <div>
+        <div id="dlgObject" :title="title" style="width:400px;height:180px;padding:0px">
+            <div id="dlgObject_tools">
+                <a href='#' name="dlgObjectUpdate" id="dlgObjectUpdate">
+                    Update
+                </a>
+            </div>
+            <form id="formObject" method="post">
+                <div class="mFormContainer">
+                    <div class="mFormRow">
+                        <span>Current frame:</span>{{currentFrame}}
+                    </div>
+                    <div class="mFormRow">
+                        <label for="lookupFrame">Frame:</label>
+                        <input id="lookupFrame" name="lookupFrame"/>
+                    </div>
+                    <div class="mFormRow">
+                        <label for="lookupFE">Frame Element:</label>
+                        <input id="lookupFE" name="lookupFE"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</script>
+

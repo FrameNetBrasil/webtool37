@@ -1,7 +1,7 @@
 <script>
     Vue.component('video-pane', {
             template: '#video-pane',
-            props: ['segment', 'scale'],
+            props: ['segment', 'scale', 'reDrawFrame'],
             data() {
                 return {
                     framesManager: new FramesManager(),
@@ -102,16 +102,18 @@
                     console.log(annotatedObject);
                     annotatedObject.name = '';
                     annotatedObject.visible = true;
+                    annotatedObject.occlusion = false;
                     annotatedObject.hide = false;
                     annotatedObject.idFE = -1;
                     annotatedObject.fe = '';
+                    annotatedObject.color = 'white';
                     //annotatedObject.startTime = config.currentTime;
                     //annotatedObject.endTime = config.currentTime;
                     //let border = 'color' + annotatedObject.id;
                     //annotatedObject.dom.classList.add(border);
                     annotatedObject.idObject = this.annotatedObjectsTracker.annotatedObjects.length;
                     this.annotatedObjectsTracker.annotatedObjects.push(annotatedObject);
-                    this.$emit('createdNewObject', this.annotatedObjectsTracker);
+                    this.$emit('createdNewObject', this.annotatedObjectsTracker, annotatedObject);
                 },
                 initialize: function () {
                     this.currentFrame = 0;
@@ -225,13 +227,14 @@
                                 let object = frameWithObjects.objects[i];
                                 let annotatedObject = object.annotatedObject;
                                 let annotatedFrame = object.annotatedFrame;
-                                let scaledBox = this.toScaledCoord(annotatedFrame.bbox.x, annotatedFrame.bbox.y, annotatedFrame.bbox.width, annotatedFrame.bbox.height);
                                 if (annotatedFrame.isVisible()) {
+                                    let scaledBox = this.toScaledCoord(annotatedFrame.bbox.x, annotatedFrame.bbox.y, annotatedFrame.bbox.width, annotatedFrame.bbox.height);
                                     annotatedObject.dom.style.display = 'block';
                                     annotatedObject.dom.style.width = scaledBox.width + 'px';
                                     annotatedObject.dom.style.height = scaledBox.height + 'px';
                                     annotatedObject.dom.style.left = scaledBox.x + 'px';
                                     annotatedObject.dom.style.top = scaledBox.y + 'px';
+                                    annotatedObject.dom.style.borderColor = annotatedObject.color;
                                     //annotatedObject.visible.prop('checked', true);
                                     annotatedObject.visible = true;
                                 } else {
@@ -452,6 +455,12 @@
                 segment(value) {
                     console.log('segment = ' + value);
                     this.extractionFileZip();
+                },
+                reDrawFrame(value) {
+                    console.log('reDrawFrame ' + value);
+                    if (value) {
+                        this.drawFrame(this.currentFrame);
+                    }
                 }
             }
         }

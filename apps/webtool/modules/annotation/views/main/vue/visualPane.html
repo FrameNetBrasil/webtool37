@@ -12,8 +12,11 @@
                     player: null,
                     playerData: null,
                     ignore_timeupdate: false,
+                    reDrawFrame: false,
+                    updateGrid: false,
                     options: {},
                     objects: [],
+                    object: null,
                     newObject: {
                         index: 0,
                         frame: -1
@@ -43,7 +46,7 @@
                     this.currentScale = value;
                 },
 
-                onCreatedNewObject(objectsTracker) {
+                onCreatedNewObject(objectsTracker, newObject) {
                     console.log('new Object');
                     //this.annotatedObjectsSet.add(object)
                     console.log(objectsTracker);
@@ -51,8 +54,20 @@
                     for (object of objectsTracker.annotatedObjects) {
                         this.objects.push(object)
                     }
-
+                    this.object = newObject;
+                    this.reDrawFrame = false;
+                    this.updateGrid = false;
                 },
+                onUpdatedObject(objectUpdated) {
+                    console.log(object);
+                    this.reDrawFrame = true;
+                    for (var i = 0; i < this.objects.length; i++) {
+                        if (this.objects[i].idObject == objectUpdated.idObject) {
+                            this.objects[i] = objectUpdated;
+                        }
+                    }
+                    this.updateGrid = true;
+                }
             },
         }
     );
@@ -70,11 +85,14 @@
                 <scale-pane @scaleChanged="onScaleChanged"></scale-pane>
             </div>
             <div style="display:flex; flex-direction: column;padding-left: 16px; width:100%">
-                <video-pane :segment="currentSegment"
+                <video-pane :segment="currentSegment"  :reDrawFrame="reDrawFrame"
                             :scale="currentScale" @createdNewObject="onCreatedNewObject"
                 ></video-pane>
+                <div id="dialogObject" style="display:none">
+                    <dialog-pane :object="object" @updatedObject="onUpdatedObject"></dialog-pane>
+                </div>
                 <div id="videoObjects">
-                    <grid-pane :objects="objects"></grid-pane>
+                    <grid-pane :objects="objects" :updateGrid="updateGrid"></grid-pane>
                 </div>
             </div>
         </div>

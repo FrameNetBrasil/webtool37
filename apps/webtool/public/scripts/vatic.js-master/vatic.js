@@ -237,11 +237,11 @@ class OpticalFlow {
         if (!this.isInitialized) {
             throw 'not initialized';
         }
-        console.log('----tracking');
-console.log(imageData);
+        //console.log('----tracking');
+//console.log(imageData);
         jsfeat.imgproc.grayscale(imageData.data, imageData.width, imageData.height, this.currentPyramid.data[0]);
         this.currentPyramid.build(this.currentPyramid.data[0]);
-console.log(this.currentPyramid)
+//console.log(this.currentPyramid)
         // TODO: Move all configuration to config
         let bboxBorderWidth = 1;
 
@@ -270,23 +270,23 @@ console.log(this.currentPyramid)
         }
 
         jsfeat.optical_flow_lk.track(this.previousPyramid, this.currentPyramid, previousPoints, currentPoints, pointsCount, 30, 30, pointsStatus, 0.01, 0.001);
-console.log(previousPoints);
-console.log(currentPoints);
+//console.log(previousPoints);
+//console.log(currentPoints);
 
         console.log(pointsStatus)
         let newBboxes = [];
         let p = 0;
 
         for (let i = 0; i < bboxes.length; i++) {
-            console.log('i = ' + i);
+//            console.log('i = ' + i);
             let bbox = bboxes[i];
-            console.log(bbox);
+//            console.log(bbox);
             let newBbox = null;
 
             if (bbox != null) {
                 let before = [];
                 let after = [];
-console.log('pointsPerObject = ' + pointsPerObject)
+//console.log('pointsPerObject = ' + pointsPerObject)
                 for (let j = 0; j < pointsPerObject; j++, p++) {
                     if (pointsStatus[p] == 1) {
                         let x = p * 2;
@@ -296,7 +296,7 @@ console.log('pointsPerObject = ' + pointsPerObject)
                         after.push([currentPoints[x], currentPoints[y]]);
                     }
                 }
-console.log(before);
+//console.log(before);
                 if (before.length > 0) {
                     let diff = nudged.estimate('T', before, after);
                     let translation = diff.getTranslation();
@@ -316,7 +316,7 @@ console.log(before);
 
             newBboxes.push(newBbox);
         }
-        console.log('---- end tracking');
+//        console.log('---- end tracking');
 
         // Swap current and previous pyramids
         let oldPyramid = this.previousPyramid;
@@ -360,6 +360,14 @@ class AnnotatedFrame {
 class AnnotatedObject {
     constructor() {
         this.frames = [];
+        this.name = '';
+        this.visible = true;
+        this.occlusion = false;
+        this.hide = false;
+        this.idFE = -1;
+        this.fe = '';
+        this.color = 'white';
+        this.idObject = -1;
     }
 
     add(frame) {
