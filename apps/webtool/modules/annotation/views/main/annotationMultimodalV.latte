@@ -37,13 +37,14 @@
             documentMM: {{$data->documentMM|noescape}},
             segments: {{$data->segments|noescape}},
             objects: {{$data->objects|noescape}},
+            urlPutObjects:  "{{$data->urlPutObjects|noescape}}",
             swfPath: {{$data->swfPath}},
             urlLookupFrame: {{$data->urlLookupFrame}},
             urlLookupFE: {{$data->urlLookupFE}},
         };
         store.commit('model', model);
         Vue.use(EasyUI);
-        console.log(store);
+        console.log(model);
         const vapp = new Vue({
             el: "#multimodalPane",
             store: store,

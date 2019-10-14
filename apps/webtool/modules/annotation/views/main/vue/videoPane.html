@@ -1,10 +1,10 @@
 <script>
     Vue.component('video-pane', {
             template: '#video-pane',
-            props: ['segment', 'scale', 'reDrawFrame'],
+            props: ['segment', 'scale'],
             data() {
                 return {
-                    framesManager: new FramesManager(),
+                    framesManager: this.$store.state.framesManager,
                     annotatedObjectsTracker: null,
                     mouse: {
                         x: 0,
@@ -54,7 +54,7 @@
             computed: {},
             created() {
                 console.log('video segment = ' + this.segment);
-                this.annotatedObjectsTracker = new AnnotatedObjectsTracker(this.framesManager)
+                this.$store.dispatch('objectsTrackerInit');
             },
             mounted() {
                 this.ctx = this.$refs.canvas.getContext('2d');
@@ -83,37 +83,47 @@
                         }
                     }
                 )
+                this.$store.watch(
+                    (state, getters) => getters.currentObjectState,
+                    (currentObjectState) => {
+                        if ((currentObjectState == 'updated') || (currentObjectState == 'selected')) {
+                            this.drawFrame(this.currentFrame);
+                        }
+                        if ((currentObjectState == 'ended')) {
+                            object.dom.style.display = 'none';
+                            let bbox = null;
+                            object.add(new AnnotatedFrame(this.currentFrame, bbox, true));
+                            this.drawFrame(this.currentFrame);
+                        }
+                    }
+                )
+                this.$store.watch(
+                    (state, getters) => getters.idObjectSelected,
+                    (idObjectSelected) => {
+                        this.drawFrame(this.currentFrame);
+                    }
+                )
                 this.extractionFileZip();
             },
             methods: {
                 clearAllAnnotatedObjects() {
-                    for (let i = 0; i < this.annotatedObjectsTracker.annotatedObjects.length; i++) {
-                        this.clearAnnotatedObject(i);
-                    }
+                    this.$store.dispatch('objectsTrackerClearAll');
                 },
                 clearAnnotatedObject(i) {
-                    let annotatedObject = this.annotatedObjectsTracker.annotatedObjects[i];
-                    annotatedObject.controls.remove();
-                    $(annotatedObject.dom).remove();
-                    this.annotatedObjectsTracker.annotatedObjects.splice(i, 1);
-                    //annotatedObjectsSet.remove(annotatedObject)
+                    this.$store.dispatch('clearAnnotatedObject', i);
                 },
                 addAnnotatedObjectControls(annotatedObject) {
                     console.log(annotatedObject);
                     annotatedObject.name = '';
                     annotatedObject.visible = true;
-                    annotatedObject.occlusion = false;
-                    annotatedObject.hide = false;
+                    annotatedObject.idFrame = -1;
+                    annotatedObject.frame = '';
                     annotatedObject.idFE = -1;
                     annotatedObject.fe = '';
                     annotatedObject.color = 'white';
-                    annotatedObject.idObject = this.annotatedObjectsTracker.annotatedObjects.length;
-                    this.annotatedObjectsTracker.annotatedObjects.push(annotatedObject);
-                    //this.$emit('createdNewObject', this.annotatedObjectsTracker, annotatedObject);
-                    this.$store.dispatch('setObjects', this.annotatedObjectsTracker.annotatedObjects);
-                    this.$store.commit('currentObject',annotatedObject);
-                    this.$store.commit('currentObjectState', 'created');
-                    console.log('new Object');
+                    annotatedObject.startFrame = this.currentFrame;
+                    annotatedObject.endFrame = this.currentFrame;
+                    this.$store.dispatch('objectsTrackerAdd', annotatedObject);
                 },
                 initialize: function () {
                     this.currentFrame = 0;
@@ -217,17 +227,27 @@
                     }
                 },
                 drawFrame: function (frameNumber) {
+                    let that = this;
                     return new Promise((resolve, _) => {
                         console.log('drawFrame ' + frameNumber);
-                        this.annotatedObjectsTracker.getFrameWithObjects(frameNumber).then((frameWithObjects) => {
+                        let annotatedObjectsTracker = this.$store.getters.objectsTracker;
+                        annotatedObjectsTracker.getFrameWithObjects(frameNumber).then((frameWithObjects) => {
+                            let currentState = '';
+                            let currentObject = that.$store.state.currentObject;
+                            if (currentObject) {
+                                console.log(currentObject.idObject);
+                                currentState = that.$store.state.currentObjectState;
+                                console.log(currentState);
+                            }
                             let img = frameWithObjects.img;
                             this.ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, img.width * this.currentScale, img.height * this.currentScale);
-                            console.log(frameWithObjects);
+                            //console.log(frameWithObjects);
                             for (let i = 0; i < frameWithObjects.objects.length; i++) {
                                 let object = frameWithObjects.objects[i];
                                 let annotatedObject = object.annotatedObject;
                                 let annotatedFrame = object.annotatedFrame;
                                 if (annotatedFrame.isVisible()) {
+                                //if ((annotatedFrame.isVisible()) && (frameNumber >= annotatedObject.startFrame) && (frameNumber <= annotatedObject.endFrame)) {
                                     let scaledBox = this.toScaledCoord(annotatedFrame.bbox.x, annotatedFrame.bbox.y, annotatedFrame.bbox.width, annotatedFrame.bbox.height);
                                     annotatedObject.dom.style.display = 'block';
                                     annotatedObject.dom.style.width = scaledBox.width + 'px';
@@ -235,28 +255,24 @@
                                     annotatedObject.dom.style.left = scaledBox.x + 'px';
                                     annotatedObject.dom.style.top = scaledBox.y + 'px';
                                     annotatedObject.dom.style.borderColor = annotatedObject.color;
-                                    //annotatedObject.visible.prop('checked', true);
+                                    annotatedObject.dom.style.backgroundColor = 'transparent';
+                                    annotatedObject.dom.style.opacity = 1;
                                     annotatedObject.visible = true;
+                                    console.log(annotatedObject.idObject );
+                                    if (currentObject) {
+                                        if (annotatedObject.idObject == currentObject.idObject) {
+                                            if (currentState == 'selected') {
+                                                console.log('opacity');
+                                                annotatedObject.dom.style.backgroundColor = annotatedObject.color;
+                                                annotatedObject.dom.style.opacity = 0.5;
+                                            }
+                                        }
+                                    }
                                 } else {
                                     annotatedObject.dom.style.display = 'none';
                                     annotatedObject.visible = false;
-                                    //annotatedObject.visible.prop('checked', false);
                                 }
                             }
-
-                            /*
-                            let shouldHideOthers = frameWithObjects.objects.some(o => o.annotatedObject.hideOthers);
-                            if (shouldHideOthers) {
-                                for (let i = 0; i < frameWithObjects.objects.length; i++) {
-                                    let object = frameWithObjects.objects[i];
-                                    let annotatedObject = object.annotatedObject;
-                                    if (!annotatedObject.hideOthers) {
-                                        annotatedObject.dom.style.display = 'none';
-                                    }
-                                }
-                            }
-                             */
-
                             resolve();
                         });
                     });
@@ -321,6 +337,9 @@
                     return dom;
                 },
                 interactify(annotatedObject, onChange) {
+
+                    let that = this;
+
                     let dom = annotatedObject.dom;
                     let bbox = $(dom);
                     bbox.addClass('bbox');
@@ -347,6 +366,10 @@
                     let x = createHandleDiv('handle center-drag');
                     console.log(x);
                     let i = createHandleDiv('objectId', annotatedObject.idObject);
+                    i.addEventListener("click", function() {
+                        console.log('i clicked = ' + parseInt(this.innerHTML))
+                        that.$store.dispatch('selectObject', parseInt(this.innerHTML))
+                    });
 
 
                     bbox.draggable({
@@ -456,12 +479,6 @@
                     console.log('segment = ' + value);
                     this.extractionFileZip();
                 },
-                reDrawFrame(value) {
-                    console.log('reDrawFrame ' + value);
-                    if (value) {
-                        this.drawFrame(this.currentFrame);
-                    }
-                }
             }
         }
     );
@@ -474,11 +491,15 @@
                 <canvas ref="canvas" id="canvas"></canvas>
             </div>
             <div id="controlsPane" style="margin-bottom: 32px">
-                <controls-pane :framesRange="framesRange"></controls-pane>
+                <controls-pane
+                        :framesRange="framesRange"
+                ></controls-pane>
             </div>
         </div>
         <div id="toolsPane" style="padding:8px">
-            <tools-pane v-on:newObjectClick="onNewObjectClick"></tools-pane>
+            <tools-pane
+                    v-on:newObjectClick="onNewObjectClick"
+            ></tools-pane>
         </div>
     </div>
 </script>

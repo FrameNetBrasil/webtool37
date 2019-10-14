@@ -18,6 +18,17 @@
                         this.$emit('newObjectClick', this.currentFrame);
                     }
                 },
+                onEndObject() {
+                    if (this.currentState == 'paused') {
+                        let currentObject = this.$store.state.currentObject;
+                        console.log(currentObject);
+                        let currentState = this.$store.state.currentObjectState;
+                        console.log(currentState);
+                        if (currentState == 'selected') {
+                            this.$store.dispatch('endObject');
+                        }
+                    }
+                },
             },
             mounted: function () {
                 this.$store.watch(
@@ -35,6 +46,7 @@
 <script type="text/x-template" id="tools-pane">
     <div>
         <LinkButton id="btnNewObject" iconCls="far fa-square" @click="onNewObject">New Object</LinkButton>
+        <LinkButton id="btnEndObject" iconCls="far fa-square" @click="onEndObject">End Object</LinkButton>
     </div>
 </script>
 

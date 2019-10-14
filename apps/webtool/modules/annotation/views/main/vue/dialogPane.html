@@ -6,6 +6,7 @@
                 return {
                     model: this.$store.state.model,
                     fe: {},
+                    frame: {},
                     o: {},
                 }
             },
@@ -51,10 +52,14 @@
                     size: null,
                     onClick: function () {
                         that.o.color = '#' + that.fe.rgbBg;
+                        that.o.idFrame = that.frame.idFrame;
+                        that.o.frame = that.frame.name;
                         that.o.idFE = that.fe.idFrameElement;
                         that.o.fe = that.fe.name;
                         //that.$emit('updatedObject', that.o);
-                        that.$store.commit('currentObjectState', 'updated');
+                        that.$store.dispatch('updateObject', that.o);
+                        //that.$store.commit('currentObject', that.o);
+                        //that.$store.commit('currentObjectState', 'updated');
                         $('#dlgObject').dialog('close');
                     }
                 });
@@ -100,6 +105,10 @@
                         if (parseInt(newValue)) {
                             that.combogridFE(newValue);
                         }
+                    },
+                    onClickRow: function (index, row) {
+                        console.log(row);
+                        that.frame = row;
                     }
                 });
 

@@ -368,6 +368,7 @@ class MainController extends MController
         $this->data->idAnnotationSetMM = $this->data->id;
         $annotationSetMM = new \fnbr\models\AnnotationSetMM($this->data->idAnnotationSetMM);
         $this->data->urlObjects = Manager::getURL('annotation/main/objectsData') . "/" . $this->data->idAnnotationSetMM;
+        $this->data->urlPutObjects = Manager::getURL('annotation/main/putObjects');
         $sentenceMM = new \fnbr\models\SentenceMM($annotationSetMM->getIdSentenceMM());
         $this->data->idSentence = $sentenceMM->getIdSentence();
         $this->data->idAnnotationSet = $annotationSetMM->getIdAnnotationSet();
@@ -378,6 +379,7 @@ class MainController extends MController
         $this->data->swfPath = Manager::getBaseURL() . '/apps/webtool/public/scripts/jplayer/';
         $this->data->urlLookupFrame = Manager::getBaseURL() . '/index.php/webtool/data/frame/lookupData';
         $this->data->urlLookupFE =  Manager::getBaseURL() . '/index.php/webtool/data/frameelement/lookupDataDecorated';
+        // todo: dynamic segments
         $this->data->segments = json_encode([
             ['value' => 0, 'text' => 'Segment0'],
             ['value' => 1, 'text' => 'Segment1'],
@@ -410,6 +412,17 @@ class MainController extends MController
         mdump($this->data);
         $this->data->objectsData = $annotation->getObjectsData($this->data, $this->idLanguage);
         $this->renderJson($this->data->objectsData);
+    }
+
+    public function putObjects() {
+        mdump($this->data);
+        try {
+            $objectMM = new \fnbr\models\ObjectMM();
+            $objectMM->putObjects(json_decode($this->data->dataObjects));
+            $this->renderPrompt('information', 'ok');
+        } catch (\Exception $e) {
+            $this->renderPrompt('error', $e->getMessage());
+        }
     }
 
     public function visual() {

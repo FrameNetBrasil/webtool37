@@ -32,6 +32,7 @@ function blobToImage(blob) {
 /**
  * Extracts the frame sequence of a video file.
  */
+
 /*
 function extractFramesFromVideo(config, file, progress) {
     let resolve = null;
@@ -273,7 +274,7 @@ class OpticalFlow {
 //console.log(previousPoints);
 //console.log(currentPoints);
 
-        console.log(pointsStatus)
+        //console.log(pointsStatus)
         let newBboxes = [];
         let p = 0;
 
@@ -347,6 +348,8 @@ class AnnotatedFrame {
         this.frameNumber = frameNumber;
         this.bbox = bbox;
         this.isGroundTruth = isGroundTruth;
+        this.hidden = false;
+        this.blocked = false;
     }
 
     isVisible() {
@@ -361,18 +364,21 @@ class AnnotatedObject {
     constructor() {
         this.frames = [];
         this.name = '';
-        this.visible = true;
-        this.occlusion = false;
-        this.hide = false;
+        //this.visible = true;
+        //this.hide = false;
+        this.idFrame = -1;
+        this.frame = '';
         this.idFE = -1;
         this.fe = '';
         this.color = 'white';
         this.idObject = -1;
+        this.startFrame = -1;
+        this.endFrame = -1;
     }
 
     add(frame) {
-        console.debug('adding frame in annotated object ' + this.idObject);
-        console.log(this.frames.length + '  frame number = ' + frame.frameNumber);
+        //console.debug('adding frame in annotated object ' + this.idObject);
+        //console.log(this.frames.length + '  frame number = ' + frame.frameNumber);
         for (let i = 0; i < this.frames.length; i++) {
             if (this.frames[i].frameNumber == frame.frameNumber) {
                 this.frames[i] = frame;
@@ -444,15 +450,15 @@ class AnnotatedObjectsTracker {
     getFrameWithObjects(frameNumber) {
         return new Promise((resolve, _) => {
             let i = this.startFrame(frameNumber);
-console.log('getFrameWithObjects frameNumber = ' + frameNumber + '  i = ' + i);
+//console.log('getFrameWithObjects frameNumber = ' + frameNumber + '  i = ' + i);
             let trackNextFrame = () => {
                 this.track(i).then((frameWithObjects) => {
                     if (i == frameNumber) {
-                        console.log('i == frameNumber')
+                        //console.log('i == frameNumber')
                         resolve(frameWithObjects);
                     } else {
                         i++;
-                        console.log('trackNextFrame i = ' + i)
+                        //console.log('trackNextFrame i = ' + i)
                         trackNextFrame();
                     }
                 });
@@ -490,7 +496,7 @@ console.log('getFrameWithObjects frameNumber = ' + frameNumber + '  i = ' + i);
                     let toCompute = [];
                     for (let i = 0; i < this.annotatedObjects.length; i++) {
                         let annotatedObject = this.annotatedObjects[i];
-                        console.log('track object ' + annotatedObject.idObject + '  frameNumber = ' + frameNumber)
+                        //console.log('track object ' + annotatedObject.idObject + '  frameNumber = ' + frameNumber)
                         let annotatedFrame = annotatedObject.get(frameNumber);
                         console.log(annotatedFrame);
                         if (annotatedFrame == null) {
@@ -498,19 +504,19 @@ console.log('getFrameWithObjects frameNumber = ' + frameNumber + '  i = ' + i);
                             if (annotatedFrame == null) {
                                 throw 'tracking must be done sequentially';
                             }
-                            console.log('to compute');
-                            console.log(annotatedFrame.bbox)
+                            //console.log('to compute');
+                            //console.log(annotatedFrame.bbox)
                             toCompute.push({annotatedObject: annotatedObject, bbox: annotatedFrame.bbox});
                         } else {
-                            console.log('pushing');
+                            //console.log('pushing');
                             result.push({annotatedObject: annotatedObject, annotatedFrame: annotatedFrame});
                         }
                     }
 
                     let bboxes = toCompute.map(c => c.bbox);
-                    console.log(bboxes)
+                    //console.log(bboxes)
                     let hasAnyBbox = bboxes.some(bbox => bbox != null);
-                    console.log(hasAnyBbox)
+                    //console.log(hasAnyBbox)
                     let optionalOpticalFlowInit;
                     if (hasAnyBbox) {
                         optionalOpticalFlowInit = this.initOpticalFlow(frameNumber - 1);
@@ -523,15 +529,15 @@ console.log('getFrameWithObjects frameNumber = ' + frameNumber + '  i = ' + i);
                     optionalOpticalFlowInit.then(() => {
                         let newBboxes;
                         if (hasAnyBbox) {
-                            console.log('tracking lastFrame = ' + frameNumber)
+                            //console.log('tracking lastFrame = ' + frameNumber)
                             let imageData = this.imageData(img);
                             newBboxes = this.opticalFlow.track(imageData, bboxes);
                             this.lastFrame = frameNumber;
                         } else {
-                            console.log('newBboxes = bboxes');
+                            //console.log('newBboxes = bboxes');
                             newBboxes = bboxes;
                         }
-console.log(newBboxes);
+//console.log(newBboxes);
                         for (let i = 0; i < toCompute.length; i++) {
                             let annotatedObject = toCompute[i].annotatedObject;
                             let annotatedFrame = new AnnotatedFrame(frameNumber, newBboxes[i], false);

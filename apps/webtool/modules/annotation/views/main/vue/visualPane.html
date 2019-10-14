@@ -86,14 +86,15 @@
                 <scale-pane @scaleChanged="onScaleChanged"></scale-pane>
             </div>
             <div id="videoPane" style="display:flex; flex-direction: column;padding-left: 16px; width:auto">
-                <video-pane :segment="currentSegment"  :reDrawFrame="reDrawFrame"
-                            :scale="currentScale"
+                <video-pane
+                        :segment="currentSegment"
+                        :scale="currentScale"
                 ></video-pane>
                 <div id="dialogObject" style="display:none">
                     <dialog-pane></dialog-pane>
                 </div>
             </div>
-            <div id="gridPane" style="width:316px;padding:8px">
+            <div id="gridPane" style="width:416px;padding:8px">
                 <grid-pane></grid-pane>
             </div>
         </div>

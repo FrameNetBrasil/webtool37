@@ -5,11 +5,12 @@
             data() {
                 return {
                     fieldClicked: '',
+                    urlPutObjects: this.$store.state.model.urlPutObjects,
                 }
             },
             computed: {
                 objects: function() {
-                    return this.$store.state.objects
+                    return this.$store.state.objectsTracker.annotatedObjects
                 },
             },
             created() {
@@ -21,163 +22,86 @@
                     (currentObjectState) => {
                         if (currentObjectState == 'updated') {
                             this.updateObjects();
+                            this.$store.commit('objectsTrackerState', 'clean');
+                        }
+                    }
+                )
+
+                this.$store.watch(
+                    (state, getters) => getters.objectsTrackerState,
+                    (objectsTrackerState) => {
+                        if (objectsTrackerState == 'dirty') {
+                            this.updateObjects();
+                            this.$store.commit('objectsTrackerState', 'clean');
                         }
                     }
                 )
 
                 let that = this;
-                let frozenColumns = [
+                let columns = [
                     {
-                        field: 'visible',
-                        title: '<i class="fas fa-eye"></i>',
-                        width: '32',
-                        //editor: {type: 'checkbox', options: {on: 'True', off: 'False'}},
-                        frozen: true,
-                        formatter: function (value, row, index) {
-                            if (value) {
-                                return "<i style='color:black' class='fas fa-eye'></i>"
-                            } else {
-                                return "<i style='color:#777777' class='fas fa-eye'></i>"
-                            }
-                        },
-                    },
-                    {
-                        field: 'occlusion',
-                        title: '<i class="fas fa-expand"></i>',
-                        width: '32',
-                        //editor: {type: 'checkbox', options: {on: 'True', off: 'False'}},
-                        frozen: true,
-                        formatter: function (value, row, index) {
-                            if (value) {
-                                return "<i style='color:black' class='fas fa-expand'></i>"
-                            } else {
-                                return "<i style='color:#777777' class='fas fa-expand'></i>"
-                            }
-                        },
+                        field: 'idObject',
+                        title: '#',
                     },
                     {
                         field: 'tag',
                         title: '<i class="fas fa-tag"></i>',
-                        frozen: true,
+                        formatter: function (value, row, index) {
+                            return "<i style='color:" + row.color + "' class='fas fa-tag'></i>";
+                        },
                     },
                     {
-                        field: 'idObject',
-                        title: '#',
-                        frozen: true,
+                        field: 'idFrame',
+                        title: 'idFrame',
+                    },
+                    {
+                        field: 'frame',
+                        title: 'Frame',
                     },
                     {
                         field: 'idFE',
                         title: 'idFE',
-                        frozen: true,
                     },
                     {
                         field: 'fe',
                         title: 'FE',
-                        frozen: true,
                     },
-                ];
-                /*
-                let columns = [
                     {
-                        field: 'timeline',
-                        title: 'Timeline',
-                        formatter: function (value, row, index) {
-                            let last = that.$store.state.framesRange.last + 1;
-                            value = "<div style='height:16px; width:" + last + "px; background-color:#CCCCCC'>";
-                            console.log(row);
-                            let i = 0;
-                            let box = (row.frames[0].bbox != null)
-                            let currentBox = null;
-                            let ranges = [{
-                                start: 0,
-                                end: 0,
-                                status: box
-                            }];
-                            for(frame of row.frames) {
-                                currentBox = frame.bbox != null;
-                                if (box != currentBox) {
-                                    ranges[i].end = frame.frameNumber - 1;
-                                    i++;
-                                    ranges.push({
-                                        start: frame.frameNumber,
-                                        end: frame.frameNumber,
-                                        status: currentBox
-                                    });
-                                }
-                            }
-                            console.log(ranges);
-                            value = value +  "</div>";
-                            return value;
-                        },
+                        field: 'name',
+                        title: 'Name',
+                    },
+                    {
+                        field: 'startFrame',
+                        title: 'Start',
+                    },
+                    {
+                        field: 'endFrame',
+                        title: 'End',
                     },
                 ];
-                */
                 $('#gridObjects').datagrid({
                     data: [],
                     title: 'Objects',
                     showHeader: true,
                     singleSelect: true,
-                    width: 300,
-                    frozenColumns: [
-                        frozenColumns
-                    ],
                     columns: [
-                        []
+                        columns
                     ],
                     toolbar: [
                         {
                             text: '<u>S</u>ave',
                             iconCls: 'fa fa-folder-o fa16px',
                             handler: function () {
-                                annotation.save();
-                            }
-                        },
-                        {
-                            text: '<u>R</u>efresh',
-                            iconCls: 'fa fa-refresh fa16px',
-                            handler: function () {
-                                annotation.refresh();
+                                that.save();
                             }
                         },
                     ],
                     onClickRow: function (index, row) {
-                        let annotatedObject = row;
-                        if (that.fieldClicked == 'visible') {
-                            $('#gridObjects').datagrid('beginEdit');
-                            annotatedObject.visible = !annotatedObject.visible;
-                            $('#gridObjects').datagrid('updateRow',{
-                                index: index,
-                                row: annotatedObject
-                            });
-                            $('#gridObjects').datagrid('endEdit');
-                            $('#gridObjects').datagrid('refreshRow', index);
-                        }
-                        //annotation.editObject = row;
-                        //$('#formObject').form('load', row);
-                        //$('#dlgObject').dialog('open');
-                        //document.getElementById('currentTime').innerHTML = config.currentTime;
+                        that.$store.commit('currentFrame', row.startFrame);
+                        that.$store.dispatch('selectObject', row.idObject);
                     },
                     onClickCell: function(index,field,value) {
                             that.fieldClicked = 'visible';
-                            //let changeTo = !value;
-                           // $('#gridObjects').datagrid('selectRow', index);
-                           // console.log($('#gridObjects').datagrid('getSelected'));
-                           // let annotatedObject = $('#gridObjects').datagrid('getSelected');
-                           // console.log(index);
-                           // console.log(annotatedObject);
-                            /*
-                            let bbox;
-                            if (changeTo) {
-                                annotatedObject.dom.style.display = 'block';
-                                let jquery = $(annotatedObject.dom);
-                                let position = jquery.position();
-                                bbox = new BoundingBox(Math.round(position.left), Math.round(position.top), Math.round(jquery.width()), Math.round(jquery.height()));
-                            } else {
-                                annotatedObject.dom.style.display = 'none';
-                                bbox = null;
-                            }
-                            annotatedObject.add(new AnnotatedFrame(player.currentFrame, bbox, true));
-*/
 
                     },
                     onBeforeSelect: function () {
@@ -190,6 +114,25 @@
                     $('#gridObjects').datagrid({
                         data: this.objects
                     })
+                },
+                save() {
+                    console.log('saving');
+                    let objects = this.$store.getters.allAnnotatedObjects;
+                    console.log(objects);
+                    let data = {
+                        idAnnotationSetMM: this.$store.state.model.idAnnotationSetMM,
+                        objects: []
+                    };
+                    for(object of objects) {
+                        data.objects.push({
+                            idFrameElement: object.idFE,
+                            startFrame: object.startFrame,
+                            endFrame: object.endFrame,
+                            name: object.name,
+                        })
+                    }
+                    $('#dataObjects').val(JSON.stringify(data));
+                    manager.doPostBack('formObjects');
                 }
             },
         }
@@ -198,8 +141,11 @@
 
 <script type="text/x-template" id="grid-pane">
     <div>
-        <div ref="gridObjects" id="gridObjects" >
+        <div ref="gridObjects" id="gridObjects" style="width: 100%">
         </div>
+        <form id="formObjects" method="post" :action="urlPutObjects">
+            <input type="hidden" id="dataObjects" name="dataObjects" value=""/>
+        </form>
     </div>
 </script>
 

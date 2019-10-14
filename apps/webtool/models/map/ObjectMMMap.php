@@ -23,8 +23,8 @@ class ObjectMMMap extends \MBusinessModel {
             'attributes' => array(
                 'idObjectMM' => array('column' => 'idObjectMM','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
                 'name' => array('column' => 'name','type' => 'string'),
-                'startTime' => array('startTime' => 'name','type' => 'string'),
-                'endTime' => array('column' => 'endTime','type' => 'string'),
+                'startFrame' => array('startFrame' => 'name','type' => 'integer'),
+                'endFrame' => array('column' => 'endFrame','type' => 'integer'),
                 'idAnnotationSetMM' => array('column' => 'idAnnotationSetMM','type' => 'integer'),
                 'idFrameElement' => array('column' => 'idFrameElement','type' => 'integer'),
             ),
@@ -49,12 +49,12 @@ class ObjectMMMap extends \MBusinessModel {
      *
      * @var string
      */
-    protected $startTime;
+    protected $startFrame;
     /**
      *
      * @var string
      */
-    protected $endTime;
+    protected $endFrame;
     /**
      *
      * @var string
@@ -92,20 +92,20 @@ class ObjectMMMap extends \MBusinessModel {
         $this->name = $value;
     }
 
-    public function getStartTime() {
-        return $this->startTime;
+    public function getStartFrame() {
+        return $this->startFrame;
     }
 
-    public function setStartTime($value) {
-        $this->startTime = $value;
+    public function setStartFrame($value) {
+        $this->startFrame = $value;
     }
 
-    public function getEndTime() {
-        return $this->endTime;
+    public function getEndFrame() {
+        return $this->endFrame;
     }
 
-    public function setEndTime($value) {
-        $this->endTime = $value;
+    public function setEndFrame($value) {
+        $this->endFrame = $value;
     }
 
     public function getIdAnnotationSetMM() {
