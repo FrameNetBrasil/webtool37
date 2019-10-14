@@ -60,6 +60,11 @@ $ cp conf.dist.php conf.php
 Access the app (e.g. http://localhost/webtool/index.php/webtool/main with user = webtool password = test)
 
 
+## Tutorials
+
+See [this YouTube channel](https://www.youtube.com/playlist?list=PLbRWTx8_CBTniSlJdlhBqJNe7A-AjKizD) for tutorials on the main functions of the WebTool.
+
+
 ## License
 
 GNU GPLv3 - See the [COPYING](COPYING) file for license rights and limitations.
