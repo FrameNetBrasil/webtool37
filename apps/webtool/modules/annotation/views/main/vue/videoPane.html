@@ -107,13 +107,13 @@
                     annotatedObject.idFE = -1;
                     annotatedObject.fe = '';
                     annotatedObject.color = 'white';
-                    //annotatedObject.startTime = config.currentTime;
-                    //annotatedObject.endTime = config.currentTime;
-                    //let border = 'color' + annotatedObject.id;
-                    //annotatedObject.dom.classList.add(border);
                     annotatedObject.idObject = this.annotatedObjectsTracker.annotatedObjects.length;
                     this.annotatedObjectsTracker.annotatedObjects.push(annotatedObject);
-                    this.$emit('createdNewObject', this.annotatedObjectsTracker, annotatedObject);
+                    //this.$emit('createdNewObject', this.annotatedObjectsTracker, annotatedObject);
+                    this.$store.dispatch('setObjects', this.annotatedObjectsTracker.annotatedObjects);
+                    this.$store.commit('currentObject',annotatedObject);
+                    this.$store.commit('currentObjectState', 'created');
+                    console.log('new Object');
                 },
                 initialize: function () {
                     this.currentFrame = 0;
@@ -202,18 +202,18 @@
                 },
                 toAbsoluteCoord(x, y, width, height) {
                     return {
-                        x:  Math.round(x / this.currentScale),
-                        y:  Math.round(y / this.currentScale),
+                        x: Math.round(x / this.currentScale),
+                        y: Math.round(y / this.currentScale),
                         width: Math.round(width / this.currentScale),
-                        height:  Math.round(height / this.currentScale)
+                        height: Math.round(height / this.currentScale)
                     }
                 },
                 toScaledCoord(x, y, width, height) {
                     return {
-                        x:  Math.round(x * this.currentScale),
-                        y:  Math.round(y * this.currentScale),
+                        x: Math.round(x * this.currentScale),
+                        y: Math.round(y * this.currentScale),
                         width: Math.round(width * this.currentScale),
-                        height:  Math.round(height * this.currentScale)
+                        height: Math.round(height * this.currentScale)
                     }
                 },
                 drawFrame: function (frameNumber) {
@@ -419,7 +419,7 @@
                             annotatedObject,
                             (x, y, width, height) => {
                                 console.log('annotated object changing - box frame ' + this.currentFrame);
-                                console.log(x + ' ' + y + ' ' + width + ' ' +  height);
+                                console.log(x + ' ' + y + ' ' + width + ' ' + height);
                                 let absolute = this.toAbsoluteCoord(x, y, width, height);
                                 console.log(absolute);
                                 let bbox = new BoundingBox(absolute.x, absolute.y, absolute.width, absolute.height);
@@ -468,13 +468,17 @@
 </script>
 
 <script type="text/x-template" id="video-pane">
-    <div ref="videoPaneContainer" id="videoPaneContainer">
-        <div ref="doodle" id="doodle" @mousemove="onMouseMove" @click="onMouseClick">
-            <canvas ref="canvas" id="canvas"></canvas>
+    <div style="display:flex; flex-direction: row;padding-left: 16px; width:auto">
+        <div ref="videoPaneContainer" id="videoPaneContainer">
+            <div ref="doodle" id="doodle" @mousemove="onMouseMove" @click="onMouseClick">
+                <canvas ref="canvas" id="canvas"></canvas>
+            </div>
+            <div id="controlsPane" style="margin-bottom: 32px">
+                <controls-pane :framesRange="framesRange"></controls-pane>
+            </div>
         </div>
-        <div id="controlsPane" style="margin-bottom: 32px">
-            <controls-pane v-on:newObjectClick="onNewObjectClick"
-                           :framesRange="framesRange"></controls-pane>
+        <div id="toolsPane" style="padding:8px">
+            <tools-pane v-on:newObjectClick="onNewObjectClick"></tools-pane>
         </div>
     </div>
 </script>

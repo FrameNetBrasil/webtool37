@@ -1,7 +1,7 @@
 <script>
     Vue.component('dialog-pane', {
             template: '#dialog-pane',
-            props: ['object'],
+            props: [],
             data() {
                 return {
                     model: this.$store.state.model,
@@ -11,15 +11,29 @@
             },
             computed: {
                 title: function() {
-                    return (this.object ? "Annotated Object #" + this.object.idObject : 'aa' )
+                    return (this.currentObject ? "Annotated Object #" + this.currentObject.idObject : 'aa' )
                 },
                 currentFrame: function() {
                     return this.$store.state.currentFrame
-                }
+                },
+                currentObject: function() {
+                    return this.$store.state.currentObject
+                },
             },
             created() {
             },
             mounted: function () {
+
+                this.$store.watch(
+                    (state, getters) => getters.currentObjectState,
+                    (currentObjectState) => {
+                        if ((currentObjectState == 'created') || (currentObjectState == 'editingFE')) {
+                            this.o = this.currentObject;
+                            this.openDialog();
+                        }
+                    }
+                )
+
                 let that = this;
 
                 $('#dlgObject').dialog({
@@ -39,7 +53,8 @@
                         that.o.color = '#' + that.fe.rgbBg;
                         that.o.idFE = that.fe.idFrameElement;
                         that.o.fe = that.fe.name;
-                        that.$emit('updatedObject', that.o);
+                        //that.$emit('updatedObject', that.o);
+                        that.$store.commit('currentObjectState', 'updated');
                         $('#dlgObject').dialog('close');
                     }
                 });
@@ -83,10 +98,6 @@
                     onChange: function (newValue, oldValue) {
                         console.log('idFrame = ' + newValue + ' - ' + oldValue);
                         if (parseInt(newValue)) {
-                            //let urlFE = this.urlFE + '/' + newValue;
-                            //console.log('urlFE = ' + urlFE);
-                            //$('#lookupFE').combogrid({url: urlFE});
-                            //$('#lookupFE').combogrid('reload');
                             that.combogridFE(newValue);
                         }
                     }
@@ -101,8 +112,7 @@
 
             },
             methods: {
-                openDialog: function(object) {
-                    this.o = object;
+                openDialog: function() {
                     $('#dlgObject').dialog({title: this.title});
                     $('#dlgObject').dialog('doLayout');
                     $('#dlgObject').dialog('open');
@@ -114,10 +124,6 @@
                 }
             },
             watch: {
-                object: {
-                    handler: 'openDialog',
-                    immediate: false
-                }
             }
         }
     );

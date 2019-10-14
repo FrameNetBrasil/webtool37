@@ -1,16 +1,30 @@
 <script>
     Vue.component('grid-pane', {
             template: '#grid-pane',
-            props: ['objects','updateGrid'],
+            props: [],
             data() {
                 return {
                     fieldClicked: '',
                 }
             },
-            computed: {},
+            computed: {
+                objects: function() {
+                    return this.$store.state.objects
+                },
+            },
             created() {
             },
             mounted: function () {
+
+                this.$store.watch(
+                    (state, getters) => getters.currentObjectState,
+                    (currentObjectState) => {
+                        if (currentObjectState == 'updated') {
+                            this.updateObjects();
+                        }
+                    }
+                )
+
                 let that = this;
                 let frozenColumns = [
                     {
@@ -178,18 +192,6 @@
                     })
                 }
             },
-            watch: {
-                objects: {
-                    handler: 'updateObjects',
-                    immediate: true
-                },
-                updateGrid(value) {
-                    console.log('updateGrid ' + value);
-                    if (value) {
-                        this.updateObjects();
-                    }
-                }
-            }
         }
     );
 </script>

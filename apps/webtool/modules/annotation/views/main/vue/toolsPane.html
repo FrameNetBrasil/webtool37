@@ -26,15 +26,6 @@
                         this.currentState = currentState;
                     }
                 )
-                this.$store.watch(
-                    (state, getters) => getters.currentFrame,
-                    (currentFrame) => {
-                        this.currentFrame = currentFrame;
-                        this.slider.value = this.currentFrame;
-                        this.$refs.sl.setValue(this.currentFrame);
-                        //console.log(this.currentFrame);
-                    }
-                )
             },
             watch: {}
         }
