@@ -1,7 +1,7 @@
 <script>
     Vue.component('controls-pane', {
             template: '#controls-pane',
-            props: ['framesRange'],
+            props: [],
             data() {
                 return {
                     slider: {
@@ -68,20 +68,21 @@
                         this.$refs.sl.setValue(this.currentFrame);
                         //console.log(this.currentFrame);
                     }
+                ),
+                this.$store.watch(
+                    (state, getters) => getters.framesRange,
+                    (framesRange) => {
+                        this.slider.min = framesRange.first;
+                        this.slider.max = framesRange.last;
+                        let interval = Math.trunc((framesRange.last - framesRange.first + 1) / 5);
+                        this.slider.rule = [framesRange.first, '|', framesRange.first + (interval), '|',
+                            framesRange.first + (interval * 2), '|', framesRange.first + (interval * 3), '|', framesRange.first + (interval * 4), '|', framesRange.last];
+                        this.slider.value = framesRange.first;
+                        this.$refs.sl.setValue(framesRange.first);
+                        console.log(framesRange);
+                    }
                 )
             },
-            watch: {
-                framesRange(framesRange) {
-                    this.slider.min = framesRange.first;
-                    this.slider.max = framesRange.last;
-                    let interval = Math.trunc((framesRange.last - framesRange.first + 1) / 5);
-                    this.slider.rule = [framesRange.first, '|', framesRange.first + (interval), '|',
-                        framesRange.first + (interval * 2), '|', framesRange.first + (interval * 3), '|', framesRange.first + (interval * 4), '|', framesRange.last];
-                    this.slider.value = framesRange.first;
-                    this.$refs.sl.setValue(framesRange.first);
-                    console.log(framesRange);
-                }
-            }
         }
     );
 </script>

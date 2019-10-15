@@ -21,21 +21,28 @@ class ObjectMM extends map\ObjectMMMap {
     }
 
     public function listByAnnotationSetMM($idAnnotationSetMM){
+        $idLanguage = \Manager::getSession()->idLanguage;
         $viewFrameElement = new ViewFrameElement();
-        $feCriteria = $viewFrameElement->getCriteria()
-            ->select('idFrame, frame.entries.name as frame, idFrameElement, entries.name, colors.rgbBg');
-        $criteria = $this->getCriteria()
-            ->select('viewframeelement.idFrame, viewframeelement.frame, viewframeelement.idFrameElement as idFE, viewframeelement.name as fe, startFrame, endFrame')
-            ->orderBy('startFrame');
-        $criteria->joinCriteria($feCriteria,"viewframeelement.idFrameElement = idFrameElement");
-        $criteria->where("idAnnotationSetMM = {$idAnnotationSetMM}");
-        return $criteria;
+        $feCriteria = $viewFrameElement->getCriteria();
+        $feCriteria->setAssociationAlias('frame.entries', 'frameEntries');
+        $feCriteria->select('idFrame, frameEntries.name as frame, idFrameElement as idFE, entries.name as fe, color.rgbBg as color, objectmm.startFrame, objectmm.endFrame, objectmm.name');
+        $feCriteria->join("viewframeelement","objectmm","(viewframeelement.idFrameElement = objectmm.idFrameElement)");
+        $feCriteria->where("frameEntries.idLanguage = {$idLanguage}");
+        $feCriteria->where("entries.idLanguage = {$idLanguage}");
+        $feCriteria->where("objectmm.idAnnotationSetMM = {$idAnnotationSetMM}");
+        $feCriteria->orderBy('objectmm.startFrame');
+        return $feCriteria;
     }
 
     public function putObjects($data) {
+        $objectFrameMM = new ObjectFrameMM();
+        $idAnnotationSetMM = $data->idAnnotationSetMM;
         $transaction = $this->beginTransaction();
         try {
-            $idAnnotationSetMM = $data->idAnnotationSetMM;
+            $selectCriteria = $this->getCriteria()->select('idObjectMM')->where("idAnnotationSetMM = {$idAnnotationSetMM}");
+            $deleteFrameCriteria = $objectFrameMM->getDeleteCriteria();
+            $deleteFrameCriteria->where("idObjectMM", "IN" , $selectCriteria);
+            $deleteFrameCriteria->delete();
             $deleteCriteria = $this->getDeleteCriteria();
             $deleteCriteria->where("idAnnotationSetMM = {$idAnnotationSetMM}");
             $deleteCriteria->delete();
@@ -43,6 +50,7 @@ class ObjectMM extends map\ObjectMMMap {
                 $this->setPersistent(false);
                 $object->idAnnotationSetMM = $data->idAnnotationSetMM;
                 $this->save($object);
+                $objectFrameMM->putFrames($this->idObjectMM, $object->frames);
             }
             $transaction->commit();
         } catch (\Exception $e) {

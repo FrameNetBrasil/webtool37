@@ -101,6 +101,27 @@ let store = new Vuex.Store({
             context.commit('duration', duration);
             context.commit('totalFrames', duration * 30); // 30fps
         },
+        updateFramesRange(context, framesRange) {
+            context.commit('framesRange', framesRange);
+            let objectsLoaded = context.state.model.objects;
+            let i = 0;
+            for(object of objectsLoaded) {
+                if ((object.startFrame >= framesRange.first)) {
+                    let annotatedObject = new AnnotatedObject();
+                    annotatedObject.idObject = i++;
+                    annotatedObject.name = object.name;
+                    annotatedObject.idFrame = object.idFrame;
+                    annotatedObject.frame = object.frame;
+                    annotatedObject.idFE = object.idFE;
+                    annotatedObject.fe = object.fe;
+                    annotatedObject.color = object.color;
+                    annotatedObject.startFrame = object.startFrame;
+                    annotatedObject.endFrame = object.endFrame;
+                    context.state.objectsTracker.annotatedObjects.push(annotatedObject);
+                }
+            }
+            context.commit('objectsTrackerState', 'dirty');
+        },
         objectsTrackerInit(context) {
             context.commit('objectsTracker', new AnnotatedObjectsTracker(context.state.framesManager));
             console.log('objectsTrackerInit ok')
@@ -164,20 +185,6 @@ let store = new Vuex.Store({
                 context.commit('objectsTrackerState', 'dirty');
             }
         },
-
-            setCurrentObject(context, updatedObject) {
-            /*
-            let objects = context.state.objects;
-            for (i in objects) {
-                object = objects[i];
-                if (object.idObject == updatedObject.idObject) {
-                    objects[i] = updatedObject;
-                }
-            }
-            context.commit('objects', objects);
-
-             */
-        }
     },
 })
 

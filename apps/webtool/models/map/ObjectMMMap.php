@@ -23,7 +23,7 @@ class ObjectMMMap extends \MBusinessModel {
             'attributes' => array(
                 'idObjectMM' => array('column' => 'idObjectMM','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
                 'name' => array('column' => 'name','type' => 'string'),
-                'startFrame' => array('startFrame' => 'name','type' => 'integer'),
+                'startFrame' => array('column' => 'startFrame','type' => 'integer'),
                 'endFrame' => array('column' => 'endFrame','type' => 'integer'),
                 'idAnnotationSetMM' => array('column' => 'idAnnotationSetMM','type' => 'integer'),
                 'idFrameElement' => array('column' => 'idFrameElement','type' => 'integer'),
@@ -31,6 +31,7 @@ class ObjectMMMap extends \MBusinessModel {
             'associations' => array(
                 'annotationsetmm' => array('toClass' => 'fnbr\models\AnnotationSetMM', 'cardinality' => 'oneToOne' , 'keys' => 'idAnnotationSetMM:idAnnotationSetMM'),
                 'frameelement' => array('toClass' => 'fnbr\models\FrameElement', 'cardinality' => 'oneToOne' , 'keys' => 'idFrameElement:idFrameElement'),
+                'objectframes' => array('toClass' => 'fnbr\models\ObjectFrameMM', 'cardinality' => 'oneToMany' , 'keys' => 'idObjectMM:idObjectMM'),
             )
         );
     }

@@ -103,7 +103,9 @@
                         this.drawFrame(this.currentFrame);
                     }
                 )
-                this.extractionFileZip();
+                this.$nextTick(() => {
+                    this.extractionFileZip();
+                });
             },
             methods: {
                 clearAllAnnotatedObjects() {
@@ -293,7 +295,7 @@
                         first: firstFrame,
                         last: lastFrame
                     }
-                    this.$store.commit('framesRange', this.framesRange);
+                    this.$store.dispatch('updateFramesRange', this.framesRange);
                 },
                 extractionFileZip: function () {
                     this.initialize();
@@ -491,9 +493,7 @@
                 <canvas ref="canvas" id="canvas"></canvas>
             </div>
             <div id="controlsPane" style="margin-bottom: 32px">
-                <controls-pane
-                        :framesRange="framesRange"
-                ></controls-pane>
+                <controls-pane></controls-pane>
             </div>
         </div>
         <div id="toolsPane" style="padding:8px">

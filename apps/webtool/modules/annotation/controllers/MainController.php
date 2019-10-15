@@ -376,6 +376,7 @@ class MainController extends MController
         $objectMM = new \fnbr\models\ObjectMM();
         $criteria = $objectMM->listByAnnotationSetMM($this->data->idAnnotationSetMM);
         $this->data->objects = $objectMM->gridDataAsJSON($criteria, true);
+        mdump($this->data->objects);
         $this->data->swfPath = Manager::getBaseURL() . '/apps/webtool/public/scripts/jplayer/';
         $this->data->urlLookupFrame = Manager::getBaseURL() . '/index.php/webtool/data/frame/lookupData';
         $this->data->urlLookupFE =  Manager::getBaseURL() . '/index.php/webtool/data/frameelement/lookupDataDecorated';

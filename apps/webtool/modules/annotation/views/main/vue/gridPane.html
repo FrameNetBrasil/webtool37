@@ -124,11 +124,26 @@
                         objects: []
                     };
                     for(object of objects) {
+                        let frames = [];
+                        for(frame of object.frames) {
+                            console.log(frame);
+                            if ((frame.isGroundTruth) && (frame.frameNumber <= object.endFrame)){
+                                frames.push({
+                                    frameNumber: frame.frameNumber,
+                                    x: frame.bbox.x,
+                                    y: frame.bbox.y,
+                                    width: frame.bbox.width,
+                                    height: frame.bbox.height,
+                                    blocked: frame.blocked ? 1 : 0,
+                                })
+                            }
+                        }
                         data.objects.push({
                             idFrameElement: object.idFE,
                             startFrame: object.startFrame,
                             endFrame: object.endFrame,
                             name: object.name,
+                            frames: frames,
                         })
                     }
                     $('#dataObjects').val(JSON.stringify(data));
