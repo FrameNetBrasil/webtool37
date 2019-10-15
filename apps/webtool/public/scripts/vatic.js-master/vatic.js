@@ -132,6 +132,7 @@ function extractFramesFromVideo(config, file, progress) {
 /**
  * Extracts the frame sequence from a previously generated zip file.
  */
+/*
 function extractFramesFromZip(config, file) {
     return new Promise((resolve, _) => {
         JSZip
@@ -165,7 +166,7 @@ function extractFramesFromZip(config, file) {
             });
     });
 }
-
+*/
 /**
  * Extracts the frame sequence from a previously generated zip file.
  */

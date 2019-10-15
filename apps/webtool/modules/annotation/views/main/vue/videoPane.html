@@ -316,8 +316,9 @@
                     console.log(url);
                     promise = extractFramesFromZipUrl(this.config, url, this.segment);
                     promise.then((frames) => {
+                        const startTime = performance.now();
+
                         console.log(frames);
-                        console.log('Extraction completed. ' + frames.totalFrames() + ' frames captured.');
                         this.firstFrame = this.segment * 1000;
                         this.lastFrame = this.firstFrame + frames.totalFrames() - 1;
                         this.currentFrame = this.firstFrame;
@@ -340,6 +341,7 @@
                                 });
                             });
                         }
+
                     });
                 },
 

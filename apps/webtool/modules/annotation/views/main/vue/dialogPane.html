@@ -67,7 +67,7 @@
 
                     $('#lookupFE').combogrid({
                         panelWidth: 220,
-                        url: that.model.urlLookupFE,
+                        // url: that.model.urlLookupFE,
                         idField: 'idFrameElement',
                         textField: 'name',
                         mode: 'remote',
@@ -93,8 +93,7 @@
 
                     $('#lookupFrame').combogrid({
                         panelWidth: 220,
-                        url: that.model.urlLookupFrame,
-                        urlFE: that.model.urlLookupFE,
+                        url: manager.baseURL + "webtool/data/frame/lookupData",
                         idField: 'idFrame',
                         textField: 'name',
                         mode: 'remote',
@@ -109,7 +108,7 @@
                                 if (parseInt(newValue)) {
                                     console.log('ggg');
                                     //that.combogridFE(newValue);
-                                    let urlFE = that.model.urlLookupFE + '/' + newValue;
+                                    let urlFE =  manager.baseURL + 'webtool/data/frameelement/lookupDataDecorated' + '/' + newValue;
                                     console.log('urlFE = ' + urlFE);
                                     $('#lookupFE').combogrid({url: urlFE});
                                 }
