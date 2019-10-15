@@ -72,6 +72,7 @@
     position: absolute;
     color: black;
     cursor: pointer;
+    padding-left: 2px;
 }
 
 .ui-button {
@@ -102,4 +103,9 @@
     top: 50%;
     transform: translate(50%, -50%);
     cursor: e-resize;
+}
+
+#toolsPaneContainer {
+    display: flex;
+    flex-direction: column;
 }

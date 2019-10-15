@@ -86,13 +86,8 @@
                 this.$store.watch(
                     (state, getters) => getters.currentObjectState,
                     (currentObjectState) => {
-                        if ((currentObjectState == 'updated') || (currentObjectState == 'selected')) {
-                            this.drawFrame(this.currentFrame);
-                        }
-                        if ((currentObjectState == 'ended')) {
-                            object.dom.style.display = 'none';
-                            let bbox = null;
-                            object.add(new AnnotatedFrame(this.currentFrame, bbox, true));
+                        console.log('currentObjectState = ' + currentObjectState)
+                        if ((currentObjectState == 'updated') || (currentObjectState == 'unselected')|| (currentObjectState == 'cleared')) {
                             this.drawFrame(this.currentFrame);
                         }
                     }
@@ -100,7 +95,19 @@
                 this.$store.watch(
                     (state, getters) => getters.idObjectSelected,
                     (idObjectSelected) => {
-                        this.drawFrame(this.currentFrame);
+                        console.log('idObjectSelected = ' + idObjectSelected)
+                        let currentObjectState = this.$store.state.currentObjectState;
+                        if (currentObjectState == 'selected') {
+                            this.drawFrame(this.currentFrame);
+                        }
+                    }
+                )
+                this.$store.watch(
+                    (state, getters) => state.redrawFrame,
+                    (redrawFrame) => {
+                        if (redrawFrame) {
+                            this.drawFrame(this.currentFrame);
+                        }
                     }
                 )
                 this.$nextTick(() => {
@@ -237,9 +244,7 @@
                             let currentState = '';
                             let currentObject = that.$store.state.currentObject;
                             if (currentObject) {
-                                console.log(currentObject.idObject);
                                 currentState = that.$store.state.currentObjectState;
-                                console.log(currentState);
                             }
                             let img = frameWithObjects.img;
                             this.ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, img.width * this.currentScale, img.height * this.currentScale);
@@ -250,31 +255,37 @@
                                 let annotatedFrame = object.annotatedFrame;
                                 if (annotatedFrame.isVisible()) {
                                 //if ((annotatedFrame.isVisible()) && (frameNumber >= annotatedObject.startFrame) && (frameNumber <= annotatedObject.endFrame)) {
+                                    console.log(annotatedFrame.blocked);
                                     let scaledBox = this.toScaledCoord(annotatedFrame.bbox.x, annotatedFrame.bbox.y, annotatedFrame.bbox.width, annotatedFrame.bbox.height);
                                     annotatedObject.dom.style.display = 'block';
                                     annotatedObject.dom.style.width = scaledBox.width + 'px';
                                     annotatedObject.dom.style.height = scaledBox.height + 'px';
                                     annotatedObject.dom.style.left = scaledBox.x + 'px';
                                     annotatedObject.dom.style.top = scaledBox.y + 'px';
+                                    annotatedObject.dom.style.borderStyle = 'solid';
                                     annotatedObject.dom.style.borderColor = annotatedObject.color;
                                     annotatedObject.dom.style.backgroundColor = 'transparent';
                                     annotatedObject.dom.style.opacity = 1;
                                     annotatedObject.visible = true;
-                                    console.log(annotatedObject.idObject );
                                     if (currentObject) {
                                         if (annotatedObject.idObject == currentObject.idObject) {
                                             if (currentState == 'selected') {
-                                                console.log('opacity');
                                                 annotatedObject.dom.style.backgroundColor = annotatedObject.color;
                                                 annotatedObject.dom.style.opacity = 0.5;
                                             }
                                         }
+                                    }
+                                    if (annotatedFrame.blocked) {
+                                        annotatedObject.dom.style.opacity = 0.5;
+                                        annotatedObject.dom.style.backgroundColor = 'white';
+                                        annotatedObject.dom.style.borderStyle = 'dashed';
                                     }
                                 } else {
                                     annotatedObject.dom.style.display = 'none';
                                     annotatedObject.visible = false;
                                 }
                             }
+                            that.$store.commit('redrawFrame', false);
                             resolve();
                         });
                     });
@@ -325,17 +336,103 @@
                                     console.log('pos framesManager');
                                     this.ready();
                                     this.framesLoaded(this.firstFrame, this.lastFrame);
+                                    this.loadObjects();
                                 });
                             });
                         }
                     });
                 },
+
+                loadObjects() {
+                    let objectsLoaded = this.$store.state.model.objects;
+                    let i = 0;
+                    for(var object of objectsLoaded) {
+                        if ((object.startFrame >= this.framesRange.first) && (object.startFrame <= this.framesRange.last)) {
+                            let annotatedObject = new AnnotatedObject();
+                            annotatedObject.idObject = i++;
+                            annotatedObject.name = object.name;
+                            annotatedObject.idFrame = parseInt(object.idFrame);
+                            annotatedObject.frame = object.frame;
+                            annotatedObject.idFE = parseInt(object.idFE);
+                            annotatedObject.fe = object.fe;
+                            annotatedObject.color = '#' + object.color;
+                            annotatedObject.startFrame = parseInt(object.startFrame);
+                            annotatedObject.endFrame = parseInt(object.endFrame);
+                            annotatedObject.dom = this.newBboxElement();
+                            this.$store.dispatch("objectsTrackerPush", annotatedObject);
+                            this.interactify(
+                                annotatedObject,
+                                (x, y, width, height) => {
+                                    //let bbox = new BoundingBox(x, y, width, height);
+                                    console.log('annotated loaded object changing - box frame ' + this.currentFrame);
+                                    console.log(x + ' ' + y + ' ' + width + ' ' + height);
+                                    let absolute = this.toAbsoluteCoord(x, y, width, height);
+                                    console.log(absolute);
+                                    let bbox = new BoundingBox(absolute.x, absolute.y, absolute.width, absolute.height);
+                                    annotatedObject.add(new AnnotatedFrame(this.currentFrame, bbox, true));
+                                }
+                            );
+
+                            //addAnnotatedObjectControls(annotatedObject);
+
+                            let lastFrame = -1;
+                            let bbox = null;
+                            let polygons = object.frames;
+                            for (let j = 0; j < polygons.length; j++) {
+                                let polygon = object.frames[j];
+                                let frameNumber = parseInt(polygon.frameNumber);
+                                let isGroundThrough = true;// parseInt(topLeft.find('l').text()) == 1;
+                                let x = parseInt(polygon.x);
+                                let y = parseInt(polygon.y);
+                                let w = parseInt(polygon.width);
+                                let h = parseInt(polygon.height);
+
+                                /*
+                                if (lastFrame + 1 != frameNumber) {
+                                    let annotatedFrame = new AnnotatedFrame(lastFrame + 1, null, true);
+                                    annotatedObject.add(annotatedFrame);
+                                }
+
+                                 */
+                                if (lastFrame == -1) {
+                                    while (lastFrame < frameNumber) {
+                                        let annotatedFrame = new AnnotatedFrame(lastFrame + 1, bbox, false);
+                                        annotatedObject.add(annotatedFrame);
+                                        lastFrame++;
+                                    }
+                                }
+
+                                bbox = new BoundingBox(x, y, w, h);
+                                let annotatedFrame = new AnnotatedFrame(frameNumber, bbox, isGroundThrough);
+                                annotatedFrame.blocked = (parseInt(polygon.blocked) == 1);
+                                annotatedObject.add(annotatedFrame);
+
+                                lastFrame = frameNumber;
+                            }
+
+                            /*
+                            if (lastFrame + 1 < framesManager.frames.totalFrames()) {
+                                let annotatedFrame = new AnnotatedFrame(lastFrame + 1, null, true);
+                                annotatedObject.add(annotatedFrame);
+                            }
+                            */
+                            lastFrame = annotatedObject.endFrame;
+                            if ((lastFrame + 1) < this.framesRange.last) {
+                                let annotatedFrame = new AnnotatedFrame(lastFrame + 1, null, true);
+                                annotatedObject.add(annotatedFrame);
+                            }
+                            console.log(annotatedObject)
+
+                        }
+                    }
+                    this.drawFrame(this.currentFrame);
+                    this.$store.commit('objectsTrackerState', 'dirty');
+                },
+
                 newBboxElement() {
                     let dom = document.createElement('div');
                     dom.className = 'bbox';
                     this.$refs.doodle.appendChild(dom);
-                    console.log('new box');
-                    console.log(dom);
                     return dom;
                 },
                 interactify(annotatedObject, onChange) {
@@ -347,7 +444,7 @@
                     bbox.addClass('bbox');
 
                     let createHandleDiv = (className, content = null) => {
-                        console.log(content);
+                        console.log('className = ' + className + '  content = ' + content);
                         let handle = document.createElement('div');
                         handle.className = className;
                         bbox.append(handle);
@@ -366,13 +463,10 @@
                     });
 
                     let x = createHandleDiv('handle center-drag');
-                    console.log(x);
                     let i = createHandleDiv('objectId', annotatedObject.idObject);
                     i.addEventListener("click", function() {
-                        console.log('i clicked = ' + parseInt(this.innerHTML))
                         that.$store.dispatch('selectObject', parseInt(this.innerHTML))
                     });
-
 
                     bbox.draggable({
                         //containment: 'parent',

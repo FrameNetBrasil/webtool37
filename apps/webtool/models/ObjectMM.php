@@ -25,7 +25,7 @@ class ObjectMM extends map\ObjectMMMap {
         $viewFrameElement = new ViewFrameElement();
         $feCriteria = $viewFrameElement->getCriteria();
         $feCriteria->setAssociationAlias('frame.entries', 'frameEntries');
-        $feCriteria->select('idFrame, frameEntries.name as frame, idFrameElement as idFE, entries.name as fe, color.rgbBg as color, objectmm.startFrame, objectmm.endFrame, objectmm.name');
+        $feCriteria->select('idFrame, frameEntries.name as frame, idFrameElement as idFE, entries.name as fe, color.rgbBg as color, objectmm.idObjectMM, objectmm.startFrame, objectmm.endFrame, objectmm.name');
         $feCriteria->join("viewframeelement","objectmm","(viewframeelement.idFrameElement = objectmm.idFrameElement)");
         $feCriteria->where("frameEntries.idLanguage = {$idLanguage}");
         $feCriteria->where("entries.idLanguage = {$idLanguage}");
@@ -33,6 +33,28 @@ class ObjectMM extends map\ObjectMMMap {
         $feCriteria->orderBy('objectmm.startFrame');
         return $feCriteria;
     }
+
+    public function listFramesByObjectMM($idObjectMM){
+        $objectFrameMM = new ObjectFrameMM();
+        $criteria = $objectFrameMM->getCriteria()
+            ->select('idObjectFrameMM, frameNumber, x, y, width, height, blocked')
+            ->where("idObjectMM = {$idObjectMM}")
+            ->orderBy('frameNumber');
+        return $criteria;
+    }
+
+    public function getObjectsAsJSON($idAnnotationSetMM) {
+        $objectsList = $this->listByAnnotationSetMM($idAnnotationSetMM)->asQuery()->getResult();
+        $objects = [];
+        foreach($objectsList as $object) {
+            $idObjectMM = $object['idObjectMM'];
+            $framesList = $this->listFramesByObjectMM($idObjectMM)->asQuery()->getResult();
+            $object['frames'] = $framesList;
+            $objects[] = (object)$object;
+        }
+        return json_encode($objects);
+    }
+
 
     public function putObjects($data) {
         $objectFrameMM = new ObjectFrameMM();

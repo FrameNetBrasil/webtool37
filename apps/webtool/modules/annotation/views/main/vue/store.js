@@ -19,6 +19,7 @@ let store = new Vuex.Store({
         totalFrames: 0,
         framesRange: {},
         annotatedObject: null,
+        redrawFrame: false,
     },
     getters: {
         currentFrame(state) {
@@ -95,6 +96,9 @@ let store = new Vuex.Store({
         objectsTrackerState(state, value) {
             state.objectsTrackerState = value;
         },
+        redrawFrame(state, value) {
+            state.redrawFrame = value;
+        },
     },
     actions: {
         setDuration(context, duration) {
@@ -103,24 +107,7 @@ let store = new Vuex.Store({
         },
         updateFramesRange(context, framesRange) {
             context.commit('framesRange', framesRange);
-            let objectsLoaded = context.state.model.objects;
-            let i = 0;
-            for(object of objectsLoaded) {
-                if ((object.startFrame >= framesRange.first)) {
-                    let annotatedObject = new AnnotatedObject();
-                    annotatedObject.idObject = i++;
-                    annotatedObject.name = object.name;
-                    annotatedObject.idFrame = object.idFrame;
-                    annotatedObject.frame = object.frame;
-                    annotatedObject.idFE = object.idFE;
-                    annotatedObject.fe = object.fe;
-                    annotatedObject.color = object.color;
-                    annotatedObject.startFrame = object.startFrame;
-                    annotatedObject.endFrame = object.endFrame;
-                    context.state.objectsTracker.annotatedObjects.push(annotatedObject);
-                }
-            }
-            context.commit('objectsTrackerState', 'dirty');
+
         },
         objectsTrackerInit(context) {
             context.commit('objectsTracker', new AnnotatedObjectsTracker(context.state.framesManager));
@@ -135,6 +122,10 @@ let store = new Vuex.Store({
             context.commit('objectsTrackerState', 'dirty');
             console.log('new Object');
         },
+        objectsTrackerPush(context, annotatedObject) { // use to loaded objects
+            //annotatedObject.idObject = context.state.objectsTracker.annotatedObjects.length;
+            context.state.objectsTracker.annotatedObjects.push(annotatedObject);
+        },
         objectsTrackerClearAll(context) {
             console.log(context.objectsTracker);
             for (let i = 0; i < context.state.objectsTracker.annotatedObjects.length; i++) {
@@ -148,11 +139,18 @@ let store = new Vuex.Store({
             context.commit('objectsTrackerState', 'dirty');
         },
         selectObject(context, idObject) {
-            let annotatedObject = context.getters.annotatedObject(idObject);
-            if (annotatedObject) {
-                context.commit('currentObject', annotatedObject)
-                context.commit('idObjectSelected', idObject)
-                context.commit('currentObjectState', 'selected')
+            let idObjectSelected = context.state.idObjectSelected;
+            if (idObject == idObjectSelected) {
+                context.commit('currentObjectState', 'unselected');
+                context.commit('currentObject', null);
+                context.commit('idObjectSelected', -1);
+            } else {
+                let annotatedObject = context.getters.annotatedObject(idObject);
+                if (annotatedObject) {
+                    context.commit('currentObject', annotatedObject);
+                    context.commit('idObjectSelected', idObject);
+                    context.commit('currentObjectState', 'selected');
+                }
             }
         },
         updateObject(context, updatedObject) {
@@ -182,6 +180,45 @@ let store = new Vuex.Store({
                 context.commit('currentObject', null)
                 context.commit('idObjectSelected', -1)
                 context.commit('currentObjectState', 'none')
+                context.commit('objectsTrackerState', 'dirty');
+            }
+        },
+        objectBlocked(context) {
+            let idObject = context.state.idObjectSelected;
+            let annotatedObject = context.getters.annotatedObject(idObject);
+            if (annotatedObject) {
+                let frame = annotatedObject.get(context.state.currentFrame);
+                if (frame) {
+                    if (!frame.blocked) {
+                        frame.blocked = true;
+                        frame.isGroundTruth = true;
+                        console.log(frame);
+                        context.commit('redrawFrame', true)
+                    }
+                }
+            }
+        },
+        objectVisible(context) {
+            let idObject = context.state.idObjectSelected;
+            let annotatedObject = context.getters.annotatedObject(idObject);
+            if (annotatedObject) {
+                let frame = annotatedObject.get(context.state.currentFrame);
+                if (frame) {
+                    if (frame.blocked) {
+                        frame.blocked = false;
+                        frame.isGroundTruth = true;
+                        console.log(frame);
+                        context.commit('redrawFrame', true)
+                    }
+                }
+            }
+        },
+        clearObject(context) {
+            let idObject = context.state.idObjectSelected;
+            let annotatedObject = context.getters.annotatedObject(idObject);
+            if (annotatedObject) {
+                annotatedObject.removeFrame(context.state.currentFrame);
+                context.commit('currentObjectState', 'cleared');
                 context.commit('objectsTrackerState', 'dirty');
             }
         },

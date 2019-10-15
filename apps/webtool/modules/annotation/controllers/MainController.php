@@ -374,8 +374,9 @@ class MainController extends MController
         $this->data->idAnnotationSet = $annotationSetMM->getIdAnnotationSet();
         $this->data->documentMM = json_encode($annotationSetMM->getDocumentData());
         $objectMM = new \fnbr\models\ObjectMM();
-        $criteria = $objectMM->listByAnnotationSetMM($this->data->idAnnotationSetMM);
-        $this->data->objects = $objectMM->gridDataAsJSON($criteria, true);
+        //$criteria = $objectMM->listByAnnotationSetMM($this->data->idAnnotationSetMM);
+        //$this->data->objects = $objectMM->gridDataAsJSON($criteria, true);
+        $this->data->objects = $objectMM->getObjectsAsJSON($this->data->idAnnotationSetMM);
         mdump($this->data->objects);
         $this->data->swfPath = Manager::getBaseURL() . '/apps/webtool/public/scripts/jplayer/';
         $this->data->urlLookupFrame = Manager::getBaseURL() . '/index.php/webtool/data/frame/lookupData';

@@ -310,6 +310,7 @@ class OpticalFlow {
                     let newHeight = maxY - minY;
 
                     if (newWidth > 0 && newHeight > 0) {
+                        console.log('!!! changing box');
                         newBbox = new BoundingBox(minX, minY, newWidth, newHeight);
                     }
                 }
@@ -410,6 +411,16 @@ class AnnotatedObject {
         return null;
     }
 
+    removeFrame(frameNumber) {
+        for (let i = frameNumber; i < this.frames.length; i++) {
+            let currentFrame = this.frames[i];
+            if (currentFrame.frameNumber == frameNumber) {
+                this.frames.splice(i, 1);
+                return;
+            }
+        }
+    }
+
     removeFramesToBeRecomputedFrom(frameNumber) {
         let count = 0;
         for (let i = frameNumber; i < this.frames.length; i++) {
@@ -498,7 +509,7 @@ class AnnotatedObjectsTracker {
                         let annotatedObject = this.annotatedObjects[i];
                         //console.log('track object ' + annotatedObject.idObject + '  frameNumber = ' + frameNumber)
                         let annotatedFrame = annotatedObject.get(frameNumber);
-                        console.log(annotatedFrame);
+                        //console.log(annotatedFrame);
                         if (annotatedFrame == null) {
                             annotatedFrame = annotatedObject.get(frameNumber - 1);
                             if (annotatedFrame == null) {

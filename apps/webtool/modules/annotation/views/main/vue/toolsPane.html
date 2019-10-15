@@ -21,12 +21,25 @@
                 onEndObject() {
                     if (this.currentState == 'paused') {
                         let currentObject = this.$store.state.currentObject;
-                        console.log(currentObject);
                         let currentState = this.$store.state.currentObjectState;
-                        console.log(currentState);
                         if (currentState == 'selected') {
                             this.$store.dispatch('endObject');
                         }
+                    }
+                },
+                onObjectBlocked() {
+                    if (this.currentState == 'paused') {
+                        this.$store.dispatch('objectBlocked');
+                    }
+                },
+                onObjectVisible() {
+                    if (this.currentState == 'paused') {
+                        this.$store.dispatch('objectVisible');
+                    }
+                },
+                onClearObject() {
+                    if (this.currentState == 'paused') {
+                        this.$store.dispatch('clearObject');
                     }
                 },
             },
@@ -44,9 +57,12 @@
 </script>
 
 <script type="text/x-template" id="tools-pane">
-    <div>
+    <div id="toolsPaneContainer">
         <LinkButton id="btnNewObject" iconCls="far fa-square" @click="onNewObject">New Object</LinkButton>
         <LinkButton id="btnEndObject" iconCls="far fa-square" @click="onEndObject">End Object</LinkButton>
+        <LinkButton id="btnObjectBlocked" iconCls="far fa-square" @click="onObjectBlocked">Object Blocked</LinkButton>
+        <LinkButton id="btnObjectVisible" iconCls="far fa-square" @click="onObjectVisible">Object Visible</LinkButton>
+        <LinkButton id="btnClearObject" iconCls="far fa-square" @click="onClearObject">Clear Object</LinkButton>
     </div>
 </script>
 
