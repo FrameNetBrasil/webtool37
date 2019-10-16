@@ -125,6 +125,8 @@
                     console.log(annotatedObject);
                     annotatedObject.name = '';
                     annotatedObject.visible = true;
+                    annotatedObject.hidden = false;
+                    annotatedObject.locked = false;
                     annotatedObject.idFrame = -1;
                     annotatedObject.frame = '';
                     annotatedObject.idFE = -1;
@@ -252,37 +254,41 @@
                             for (let i = 0; i < frameWithObjects.objects.length; i++) {
                                 let object = frameWithObjects.objects[i];
                                 let annotatedObject = object.annotatedObject;
-                                let annotatedFrame = object.annotatedFrame;
-                                if (annotatedFrame.isVisible()) {
-                                //if ((annotatedFrame.isVisible()) && (frameNumber >= annotatedObject.startFrame) && (frameNumber <= annotatedObject.endFrame)) {
-                                    console.log(annotatedFrame.blocked);
-                                    let scaledBox = this.toScaledCoord(annotatedFrame.bbox.x, annotatedFrame.bbox.y, annotatedFrame.bbox.width, annotatedFrame.bbox.height);
-                                    annotatedObject.dom.style.display = 'block';
-                                    annotatedObject.dom.style.width = scaledBox.width + 'px';
-                                    annotatedObject.dom.style.height = scaledBox.height + 'px';
-                                    annotatedObject.dom.style.left = scaledBox.x + 'px';
-                                    annotatedObject.dom.style.top = scaledBox.y + 'px';
-                                    annotatedObject.dom.style.borderStyle = 'solid';
-                                    annotatedObject.dom.style.borderColor = annotatedObject.color;
-                                    annotatedObject.dom.style.backgroundColor = 'transparent';
-                                    annotatedObject.dom.style.opacity = 1;
-                                    annotatedObject.visible = true;
-                                    if (currentObject) {
-                                        if (annotatedObject.idObject == currentObject.idObject) {
-                                            if (currentState == 'selected') {
-                                                annotatedObject.dom.style.backgroundColor = annotatedObject.color;
-                                                annotatedObject.dom.style.opacity = 0.5;
+                                if (annotatedObject.hidden) {
+                                    annotatedObject.dom.style.display = 'none';
+                                } else {
+                                    let annotatedFrame = object.annotatedFrame;
+                                    if (annotatedFrame.isVisible()) {
+                                        //if ((annotatedFrame.isVisible()) && (frameNumber >= annotatedObject.startFrame) && (frameNumber <= annotatedObject.endFrame)) {
+                                        //console.log(annotatedFrame.blocked);
+                                        let scaledBox = this.toScaledCoord(annotatedFrame.bbox.x, annotatedFrame.bbox.y, annotatedFrame.bbox.width, annotatedFrame.bbox.height);
+                                        annotatedObject.dom.style.display = 'block';
+                                        annotatedObject.dom.style.width = scaledBox.width + 'px';
+                                        annotatedObject.dom.style.height = scaledBox.height + 'px';
+                                        annotatedObject.dom.style.left = scaledBox.x + 'px';
+                                        annotatedObject.dom.style.top = scaledBox.y + 'px';
+                                        annotatedObject.dom.style.borderStyle = 'solid';
+                                        annotatedObject.dom.style.borderColor = annotatedObject.color;
+                                        annotatedObject.dom.style.backgroundColor = 'transparent';
+                                        annotatedObject.dom.style.opacity = 1;
+                                        annotatedObject.visible = true;
+                                        if (currentObject) {
+                                            if (annotatedObject.idObject == currentObject.idObject) {
+                                                if (currentState == 'selected') {
+                                                    annotatedObject.dom.style.backgroundColor = annotatedObject.color;
+                                                    annotatedObject.dom.style.opacity = 0.5;
+                                                }
                                             }
                                         }
+                                        if (annotatedFrame.blocked) {
+                                            annotatedObject.dom.style.opacity = 0.5;
+                                            annotatedObject.dom.style.backgroundColor = 'white';
+                                            annotatedObject.dom.style.borderStyle = 'dashed';
+                                        }
+                                    } else {
+                                        annotatedObject.dom.style.display = 'none';
+                                        annotatedObject.visible = false;
                                     }
-                                    if (annotatedFrame.blocked) {
-                                        annotatedObject.dom.style.opacity = 0.5;
-                                        annotatedObject.dom.style.backgroundColor = 'white';
-                                        annotatedObject.dom.style.borderStyle = 'dashed';
-                                    }
-                                } else {
-                                    annotatedObject.dom.style.display = 'none';
-                                    annotatedObject.visible = false;
                                 }
                             }
                             that.$store.commit('redrawFrame', false);
@@ -358,6 +364,8 @@
                             annotatedObject.idFE = parseInt(object.idFE);
                             annotatedObject.fe = object.fe;
                             annotatedObject.color = '#' + object.color;
+                            annotatedObject.hidden = false;
+                            annotatedObject.locked = false;
                             annotatedObject.startFrame = parseInt(object.startFrame);
                             annotatedObject.endFrame = parseInt(object.endFrame);
                             annotatedObject.dom = this.newBboxElement();
@@ -592,7 +600,7 @@
                 <controls-pane></controls-pane>
             </div>
         </div>
-        <div id="toolsPane" style="padding:8px">
+        <div id="toolsPane">
             <tools-pane
                     v-on:newObjectClick="onNewObjectClick"
             ></tools-pane>

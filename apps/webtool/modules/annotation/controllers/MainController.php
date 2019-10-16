@@ -421,7 +421,7 @@ class MainController extends MController
         try {
             $objectMM = new \fnbr\models\ObjectMM();
             $objectMM->putObjects(json_decode($this->data->dataObjects));
-            $this->renderPrompt('information', 'ok');
+            $this->renderPrompt('information', 'Objects saved!');
         } catch (\Exception $e) {
             $this->renderPrompt('error', $e->getMessage());
         }

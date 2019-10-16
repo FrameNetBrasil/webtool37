@@ -350,7 +350,6 @@ class AnnotatedFrame {
         this.frameNumber = frameNumber;
         this.bbox = bbox;
         this.isGroundTruth = isGroundTruth;
-        this.hidden = false;
         this.blocked = false;
     }
 
@@ -366,8 +365,9 @@ class AnnotatedObject {
     constructor() {
         this.frames = [];
         this.name = '';
-        //this.visible = true;
-        //this.hide = false;
+        this.visible = true;
+        this.hidden = false;
+        this.locked = false;
         this.idFrame = -1;
         this.frame = '';
         this.idFE = -1;

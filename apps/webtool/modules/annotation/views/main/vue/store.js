@@ -153,6 +153,21 @@ let store = new Vuex.Store({
                 }
             }
         },
+        lockObject(context, idObject) {
+                let annotatedObject = context.getters.annotatedObject(idObject);
+                if (annotatedObject) {
+                    annotatedObject.locked = !annotatedObject.locked;
+                    context.commit('objectsTrackerState', 'dirty');
+                }
+        },
+        hideObject(context, idObject) {
+            let annotatedObject = context.getters.annotatedObject(idObject);
+            if (annotatedObject) {
+                annotatedObject.hidden = !annotatedObject.hidden;
+                context.commit('redrawFrame', true)
+                context.commit('objectsTrackerState', 'dirty');
+            }
+        },
         updateObject(context, updatedObject) {
             let idObject = updatedObject.idObject;
             console.log('updating ' + idObject);

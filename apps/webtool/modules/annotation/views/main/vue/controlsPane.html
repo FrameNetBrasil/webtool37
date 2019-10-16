@@ -42,6 +42,14 @@
                         }
                     }
                 },
+                onBeginningClick() {
+                    if (this.currentState == 'paused') {
+                        if (this.slider.value > this.slider.min) {
+                            this.slider.value = this.slider.min;
+                            this.$store.commit('currentFrame', this.slider.value);
+                        }
+                    }
+                },
                 onPlayClick() {
                     if (this.currentState == 'paused') {
                         this.$store.commit('currentState', 'playing');
@@ -91,6 +99,7 @@
     <div>
         <div id="jp_container_1" role="application" aria-label="media player" style="text-align:left">
             <div id="controls">
+                <LinkButton id="btnBeginning" :plain="true" :selected="true" @click="onBeginningClick"><i class="fas fa-fast-backward"></i></LinkButton>
                 <LinkButton id="btnBackward" :plain="true" :selected="true" @click="onBackwardClick"><i class="fas fa-step-backward"></i></LinkButton>
                 <LinkButton id="btnPlay" :plain="true"  @click="onPlayClick"><i class="fas fa-play"></i></LinkButton>
                 <LinkButton id="btnPause"  :plain="true" @click="onPauseClick"><i class="fas fa-pause"></i></LinkButton>

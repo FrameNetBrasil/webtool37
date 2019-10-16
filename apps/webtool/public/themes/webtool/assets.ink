@@ -16,6 +16,8 @@ scripts/jsplumb/jsplumbtoolkit-demo.css
 scripts/jquery-manager/jquery.manager.core.js
 scripts/fontawesome-free-5.0.9/svg-with-js/js/fontawesome-all.min.js
 scripts/fontawesome-free-5.0.9/svg-with-js/js/fa-v4-shims.min.js
+;scripts/fontawesome-free-5.11.2-web/js/fontawesome-all.min.js
+;scripts/fontawesome-free-5.11.2-web/js/v4-shims.min.js
 scripts/bootstrap-3.2.0-dist/js/bootstrap.min.js
 ;scripts/jquery-easyui-1.5.5.4/jquery.easyui.min.js
 scripts/jquery-easyui-1.5.2/jquery.easyui.min.js

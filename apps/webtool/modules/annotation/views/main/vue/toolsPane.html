@@ -4,6 +4,7 @@
             props: [],
             data() {
                 return {
+                    urlPutObjects: this.$store.state.model.urlPutObjects,
                     currentTime: 0,
                     currentFrame: 0,
                     currentState: 'paused'
@@ -42,6 +43,41 @@
                         this.$store.dispatch('clearObject');
                     }
                 },
+                onSave() {
+                    console.log('saving');
+                    let objects = this.$store.getters.allAnnotatedObjects;
+                    console.log(objects);
+                    let data = {
+                        idAnnotationSetMM: this.$store.state.model.idAnnotationSetMM,
+                        objects: []
+                    };
+                    for(object of objects) {
+                        let frames = [];
+                        for(frame of object.frames) {
+                            console.log(frame);
+                            if ((frame.isGroundTruth) && (frame.frameNumber <= object.endFrame)){
+                                frames.push({
+                                    frameNumber: frame.frameNumber,
+                                    x: frame.bbox.x,
+                                    y: frame.bbox.y,
+                                    width: frame.bbox.width,
+                                    height: frame.bbox.height,
+                                    blocked: frame.blocked ? 1 : 0,
+                                })
+                            }
+                        }
+                        data.objects.push({
+                            idFrameElement: object.idFE,
+                            startFrame: object.startFrame,
+                            endFrame: object.endFrame,
+                            name: object.name,
+                            frames: frames,
+                        })
+                    }
+                    $('#dataObjects').val(JSON.stringify(data));
+                    manager.doPostBack('formObjects');
+                },
+
             },
             mounted: function () {
                 this.$store.watch(
@@ -58,11 +94,20 @@
 
 <script type="text/x-template" id="tools-pane">
     <div id="toolsPaneContainer">
-        <LinkButton id="btnNewObject" iconCls="far fa-square" @click="onNewObject">New Object</LinkButton>
-        <LinkButton id="btnEndObject" iconCls="far fa-square" @click="onEndObject">End Object</LinkButton>
-        <LinkButton id="btnObjectBlocked" iconCls="far fa-square" @click="onObjectBlocked">Object Blocked</LinkButton>
-        <LinkButton id="btnObjectVisible" iconCls="far fa-square" @click="onObjectVisible">Object Visible</LinkButton>
+        <LinkButton id="btnNewObject" iconCls="fa16pxWhite fas fa-crop" :plain="true" @click="onNewObject"></LinkButton>
+        <LinkButton id="btnEndObject" iconCls="fa16pxWhite fas fa-unlink" :plain="true"  @click="onEndObject"></LinkButton>
+        <hr style="margin:8px"/>
+        <LinkButton id="btnObjectBlocked" iconCls="fa16pxWhite far fa-images" :plain="true" @click="onObjectBlocked"></LinkButton>
+        <LinkButton id="btnObjectVisible" iconCls="fa16pxWhite far fa-image" :plain="true" @click="onObjectVisible"></LinkButton>
+        <hr style="margin:8px"/>
+        <!--
         <LinkButton id="btnClearObject" iconCls="far fa-square" @click="onClearObject">Clear Object</LinkButton>
+        -->
+        <LinkButton id="btnSave" iconCls="fa16pxWhite fas fa-cloud-upload-alt" :plain="true" @click="onSave"></LinkButton>
+        <form id="formObjects" method="post" :action="urlPutObjects">
+            <input type="hidden" id="dataObjects" name="dataObjects" value=""/>
+        </form>
+
     </div>
 </script>
 

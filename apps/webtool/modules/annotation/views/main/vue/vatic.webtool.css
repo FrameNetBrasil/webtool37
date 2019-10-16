@@ -105,7 +105,68 @@
     cursor: e-resize;
 }
 
+#videoPane {
+    background: #263238;
+}
+#toolsPane {
+    padding: 0px 8px 8px 8px;
+}
+
 #toolsPaneContainer {
     display: flex;
     flex-direction: column;
+    background: #455A64;
+    border: 1px solid #546E7A;
+    box-sizing: border-box;
+    padding-top: 8px;
+}
+
+#toolsPaneContainer > * {
+    color:white;
+}
+
+#toolsPaneContainer l-btn {
+    color:white;
+}
+
+.fa16pxWhite {
+    font-size: 16px;
+    color:white;
+}
+
+.fa16pxWhite:hover {
+    font-size: 16px;
+    color:#263238;
+}
+
+#btnNewObject.l-btn-plain:hover {
+    background-color:#455A64;
+    border-color:#455A64;
+}
+
+#btnEndObject.l-btn-plain:hover {
+    background-color:#455A64;
+    border-color:#455A64;
+}
+#btnObjectBlocked.l-btn-plain:hover {
+    background-color:#455A64;
+    border-color:#455A64;
+}
+#btnObjectVisible.l-btn-plain:hover {
+    background-color:#455A64;
+    border-color:#455A64;
+}
+#btnSave.l-btn-plain:hover {
+    background-color:#455A64;
+    border-color:#455A64;
+}
+
+#toolsPaneContainer a {
+    width: 32px;
+    height:32px;
+}
+
+#gridPane {
+    width:416px;
+    padding:0px 8px 8px 0px;
 }
