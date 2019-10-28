@@ -10,7 +10,7 @@ let store = new Vuex.Store({
         objectsTracker: null,
         objectsTrackerState: 'clean', // dirty
         currentFrame: 0,
-        currentState: 'paused',
+        currentState: 'loading', // playing, paused, loading, loaded
         objects: [],
         currentObject: null,
         currentObjectState: 'none',// creating, created, selected,editingFE, editingBox, stopping, updated
@@ -126,6 +126,13 @@ let store = new Vuex.Store({
             //annotatedObject.idObject = context.state.objectsTracker.annotatedObjects.length;
             context.state.objectsTracker.annotatedObjects.push(annotatedObject);
         },
+        objectsTrackerClear(context, annotatedObject) {
+            for (let i = 0; i < context.state.objectsTracker.annotatedObjects.length; i++) {
+                if (context.state.objectsTracker.annotatedObjects[i].idObject == annotatedObject.idObject) {
+                    context.dispatch('clearAnnotatedObject', i);
+                }
+            }
+        },
         objectsTrackerClearAll(context) {
             console.log(context.objectsTracker);
             for (let i = 0; i < context.state.objectsTracker.annotatedObjects.length; i++) {
@@ -233,6 +240,15 @@ let store = new Vuex.Store({
             let annotatedObject = context.getters.annotatedObject(idObject);
             if (annotatedObject) {
                 annotatedObject.removeFrame(context.state.currentFrame);
+                context.commit('currentObjectState', 'cleared');
+                context.commit('objectsTrackerState', 'dirty');
+            }
+        },
+        deleteObject(context) {
+            let idObject = context.state.idObjectSelected;
+            let annotatedObject = context.getters.annotatedObject(idObject);
+            if (annotatedObject) {
+                context.dispatch('objectsTrackerClear', annotatedObject);
                 context.commit('currentObjectState', 'cleared');
                 context.commit('objectsTrackerState', 'dirty');
             }

@@ -43,10 +43,23 @@
                         this.$store.dispatch('clearObject');
                     }
                 },
+                onObjectEdit() {
+                    if (this.currentState == 'paused') {
+                        let currentState = this.$store.state.currentObjectState;
+                        if (currentState == 'selected') {
+                            this.$store.commit('currentObjectState', 'editingFE');
+                        }
+                    }
+                },
+                onObjectDelete() {
+                    if (this.currentState == 'paused') {
+                        this.$store.dispatch('deleteObject');
+                    }
+                },
                 onSave() {
                     console.log('saving');
                     let objects = this.$store.getters.allAnnotatedObjects;
-                    console.log(objects);
+                    // console.log(objects);
                     let data = {
                         idAnnotationSetMM: this.$store.state.model.idAnnotationSetMM,
                         objects: []
@@ -80,12 +93,16 @@
 
             },
             mounted: function () {
+                this.currentState = this.$store.state.currentState;
                 this.$store.watch(
                     (state, getters) => getters.currentState,
                     (currentState) => {
                         this.currentState = currentState;
                     }
                 )
+                console.log('=========== tools pane current state = ' + this.currentState);
+
+
             },
             watch: {}
         }
@@ -93,17 +110,20 @@
 </script>
 
 <script type="text/x-template" id="tools-pane">
-    <div id="toolsPaneContainer">
-        <LinkButton id="btnNewObject" iconCls="fa16pxWhite fas fa-crop" :plain="true" @click="onNewObject"></LinkButton>
-        <LinkButton id="btnEndObject" iconCls="fa16pxWhite fas fa-unlink" :plain="true"  @click="onEndObject"></LinkButton>
+    <div v-if="(currentState != 'loading')" id="toolsPaneContainer">
+        <LinkButton id="btnNewObject" iconCls="fa16pxWhite fas fa-crop" :plain="true" @click="onNewObject" title="New Object"></LinkButton>
+        <LinkButton id="btnEndObject" iconCls="fa16pxWhite fas fa-unlink" :plain="true"  @click="onEndObject" title="End Object"></LinkButton>
         <hr style="margin:8px"/>
-        <LinkButton id="btnObjectBlocked" iconCls="fa16pxWhite far fa-images" :plain="true" @click="onObjectBlocked"></LinkButton>
-        <LinkButton id="btnObjectVisible" iconCls="fa16pxWhite far fa-image" :plain="true" @click="onObjectVisible"></LinkButton>
+        <LinkButton id="btnObjectEdit" iconCls="fa16pxWhite fas fa-edit" :plain="true" @click="onObjectEdit" title="Edit FE"></LinkButton>
+        <LinkButton id="btnObjectDelete" iconCls="fa16pxWhite fas fa-trash-alt" :plain="true" @click="onObjectDelete" title="Delete Object"></LinkButton>
+        <hr style="margin:8px"/>
+        <LinkButton id="btnObjectBlocked" iconCls="fa16pxWhite far fa-images" :plain="true" @click="onObjectBlocked" title="Blocked"></LinkButton>
+        <LinkButton id="btnObjectVisible" iconCls="fa16pxWhite far fa-image" :plain="true" @click="onObjectVisible" title="Visible"></LinkButton>
         <hr style="margin:8px"/>
         <!--
         <LinkButton id="btnClearObject" iconCls="far fa-square" @click="onClearObject">Clear Object</LinkButton>
         -->
-        <LinkButton id="btnSave" iconCls="fa16pxWhite fas fa-cloud-upload-alt" :plain="true" @click="onSave"></LinkButton>
+        <LinkButton id="btnSave" iconCls="fa16pxWhite fas fa-cloud-upload-alt" :plain="true" @click="onSave" title="Save"></LinkButton>
         <form id="formObjects" method="post" :action="urlPutObjects">
             <input type="hidden" id="dataObjects" name="dataObjects" value=""/>
         </form>

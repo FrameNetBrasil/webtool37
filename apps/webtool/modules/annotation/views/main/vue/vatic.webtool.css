@@ -31,10 +31,10 @@
     background-color:black;
 }
 
-#sliderVideo {
-    display:inline-block;
+#sliderContainer {
+    //display:inline-block;
     width: 100%;
-    padding: 5px 16px 5px 8px;
+    padding: 5px 16px 5px 16px;
 }
 
 .bbox {
@@ -108,6 +108,7 @@
 #videoPane {
     background: #263238;
 }
+
 #toolsPane {
     padding: 0px 8px 8px 8px;
 }
@@ -157,6 +158,16 @@
     border-color:#455A64;
 }
 #btnSave.l-btn-plain:hover {
+    background-color:#455A64;
+    border-color:#455A64;
+}
+
+#btnObjectEdit.l-btn-plain:hover {
+    background-color:#455A64;
+    border-color:#455A64;
+}
+
+#btnObjectDelete.l-btn-plain:hover {
     background-color:#455A64;
     border-color:#455A64;
 }

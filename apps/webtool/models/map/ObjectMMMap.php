@@ -25,6 +25,7 @@ class ObjectMMMap extends \MBusinessModel {
                 'name' => array('column' => 'name','type' => 'string'),
                 'startFrame' => array('column' => 'startFrame','type' => 'integer'),
                 'endFrame' => array('column' => 'endFrame','type' => 'integer'),
+                'status' => array('column' => 'status','type' => 'integer'),
                 'idAnnotationSetMM' => array('column' => 'idAnnotationSetMM','type' => 'integer'),
                 'idFrameElement' => array('column' => 'idFrameElement','type' => 'integer'),
             ),
@@ -32,6 +33,7 @@ class ObjectMMMap extends \MBusinessModel {
                 'annotationsetmm' => array('toClass' => 'fnbr\models\AnnotationSetMM', 'cardinality' => 'oneToOne' , 'keys' => 'idAnnotationSetMM:idAnnotationSetMM'),
                 'frameelement' => array('toClass' => 'fnbr\models\FrameElement', 'cardinality' => 'oneToOne' , 'keys' => 'idFrameElement:idFrameElement'),
                 'objectframes' => array('toClass' => 'fnbr\models\ObjectFrameMM', 'cardinality' => 'oneToMany' , 'keys' => 'idObjectMM:idObjectMM'),
+                'viewframeelement' => array('toClass' => 'fnbr\models\ViewFrameElement', 'cardinality' => 'oneToOne' , 'keys' => 'idFrameElement:idFrameElement'),
             )
         );
     }
@@ -107,6 +109,14 @@ class ObjectMMMap extends \MBusinessModel {
 
     public function setEndFrame($value) {
         $this->endFrame = $value;
+    }
+
+    public function getStatus() {
+        return $this->status;
+    }
+
+    public function setStatus($value) {
+        $this->status = $value;
     }
 
     public function getIdAnnotationSetMM() {

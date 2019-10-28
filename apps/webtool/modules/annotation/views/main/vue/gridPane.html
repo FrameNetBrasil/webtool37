@@ -5,6 +5,7 @@
             data() {
                 return {
                     fieldClicked: '',
+                    currentState: '',
                 }
             },
             computed: {
@@ -99,6 +100,19 @@
                         field: 'endFrame',
                         title: 'End',
                     },
+                    {
+                        field: 'status',
+                        width: 24,
+                        title: '<i class="fas fa-info"></i>',
+                        formatter: function (value, row, index) {
+                            console.log(row);
+                            if ((row.idFE != null) && (row.idFE != -1)) {
+                                return "<i style='color:green' class='fas fa-check'></i>";
+                            } else {
+                                return "<i style='color:gold' class='fas fa-exclamation-triangle'></i>";
+                            }
+                        },
+                    },
                 ];
                 $('#gridObjects').datagrid({
                     data: [],
@@ -127,6 +141,14 @@
                         return false;
                     },
                 });
+                this.currentState = this.$store.state.currentState;
+                console.log('*** grid current state = ' + this.currentState);
+                this.$store.watch(
+                    (state, getters) => getters.currentState,
+                    (currentState) => {
+                        this.currentState = currentState;
+                    }
+                )
             },
             methods: {
                 updateObjects() {

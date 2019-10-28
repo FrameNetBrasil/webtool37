@@ -65,6 +65,11 @@ class ObjectFrameMMMap extends \MBusinessModel {
      *
      * @var string
      */
+    protected $status;
+    /**
+     *
+     * @var string
+     */
     protected $idObjectMM;
 
     /**

@@ -7,6 +7,7 @@
                     title: 'Visual Annotation',
                     videoTitle: this.$store.state.model.documentMM.videoTitle,
                     segments: this.$store.state.model.segments,
+                    currentState: this.$store.state.currentState,
                     currentSegment: 0,
                     currentScale: 50,
                     player: null,
@@ -28,7 +29,6 @@
             },
             mounted() {
 
-
                 let that = this;
                 $('#segments').combobox({
                     value: this.currentSegment,
@@ -37,6 +37,14 @@
                         that.changeSegment(value);
                     }
                 })
+                this.currentState = this.$store.state.currentState;
+                this.$store.watch(
+                    (state, getters) => getters.currentState,
+                    (currentState) => {
+                        this.currentState = currentState;
+                    }
+                )
+                console.log('=========== visual pane current state = ' + this.currentState);
             },
             methods: {
                 changeSegment(value) {
@@ -47,28 +55,6 @@
                     console.log('scale changed to ' + value);
                     this.currentScale = value;
                 },
-
-                onCreatedNewObject(objectsTracker, newObject) {
-                    //console.log('new Object');
-                    //console.log(objectsTracker);
-                    //this.objects = [];
-                    //for (object of objectsTracker.annotatedObjects) {
-                    //    this.objects.push(object)
-                    //}
-                    //this.object = newObject;
-                    //this.reDrawFrame = false;
-                    //this.updateGrid = false;
-                },
-                onUpdatedObject(objectUpdated) {
-                    //console.log(object);
-                    //this.reDrawFrame = true;
-                    //for (var i = 0; i < this.objects.length; i++) {
-                    //    if (this.objects[i].idObject == objectUpdated.idObject) {
-                    //        this.objects[i] = objectUpdated;
-                    //    }
-                    //}
-                    //this.updateGrid = true;
-                }
             },
         }
     );
@@ -97,7 +83,6 @@
             <div id="gridPane">
                 <grid-pane></grid-pane>
             </div>
-        </div>
         </div>
     </Panel>
 </script>

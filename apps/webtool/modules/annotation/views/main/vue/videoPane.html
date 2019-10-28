@@ -25,6 +25,7 @@
                         height: 0
                     },
                     tempAnnotatedObject: null,
+                    currentState: '',
                     currentTime: 0,
                     firstFrame: 0,
                     lastFrame: 0,
@@ -67,7 +68,10 @@
                                 this.timeout = setTimeout(() => this.nextFrame(), 1000 / (this.config.fps * parseFloat(this.config.playbackRate)));
                             });
                         } else {
-                            this.drawFrame(this.currentFrame);
+                            let currentState = this.$store.state.currentState;
+                            if (currentState != 'dragging') {
+                                this.drawFrame(this.currentFrame);
+                            }
                         }
                     }
                 )
@@ -110,6 +114,14 @@
                         }
                     }
                 )
+                this.currentState = this.$store.state.currentState;
+                this.$store.watch(
+                    (state, getters) => getters.currentState,
+                    (currentState) => {
+                        this.currentState = currentState;
+                    }
+                )
+
                 this.$nextTick(() => {
                     this.extractionFileZip();
                 });
@@ -141,7 +153,8 @@
                     this.isPlaying = false;
                     this.isReady = false;
                     this.clearAllAnnotatedObjects();
-                    this.$store.commit('currentState', 'paused');
+                    //this.$store.commit('currentState', 'paused');
+                    this.$store.commit('currentState', 'loading');
                 },
                 ready: function () {
                     this.isReady = true;
@@ -315,6 +328,7 @@
                     this.$store.dispatch('updateFramesRange', this.framesRange);
                 },
                 extractionFileZip: function () {
+                    this.$store.commit('currentState', 'loading');
                     this.initialize();
                     let promise;
                     let zip = null;
@@ -344,6 +358,8 @@
                                     this.ready();
                                     this.framesLoaded(this.firstFrame, this.lastFrame);
                                     this.loadObjects();
+                                    this.$store.commit('currentState', 'loaded');
+
                                 });
                             });
                         }
@@ -359,11 +375,11 @@
                             let annotatedObject = new AnnotatedObject();
                             annotatedObject.idObject = i++;
                             annotatedObject.name = object.name;
-                            annotatedObject.idFrame = parseInt(object.idFrame);
+                            annotatedObject.idFrame = object.idFrame ? parseInt(object.idFrame) : null;
                             annotatedObject.frame = object.frame;
-                            annotatedObject.idFE = parseInt(object.idFE);
+                            annotatedObject.idFE = object.idFE ? parseInt(object.idFE) : null;
                             annotatedObject.fe = object.fe;
-                            annotatedObject.color = '#' + object.color;
+                            annotatedObject.color = object.idFE ?  '#' + object.color : 'white';
                             annotatedObject.hidden = false;
                             annotatedObject.locked = false;
                             annotatedObject.startFrame = parseInt(object.startFrame);
@@ -591,12 +607,14 @@
 </script>
 
 <script type="text/x-template" id="video-pane">
-    <div style="display:flex; flex-direction: row;padding-left: 16px; width:auto">
+    <div  style="display:flex; flex-direction: row;padding-left: 16px; width:auto">
         <div ref="videoPaneContainer" id="videoPaneContainer">
             <div ref="doodle" id="doodle" @mousemove="onMouseMove" @click="onMouseClick">
-                <canvas ref="canvas" id="canvas"></canvas>
+                <div v-if="(currentState == 'loading')">Loading...</div>
+                <canvas ref="canvas" id="canvas">
+                </canvas>
             </div>
-            <div id="controlsPane" style="margin-bottom: 32px">
+            <div v-if="(currentState != 'loading')" id="controlsPane" style="margin-bottom: 32px">
                 <controls-pane></controls-pane>
             </div>
         </div>
