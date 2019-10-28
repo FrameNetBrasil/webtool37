@@ -358,7 +358,8 @@
                                     this.ready();
                                     this.framesLoaded(this.firstFrame, this.lastFrame);
                                     this.loadObjects();
-                                    this.$store.commit('currentState', 'loaded');
+                                    //this.$store.commit('currentState', 'loaded');
+                                    this.$store.commit('currentState', 'paused');
 
                                 });
                             });
@@ -610,11 +611,10 @@
     <div  style="display:flex; flex-direction: row;padding-left: 16px; width:auto">
         <div ref="videoPaneContainer" id="videoPaneContainer">
             <div ref="doodle" id="doodle" @mousemove="onMouseMove" @click="onMouseClick">
-                <div v-if="(currentState == 'loading')">Loading...</div>
                 <canvas ref="canvas" id="canvas">
                 </canvas>
             </div>
-            <div v-if="(currentState != 'loading')" id="controlsPane" style="margin-bottom: 32px">
+            <div id="controlsPane" style="margin-bottom: 32px">
                 <controls-pane></controls-pane>
             </div>
         </div>
