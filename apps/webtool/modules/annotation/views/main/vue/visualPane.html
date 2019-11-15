@@ -41,10 +41,34 @@
                 this.$store.watch(
                     (state, getters) => getters.currentState,
                     (currentState) => {
+                        console.log('changed state to ' + currentState)
                         this.currentState = currentState;
                     }
                 )
                 console.log('=========== visual pane current state = ' + this.currentState);
+                this.$nextTick(() => {
+                    console.log('visual pane mounted');
+                    $("#jquery_jplayer_1").jPlayer({
+                        ready: function () {
+                            console.log('jplayer ready');
+                            $(this).jPlayer("setMedia", {
+                                title: "Bubble",
+                                m4a: "http://127.0.0.1/webtool/apps/webtool/files/multimodal/audio/PedroPeloMundo_Se01_Ep06_Bl01_Par01.mp4"
+                            });
+                        },
+                        cssSelectorAncestor: "#jp_container",
+                        swfPath: "/js",
+                        supplied: "m4a",
+                        useStateClassSkin: false,
+                        autoBlur: false,
+                        smoothPlayBar: false,
+                        keyEnabled: false,
+                        remainingDuration: false,
+                        toggleDuration: false
+                    });
+                })
+
+
             },
             methods: {
                 changeSegment(value) {
@@ -67,10 +91,11 @@
             <h3 style="color:white">{{videoTitle}}</h3>
             <input id="segments"></input>
         </div>
-        <div style="display:flex; flex-direction: row; height: 100%; width: 100%;align-items: flex-start;background-color:#263238;">
+        <div v-if="currentState != 'initing'"  style="display:flex; flex-direction: row; height: 100%; width: 100%;align-items: flex-start;background-color:#263238;">
             <div id="scalePane" style="width:60px; color:white">
                 <scale-pane @scaleChanged="onScaleChanged"></scale-pane>
             </div>
+            <div id="jquery_jplayer_1" class="jp-jplayer"></div>
             <div id="videoPane" style="display:flex; flex-direction: column;padding-left: 16px; width:auto">
                 <video-pane
                         :segment="currentSegment"

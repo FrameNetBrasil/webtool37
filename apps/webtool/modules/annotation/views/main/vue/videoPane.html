@@ -34,14 +34,16 @@
                     isPlaying: false,
                     isReady: false,
                     timeout: null,
+                    showControls: false,
                     ctx: null,
+                    timeInterval: 0.0,
                     config: {
                         // Should be higher than real FPS to not skip real frames
                         // Hardcoded due to JS limitations
                         fps: 30,
 
                         // Low rate decreases the chance of losing frames with poor browser performances
-                        playbackRate: 0.4,
+                        playbackRate: 1.5,//0.4,
 
                         // Format of the extracted frames
                         imageMimeType: 'image/jpeg',
@@ -58,14 +60,17 @@
                 this.$store.dispatch('objectsTrackerInit');
             },
             mounted() {
+                this.timeInterval = 1000 / (this.config.fps * parseFloat(this.config.playbackRate));
+                console.log('=====' + this.timeInterval);
                 this.ctx = this.$refs.canvas.getContext('2d');
+                this.showControls;
                 this.$store.watch(
                     (state, getters) => getters.currentFrame,
                     (currentFrame) => {
                         this.currentFrame = currentFrame;
                         if (this.isPlaying) {
                             this.drawFrame(currentFrame).then(() => {
-                                this.timeout = setTimeout(() => this.nextFrame(), 1000 / (this.config.fps * parseFloat(this.config.playbackRate)));
+                                this.timeout = setTimeout(() => this.nextFrame(), this.timeInterval);
                             });
                         } else {
                             let currentState = this.$store.state.currentState;
@@ -190,6 +195,8 @@
                     }
                     this.isPlaying = true;
                     this.$store.commit('currentState', 'playing');
+                    console.log('playing');
+                    $("#jquery_jplayer_1").jPlayer('play', (this.currentFrame / 30));
                     this.nextFrame();
                 },
                 pause: function () {
@@ -199,6 +206,7 @@
 
                     this.isPlaying = false;
                     this.$store.commit('currentState', 'paused');
+                    $("#jquery_jplayer_1").jPlayer('pause');
                     if (this.timeout != null) {
                         clearTimeout(this.timeout);
                         this.timeout = null;
@@ -344,6 +352,7 @@
                         this.currentFrame = this.firstFrame;
                         if (frames.totalFrames() > 0) {
                             frames.getFrame(this.firstFrame).then((blob) => {
+                                this.showControls = true;
                                 blobToImage(blob).then((img) => {
                                     this.originalDimensions = {
                                         width: img.width,
@@ -615,11 +624,14 @@
                 </canvas>
             </div>
             <div id="controlsPane" style="margin-bottom: 32px">
-                <controls-pane></controls-pane>
+                <controls-pane v-if="showControls"></controls-pane>
+            </div>
+            <div id="jp_container">
+                <div class="jp-current-time" role="timer" aria-label="time" style="color:white;fonte-size:1em">&nbsp;</div>
             </div>
         </div>
         <div id="toolsPane">
-            <tools-pane
+            <tools-pane  v-if="showControls"
                     v-on:newObjectClick="onNewObjectClick"
             ></tools-pane>
         </div>
