@@ -20,6 +20,8 @@ let store = new Vuex.Store({
         framesRange: {},
         annotatedObject: null,
         redrawFrame: false,
+        videoLoaded: false,
+        zipLoaded: false,
     },
     getters: {
         currentFrame(state) {
@@ -54,6 +56,9 @@ let store = new Vuex.Store({
         },
         allAnnotatedObjects(state) {
             return state.objectsTracker.annotatedObjects;
+        },
+        allLoaded(state) {
+            return state.videoLoaded && state.zipLoaded;
         }
     },
     mutations: {
@@ -99,6 +104,12 @@ let store = new Vuex.Store({
         redrawFrame(state, value) {
             state.redrawFrame = value;
         },
+        videoLoaded(state, value) {
+            state.videoLoaded = true;
+        },
+        zipLoaded(state, value) {
+            state.zipLoaded = true;
+        },
     },
     actions: {
         setDuration(context, duration) {
@@ -114,8 +125,8 @@ let store = new Vuex.Store({
             console.log('objectsTrackerInit ok')
         },
         objectsTrackerAdd(context, annotatedObject) {
-            annotatedObject.idObject = context.state.objectsTracker.annotatedObjects.length;
-            context.state.objectsTracker.annotatedObjects.push(annotatedObject);
+            annotatedObject.idObject = context.state.objectsTracker.getLength();
+            context.state.objectsTracker.add(annotatedObject);
             context.commit('currentObject',annotatedObject);
             context.commit('idObjectSelected',annotatedObject.idObject);
             context.commit('currentObjectState', 'created');
@@ -124,25 +135,19 @@ let store = new Vuex.Store({
         },
         objectsTrackerPush(context, annotatedObject) { // use to loaded objects
             //annotatedObject.idObject = context.state.objectsTracker.annotatedObjects.length;
-            context.state.objectsTracker.annotatedObjects.push(annotatedObject);
+            context.state.objectsTracker.add(annotatedObject);
         },
         objectsTrackerClear(context, annotatedObject) {
-            for (let i = 0; i < context.state.objectsTracker.annotatedObjects.length; i++) {
-                if (context.state.objectsTracker.annotatedObjects[i].idObject == annotatedObject.idObject) {
-                    context.dispatch('clearAnnotatedObject', i);
-                }
-            }
+            context.state.objectsTracker.clear(annotatedObject);
+
         },
         objectsTrackerClearAll(context) {
-            console.log(context.objectsTracker);
-            for (let i = 0; i < context.state.objectsTracker.annotatedObjects.length; i++) {
-                context.dispatch('clearAnnotatedObject', i);
-            }
+            context.state.objectsTracker.clearAll();
         },
         clearAnnotatedObject(context, i) {
             let annotatedObject = context.state.objectsTracker.annotatedObjects[i];
             $(annotatedObject.dom).remove();
-            context.state.objectsTracker.annotatedObjects.splice(i, 1);
+            context.state.objectsTracker.remove(i);
             context.commit('objectsTrackerState', 'dirty');
         },
         selectObject(context, idObject) {

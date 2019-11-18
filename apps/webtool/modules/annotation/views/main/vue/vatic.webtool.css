@@ -31,6 +31,22 @@
     background-color:black;
 }
 
+#jcontrols {
+    display: flex;
+    flex-direction: row;
+    width:100%;
+    background-color:black;
+    padding: 0 8px 8px 8px;
+    height:24px;
+}
+
+#jcontrols > * {
+    color:white;
+    background-color:black;
+    border-color: black;
+    font-size: 1em;
+}
+
 #sliderContainer {
     //display:inline-block;
     width: 100%;

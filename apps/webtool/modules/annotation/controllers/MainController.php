@@ -383,10 +383,10 @@ class MainController extends MController
         $this->data->urlLookupFE =  Manager::getBaseURL() . '/index.php/webtool/data/frameelement/lookupDataDecorated';
         // todo: dynamic segments
         $this->data->segments = json_encode([
-            ['value' => 0, 'text' => 'Segment0'],
             ['value' => 1, 'text' => 'Segment1'],
             ['value' => 2, 'text' => 'Segment2'],
             ['value' => 3, 'text' => 'Segment3'],
+            ['value' => 4, 'text' => 'Segment4'],
         ]);
         $this->render();
     }

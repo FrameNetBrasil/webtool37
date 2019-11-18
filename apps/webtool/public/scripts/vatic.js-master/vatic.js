@@ -132,6 +132,7 @@ function extractFramesFromVideo(config, file, progress) {
 /**
  * Extracts the frame sequence from a previously generated zip file.
  */
+
 /*
 function extractFramesFromZip(config, file) {
     return new Promise((resolve, _) => {
@@ -172,6 +173,7 @@ function extractFramesFromZip(config, file) {
  */
 function extractFramesFromZipUrl(config, url, segment) {
     return new Promise((resolve, _) => {
+        console.log(url);
         fetch(url)       // 1) fetch the url
             .then(function (response) {                       // 2) filter on 200 OK
                 if (response.status === 200 || response.status === 0) {
@@ -182,11 +184,15 @@ function extractFramesFromZipUrl(config, url, segment) {
             })
             .then(JSZip.loadAsync)                            // 3) chain with the zip promise
             .then(function (zip) {
-                let first = (segment * 1000);
+                console.log(zip);
+                let first = 1;//(segment * 1000) + 1;
                 let n = 0;
                 let totalFrames = 0;
                 for (let i = first; ; i++, n++) {
-                    let file = zip.file(i + config.imageExtension);
+                    let s = '00000' + i;
+                    let j = s.substr(-5);
+                    //console.log(j + config.imageExtension);
+                    let file = zip.file(j + config.imageExtension);
                     if (file == null) {
                         totalFrames = n;
                         break;
@@ -199,7 +205,11 @@ function extractFramesFromZipUrl(config, url, segment) {
                     },
                     getFrame: (frameNumber) => {
                         return new Promise((resolve, _) => {
-                            let file = zip.file(frameNumber + config.imageExtension);
+                            let s = '00000' + frameNumber;
+                            console.log('getFrame ' + s);
+                            let j = s.substr(-5);
+                            //console.log(j + config.imageExtension);
+                            let file = zip.file(j + config.imageExtension);
                             file
                                 .async('arraybuffer')
                                 .then((content) => {
@@ -457,6 +467,46 @@ class AnnotatedObjectsTracker {
             this.annotatedObjects = [];
             this.lastFrame = -1;
         });
+    }
+
+    getLength() {
+        return this.annotatedObjects.length;
+    }
+
+    add(annotatedObject) {
+        this.annotatedObjects.push(annotatedObject)
+    }
+
+    remove(i) {
+        this.annotatedObjects.splice(i, 1);
+    }
+
+    clear(annotatedObject) {
+        for (let i = 0; i < this.annotatedObjects.length; i++) {
+            if (this.annotatedObjects[i].idObject == annotatedObject.idObject) {
+                this.remove(i);
+            }
+        }
+    }
+
+    clearAll() {
+        for (let i = 0; i < this.annotatedObjects.length; i++) {
+            this.remove(i);
+        }
+    }
+
+    getObjectsByFrame(frameNumber) {
+        let result = [];
+        for (let i = 0; i < this.annotatedObjects.length; i++) {
+            let annotatedObject = this.annotatedObjects[i];
+            let annotatedFrame = annotatedObject.get(frameNumber);
+            if (annotatedFrame != null) {
+                if (annotatedFrame.frameNumber == frameNumber) {
+                    result.push({annotatedObject: annotatedObject, annotatedFrame: annotatedFrame});
+                }
+            }
+        }
+        return result;
     }
 
     getFrameWithObjects(frameNumber) {
