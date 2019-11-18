@@ -371,6 +371,8 @@ class MainController extends MController
         $this->data->urlPutObjects = Manager::getURL('annotation/main/putObjects');
         $sentenceMM = new \fnbr\models\SentenceMM($annotationSetMM->getIdSentenceMM());
         $this->data->idSentence = $sentenceMM->getIdSentence();
+        $this->data->idSentenceMM = $sentenceMM->getIdSentenceMM();
+        $this->data->sentenceMMRangeTime = $sentenceMM->getStartTimeStamp() . ' - ' . $sentenceMM->getEndTimeStamp();
         $this->data->idAnnotationSet = $annotationSetMM->getIdAnnotationSet();
         $this->data->documentMM = json_encode($annotationSetMM->getDocumentData());
         $objectMM = new \fnbr\models\ObjectMM();
