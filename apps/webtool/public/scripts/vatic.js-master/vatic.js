@@ -8,6 +8,38 @@ class FramesManager {
             }
         };
         this.onReset = [];
+        let dbName = 'vatic_js';
+        //this.db = new PouchDB(dbName);
+        this.db = {};
+        this.attachmentName = 'img';// + config.imageExtension;
+
+    }
+
+    setConfig(config) {
+        this.config = config;
+    }
+
+    addFrame(frameNumber, frame, imageMimeType) {
+        let attachment = frame;//new Blob(frame, {type: imageMimeType});
+        /*
+        this.db.putAttachment(frameNumber.toString(), this.attachmentName, attachment, imageMimeType).then(function (result) {
+            console.log('put in db ' + frameNumber.toString());
+        }).catch(function (err) {
+            console.log(err);
+        });
+        */
+        this.db[frameNumber] = frame;
+    }
+
+    async getFrame(frameNumber) {
+        //return this.db.getAttachment(frameNumber.toString(), this.attachmentName);
+        let frame = this.db[frameNumber];
+        if (typeof frame === 'undefined') {
+            let frame = await getFrameFromUrl(this.config.url + '/' + frameNumber + this.config.imageExtension);
+            this.addFrame(frameNumber, frame, this.config.imageMimeType);
+            return frame;
+        }
+        return frame;
     }
 
     set(frames) {
@@ -223,6 +255,52 @@ function extractFramesFromZipUrl(config, url, segment) {
     });
 }
 
+function getFrameFromUrl(url) {
+    console.log(url);
+    return fetch(url)       // 1) fetch the url
+        .then(function (response) {                       // 2) filter on 200 OK
+            if (response.status === 200 || response.status === 0) {
+                return Promise.resolve(response.blob());
+            } else {
+                return Promise.reject(new Error(response.statusText));
+            }
+        });
+}
+
+async function getFramesForObjects (framesManager, config, objectsToLoad) {
+    framesManager.setConfig(config);
+    let framesToLoad = [];
+    framesToLoad.push(1);
+    for (var object of objectsToLoad) {
+        let startFrame = parseInt(object.startFrame);
+        let endFrame = parseInt(object.endFrame);
+        for(let i = startFrame; i <= endFrame; i++) {
+            framesToLoad.push(i);
+        }
+    }
+    await Promise.all(framesToLoad.map(async (frameNumber) => {
+        let f = '0000' + frameNumber;
+        let frame = await getFrameFromUrl(config.url + '/' + f.substr(-4) + config.imageExtension);
+        framesManager.addFrame(frameNumber, frame, config.imageMimeType);
+    }));
+
+    return {
+        totalFrames: () => {
+            return framesToLoad.length;
+        },
+        getFrame: (frameNumber) => {
+            console.log('getting frame ' + frameNumber);
+            return framesManager.getFrame(frameNumber);
+            /*
+            return framesManager.getFrame(frameNumber).then(function (blob) {
+                resolve(blob);
+            }).catch(function (err) {
+                console.log(err);
+            });;
+            */
+        }
+    };
+}
 /**
  * Tracks point between two consecutive frames using optical flow.
  */
@@ -408,6 +486,7 @@ class AnnotatedObject {
     }
 
     get(frameNumber) {
+        /* Verifica se este AnnotatedObject existe no frame frameNumber */
         for (let i = 0; i < this.frames.length; i++) {
             let currentFrame = this.frames[i];
             if (currentFrame.frameNumber > frameNumber) {
@@ -420,6 +499,10 @@ class AnnotatedObject {
         }
 
         return null;
+    }
+
+    inFrame(frameNumber) {
+        return (this.startFrame <= frameNumber) && (this.endFrame >= frameNumber);
     }
 
     removeFrame(frameNumber) {
@@ -512,8 +595,10 @@ class AnnotatedObjectsTracker {
     getFrameWithObjects(frameNumber) {
         return new Promise((resolve, _) => {
             let i = this.startFrame(frameNumber);
+            console.log('startFrame = ' + i);
 //console.log('getFrameWithObjects frameNumber = ' + frameNumber + '  i = ' + i);
             let trackNextFrame = () => {
+                console.log('tracking frame ' + i);
                 this.track(i).then((frameWithObjects) => {
                     if (i == frameNumber) {
                         //console.log('i == frameNumber')
@@ -531,6 +616,32 @@ class AnnotatedObjectsTracker {
     }
 
     startFrame(frameNumber) {
+        let start = frameNumber;
+        for (let i = 0; i < this.annotatedObjects.length; i++) {
+            let annotatedObject = this.annotatedObjects[i];
+            if (annotatedObject.inFrame(frameNumber)) { // objeto está no frame
+                let hasStart = false;
+                let objectStart = frameNumber;
+                while (annotatedObject.startFrame <= objectStart) {
+                    if (annotatedObject.get(objectStart) == null) { // mas tem dados da bbox
+                        objectStart--;
+                    } else {
+                        hasStart = true;
+                        if (objectStart < start) {
+                            start = objectStart;
+                        }
+                        break;
+                    }
+                }
+                if (!hasStart) {
+                    throw 'corrupted object annotations';
+                }
+            }
+        }
+        console.log('startFrame = ' + start);
+        return start;
+
+        /*  Está verificando se todos os objetos estão em pelo menos um frame - vou fazer isso no Save
         for (; frameNumber >= 0; frameNumber--) {
             let allObjectsHaveData = true;
 
@@ -548,30 +659,37 @@ class AnnotatedObjectsTracker {
         }
 
         throw 'corrupted object annotations';
+        */
     }
 
     track(frameNumber) {
         return new Promise((resolve, _) => {
-            this.framesManager.frames.getFrame(frameNumber).then((blob) => {
+           this.framesManager.getFrame(frameNumber).then((blob) => {
+               console.log('track framenumber ' + frameNumber);
+               console.log(blob);
                 blobToImage(blob).then((img) => {
                     let result = [];
                     let toCompute = [];
                     for (let i = 0; i < this.annotatedObjects.length; i++) {
                         let annotatedObject = this.annotatedObjects[i];
-                        //console.log('track object ' + annotatedObject.idObject + '  frameNumber = ' + frameNumber)
-                        let annotatedFrame = annotatedObject.get(frameNumber);
-                        //console.log(annotatedFrame);
-                        if (annotatedFrame == null) {
-                            annotatedFrame = annotatedObject.get(frameNumber - 1);
-                            if (annotatedFrame == null) {
-                                throw 'tracking must be done sequentially';
+                        if (annotatedObject.inFrame(frameNumber)) {
+                            //console.log('track object ' + annotatedObject.idObject + '  frameNumber = ' + frameNumber)
+                            let annotatedFrame = annotatedObject.get(frameNumber);
+                            //console.log(annotatedFrame);
+                            if (annotatedFrame == null) { /* não existe o AnnotatedObject no frame frameNumber */
+                                annotatedFrame = annotatedObject.get(frameNumber - 1);
+                                if (annotatedFrame == null) { /* também não existe no anterior */
+                                    //throw 'tracking must be done sequentially';
+                                    continue; // passa para o próximo AnnotatedObject
+                                }
+                                //console.log('to compute');
+                                //console.log(annotatedFrame.bbox)
+                                /* existe no frame anterior mas não no corrent, então é preciso calcular a nova box */
+                                toCompute.push({annotatedObject: annotatedObject, bbox: annotatedFrame.bbox});
+                            } else {
+                                /* existe o AnnotatedObject no frame frameNumber, então coloca-o no array result */
+                                result.push({annotatedObject: annotatedObject, annotatedFrame: annotatedFrame});
                             }
-                            //console.log('to compute');
-                            //console.log(annotatedFrame.bbox)
-                            toCompute.push({annotatedObject: annotatedObject, bbox: annotatedFrame.bbox});
-                        } else {
-                            //console.log('pushing');
-                            result.push({annotatedObject: annotatedObject, annotatedFrame: annotatedFrame});
                         }
                     }
 
@@ -580,7 +698,7 @@ class AnnotatedObjectsTracker {
                     let hasAnyBbox = bboxes.some(bbox => bbox != null);
                     //console.log(hasAnyBbox)
                     let optionalOpticalFlowInit;
-                    if (hasAnyBbox) {
+                    if (hasAnyBbox) { // se tem alguma box para ser calculada
                         optionalOpticalFlowInit = this.initOpticalFlow(frameNumber - 1);
                     } else {
                         optionalOpticalFlowInit = new Promise((r, _) => {
@@ -620,7 +738,8 @@ class AnnotatedObjectsTracker {
                 resolve();
             } else {
                 this.opticalFlow.reset();
-                this.framesManager.frames.getFrame(frameNumber).then((blob) => {
+                //let blob = this.framesManager.getFrame(frameNumber);
+                this.framesManager.getFrame(frameNumber).then((blob) => {
                     blobToImage(blob).then((img) => {
                         let imageData = this.imageData(img);
                         this.opticalFlow.init(imageData);

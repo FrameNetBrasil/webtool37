@@ -12,10 +12,7 @@
                         startX: 0,
                         startY: 0
                     },
-                    framesRange: {
-                        first: 0,
-                        last: 0
-                    },
+                    framesRange: this.$store.state.model.framesRange,
                     originalDimensions: {
                         width: 0,
                         height: 0
@@ -36,7 +33,7 @@
                     timeout: null,
                     showControls: false,
                     ctx: null,
-                    timeInterval: 0.0,
+                    //timeInterval: 0.0,
                     config: {
                         // Should be higher than real FPS to not skip real frames
                         // Hardcoded due to JS limitations
@@ -54,6 +51,7 @@
 
                         duration: 0.0,
                         timeInterval: 33.33,
+                        url: '',
                     }
                 }
             },
@@ -61,6 +59,7 @@
                 displayTime: function () {
                     let dt = this.currentTime + '00';
                     return dt.substr(0, 9);
+                    //return $.jPlayer.convertTime( this.currentTime);
                 }
             },
             created() {
@@ -77,7 +76,7 @@
                     (currentFrame) => {
                         this.currentFrame = currentFrame;
                         if (this.isPlaying) {
-                            this.drawFrameObjects(currentFrame);
+                            //this.drawFrameObjects(currentFrame);
                             //this.drawFrame(currentFrame).then(() => {
                             //    this.timeout = setTimeout(() => this.nextFrame(), this.timeInterval);
                             //});
@@ -85,7 +84,7 @@
                             let currentState = this.$store.state.currentState;
                             if (currentState != 'dragging') {
                                 //console.log(this.currentFrame / 30);
-                                $("#jquery_jplayer_1").jPlayer('pause', (((this.currentFrame - 1) *  this.config.timeInterval)/1000));
+                                $("#jquery_jplayer_1").jPlayer('pause', (((this.currentFrame) * this.config.timeInterval) / 1000));
                                 //$("#jquery_jplayer_1").jPlayer('pause');
                                 this.drawFrame(this.currentFrame);
                             }
@@ -143,14 +142,15 @@
                     (allLoaded) => {
                         if (allLoaded) {
                             this.showControls = true;
-                            this.config.timeInterval = (this.config.duration * 1000) / this.framesRange.last;
+                            this.config.timeInterval = (this.config.duration * 1000) / (this.framesRange.last + 1);
                             console.log('timeInterval = ' + this.config.timeInterval);
                         }
                     }
                 )
 
                 this.$nextTick(() => {
-                    this.extractionFileZip();
+                    //this.extractionFileZip();
+                    this.initializeFrameObject();
                 });
 
                 this.$nextTick(() => {
@@ -162,7 +162,7 @@
                             $(this).jPlayer("setMedia", {
                                 title: "Bubble",
                                 //m4a: "http://127.0.0.1/webtool/apps/webtool/files/multimodal/audio/PedroPeloMundo_Se01_Ep06_Bl01_Par01.mp4"
-                                m4v: "http://127.0.0.1/webtool/apps/webtool/files/multimodal/video/PedroPeloMundo_Se01_Ep06_Bl01_Par01_01.mp4"
+                                m4v: "http://127.0.0.1/webtool/apps/webtool/files/multimodal/video/PedroPeloMundo_Se01_Ep06_Bl01_Par01.mp4"
                             });
                         },
                         size: {
@@ -216,7 +216,7 @@
                     annotatedObject.fe = '';
                     annotatedObject.color = 'white';
                     annotatedObject.startFrame = this.currentFrame;
-                    annotatedObject.endFrame = this.currentFrame;
+                    annotatedObject.endFrame = this.framesRange.last;// this.currentFrame;
                     this.$store.dispatch('objectsTrackerAdd', annotatedObject);
                 },
                 initialize: function () {
@@ -241,7 +241,8 @@
 
                     this.pause();
 
-                    if (frameNumber >= 0 && frameNumber < framesManager.frames.totalFrames()) {
+                    //if (frameNumber >= 0 && frameNumber < framesManager.frames.totalFrames()) {
+                    if (frameNumber >= 0 && frameNumber < this.framesRange.last) {
                         this.drawFrame(frameNumber);
                         this.currentFrame = frameNumber;
                     }
@@ -261,7 +262,7 @@
                     }
                     //this.$store.commit('currentState', 'playing');
                     console.log('playing ' + this.currentFrame);
-                    $("#jquery_jplayer_1").jPlayer('play', (((this.currentFrame - 1) *  this.config.timeInterval)/1000));
+                    $("#jquery_jplayer_1").jPlayer('play', (((this.currentFrame - 1) * this.config.timeInterval) / 1000));
                     this.isPlaying = true;
                     //this.nextFrame();
                 },
@@ -273,7 +274,7 @@
                     this.isPlaying = false;
                     //this.$store.commit('currentState', 'paused');
                     console.log('== paused = ' + this.currentFrame);
-                    $("#jquery_jplayer_1").jPlayer('pause',(((this.currentFrame - 1) *  this.config.timeInterval)/1000));
+                    $("#jquery_jplayer_1").jPlayer('pause', (((this.currentFrame - 1) * this.config.timeInterval) / 1000));
                     //if (this.timeout != null) {
                     //    clearTimeout(this.timeout);
                     //    this.timeout = null;
@@ -363,62 +364,63 @@
                 },
                 drawFrame: function (frameNumber) {
                     let that = this;
-                    return new Promise((resolve, _) => {
-                        console.log('drawFrame ' + frameNumber);
-                        let annotatedObjectsTracker = this.$store.getters.objectsTracker;
-                        annotatedObjectsTracker.getFrameWithObjects(frameNumber).then((frameWithObjects) => {
-                            let currentState = '';
-                            let currentObject = that.$store.state.currentObject;
-                            if (currentObject) {
-                                currentState = that.$store.state.currentObjectState;
-                            }
-                            //let img = frameWithObjects.img;
-                            //this.ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, img.width * this.currentScale, img.height * this.currentScale);
-                            console.log(frameWithObjects);
-                            for (let i = 0; i < frameWithObjects.objects.length; i++) {
-                                let object = frameWithObjects.objects[i];
-                                let annotatedObject = object.annotatedObject;
-                                if (annotatedObject.hidden) {
-                                    annotatedObject.dom.style.display = 'none';
-                                } else {
-                                    let annotatedFrame = object.annotatedFrame;
-                                    if (annotatedFrame.isVisible()) {
-                                        //if ((annotatedFrame.isVisible()) && (frameNumber >= annotatedObject.startFrame) && (frameNumber <= annotatedObject.endFrame)) {
-                                        //console.log(annotatedFrame.blocked);
-                                        let scaledBox = this.toScaledCoord(annotatedFrame.bbox.x, annotatedFrame.bbox.y, annotatedFrame.bbox.width, annotatedFrame.bbox.height);
-                                        annotatedObject.dom.style.display = 'block';
-                                        annotatedObject.dom.style.width = scaledBox.width + 'px';
-                                        annotatedObject.dom.style.height = scaledBox.height + 'px';
-                                        annotatedObject.dom.style.left = scaledBox.x + 'px';
-                                        annotatedObject.dom.style.top = scaledBox.y + 'px';
-                                        annotatedObject.dom.style.borderStyle = 'solid';
-                                        annotatedObject.dom.style.borderColor = annotatedObject.color;
-                                        annotatedObject.dom.style.backgroundColor = 'transparent';
-                                        annotatedObject.dom.style.opacity = 1;
-                                        annotatedObject.visible = true;
-                                        if (currentObject) {
-                                            if (annotatedObject.idObject == currentObject.idObject) {
-                                                if (currentState == 'selected') {
-                                                    annotatedObject.dom.style.backgroundColor = annotatedObject.color;
-                                                    annotatedObject.dom.style.opacity = 0.5;
-                                                }
+                    //return new Promise((resolve, _) => {
+                    console.log('drawFrame ' + frameNumber);
+                    jQuery('.bbox').css("display","none");
+                    let annotatedObjectsTracker = this.$store.getters.objectsTracker;
+                    annotatedObjectsTracker.getFrameWithObjects(frameNumber).then((frameWithObjects) => {
+                        let currentState = '';
+                        let currentObject = that.$store.state.currentObject;
+                        if (currentObject) {
+                            currentState = that.$store.state.currentObjectState;
+                        }
+                        let img = frameWithObjects.img;
+                        this.ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, img.width * this.currentScale, img.height * this.currentScale);
+                        console.log(frameWithObjects);
+                        for (let i = 0; i < frameWithObjects.objects.length; i++) {
+                            let object = frameWithObjects.objects[i];
+                            let annotatedObject = object.annotatedObject;
+                            if (annotatedObject.hidden) {
+                                annotatedObject.dom.style.display = 'none';
+                            } else {
+                                let annotatedFrame = object.annotatedFrame;
+                                if (annotatedFrame.isVisible()) {
+                                    //if ((annotatedFrame.isVisible()) && (frameNumber >= annotatedObject.startFrame) && (frameNumber <= annotatedObject.endFrame)) {
+                                    //console.log(annotatedFrame.blocked);
+                                    let scaledBox = this.toScaledCoord(annotatedFrame.bbox.x, annotatedFrame.bbox.y, annotatedFrame.bbox.width, annotatedFrame.bbox.height);
+                                    annotatedObject.dom.style.display = 'block';
+                                    annotatedObject.dom.style.width = scaledBox.width + 'px';
+                                    annotatedObject.dom.style.height = scaledBox.height + 'px';
+                                    annotatedObject.dom.style.left = scaledBox.x + 'px';
+                                    annotatedObject.dom.style.top = scaledBox.y + 'px';
+                                    annotatedObject.dom.style.borderStyle = 'solid';
+                                    annotatedObject.dom.style.borderColor = annotatedObject.color;
+                                    annotatedObject.dom.style.backgroundColor = 'transparent';
+                                    annotatedObject.dom.style.opacity = 1;
+                                    annotatedObject.visible = true;
+                                    if (currentObject) {
+                                        if (annotatedObject.idObject == currentObject.idObject) {
+                                            if (currentState == 'selected') {
+                                                annotatedObject.dom.style.backgroundColor = annotatedObject.color;
+                                                annotatedObject.dom.style.opacity = 0.5;
                                             }
                                         }
-                                        if (annotatedFrame.blocked) {
-                                            annotatedObject.dom.style.opacity = 0.5;
-                                            annotatedObject.dom.style.backgroundColor = 'white';
-                                            annotatedObject.dom.style.borderStyle = 'dashed';
-                                        }
-                                    } else {
-                                        annotatedObject.dom.style.display = 'none';
-                                        annotatedObject.visible = false;
                                     }
+                                    if (annotatedFrame.blocked) {
+                                        annotatedObject.dom.style.opacity = 0.5;
+                                        annotatedObject.dom.style.backgroundColor = 'white';
+                                        annotatedObject.dom.style.borderStyle = 'dashed';
+                                    }
+                                } else {
+                                    annotatedObject.dom.style.display = 'none';
+                                    annotatedObject.visible = false;
                                 }
                             }
-                            that.$store.commit('redrawFrame', false);
-                            resolve();
-                        });
+                        }
+                        that.$store.commit('redrawFrame', false);
+                        //resolve();
                     });
+                    //});
                 }
 
                 ,
@@ -434,14 +436,14 @@
                 }
                 ,
                 framesLoaded(firstFrame, lastFrame) {
-                    console.log('Frames Loaded! ' + firstFrame + ' to ' + lastFrame);
-                    this.framesRange = {
-                        first: firstFrame,
-                        last: lastFrame
-                    }
+                    //console.log('Frames Loaded! ' + firstFrame + ' to ' + lastFrame);
+                    //this.framesRange = {
+                    //    first: firstFrame,
+                    //    last: lastFrame
+                    // }
                     this.$store.dispatch('updateFramesRange', this.framesRange);
-                }
-                ,
+                },
+                /*
                 extractionFileZip: function () {
                     this.$store.commit('currentState', 'loading');
                     this.initialize();
@@ -482,8 +484,55 @@
                         }
 
                     });
-                }
-                ,
+                },
+                */
+                initializeFrameObject: function () {
+                    this.$store.commit('currentState', 'loading');
+                    this.initialize();
+                    let promise;
+                    //let zip = null;
+                    //let url = this.$store.state.model.documentMM.framesPath + '/' + this.segment + '.zip';
+                    //promise = extractFramesFromZipUrl(this.config, url, this.segment);
+                    this.config.url = this.$store.state.model.documentMM.framesPath;
+                    console.log(this.config.url);
+                    let objectsToLoaded = this.$store.state.model.objects;
+                    getFramesForObjects(this.framesManager, this.config, objectsToLoaded).then((frames) => {
+
+                        console.log(frames);
+                        this.firstFrame = this.framesRange.first;//15;//this.segment * 1000;
+                        this.lastFrame = this.framesRange.last;//this.firstFrame + frames.totalFrames() - 1;
+                        this.currentFrame = this.firstFrame;
+                        //if (frames.totalFrames() > 0) {
+                        if (this.lastFrame > 0) {
+                            //let blob = frames.getFrame(this.firstFrame);
+                            //console.log(blob);
+                            frames.getFrame(this.firstFrame).then((blob) => {
+                                blobToImage(blob).then((img) => {
+
+                                    this.originalDimensions = {
+                                        width: img.width,
+                                        height: img.height
+                                    }
+
+                                    this.updateCurrentDimensions();
+                                    this.initializeCanvasDimensions();
+                                    this.ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, img.width * this.currentScale, img.height * this.currentScale);
+                                    console.log('Video dimensions determined: ' + img.width + 'x' + img.height);
+                                    //this.framesManager.set(frames);
+                                    //console.log('pos framesManager');
+                                    this.ready();
+                                    $("#jquery_jplayer_1").jPlayer('pause',0);
+                                    this.framesLoaded(this.firstFrame, this.lastFrame);
+                                    this.loadObjects();
+                                    //this.$store.commit('currentState', 'loaded');
+                                    this.$store.commit('currentState', 'paused');
+                                    this.$store.commit('zipLoaded');
+
+                                });
+                            });
+                        }
+                    })
+                },
 
                 loadObjects() {
                     let objectsLoaded = this.$store.state.model.objects;
@@ -571,8 +620,7 @@
                     }
                     this.drawFrame(this.currentFrame);
                     this.$store.commit('objectsTrackerState', 'dirty');
-                }
-                ,
+                },
 
                 newBboxElement() {
                     let dom = document.createElement('div');
@@ -762,8 +810,10 @@
             </div>
 
         </div>
-        <canvas ref="canvas" id="canvas" style="display:none">
-        </canvas>
+        <div>
+            <canvas ref="canvas" id="canvas" style="display:block">
+            </canvas>
+        </div>
         <div id="toolsPane">
             <tools-pane v-if="showControls"
                         v-on:newObjectClick="onNewObjectClick"

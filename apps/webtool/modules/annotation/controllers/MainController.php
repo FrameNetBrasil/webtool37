@@ -390,6 +390,10 @@ class MainController extends MController
             ['value' => 3, 'text' => 'Segment3'],
             ['value' => 4, 'text' => 'Segment4'],
         ]);
+        $this->data->framesRange = json_encode([
+            'first' => 1,
+            'last' => 3000
+        ]);
         $this->render();
     }
 
