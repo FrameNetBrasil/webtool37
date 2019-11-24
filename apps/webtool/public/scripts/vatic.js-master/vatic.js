@@ -7,16 +7,138 @@ class FramesManager {
                 return 0;
             }
         };
-        this.onReset = [];
-        let dbName = 'vatic_js';
-        //this.db = new PouchDB(dbName);
         this.db = {};
-        this.attachmentName = 'img';// + config.imageExtension;
 
+        this.onReset = [];
+        //this.video = document.createElement('video');
+
+        this.canvas = document.createElement('canvas');
+        this.ctx = this.canvas.getContext('2d');
+
+        this.dimensionsInitialized = false;
+        this.totalFrames = 0;
+        this.processedFrames = 0;
+        this.lastApproxFrame = -1;
+        this.lastProgressFrame = -1;
+        this.frameNumber = -1;
+        this.interval = 0;
+    }
+
+    onBrowserAnimationFrame() {
+        if (this.dimensionsInitialized && this.video.ended) {
+            if (this.processedFrames == this.totalFrames) {
+                this.videoEnded();
+            }
+            return;
+        }
+
+        compatibility.requestAnimationFrame(this.onBrowserAnimationFrame);
+
+        if (this.video.readyState !== this.video.HAVE_CURRENT_DATA &&
+            this.video.readyState !== this.video.HAVE_FUTURE_DATA &&
+            this.video.readyState !== this.video.HAVE_ENOUGH_DATA) {
+            return;
+        }
+
+        let currentApproxFrame = Math.round(this.video.currentTime * this.config.fps);
+        if (currentApproxFrame != this.lastApproxFrame) {
+            this.lastApproxFrame = currentApproxFrame;
+            this.frameNumber = this.totalFrames;
+            this.totalFrames++;
+
+            if (!this.dimensionsInitialized) {
+                this.dimensionsInitialized = true;
+                this.canvas.width = this.video.videoWidth;
+                this.canvas.height = this.video.videoHeight;
+            }
+
+            this.ctx.drawImage(this.video, 0, 0);
+            this.canvas.toBlob(
+                (blob) => {
+                    this.processedFrames++;
+
+                    if (this.frameNumber > this.lastProgressFrame) {
+                        this.lastProgressFrame = frameNumber;
+                        progress(this.video.currentTime / this.video.duration, this.processedFrames, blob);
+                    }
+
+                    if (this.video.ended && this.this.processedFrames == totalFrames) {
+                        this.videoEnded();
+                    }
+                },
+                this.config.imageMimeType
+            );
+        }
+    }
+
+    progress(percentage, framesSoFar, lastFrameBlob) {
+        blobToImage(lastFrameBlob).then((img) => {
+            if (!this.dimensionsInitialized) {
+                this.dimensionsInitialized = true;
+                //initializeCanvasDimensions(img);
+            }
+            this.ctx.drawImage(img, 0, 0);
+
+            //videoDimensionsElement.innerHTML = 'Video dimensions determined: ' + img.width + 'x' + img.height;
+            //extractionProgressElement.innerHTML = (percentage * 100).toFixed(2) + ' % completed. ' + framesSoFar + ' frames extracted.';
+        })
+    }
+
+    videoEnded() {
+        if (this.video.src != '') {
+            URL.revokeObjectURL(this.video.src);
+            this.video.src = '';
+
+            resolve({
+                totalFrames: () => {
+                    return totalFrames;
+                },
+                getFrame: (frameNumber) => {
+                    //return db.getAttachment(frameNumber.toString(), attachmentName);
+                }
+            });
+        }
     }
 
     setConfig(config) {
         this.config = config;
+        this.video = document.getElementById('jp_video_1');
+        //this.video.autoplay = false;
+        //this.video.muted = true;
+        //this.video.loop = false;
+        //this.video.playbackRate = this.config.playbackRate;
+        //this.video.src = URL.createObjectURL("http://127.0.0.1/webtool/apps/webtool/files/multimodal/video/PedroPeloMundo_Se01_Ep06_Bl01_Par01.mp4");
+        //this.video.src = "http://127.0.0.1/webtool/apps/webtool/files/multimodal/video/PedroPeloMundo_Se01_Ep06_Bl01_Par01.mp4";
+        //compatibility.requestAnimationFrame(this.onBrowserAnimationFrame);
+        //this.video.play();
+        //this.video.load();
+        //this.video.onloadedmetadata = function() {
+        //    console.log("****  Metadata for video loaded");
+        //};
+        if (!this.dimensionsInitialized) {
+            this.dimensionsInitialized = true;
+            this.canvas.width = this.video.videoWidth;
+            this.canvas.height = this.video.videoHeight;
+        }
+        this.interval = 1000 / this.config.fps;
+        console.log(this);
+
+    }
+
+    async getFrameFromVideo(frameNumber) {
+        //let jumpToTime = (frameNumber - 1 ) * (this.interval);
+        //this.video.currentTime = jumpToTime;
+        console.log('getFrameFromVideo currentTime = ' + this.video.currentTime);
+        this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
+        return new Promise((resolve, reject) => {
+            this.canvas.toBlob(
+                (blob) => {
+                    console.log(blob);
+                    resolve(blob);
+                },
+                this.config.imageMimeType
+            );
+        });
     }
 
     addFrame(frameNumber, frame, imageMimeType) {
@@ -34,8 +156,16 @@ class FramesManager {
     async getFrame(frameNumber) {
         //return this.db.getAttachment(frameNumber.toString(), this.attachmentName);
         let frame = this.db[frameNumber];
+        //if (typeof frame === 'undefined') {
+        //    let f = '0000' + frameNumber;
+        //    let frame = await getFrameFromUrl(this.config.url + '/' + f.substr(-4) + this.config.imageExtension);
+        //    this.addFrame(frameNumber, frame, this.config.imageMimeType);
+        //    return frame;
+        //}
         if (typeof frame === 'undefined') {
-            let frame = await getFrameFromUrl(this.config.url + '/' + frameNumber + this.config.imageExtension);
+            //let f = '0000' + frameNumber;
+            let frame = await this.getFrameFromVideo(frameNumber);
+            console.log(frame);
             this.addFrame(frameNumber, frame, this.config.imageMimeType);
             return frame;
         }
@@ -61,6 +191,20 @@ function blobToImage(blob) {
     });
 }
 
+/*
+function progress (percentage, framesSoFar, lastFrameBlob) => {
+              blobToImage(lastFrameBlob).then((img) => {
+                if (!dimensionsInitialized) {
+                  dimensionsInitialized = true;
+                  initializeCanvasDimensions(img);
+                }
+                ctx.drawImage(img, 0, 0);
+
+                videoDimensionsElement.innerHTML = 'Video dimensions determined: ' + img.width + 'x' + img.height;
+                extractionProgressElement.innerHTML = (percentage * 100).toFixed(2) + ' % completed. ' + framesSoFar + ' frames extracted.';
+              });
+
+ */
 /**
  * Extracts the frame sequence of a video file.
  */
@@ -267,22 +411,22 @@ function getFrameFromUrl(url) {
         });
 }
 
-async function getFramesForObjects (framesManager, config, objectsToLoad) {
+async function getFramesForObjects(framesManager, config) {
     framesManager.setConfig(config);
-    let framesToLoad = [];
-    framesToLoad.push(1);
-    for (var object of objectsToLoad) {
-        let startFrame = parseInt(object.startFrame);
-        let endFrame = parseInt(object.endFrame);
-        for(let i = startFrame; i <= endFrame; i++) {
-            framesToLoad.push(i);
-        }
-    }
-    await Promise.all(framesToLoad.map(async (frameNumber) => {
-        let f = '0000' + frameNumber;
-        let frame = await getFrameFromUrl(config.url + '/' + f.substr(-4) + config.imageExtension);
-        framesManager.addFrame(frameNumber, frame, config.imageMimeType);
-    }));
+    //let framesToLoad = [];
+    //framesToLoad.push(1);
+    //for (var object of objectsToLoad) {
+    //    let startFrame = parseInt(object.startFrame);
+    //    let endFrame = parseInt(object.endFrame);
+    //    for (let i = startFrame; i <= endFrame; i++) {
+    //        framesToLoad.push(i);
+    //    }
+    //}
+    //await Promise.all(framesToLoad.map(async (frameNumber) => {
+    //    let f = '0000' + frameNumber;
+        //let frame = await getFrameFromUrl(config.url + '/' + f.substr(-4) + config.imageExtension);
+        //framesManager.addFrame(frameNumber, frame, config.imageMimeType);
+    //}));
 
     return {
         totalFrames: () => {
@@ -301,6 +445,7 @@ async function getFramesForObjects (framesManager, config, objectsToLoad) {
         }
     };
 }
+
 /**
  * Tracks point between two consecutive frames using optical flow.
  */
@@ -664,9 +809,9 @@ class AnnotatedObjectsTracker {
 
     track(frameNumber) {
         return new Promise((resolve, _) => {
-           this.framesManager.getFrame(frameNumber).then((blob) => {
-               console.log('track framenumber ' + frameNumber);
-               console.log(blob);
+            this.framesManager.getFrame(frameNumber).then((blob) => {
+                console.log('track framenumber ' + frameNumber);
+                console.log(blob);
                 blobToImage(blob).then((img) => {
                     let result = [];
                     let toCompute = [];

@@ -392,7 +392,7 @@ class MainController extends MController
         ]);
         $this->data->framesRange = json_encode([
             'first' => 1,
-            'last' => 3000
+            'last' => 3284
         ]);
         $this->render();
     }

@@ -10,6 +10,7 @@ let store = new Vuex.Store({
         objectsTracker: null,
         objectsTrackerState: 'clean', // dirty
         currentFrame: 0,
+        playFrame: 0,
         currentState: 'loading', // playing, paused, loading, loaded
         objects: [],
         currentObject: null,
@@ -21,11 +22,15 @@ let store = new Vuex.Store({
         annotatedObject: null,
         redrawFrame: false,
         videoLoaded: false,
-        zipLoaded: false,
+        video2Loaded: false,
+        objectLoaded: false,
     },
     getters: {
         currentFrame(state) {
             return state.currentFrame
+        },
+        playFrame(state) {
+            return state.playFrame
         },
         currentState(state) {
             return state.currentState
@@ -57,8 +62,11 @@ let store = new Vuex.Store({
         allAnnotatedObjects(state) {
             return state.objectsTracker.annotatedObjects;
         },
+        videoLoaded(state) {
+            return state.videoLoaded && state.video2Loaded;
+        },
         allLoaded(state) {
-            return state.videoLoaded && state.zipLoaded;
+            return state.videoLoaded && state.video2Loaded && state.objectLoaded;
         }
     },
     mutations: {
@@ -67,6 +75,9 @@ let store = new Vuex.Store({
         },
         currentFrame(state, value) {
             state.currentFrame = value;
+        },
+        playFrame(state, value) {
+            state.playFrame = value;
         },
         currentState(state, value) {
             state.currentState = value;
@@ -107,8 +118,11 @@ let store = new Vuex.Store({
         videoLoaded(state, value) {
             state.videoLoaded = true;
         },
-        zipLoaded(state, value) {
-            state.zipLoaded = true;
+        video2Loaded(state, value) {
+            state.video2Loaded = true;
+        },
+        objectLoaded(state, value) {
+            state.objectLoaded = true;
         },
     },
     actions: {

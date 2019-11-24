@@ -20,14 +20,14 @@
             },
             methods: {
                 changeValue(v) {
-                    if (this.currentState == 'paused') {
+                    if ((this.currentState == 'paused') || (this.currentState == 'loaded')) {
                         if ((v >= this.slider.min) && (v <= this.slider.max)) {
                             this.$store.commit('currentFrame', v);
                         }
                     }
                 },
                 onForwardClick() {
-                    if (this.currentState == 'paused') {
+                    if ((this.currentState == 'paused') || (this.currentState == 'loaded')) {
                         if (this.slider.value < this.slider.max) {
                             this.slider.value = this.slider.value + 1;
                             this.$store.commit('currentFrame', this.slider.value);
@@ -35,7 +35,7 @@
                     }
                 },
                 onBackwardClick() {
-                    if (this.currentState == 'paused') {
+                    if ((this.currentState == 'paused') || (this.currentState == 'loaded')) {
                         if (this.slider.value > this.slider.min) {
                             this.slider.value = this.slider.value - 1;
                             this.$store.commit('currentFrame', this.slider.value);
@@ -43,7 +43,7 @@
                     }
                 },
                 onBeginningClick() {
-                    if (this.currentState == 'paused') {
+                    if ((this.currentState == 'paused') || (this.currentState == 'loaded')) {
                         if (this.slider.value > this.slider.min) {
                             this.slider.value = this.slider.min;
                             this.$store.commit('currentFrame', this.slider.value);
@@ -51,15 +51,20 @@
                     }
                 },
                 onPlayClick() {
-                    if (this.currentState == 'paused') {
+                    if ((this.currentState == 'paused') || (this.currentState == 'loaded')) {
                         this.$store.commit('currentState', 'playing');
                     }
                 },
                 onPauseClick() {
-                    if (this.currentState == 'playing') {
+                    if ((this.currentState == 'playing') || (this.currentState == 'loaded')) {
                         this.$store.commit('currentState', 'paused');
                     }
                 },
+                updateSlider() {
+                    this.slider.value = this.currentFrame;
+                    let value = Math.round((100 * (this.currentFrame - this.slider.min) / (this.slider.max - this.slider.min)));
+                    $('#sliderVideo').slider('setValue', value);
+                }
             },
             mounted: function () {
 
@@ -74,9 +79,14 @@
                     (state, getters) => getters.currentFrame,
                     (currentFrame) => {
                         this.currentFrame = currentFrame;
-                        this.slider.value = this.currentFrame;
-                        let value = Math.round((100 * (this.currentFrame - this.slider.min) / (this.slider.max - this.slider.min)));
-                        $('#sliderVideo').slider('setValue', value);
+                        this.updateSlider();
+                    }
+                )
+                this.$store.watch(
+                    (state, getters) => getters.playFrame,
+                    (playFrame) => {
+                        this.currentFrame = playFrame;
+                        this.updateSlider();
                     }
                 )
                 this.slider.min = this.$store.getters.framesRange.first;
