@@ -71,7 +71,9 @@ class Lemma extends map\LemmaMap
     public function getByNameIdLanguage($name, $idLanguage)
     {
         $criteria = $this->getCriteria()->select("idLemma, name");
-        $criteria->where("(name = lower('{$name}')) and (idLanguage = {$idLanguage})");
+        //$criteria->where("(name = lower('{$name}')) and (idLanguage = {$idLanguage})");
+        $criteria->where("(name = :name) and (idLanguage = {$idLanguage})");
+        $criteria->addParameter('name', strtolower($name));
         $this->retrieveFromCriteria($criteria);
     }
 
@@ -97,7 +99,8 @@ class Lemma extends map\LemmaMap
     public function listForLookup($lemma = '', $idLanguage = '1')
     {
         $criteria = $this->getCriteria()->select("idLemma, concat(name,'  [',language.language,']') as fullname")->orderBy('name');
-        $criteria->where("name LIKE '{$lemma}%'");
+        $criteria->where("name LIKE :name");
+        $criteria->addParameter('name', strtolower($lemma) . '%');
         $criteria->where("idLanguage = {$idLanguage}");
         return $criteria;
     }
@@ -111,7 +114,8 @@ class Lemma extends map\LemmaMap
         if ($filter->lexeme) {
             $criteria->where("lexemeentries.lexeme.name LIKE '{$filter->lexeme}%'");
         } else if ($filter->lemma) {
-            $criteria->where("name LIKE '{$filter->lemma}%'");
+            $criteria->where("name LIKE :name");
+            $criteria->addParameter('name', strtolower($filter->lemma) . '%');
         }
         if ($filter->idLanguage) {
             $criteria->where("idLanguage = {$filter->idLanguage}");

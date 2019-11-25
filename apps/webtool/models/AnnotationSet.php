@@ -773,6 +773,8 @@ HERE;
         $transaction = $this->beginTransaction();
         try {
             $idAnnotationSet = $this->getId();
+            $asComments = new ASComments();
+            $asComments->deleteByAnnotationSet($idAnnotationSet);
             $layer = new Layer();
             $layer->deleteByAnnotationSet($idAnnotationSet);
             parent::delete();
