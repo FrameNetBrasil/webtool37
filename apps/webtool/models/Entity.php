@@ -56,7 +56,9 @@ class Entity extends map\EntityMap
 
     public function getByAlias($alias)
     {
-        $criteria = $this->getCriteria()->select('*')->where("upper(alias) = upper('{$alias}')");
+        //$criteria = $this->getCriteria()->select('*')->where("upper(alias) = upper('{$alias}')");
+        $criteria = $this->getCriteria()->select('*')->where("upper(alias) = :alias");
+        $criteria->addParameter('alias', strtoupper($alias));
         $this->retrieveFromCriteria($criteria);
         return $this;
     }
