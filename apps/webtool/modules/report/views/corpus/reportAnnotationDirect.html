@@ -57,7 +57,7 @@
 
         $('#annotationSet').datagrid({
             title: {{$data->title}},
-        singleSelect: true,
+            singleSelect: true,
             //collapsible: true,
             fit: true,
             nowrap: false,
@@ -65,14 +65,15 @@
             selectOnCheck: false,
             idField: 'idAnnotationSet',
             url: {{$manager->getURL('annotation/main/annotationSet')}} + '/' + {{$data->idSubCorpus}},
-        method: 'get',
+            method: 'get',
             onSelect: function (rowIndex, rowData) {
-            $('#layersPane').html('');
-            console.log(rowData);
-            addAnnotationSets(rowData.idSentence);
-        }
+                $('#layersPane').html('');
+                console.log(rowData);
+                addAnnotationSets(rowData.idSentence);
+            }
+        });
     });
-
+    
         function clearSentences() {
             $("#divSentencesColorOn").html('');
             $("#divSentencesColorOff").html('');
@@ -155,7 +156,7 @@
             $('#' + id + '_on').remove();
             $('#' + id + '_off').remove();
         }
-    });
+
 
 </script>
 <style type="text/css">
