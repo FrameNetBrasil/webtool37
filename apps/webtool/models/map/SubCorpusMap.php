@@ -25,7 +25,7 @@ class SubCorpusMap extends \MBusinessModel {
             'attributes' => array(
                 'idSubCorpus' => array('column' => 'idSubCorpus','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
                 'name' => array('column' => 'name','type' => 'string'),
-                'rank' => array('column' => 'rank','type' => 'integer'),
+                'rank' => array('column' => '`rank`','type' => 'integer'),
                 'idEntity' => array('column' => 'idEntity','type' => 'integer'),
             ),
             'associations' => array(
