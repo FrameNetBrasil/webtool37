@@ -31,6 +31,7 @@ class ReportCorpusService extends MService
     {
         $result = [];
         $sentence = new fnbr\models\Sentence($this->data->idSentence);
+        Manager::getSession()->idLanguage = $sentence->getIdLanguage();
         $viewAS = new fnbr\models\ViewAnnotationSet();
         $as = new fnbr\models\AnnotationSet();
         $annotationSets = $as->getAnnotationSets($this->data->idSentence);

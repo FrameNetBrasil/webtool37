@@ -182,6 +182,7 @@ class AnnotationSet extends map\AnnotationSetMap
     public function allowManyAnnotationSet() {
         $allow = \Manager::checkAccess('MASTER', A_EXECUTE) || \Manager::checkAccess('ANNO', A_EXECUTE);
         $allow = $allow || (\Manager::checkAccess('READER', A_EXECUTE));
+        $allow = $allow || (!\Manager::isLogged());
         return $allow;
     }
 
