@@ -67,8 +67,8 @@
             if ($.type(id) === "undefined") {
                 id = reportCorpus.node.id.substr(1);
             }
-            manager.doAction('@report/corpus/reportAnnotation' + '/' + id);
-        }
+            //manager.doAction('@report/corpus/reportAnnotation' + '/' + id);
+            manager.doGet({{$manager->getURL('report/corpus/reportAnnotation')}} + '/' + id,'reportCorpusCenterPane');        }
 
         reportCorpus.exportCONLL = function (id) {
             if ($.type(id) === "undefined") {
