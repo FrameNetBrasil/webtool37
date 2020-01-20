@@ -335,35 +335,13 @@ class MainController extends MController
         $type = $this->data->id{0};
         if ($type == 'd') {
             $this->data->idDocument = substr($this->data->id, 1);
-           // $documentMM = new fnbr\models\DocumentMM();
-           // $documentMM->getByIdDocument($idDocument);
-           // $this->data->idDocumentMM = $documentMM->getIdDocument();
-          //  $this->data->idDocumentMM = $documentMM->getIdDocument();
             $this->data->title = $annotation->getDocumentTitle($this->data->idDocumentoMM, $this->idLanguage);
-            /*
-            $document = new fnbr\models\Document($idDocument);
-            $this->data->status = $annotation->getSubCorpusStatus($this->data->idSubCorpus, $this->data->cxn);
-            foreach ($this->data->status->stat as $stat) {
-                $stats .= "({$stat->name}: {$stat->quant})  ";
-            }
-            $this->data->title = $annotation->getSubCorpusTitle($this->data->idSubCorpus, $this->idLanguage, $this->data->cxn) . "  - Stats: {$stats}  -  Status: {$this->data->status->status->msg}";
-            */
             $this->data->userLanguage = fnbr\models\Base::languages()[fnbr\models\Base::getCurrentUser()->getConfigData('fnbrIdLanguage')];
             $this->render();
         }
     }
 
     public function annotationMultimodal() {
-        Manager::getPage()->setTemplateName('content');
-        $this->data->idAnnotationSetMM = $this->data->id;
-        $annotationSetMM = new \fnbr\models\AnnotationSetMM($this->data->idAnnotationSetMM);
-        $sentenceMM = new \fnbr\models\SentenceMM($annotationSetMM->getIdSentenceMM());
-        $this->data->idSentence = $sentenceMM->getIdSentence();
-        $this->data->idAnnotationSet = $annotationSetMM->getIdAnnotationSet();
-        $this->render();
-    }
-
-    public function annotationMultimodalV() {
         Manager::getPage()->setTemplateName('content');
         $this->data->idAnnotationSetMM = $this->data->id;
         $annotationSetMM = new \fnbr\models\AnnotationSetMM($this->data->idAnnotationSetMM);
@@ -376,8 +354,6 @@ class MainController extends MController
         $this->data->idAnnotationSet = $annotationSetMM->getIdAnnotationSet();
         $this->data->documentMM = json_encode($annotationSetMM->getDocumentData());
         $objectMM = new \fnbr\models\ObjectMM();
-        //$criteria = $objectMM->listByAnnotationSetMM($this->data->idAnnotationSetMM);
-        //$this->data->objects = $objectMM->gridDataAsJSON($criteria, true);
         $this->data->objects = $objectMM->getObjectsAsJSON($this->data->idAnnotationSetMM);
         mdump($this->data->objects);
         $this->data->swfPath = Manager::getBaseURL() . '/apps/webtool/public/scripts/jplayer/';
