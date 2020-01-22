@@ -213,5 +213,24 @@ class ImportController extends MController
         }
     }
 
+    public function formImportMultimodalVideo()
+    {
+        $language = new fnbr\models\Language();
+        $this->data->languages = $language->listAll()->asQuery()->chunkResult('idLanguage', 'language');
+        $this->data->action = '@utils/import/importMultimodalVideo';
+        $this->render();
+    }
+
+    public function importMultimodalVideo()
+    {
+        try {
+            $files = Mutil::parseFiles('uploadFile');
+            $model = new fnbr\models\Document($this->data->idDocument);
+            $model->uploadMultimodalVideo($this->data, $files[0]);
+            $this->renderPrompt('information', 'Multimodal video loaded successfully.');
+        } catch (EMException $e) {
+            $this->renderPrompt('error', $e->getMessage());
+        }
+    }
 
 }

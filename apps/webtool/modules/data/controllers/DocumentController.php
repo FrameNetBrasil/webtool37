@@ -7,6 +7,12 @@ class DocumentController extends MController {
         $criteria = $model->listForLookup($this->data->q);
         $this->renderJSON($model->gridDataAsJSON($criteria));
     }
+
+    public function lookupDataMultiModal(){
+        $model = new fnbr\models\DocumentMM();
+        $criteria = $model->listForLookup($this->data->q);
+        $this->renderJSON($model->gridDataAsJSON($criteria));
+    }
     /*
 
     public function main() {

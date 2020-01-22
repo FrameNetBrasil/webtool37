@@ -305,11 +305,11 @@ class Document extends map\DocumentMap
             mdump($text);
 
             $this->createSubCorpusFullText($data);
-            foreach($text as $p => $sentences) {
+            foreach ($text as $p => $sentences) {
                 $paragraphNum = $p + 1;
                 $paragraph = $this->createParagraph($paragraphNum);
                 $sentenceNum = 0;
-                foreach($sentences as $s => $sentence)  {
+                foreach ($sentences as $s => $sentence) {
                     $row = str_replace("\t", " ", $sentence);
                     $row = str_replace("\n", " ", $row);
                     $row = trim($row);
@@ -457,7 +457,8 @@ HERE;
 
     }
 
-    public function listSentenceForXML() {
+    public function listSentenceForXML()
+    {
         $cmd = <<<HERE
 
 select distinct s.idSentence, s.text
@@ -474,7 +475,8 @@ HERE;
         return $query;
     }
 
-    public function listAnnotationSetForXML($idSentence, $idLanguage = 1) {
+    public function listAnnotationSetForXML($idSentence, $idLanguage = 1)
+    {
         $cmd = <<<HERE
 
 select a.idAnnotationSet, lb.layerTypeEntry, lb.startChar, lb.endChar, f.idFrame, e1.name frameName, fe.idFrameElement, e3.name feName, gl.idGenericLabel, gl.name glName, lu.idLU, lu.name luName, pos.POS, lx.name lexeme
@@ -507,7 +509,8 @@ HERE;
         return $query;
     }
 
-    public function listSentenceForCONLL() {
+    public function listSentenceForCONLL()
+    {
         $cmd = <<<HERE
 
 select distinct s.idSentence, s.text
@@ -524,7 +527,8 @@ HERE;
         return $query;
     }
 
-    public function listAnnotationSetForCONLL($idSentence) {
+    public function listAnnotationSetForCONLL($idSentence)
+    {
         $idLanguage = \Manager::getSession()->idLanguage;
 
         $cmd = <<<HERE
@@ -627,6 +631,18 @@ HERE;
             throw new EModelException($e->getMessage());
         }
         return $result;
+    }
+
+    public function uploadMultimodalVideo($data, $file)
+    {
+        $documentMM = new DocumentMM();
+        $documentMM->getByIdDocument($data->idDocument);
+        $fileName = $file->getName();
+        $path = \Manager::getAppPath('/files/multimodal/videos/' . $fileName);
+        $file->copyTo($path);
+        $documentMM->setVisualPath($fileName);
+        $documentMM->saveMM();
+        mdump($documentMM->getVisualPath());
     }
 
     public function createSubCorpusMultimodalText($data)

@@ -7,7 +7,7 @@
                 <mspan>Formato: start_timestamp|end_timestamp|text.</mspan>
             </mvcontainer>
             <mselection id="idLanguage" label="Língua" options="$this->data->languages"/>
-            <include component="MLookupDocument.php" id="idDocument" label="Document"/>
+            <include component="MLookupDocumentMultiModal.php" id="idDocument" label="Document"/>
             <mfilefield id="uploadFile" label="Arquivo com dados" text="Selecionar Arquivo" width="300px"/>
         </fields>    
         <buttons>

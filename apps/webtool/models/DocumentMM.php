@@ -44,6 +44,9 @@ class DocumentMM extends map\DocumentMMMap
         parent::save();
     }
 
+    public function saveMM() {
+        parent::save();
+    }
 
     public function listByCorpus($idCorpus)
     {
@@ -53,6 +56,17 @@ class DocumentMM extends map\DocumentMMMap
         Base::entryLanguage($criteria, 'document');
         $criteria->where("idCorpus = {$idCorpus}");
         $criteria->groupBy("document.idDocument, document.entry, document.entries.name");
+        return $criteria;
+    }
+
+    public function listForLookup($name)
+    {
+        $criteria = $this->getCriteria()->select('document.idDocument,document.entries.name as name')->orderBy('document.entries.name');
+        Base::entryLanguage($criteria, 'document');
+        if ($name != '*') {
+            $name = (strlen($name) > 1) ? $name : 'none';
+            $criteria->where("upper(document.entries.name) LIKE upper('{$name}%')");
+        }
         return $criteria;
     }
 }
