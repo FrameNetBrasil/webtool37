@@ -64,6 +64,14 @@ Access the app (e.g. http://localhost/webtool/index.php/webtool/main with user =
 
 See [this YouTube channel](https://www.youtube.com/playlist?list=PLbRWTx8_CBTniSlJdlhBqJNe7A-AjKizD) for tutorials on the main functions of the WebTool.
 
+## Contributing
+* Create a new branch with a meaningful name `git checkout -b branch_name`.<br />
+* Develop your feature on Xcode IDE  and run it .<br />
+* Add the files you changed `git add file_name`.<br />
+* Commit your changes `git commit -m "Message briefly explaining the feature"`.<br />
+* Keep one commit per feature. If you forgot to add changes, you can edit the previous commit `git commit --amend`.<br />
+* Push to your repo `git push --set-upstream origin branch-name`.<br />
+* Go into [the Github repo](https://github.com/FrameNetBrasil/webtool.git) and create a pull request explaining your changes.<br />
 
 ## License
 
