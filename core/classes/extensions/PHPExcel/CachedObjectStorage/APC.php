@@ -66,7 +66,7 @@ class PHPExcel_CachedObjectStorage_APC extends PHPExcel_CachedObjectStorage_Cach
 
 			if (!apc_store($this->_cachePrefix.$this->_currentObjectID.'.cache',serialize($this->_currentObject),$this->_cacheTime)) {
 				$this->__destruct();
-				throw new Exception('Failed to store cell '.$this->_currentObjectID.' in APC');
+				throw new Exception('Failed to _store cell '.$this->_currentObjectID.' in APC');
 			}
 			$this->_currentCellIsDirty = false;
 		}
@@ -201,7 +201,7 @@ class PHPExcel_CachedObjectStorage_APC extends PHPExcel_CachedObjectStorage_Cach
 				}
 				if (!apc_store($newCachePrefix.$cellID.'.cache',$obj,$this->_cacheTime)) {
 					$this->__destruct();
-					throw new Exception('Failed to store cell '.$cellID.' in APC');
+					throw new Exception('Failed to _store cell '.$cellID.' in APC');
 				}
 			}
 		}

@@ -1317,7 +1317,7 @@ jQuery.fn.extend({
 
 			} else if ( type === "undefined" || type === "boolean" ) {
 				if ( this.className ) {
-					// store className if set
+					// _store className if set
 					jQuery.data( this, "__className__", this.className );
 				}
 
@@ -1960,7 +1960,7 @@ jQuery.event = {
 			return event;
 		}
 
-		// store a copy of the original event object
+		// _store a copy of the original event object
 		// and "clone" to set read-only properties
 		var originalEvent = event;
 		event = jQuery.Event( originalEvent );
@@ -2303,7 +2303,7 @@ if ( !jQuery.support.changeBubbles ) {
 			},
 
 			// Beforeactivate happens also before the previous element is blurred
-			// with this event you can't trigger a change event, but you can store
+			// with this event you can't trigger a change event, but you can _store
 			// information/focus[in] is not needed anymore
 			beforeactivate: function( e ) {
 				var elem = e.target;

@@ -1,0 +1,210 @@
+<script>
+    Vue.component('controls-pane', {
+            template: '#controls-pane',
+            props: [],
+            data() {
+                return {
+                    slider: {
+                        min: 0,
+                        max: 0,
+                        value: 0,
+                        //disable: true,
+                    },
+                    currentTime: 0,
+                    currentFrame: 0,
+                    currentState:  this.$store.state.currentState,
+                }
+            },
+            computed: {},
+            created() {
+            },
+            methods: {
+                changeValue(v) {
+                    if ((this.currentState == 'paused') || (this.currentState == 'loaded')) {
+                        if ((v >= this.slider.min) && (v <= this.slider.max)) {
+                            this.$store.commit('currentFrame', v);
+                        }
+                    }
+                },
+                onForwardClick() {
+                    if ((this.currentState == 'paused') || (this.currentState == 'loaded')) {
+                        if (this.slider.value < this.slider.max) {
+                            this.slider.value = this.slider.value + 1;
+                            this.$store.commit('currentFrame', this.slider.value);
+                        }
+                    }
+                },
+                onBackwardClick() {
+                    if ((this.currentState == 'paused') || (this.currentState == 'loaded')) {
+                        if (this.slider.value > this.slider.min) {
+                            this.slider.value = this.slider.value - 1;
+                            this.$store.commit('currentFrame', this.slider.value);
+                        }
+                    }
+                },
+                onBeginningClick() {
+                    if ((this.currentState == 'paused') || (this.currentState == 'loaded')) {
+                        if (this.slider.value > this.slider.min) {
+                            this.slider.value = this.slider.min;
+                            this.$store.commit('currentFrame', this.slider.value);
+                        }
+                    }
+                },
+                onPlayClick() {
+                    if ((this.currentState == 'paused') || (this.currentState == 'loaded')) {
+                        this.$store.commit('currentState', 'playing');
+                    }
+                },
+                onPauseClick() {
+                    if ((this.currentState == 'playing') || (this.currentState == 'loaded')) {
+                        this.$store.commit('currentState', 'paused');
+                    }
+                },
+                updateSlider() {
+                    this.slider.value = this.currentFrame;
+                    let value = Math.round((100 * (this.currentFrame - this.slider.min) / (this.slider.max - this.slider.min)));
+                    $('#sliderVideo').slider('setValue', value);
+                }
+            },
+            mounted: function () {
+
+                this.$store.watch(
+                    (state, getters) => getters.currentState,
+                    (currentState) => {
+                        this.currentState = currentState;
+                    }
+                )
+
+                this.$store.watch(
+                    (state, getters) => getters.currentFrame,
+                    (currentFrame) => {
+                        this.currentFrame = currentFrame;
+                        this.updateSlider();
+                    }
+                )
+                this.$store.watch(
+                    (state, getters) => getters.playFrame,
+                    (playFrame) => {
+                        this.currentFrame = playFrame;
+                        this.updateSlider();
+                    }
+                )
+                this.slider.min = this.$store.getters.framesRange.first;
+                this.slider.max = this.$store.getters.framesRange.last;
+                this.slider.value = this.$store.getters.framesRange.first;
+                /*
+                this.$store.watch(
+                    (state, getters) => getters.framesRange,
+                    (framesRange) => {
+                        console.log('controls framesRange');
+                        console.log(framesRange);
+                        this.slider.min = framesRange.first;
+                        this.slider.max = framesRange.last;
+                        this.slider.value = framesRange.first;
+                    }
+                )
+                */
+                let that = this;
+                $('#sliderVideo').slider({
+                    min: 0,
+                    max: 100,
+                    value: that.slider.value,
+                    disabled: false,
+                    width: 'auto',
+                    /*
+                                            converter:{
+                                                toPosition:function(value, size){
+                                                    console.log('toPosition value =' + value);
+                                                    //let opts = $('#sliderVideo').slider('options');
+                                                    //console.log('value = ' + value + ' size = ' + size + ' - ' + opts.min + ' - ' + opts.max);
+                                                    let position = (value-that.slider.min)/(that.slider.max-that.slider.min)*size;
+                                                    console.log('position = ' + position);
+                                                    return position;
+                                                },
+                                                toValue:function(pos, size){
+                                                    console.log('toValue pos =' + pos);
+                                                    //let opts = $('#sliderVideo').slider('options');
+                                                    //console.log('pos = ' + pos + ' size = ' + size + ' - ' + opts.min + ' - ' + opts.max);
+                                                    let value = that.slider.min + (that.slider.max-that.slider.min)*(pos/size);
+                                                    console.log('value = ' + value);
+                                                    return value;
+                                                }
+                                            },
+
+                                            onComplete: function(value) {
+                                                console.log('on complete ' + value);
+                                                if (that.currentState == 'paused') {
+                                                    //let v = Math.round(that.slider.min + (that.slider.max-that.slider.min)*(value/100));
+                                                    let v = value;
+                                                    console.log('v = ' + v);
+                                                    if ((v >= that.slider.min) && (v <= that.slider.max)) {
+                                                        that.$store.commit('currentFrame', v);
+                                                    }
+                                                }
+                                            },
+                                            onChange: function(value) {
+                                                //console.log(that.slider);
+                                                //console.log(that.currentState);
+                                                console.log('on change ' + value);
+                                            },
+                                            */
+                    onComplete: function (value) {
+                        console.log('on complete ' + value);
+                        let v = Math.round(that.slider.min + (that.slider.max - that.slider.min) * (value / 100));
+                        //let v = value;
+                        console.log('v = ' + v);
+                        if ((v >= that.slider.min) && (v <= that.slider.max)) {
+                            that.$store.commit('currentFrame', v);
+                        }
+                    },
+                    onSlideStart: function () {
+                        console.log('slider start');
+                        that.$store.commit('currentState', 'dragging');
+                    },
+                    onSlideEnd: function () {
+                        that.$store.commit('currentState', 'paused');
+                        //let value = $('#sliderVideo').slider('getValue');
+                        //console.log(value);
+                        //console.log('slider end');
+                        //let v = Math.round(that.slider.min + (that.slider.max-that.slider.min)*(value/100));
+                        //that.$store.commit('currentFrame', v);
+                    },
+                });
+
+
+            },
+        }
+    );
+</script>
+
+<script type="text/x-template" id="controls-pane">
+    <div>
+        <div id="controls">
+            <LinkButton id="btnBeginning" :plain="true" :selected="true" @click="onBeginningClick"><i
+                    class="fas fa-fast-backward"></i></LinkButton>
+            <LinkButton id="btnBackward" :plain="true" :selected="true" @click="onBackwardClick"><i
+                    class="fas fa-step-backward"></i></LinkButton>
+            <LinkButton id="btnPlay" :plain="true" @click="onPlayClick"><i class="fas fa-play"></i></LinkButton>
+            <LinkButton id="btnPause" :plain="true" @click="onPauseClick"><i class="fas fa-pause"></i></LinkButton>
+            <LinkButton id="btnForward" :plain="true" @click="onForwardClick"><i class="fas fa-step-forward"></i>
+            </LinkButton>
+            <div style="width:80px;padding:5px">
+                <span>{{slider.value}}</span>&nbsp<span>/</span>&nbsp<span>{{slider.max}}</span>
+            </div>
+            <!--
+            <Slider id="sliderVideo" ref="sl" :showTip="false" :value="slider.value" :min="slider.min" :max="slider.max"
+                    @input="changeValue"></Slider>
+                    -->
+            <div id="sliderContainer" style="width:100%">
+                <input id="sliderVideo"></input>
+            </div>
+
+        </div>
+        <!--
+        <Slider ref="sl" :showTip="true" :value="slider.value" :min="slider.min" :max="slider.max"
+                :rule="slider.rule" @input="changeValue"></Slider>
+        -->
+
+    </div>
+</script>
+

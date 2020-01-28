@@ -1,0 +1,199 @@
+
+#doodle {
+    position: relative;
+    /*z-index: 2;*/
+    /*
+    width: 640px;
+    height: 360px;
+     */
+}
+
+#controls {
+    display: flex;
+    flex-direction: row;
+    width:100%;
+    background-color:black;
+}
+
+#controls > * {
+    color:white;
+    background-color:black;
+    border-color: black;
+}
+
+#controls l-btn {
+ color:white;
+}
+#controls  l-btn-plain-selected, #controls  l-btn-plain-selected:hover {
+    background-color:black;
+}
+#controls  l-btn-selected, #controls  l-btn-selected:hover {
+    background-color:black;
+}
+
+#jcontrols {
+    display: flex;
+    flex-direction: row;
+    width:100%;
+    background-color:black;
+    padding: 0 8px 8px 8px;
+    height:24px;
+}
+
+#jcontrols > * {
+    color:white;
+    background-color:black;
+    border-color: black;
+    font-size: 1em;
+}
+
+#sliderContainer {
+    //display:inline-block;
+    width: 100%;
+    padding: 5px 16px 5px 16px;
+}
+
+.bbox {
+    border: 1px solid #FFFFFF;
+    position: absolute;
+    z-index: 3;
+}
+
+.bboxhighlight {
+    opacity: 1 !important;
+}
+
+.handle, .ui-resizable-handle {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 1px solid #FFFFFF;
+    background-color: rgba(255, 255, 0, .05);
+    position: absolute;
+}
+
+.center-drag {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    cursor: move;
+}
+
+.objectId {
+    width: 20px;
+    height: 14px;
+    background-color: white;
+    right: 0;
+    top: 0;
+    position: absolute;
+    color: black;
+    cursor: pointer;
+    padding-left: 2px;
+}
+
+.ui-button {
+    margin-right: 5px;
+}
+
+.ui-resizable-n {
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: n-resize;
+}
+
+.ui-resizable-s {
+    left: 50%;
+    bottom: 0%;
+    transform: translate(-50%, 50%);
+    cursor: s-resize;
+}
+
+.ui-resizable-w {
+    top: 50%;
+    transform: translate(-50%, -50%);
+    cursor: w-resize;
+}
+
+.ui-resizable-e {
+    right: 0%;
+    top: 50%;
+    transform: translate(50%, -50%);
+    cursor: e-resize;
+}
+
+#videoPane {
+    background: #263238;
+}
+
+#toolsPane {
+    padding: 0px 8px 8px 8px;
+}
+
+#toolsPaneContainer {
+    display: flex;
+    flex-direction: column;
+    background: #455A64;
+    border: 1px solid #546E7A;
+    box-sizing: border-box;
+    padding-top: 8px;
+}
+
+#toolsPaneContainer > * {
+    color:white;
+}
+
+#toolsPaneContainer l-btn {
+    color:white;
+}
+
+.fa16pxWhite {
+    font-size: 16px;
+    color:white;
+}
+
+.fa16pxWhite:hover {
+    font-size: 16px;
+    color:#263238;
+}
+
+#btnNewObject.l-btn-plain:hover {
+    background-color:#455A64;
+    border-color:#455A64;
+}
+
+#btnEndObject.l-btn-plain:hover {
+    background-color:#455A64;
+    border-color:#455A64;
+}
+#btnObjectBlocked.l-btn-plain:hover {
+    background-color:#455A64;
+    border-color:#455A64;
+}
+#btnObjectVisible.l-btn-plain:hover {
+    background-color:#455A64;
+    border-color:#455A64;
+}
+#btnSave.l-btn-plain:hover {
+    background-color:#455A64;
+    border-color:#455A64;
+}
+
+#btnObjectEdit.l-btn-plain:hover {
+    background-color:#455A64;
+    border-color:#455A64;
+}
+
+#btnObjectDelete.l-btn-plain:hover {
+    background-color:#455A64;
+    border-color:#455A64;
+}
+
+#toolsPaneContainer a {
+    width: 32px;
+    height:32px;
+}
+
+#gridPane {
+    width:416px;
+    padding:0px 8px 8px 0px;
+}

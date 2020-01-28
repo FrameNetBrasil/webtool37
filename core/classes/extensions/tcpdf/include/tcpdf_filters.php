@@ -321,7 +321,7 @@ class TCPDF_FILTERS {
 					// index exist on dictionary
 					$decoded .= $dictionary[$index];
 					$dic_val = $dictionary[$prev_index].$dictionary[$index]{0};
-					// store current index
+					// _store current index
 					$prev_index = $index;
 				} else {
 					// index do not exist on dictionary

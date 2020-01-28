@@ -20,7 +20,7 @@
 namespace Doctrine\Common;
 
 /**
- * Class to store and retrieve the version of Doctrine
+ * Class to _store and retrieve the version of Doctrine
  *
  * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link    www.doctrine-project.org

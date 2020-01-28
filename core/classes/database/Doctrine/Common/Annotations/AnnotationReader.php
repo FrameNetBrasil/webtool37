@@ -104,14 +104,14 @@ class AnnotationReader implements Reader
     private $phpParser;
 
     /**
-     * In-memory cache mechanism to store imported annotations per class.
+     * In-memory cache mechanism to _store imported annotations per class.
      *
      * @var array
      */
     private $imports = array();
 
     /**
-     * In-memory cache mechanism to store ignored annotations per class.
+     * In-memory cache mechanism to _store ignored annotations per class.
      *
      * @var array
      */

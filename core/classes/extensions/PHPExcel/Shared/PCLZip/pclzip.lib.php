@@ -200,7 +200,7 @@
     var $error_string = '';
     
     // ----- Current status of the magic_quotes_runtime
-    // This value store the php configuration for magic_quotes
+    // This value _store the php configuration for magic_quotes
     // The class can then disable the magic_quotes and reset it after
     var $magic_quotes_status;
 

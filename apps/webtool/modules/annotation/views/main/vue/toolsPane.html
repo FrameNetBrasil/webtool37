@@ -1,0 +1,133 @@
+<script>
+    Vue.component('tools-pane', {
+            template: '#tools-pane',
+            props: [],
+            data() {
+                return {
+                    urlPutObjects: this.$store.state.model.urlPutObjects,
+                    currentTime: 0,
+                    currentFrame: 0,
+                    currentState: 'paused'
+                }
+            },
+            computed: {},
+            created() {
+            },
+            methods: {
+                onNewObject() {
+                    if (this.currentState == 'paused') {
+                        this.$emit('newObjectClick', this.currentFrame);
+                    }
+                },
+                onEndObject() {
+                    if (this.currentState == 'paused') {
+                        let currentObject = this.$store.state.currentObject;
+                        let currentState = this.$store.state.currentObjectState;
+                        if (currentState == 'selected') {
+                            this.$store.dispatch('endObject');
+                        }
+                    }
+                },
+                onObjectBlocked() {
+                    if (this.currentState == 'paused') {
+                        this.$store.dispatch('objectBlocked');
+                    }
+                },
+                onObjectVisible() {
+                    if (this.currentState == 'paused') {
+                        this.$store.dispatch('objectVisible');
+                    }
+                },
+                onClearObject() {
+                    if (this.currentState == 'paused') {
+                        this.$store.dispatch('clearObject');
+                    }
+                },
+                onObjectEdit() {
+                    if (this.currentState == 'paused') {
+                        let currentState = this.$store.state.currentObjectState;
+                        if (currentState == 'selected') {
+                            this.$store.commit('currentObjectState', 'editingFE');
+                        }
+                    }
+                },
+                onObjectDelete() {
+                    if (this.currentState == 'paused') {
+                        this.$store.dispatch('deleteObject');
+                    }
+                },
+                onSave() {
+                    console.log('saving');
+                    let objects = this.$store.getters.allAnnotatedObjects;
+                    // console.log(objects);
+                    let data = {
+                        idAnnotationSetMM: this.$store.state.model.idAnnotationSetMM,
+                        objects: []
+                    };
+                    for(object of objects) {
+                        let frames = [];
+                        for(frame of object.frames) {
+                            console.log(frame);
+                            if ((frame.isGroundTruth) && (frame.frameNumber <= object.endFrame)){
+                                frames.push({
+                                    frameNumber: frame.frameNumber,
+                                    x: frame.bbox.x,
+                                    y: frame.bbox.y,
+                                    width: frame.bbox.width,
+                                    height: frame.bbox.height,
+                                    blocked: frame.blocked ? 1 : 0,
+                                })
+                            }
+                        }
+                        data.objects.push({
+                            idFrameElement: object.idFE,
+                            startFrame: object.startFrame,
+                            endFrame: object.endFrame,
+                            name: object.name,
+                            frames: frames,
+                        })
+                    }
+                    $('#dataObjects').val(JSON.stringify(data));
+                    manager.doPostBack('formObjects');
+                },
+
+            },
+            mounted: function () {
+                this.currentState = this.$store.state.currentState;
+                this.$store.watch(
+                    (state, getters) => getters.currentState,
+                    (currentState) => {
+                        this.currentState = currentState;
+                    }
+                )
+                console.log('=========== tools pane current state = ' + this.currentState);
+
+
+            },
+            watch: {}
+        }
+    );
+</script>
+
+<script type="text/x-template" id="tools-pane">
+    <div id="toolsPaneContainer">
+        <LinkButton id="btnNewObject" iconCls="fa16pxWhite fas fa-crop" :plain="true" @click="onNewObject" title="New Object"></LinkButton>
+        <LinkButton id="btnEndObject" iconCls="fa16pxWhite fas fa-unlink" :plain="true"  @click="onEndObject" title="End Object"></LinkButton>
+        <hr style="margin:8px"/>
+        <LinkButton id="btnObjectEdit" iconCls="fa16pxWhite fas fa-edit" :plain="true" @click="onObjectEdit" title="Edit FE"></LinkButton>
+        <LinkButton id="btnObjectDelete" iconCls="fa16pxWhite fas fa-trash-alt" :plain="true" @click="onObjectDelete" title="Delete Object"></LinkButton>
+        <hr style="margin:8px"/>
+        <LinkButton id="btnObjectBlocked" iconCls="fa16pxWhite far fa-images" :plain="true" @click="onObjectBlocked" title="Blocked"></LinkButton>
+        <LinkButton id="btnObjectVisible" iconCls="fa16pxWhite far fa-image" :plain="true" @click="onObjectVisible" title="Visible"></LinkButton>
+        <hr style="margin:8px"/>
+        <!--
+        <LinkButton id="btnClearObject" iconCls="far fa-square" @click="onClearObject">Clear Object</LinkButton>
+        -->
+        <LinkButton id="btnSave" iconCls="fa16pxWhite fas fa-cloud-upload-alt" :plain="true" @click="onSave" title="Save"></LinkButton>
+        <form id="formObjects" method="post" :action="urlPutObjects">
+            <input type="hidden" id="dataObjects" name="dataObjects" value=""/>
+        </form>
+
+    </div>
+</script>
+

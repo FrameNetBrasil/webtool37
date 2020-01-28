@@ -35,7 +35,8 @@ class DocumentMap extends \MBusinessModel {
                 'corpus' => array('toClass' => 'fnbr\models\Corpus', 'cardinality' => 'oneToOne' , 'keys' => 'idCorpus:idCorpus'), 
                 'paragraphs' => array('toClass' => 'fnbr\models\Paragraph', 'cardinality' => 'oneToMany' , 'keys' => 'idDocument:idDocument'), 
                 'timelines' => array('toClass' => 'fnbr\models\Timeline', 'cardinality' => 'oneToMany' , 'keys' => 'timeline:timeline'), 
-                'entries' => array('toClass' => 'fnbr\models\Entry', 'cardinality' => 'oneToMany' , 'keys' => 'entry:entry'), 
+                'entries' => array('toClass' => 'fnbr\models\Entry', 'cardinality' => 'oneToMany' , 'keys' => 'entry:entry'),
+                'documentmm' => array('toClass' => 'fnbr\models\DocumentMM', 'cardinality' => 'oneToMany' , 'keys' => 'idDocument:idDocument'),
             )
         );
     }
@@ -79,7 +80,8 @@ class DocumentMap extends \MBusinessModel {
     protected $paragraphs;
     protected $timelines;
     protected $entries;
-    
+    protected $documentmm;
+
 
     /**
      * Getters/Setters
@@ -252,9 +254,31 @@ class DocumentMap extends \MBusinessModel {
         $this->retrieveAssociation("entries");
     }
 
-    
+    /**
+     *
+     * @return Association
+     */
+    public function getDocumentMM() {
+        if (is_null($this->documentmm)){
+            $this->retrieveAssociation("documentmm");
+        }
+        return  $this->documentmm;
+    }
+    /**
+     *
+     * @param Association $value
+     */
+    public function setDocumentMM($value) {
+        $this->documentmm = $value;
+    }
+    /**
+     *
+     * @return Association
+     */
+    public function getAssociationDocumentMM() {
+        $this->retrieveAssociation("documentmm");
+    }
+
 
 }
 // end - wizard
-
-?>

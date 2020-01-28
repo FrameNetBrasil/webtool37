@@ -2621,7 +2621,7 @@ class PHPExcel_Calculation {
 		}
 
 		//	If we're using cell caching, then $pCell may well be flushed back to the cache (which detaches the parent worksheet),
-		//		so we store the parent worksheet so that we can re-attach it when necessary
+		//		so we _store the parent worksheet so that we can re-attach it when necessary
 		$pCellParent = ($pCell !== NULL) ? $pCell->getParent() : NULL;
 
 		//	Binary Operators
@@ -3005,7 +3005,7 @@ class PHPExcel_Calculation {
 		if ($tokens == false) return false;
 
 		//	If we're using cell caching, then $pCell may well be flushed back to the cache (which detaches the parent worksheet),
-		//		so we store the parent worksheet so that we can re-attach it when necessary
+		//		so we _store the parent worksheet so that we can re-attach it when necessary
 		$pCellParent = ($pCell !== NULL) ? $pCell->getParent() : null;
 		$stack = new PHPExcel_Calculation_Token_Stack;
 

@@ -211,6 +211,22 @@ class SubCorpus extends map\SubCorpusMap
         }
     }
 
+    public function addManualSubCorpusMultimodal($data)
+    {
+        $transaction = $this->beginTransaction();
+        try {
+            $entity = Base::createEntity('SC', 'sco_multimodal-related');
+            $this->setName('multimodal-related');
+            $this->setRank(0);
+            $this->setIdEntity($entity->getId());
+            $this->save();
+            $transaction->commit();
+        } catch (\Exception $ex) {
+            $transaction->rollback();
+            throw new \Exception($ex->getMessage());
+        }
+    }
+
     public function hasAnnotationSet() {
         $as = new AnnotationSet();
         $criteria = $as->listBySubCorpus($this->getIdSubCorpus());

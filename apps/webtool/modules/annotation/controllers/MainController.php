@@ -305,4 +305,117 @@ class MainController extends MController
         }
     }
 
+    public function formMultimodalAnnotation()
+    {
+        $annotation = Manager::getAppService('annotation');
+        $this->data->isMaster = Manager::checkAccess('MASTER', A_EXECUTE) ? 'true' : 'false';
+        $this->data->isSenior = Manager::checkAccess('SENIOR', A_EXECUTE) ? 'true' : 'false';
+        $this->data->colors = $annotation->getColor();
+        $this->data->layerType = $annotation->getLayerType();
+        $it = $annotation->getInstantiationType();
+        $this->data->instantiationType = $it['array'];
+        $this->data->instantiationTypeObj = $it['obj'];
+        $this->render();
+    }
+
+    public function multimodalTree()
+    {
+        $annotation = Manager::getAppService('annotation');
+        if ($this->data->id == '') {
+            $json = $annotation->listCorpusMultimodal($this->data->corpus, $this->idLanguage);
+        } elseif ($this->data->id{0} == 'c') {
+            $json = $annotation->listCorpusDocumentMultimodal(substr($this->data->id, 1));
+        }
+        $this->renderJson($json);
+    }
+
+    public function sentencesMultimodal()
+    {
+        $annotation = Manager::getAppService('annotation');
+        $type = $this->data->id{0};
+        if ($type == 'd') {
+            $this->data->idDocument = substr($this->data->id, 1);
+            $this->data->title = $annotation->getDocumentTitle($this->data->idDocumentoMM, $this->idLanguage);
+            $this->data->userLanguage = fnbr\models\Base::languages()[fnbr\models\Base::getCurrentUser()->getConfigData('fnbrIdLanguage')];
+            $this->render();
+        }
+    }
+
+    public function annotationMultimodal() {
+        Manager::getPage()->setTemplateName('content');
+        $this->data->idAnnotationSetMM = $this->data->id;
+        $annotationSetMM = new \fnbr\models\AnnotationSetMM($this->data->idAnnotationSetMM);
+        $this->data->urlObjects = Manager::getURL('annotation/main/objectsData') . "/" . $this->data->idAnnotationSetMM;
+        $this->data->urlPutObjects = Manager::getURL('annotation/main/putObjects');
+        $sentenceMM = new \fnbr\models\SentenceMM($annotationSetMM->getIdSentenceMM());
+        $this->data->idSentence = $sentenceMM->getIdSentence();
+        $this->data->idSentenceMM = $sentenceMM->getIdSentenceMM();
+        $this->data->sentenceMMRangeTime = $sentenceMM->getStartTimeStamp() . ' - ' . $sentenceMM->getEndTimeStamp();
+        $this->data->idAnnotationSet = $annotationSetMM->getIdAnnotationSet();
+        $this->data->documentMM = json_encode($annotationSetMM->getDocumentData());
+        $objectMM = new \fnbr\models\ObjectMM();
+        $this->data->objects = $objectMM->getObjectsAsJSON($this->data->idAnnotationSetMM);
+        mdump($this->data->objects);
+        $this->data->swfPath = Manager::getBaseURL() . '/apps/webtool/public/scripts/jplayer/';
+        $this->data->urlLookupFrame = Manager::getBaseURL() . '/index.php/webtool/data/frame/lookupData';
+        $this->data->urlLookupFE =  Manager::getBaseURL() . '/index.php/webtool/data/frameelement/lookupDataDecorated';
+        // todo: dynamic segments
+        $this->data->segments = json_encode([
+            ['value' => 1, 'text' => 'Segment1'],
+            ['value' => 2, 'text' => 'Segment2'],
+            ['value' => 3, 'text' => 'Segment3'],
+            ['value' => 4, 'text' => 'Segment4'],
+        ]);
+        $this->data->framesRange = json_encode([
+            'first' => 1,
+            'last' => 3284
+        ]);
+        $this->render();
+    }
+
+    public function annotationSetMultimodal()
+    {
+        $annotation = Manager::getAppService('annotation');
+        if ($this->data->sort) {
+            $sortable = (object)[
+                'field' => $this->data->sort,
+                'order' => $this->data->order
+            ];
+        }
+        $idDocument = $this->data->id;
+        $documentMM = new fnbr\models\DocumentMM();
+        $documentMM->getByIdDocument($idDocument);
+        $json = $annotation->listAnnotationSetMultimodal($documentMM->getIdDocumentMM(), $sortable);
+        $this->renderJson($json);
+    }
+
+    public function objectsData()
+    {
+        $this->data->idAnnotationSetMM = $this->data->id;
+        $annotation = Manager::getAppService('annotationmm');
+        mdump($this->data);
+        $this->data->objectsData = $annotation->getObjectsData($this->data, $this->idLanguage);
+        $this->renderJson($this->data->objectsData);
+    }
+
+    public function putObjects() {
+        mdump($this->data);
+        try {
+            $objectMM = new \fnbr\models\ObjectMM();
+            $objectMM->putObjects(json_decode($this->data->dataObjects));
+            $this->renderPrompt('information', 'Objects saved!');
+        } catch (\Exception $e) {
+            $this->renderPrompt('error', $e->getMessage());
+        }
+    }
+
+    public function visual() {
+        Manager::getPage()->setTemplateName('content');
+        $this->render();
+    }
+
+    public function visualPlayer() {
+        Manager::getPage()->setTemplateName('content');
+        $this->render();
+    }
 }

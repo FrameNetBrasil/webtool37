@@ -222,7 +222,7 @@ abstract class CacheProvider implements Cache
     abstract protected function doFlush();
 
      /**
-     * Retrieves cached information from data store
+     * Retrieves cached information from data _store
      *
      * @since   2.2
      * @return  array An associative array with server's statistics if available, NULL otherwise.
