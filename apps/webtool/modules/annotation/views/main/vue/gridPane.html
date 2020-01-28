@@ -105,7 +105,7 @@
                         width: 24,
                         title: '<i class="fas fa-info"></i>',
                         formatter: function (value, row, index) {
-                            console.log(row);
+                            //console.log(row);
                             if ((row.idFE != null) && (row.idFE != -1)) {
                                 return "<i style='color:green' class='fas fa-check'></i>";
                             } else {
@@ -124,10 +124,10 @@
                     ],
                     onClickRow: function (index, row) {
                         if (that.fieldClicked == 'locked') {
-                                console.log('locked ' + row.idObject);
+                               // console.log('locked ' + row.idObject);
                             that.$store.dispatch('lockObject', row.idObject);
                         } else if (that.fieldClicked == 'hidden') {
-                            console.log('hidden ' + row.idObject);
+                            //console.log('hidden ' + row.idObject);
                             that.$store.dispatch('hideObject', row.idObject);
                         } else {
                             that.$store.commit('currentFrame', row.startFrame);
@@ -142,7 +142,7 @@
                     },
                 });
                 this.currentState = this.$store.state.currentState;
-                console.log('*** grid current state = ' + this.currentState);
+                //console.log('*** grid current state = ' + this.currentState);
                 this.$store.watch(
                     (state, getters) => getters.currentState,
                     (currentState) => {

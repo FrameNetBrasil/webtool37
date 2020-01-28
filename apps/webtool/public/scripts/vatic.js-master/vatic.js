@@ -121,19 +121,19 @@ class FramesManager {
             this.canvas.height = this.video.videoHeight;
         }
         this.interval = 1000 / this.config.fps;
-        console.log(this);
+        //console.log(this);
 
     }
 
     async getFrameFromVideo(frameNumber) {
         //let jumpToTime = (frameNumber - 1 ) * (this.interval);
         //this.video.currentTime = jumpToTime;
-        console.log('getFrameFromVideo currentTime = ' + this.video.currentTime);
+        //console.log('getFrameFromVideo currentTime = ' + this.video.currentTime);
         this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
         return new Promise((resolve, reject) => {
             this.canvas.toBlob(
                 (blob) => {
-                    console.log(blob);
+                    //console.log(blob);
                     resolve(blob);
                 },
                 this.config.imageMimeType
@@ -165,7 +165,7 @@ class FramesManager {
         if (typeof frame === 'undefined') {
             //let f = '0000' + frameNumber;
             let frame = await this.getFrameFromVideo(frameNumber);
-            console.log(frame);
+            //console.log(frame);
             this.addFrame(frameNumber, frame, this.config.imageMimeType);
             return frame;
         }
@@ -349,7 +349,7 @@ function extractFramesFromZip(config, file) {
  */
 function extractFramesFromZipUrl(config, url, segment) {
     return new Promise((resolve, _) => {
-        console.log(url);
+        //console.log(url);
         fetch(url)       // 1) fetch the url
             .then(function (response) {                       // 2) filter on 200 OK
                 if (response.status === 200 || response.status === 0) {
@@ -360,7 +360,7 @@ function extractFramesFromZipUrl(config, url, segment) {
             })
             .then(JSZip.loadAsync)                            // 3) chain with the zip promise
             .then(function (zip) {
-                console.log(zip);
+                //console.log(zip);
                 let first = 1;//(segment * 1000) + 1;
                 let n = 0;
                 let totalFrames = 0;
@@ -382,7 +382,7 @@ function extractFramesFromZipUrl(config, url, segment) {
                     getFrame: (frameNumber) => {
                         return new Promise((resolve, _) => {
                             let s = '00000' + frameNumber;
-                            console.log('getFrame ' + s);
+                            //console.log('getFrame ' + s);
                             let j = s.substr(-5);
                             //console.log(j + config.imageExtension);
                             let file = zip.file(j + config.imageExtension);
@@ -400,7 +400,7 @@ function extractFramesFromZipUrl(config, url, segment) {
 }
 
 function getFrameFromUrl(url) {
-    console.log(url);
+    //console.log(url);
     return fetch(url)       // 1) fetch the url
         .then(function (response) {                       // 2) filter on 200 OK
             if (response.status === 200 || response.status === 0) {
@@ -433,7 +433,7 @@ async function getFramesForObjects(framesManager, config) {
             return framesToLoad.length;
         },
         getFrame: (frameNumber) => {
-            console.log('getting frame ' + frameNumber);
+            //console.log('getting frame ' + frameNumber);
             return framesManager.getFrame(frameNumber);
             /*
             return framesManager.getFrame(frameNumber).then(function (blob) {
@@ -544,7 +544,7 @@ class OpticalFlow {
                     let newHeight = maxY - minY;
 
                     if (newWidth > 0 && newHeight > 0) {
-                        console.log('!!! changing box');
+                        //le.log('!!! changing box');
                         newBbox = new BoundingBox(minX, minY, newWidth, newHeight);
                     }
                 }
@@ -740,10 +740,10 @@ class AnnotatedObjectsTracker {
     getFrameWithObjects(frameNumber) {
         return new Promise((resolve, _) => {
             let i = this.startFrame(frameNumber);
-            console.log('startFrame = ' + i);
+            //console.log('startFrame = ' + i);
 //console.log('getFrameWithObjects frameNumber = ' + frameNumber + '  i = ' + i);
             let trackNextFrame = () => {
-                console.log('tracking frame ' + i);
+                //console.log('tracking frame ' + i);
                 this.track(i).then((frameWithObjects) => {
                     if (i == frameNumber) {
                         //console.log('i == frameNumber')
@@ -783,7 +783,7 @@ class AnnotatedObjectsTracker {
                 }
             }
         }
-        console.log('startFrame = ' + start);
+        //console.log('startFrame = ' + start);
         return start;
 
         /*  Está verificando se todos os objetos estão em pelo menos um frame - vou fazer isso no Save
@@ -810,8 +810,8 @@ class AnnotatedObjectsTracker {
     track(frameNumber) {
         return new Promise((resolve, _) => {
             this.framesManager.getFrame(frameNumber).then((blob) => {
-                console.log('track framenumber ' + frameNumber);
-                console.log(blob);
+                //console.log('track framenumber ' + frameNumber);
+                //console.log(blob);
                 blobToImage(blob).then((img) => {
                     let result = [];
                     let toCompute = [];
@@ -878,7 +878,7 @@ class AnnotatedObjectsTracker {
 
     initOpticalFlow(frameNumber) {
         return new Promise((resolve, _) => {
-            console.log('initOpticalFlow lastFrame = ' + this.lastFrame + '   frameNumber = ' + frameNumber);
+            //console.log('initOpticalFlow lastFrame = ' + this.lastFrame + '   frameNumber = ' + frameNumber);
             if (this.lastFrame != -1 && this.lastFrame == frameNumber) {
                 resolve();
             } else {

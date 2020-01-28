@@ -57,7 +57,7 @@
                     }
                 },
                 onSave() {
-                    console.log('saving');
+                    //console.log('saving');
                     let objects = this.$store.getters.allAnnotatedObjects;
                     // console.log(objects);
                     let data = {
@@ -67,7 +67,7 @@
                     for(object of objects) {
                         let frames = [];
                         for(frame of object.frames) {
-                            console.log(frame);
+                            //console.log(frame);
                             if ((frame.isGroundTruth) && (frame.frameNumber <= object.endFrame)){
                                 frames.push({
                                     frameNumber: frame.frameNumber,
@@ -100,7 +100,7 @@
                         this.currentState = currentState;
                     }
                 )
-                console.log('=========== tools pane current state = ' + this.currentState);
+                //console.log('=========== tools pane current state = ' + this.currentState);
 
 
             },
