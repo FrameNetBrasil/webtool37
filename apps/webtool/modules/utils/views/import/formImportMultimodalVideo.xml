@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formImportMultimodalVideo" title="Import Multimodal Video"  close=">fnbr/main" >
+        <fields>
+            <mvcontainer>
+                <mspan>Importação de arquivos de video para anotação multimodal.</mspan>
+            </mvcontainer>
+            <include component="MLookupDocumentMultiModal.php" id="idDocument" label="Document"/>
+            <mfilefield id="uploadFile" label="Arquivo de Video" text="Selecionar Arquivo" width="300px"/>
+        </fields>    
+        <buttons>
+            <mbutton id="btnPost" text="{{_M('Send')}}" action="$this->data->action"/>
+        </buttons>
+    </mformdialog>
+</view>

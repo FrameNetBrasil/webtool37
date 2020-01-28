@@ -2491,7 +2491,7 @@ class PHPExcel_Reader_Excel5 implements PHPExcel_Reader_IReader
 				$offset += $externalSheetNameString['size'];
 			}
 
-			// store the record data
+			// _store the record data
 			$this->_externalBooks[] = array(
 				'type' => 'external',
 				'encodedUrl' => $encodedUrlString['value'],
@@ -2845,7 +2845,7 @@ class PHPExcel_Reader_Excel5 implements PHPExcel_Reader_IReader
 				$pos += $extendedRunLength;
 			}
 
-			// store the shared sting
+			// _store the shared sting
 			$this->_sst[] = array(
 				'value' => $retstr,
 				'fmtRuns' => $fmtRuns,
@@ -3771,7 +3771,7 @@ class PHPExcel_Reader_Excel5 implements PHPExcel_Reader_IReader
 				$cell->setXfIndex($this->_mapCellXfIndex[$xfIndex]);
 			}
 
-			// store the formula
+			// _store the formula
 			if (!$isPartOfSharedFormula) {
 				// not part of shared formula
 				// add cell value. If we can read formula, populate with formula, otherwise just used cached value
@@ -3793,7 +3793,7 @@ class PHPExcel_Reader_Excel5 implements PHPExcel_Reader_IReader
 				}
 			}
 
-			// store the cached calculated value
+			// _store the cached calculated value
 			$cell->setCalculatedValue($value);
 		}
 	}
@@ -3824,7 +3824,7 @@ class PHPExcel_Reader_Excel5 implements PHPExcel_Reader_IReader
 		// offset: 8, size: var; Binary token array of the shared formula
 		$formula = substr($recordData, 8);
 
-		// at this point we only store the shared formula for later use
+		// at this point we only _store the shared formula for later use
 		$this->_sharedFormulas[$this->_baseCell] = $formula;
 
 	}

@@ -105,7 +105,7 @@ class PHPExcel_Writer_Excel5_BIFFwriter
 	}
 
 	/**
-	 * Determine the byte order and store it as class data to avoid
+	 * Determine the byte order and _store it as class data to avoid
 	 * recalculating it for each call to new().
 	 *
 	 * @return int

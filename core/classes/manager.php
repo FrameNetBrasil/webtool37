@@ -1181,6 +1181,12 @@ class Manager
         return $appURL = self::$instance->getBaseURL($absolute) . '/index.php' . '/' . $app . ($file ? '/' . $file : '');
     }
 
+    public static function getAppFileURL($app = '', $file = '', $absolute = false)
+    {
+        $app = ($app ?: self::$instance->getApp());
+        return $appURL = self::$instance->getBaseURL($absolute) . '/apps' . '/' . $app . ($file ? '/' . $file : '');
+    }
+
     public static function getStaticURL($app = '', $file = '', $absolute = false)
     {
         $app = ($app ?: self::$instance->getApp());

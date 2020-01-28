@@ -20,23 +20,10 @@ class MTemplateLocator
 {
     public static function fetch(MTemplate $template, $folder, $file)
     {
-
-        $templateEngine = Manager::getOptions('templateEngine') ?: 'smarty';
-        if ($templateEngine == 'smarty') {
-            $path = self::buildPath($folder, $file);
-            if (self::appTemplateExists($path)) {
-                $template->engine->setTemplateDir(self::getAppTemplatePath());
-            } else {
-                $path = Manager::getPublicPath("templates/{$path}");
-            }
-            return $template->fetch($path);
-        }
-        if ($templateEngine == 'latte') {
-            $folder = Manager::getConf("options.varPath") . '/templates/' . $folder;
-            $template->setPath($folder);
-            return $template->fetch($file);
-        }
-
+        //$folder = Manager::getConf("options.varPath") . '/templates/' . $folder;
+        $folder = Manager::getThemePath() . '/templates/' . $folder;
+        $template->setPath($folder);
+        return $template->fetch($file);
     }
 
     private static function buildPath($folder, $file)

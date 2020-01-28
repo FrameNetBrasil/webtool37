@@ -87,7 +87,7 @@ class MRequest
      */
     public $format = null;
     /**
-     * Free space to store your request specific data
+     * Free space to _store your request specific data
      */
     public $args = array();
     /**

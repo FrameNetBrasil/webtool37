@@ -1,0 +1,98 @@
+<script>
+    Vue.component('visual-pane', {
+            template: '#visual-pane',
+            props: [],
+            data() {
+                return {
+                    title: 'Visual Annotation',
+                    videoTitle: this.$store.state.model.documentMM.videoTitle,
+                    segments: this.$store.state.model.segments,
+                    currentState: this.$store.state.currentState,
+                    currentSegment: 1,
+                    currentScale: 50,
+                    player: null,
+                    playerData: null,
+                    ignore_timeupdate: false,
+                    reDrawFrame: false,
+                    updateGrid: false,
+                    options: {},
+                    objects: [],
+                    object: null,
+                    newObject: {
+                        index: 0,
+                        frame: -1
+                    },
+                }
+            },
+            computed: {},
+            created() {
+            },
+            mounted() {
+
+                /*
+                let that = this;
+                $('#segments').combobox({
+                    value: this.currentSegment,
+                    data: this.segments,
+                    onChange: function (value) {
+                        that.changeSegment(value);
+                    }
+                })
+                */
+                /*
+                this.currentState = this.$store.state.currentState;
+                this.$store.watch(
+                    (state, getters) => getters.currentState,
+                    (currentState) => {
+                        console.log('changed state to ' + currentState)
+                        this.currentState = currentState;
+                    }
+                )
+                console.log('=========== visual pane current state = ' + this.currentState);
+                */
+
+            },
+            methods: {
+                changeSegment(value) {
+                    this.currentSegment = value;
+                    console.log(this.currentSegment);
+                },
+                onScaleChanged(value) {
+                    console.log('scale changed to ' + value);
+                    this.currentScale = value;
+                },
+            },
+        }
+    );
+</script>
+
+<script type="text/x-template" id="visual-pane">
+    <Panel id="visualAnnotation" :border="false"
+           style="width:100%;height:1500px;padding:16px;background-color:#263238;">
+        <div id="videoSegment" style="padding:8px;background-color:#263238">
+            <h3 style="color:white">{{videoTitle}}</h3>
+            <!--
+            <input id="segments"></input>
+            -->
+        </div>
+        <div v-if="currentState != 'initing'"  style="display:flex; flex-direction: row; height: 100%; width: 100%;align-items: flex-start;background-color:#263238;">
+            <div id="scalePane" style="width:60px; color:white">
+                <scale-pane @scaleChanged="onScaleChanged"></scale-pane>
+            </div>
+
+            <div id="videoPane" style="display:flex; flex-direction: column;padding-left: 16px; width:auto">
+                <video-pane
+                        :segment="currentSegment"
+                        :scale="currentScale"
+                ></video-pane>
+                <div id="dialogObject" style="display:none">
+                    <dialog-pane></dialog-pane>
+                </div>
+            </div>
+            <div id="gridPane">
+                <grid-pane></grid-pane>
+            </div>
+        </div>
+    </Panel>
+</script>
+

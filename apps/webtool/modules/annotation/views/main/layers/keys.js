@@ -16,8 +16,8 @@
 
 
         $( "body" ).keydown(function( event ) {
-            console.log('keydown');
-            console.log(event);
+            //console.log('keydown');
+            //console.log(event);
             var c = event.which;
             switch(c) {
                 case 27: { // esc

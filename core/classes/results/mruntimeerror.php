@@ -50,7 +50,7 @@ class MRuntimeError extends MResult
         if ($this->request->isAjax() && ($format == "html")) {
             $format = "json";
         }
-        $this->response->setContentType($this->response->getMimeType("xx." + $format));
+        //$this->response->setContentType($this->response->getMimeType("xx." + $format));
     }
 
     private function setResponseStatusCode()

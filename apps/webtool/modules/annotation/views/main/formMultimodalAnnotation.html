@@ -1,0 +1,76 @@
+<div id="annoLayout" style="width:100%;height:100%;">
+    <div id="annoLeftPane" region="west" split="true" title="Multimodal" style="height: 100%">
+        <div style="padding:5px">
+            <input id="corpus" name="corpus" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Corpus'}}">
+        </div>
+        <div style="padding:5px">
+            <input id="idSentence" name="idSentence" type="text" style="width:200px; padding:5px" placeholder="{{_'#sentence'}}">
+        </div>
+        <ul id="multimodalTree"></ul>
+    </div>
+    <div id="annoCenterPane" region="center" title="{{_'Multimodal Annotation'}}" style="height: 100%">
+        <div class="easyui-layout" style="width:100%;height:100%;">
+            <div id="sentencesPane" region="center" style="width:100%;height:100%"   split="true" data-options="border:1"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var annotation = {
+        type: 'm',
+        isMaster: {{$data->isMaster|noescape}},
+        isSenior: {{$data->isSenior|noescape}},
+        rgbColors: {{$data->colors|noescape}},
+        layerType: {{$data->layerType|noescape}},
+        instantiationType: {{$data->instantiationType|noescape}},
+        instantiationTypeObj: {{$data->instantiationTypeObj|noescape}}
+    };
+
+    annotation.showDocument = function (document) {
+        $('#layersPane').html('');
+        manager.doGet({{$manager->getURL('annotation/main/sentencesMultimodal')}} + '/' + document,'sentencesPane');
+    }
+
+    annotation.showSubCorpus = function (subCorpus) {
+        $('#layersPane').html('');
+        manager.doGet({{$manager->getURL('annotation/main/sentencesMultimodal')}} + '/' + subCorpus,'sentencesPane');
+    }
+
+    $(function () {
+
+        $('#annoLayout').layout({
+            fit:true
+        });
+        
+        $('#corpus').textbox({
+            buttonText:{{_'Search Corpus'}},
+            //iconCls:'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Corpus'}},
+            onClickButton: function() {
+                $('#corpusTree').tree({queryParams: {corpus: $('#corpus').textbox('getValue')}});
+            }
+        });
+
+        $('#idSentence').textbox({
+            buttonText:{{_'Annotate Sentence'}},
+            //iconCls:'icon-search',
+            iconAlign:'right',
+            prompt: {{_'#sentence'}},
+            onClickButton: function() {
+                var idSentence = $('#idSentence').textbox('getValue');
+                window.open({{$manager->getURL('annotation/main/annotationMultimodal')}} + '/' + idSentence + '/0/' + annotation.type, '_blank');
+            }
+        });
+
+        $('#multimodalTree').tree({
+            url: {{$manager->getURL('annotation/main/multimodalTree')}},
+            onSelect: function (node) {
+                console.log(node);
+                if (node.id.charAt(0) == 'd') {
+                    annotation.showDocument(node.id);
+                }
+            }
+        });
+    });
+</script>

@@ -20,7 +20,7 @@
 namespace Doctrine\DBAL;
 
 /**
- * Class to store and retrieve the version of Doctrine
+ * Class to _store and retrieve the version of Doctrine
  *
  * 
  * @link    www.doctrine-project.org

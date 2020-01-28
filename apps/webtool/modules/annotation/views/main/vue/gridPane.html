@@ -1,0 +1,170 @@
+<script>
+    Vue.component('grid-pane', {
+            template: '#grid-pane',
+            props: [],
+            data() {
+                return {
+                    fieldClicked: '',
+                    currentState: '',
+                }
+            },
+            computed: {
+                objects: function() {
+                    return this.$store.state.objectsTracker.annotatedObjects
+                },
+            },
+            created() {
+            },
+            mounted: function () {
+
+                this.$store.watch(
+                    (state, getters) => getters.currentObjectState,
+                    (currentObjectState) => {
+                        if (currentObjectState == 'updated') {
+                            this.updateObjects();
+                            this.$store.commit('objectsTrackerState', 'clean');
+                        }
+                    }
+                )
+
+                this.$store.watch(
+                    (state, getters) => getters.objectsTrackerState,
+                    (objectsTrackerState) => {
+                        if (objectsTrackerState == 'dirty') {
+                            this.updateObjects();
+                            this.$store.commit('objectsTrackerState', 'clean');
+                        }
+                    }
+                )
+
+                let that = this;
+                let columns = [
+                    {
+                        field: 'locked',
+                        width: 24,
+                        title: '<i class="fas fa-lock"></i>',
+                        formatter: function (value, row, index) {
+                            let icon = (value ? 'fas fa-lock' : 'fas fa-unlock');
+                            return "<i style='color:black' class='" + icon + "'></i>";
+                        },
+                    },
+                    {
+                        field: 'hidden',
+                        width: 24,
+                        title: '<i class="fas fa-eye"></i>',
+                        formatter: function (value, row, index) {
+                            let color = (value ? '#CCC' : 'black');
+                            return "<i style='color:" + color + "' class='fas fa-eye'></i>";
+                        },
+                    },
+                    {
+                        field: 'idObject',
+                        title: '#',
+                    },
+                    {
+                        field: 'tag',
+                        width: 24,
+                        title: '<i class="fas fa-tag"></i>',
+                        formatter: function (value, row, index) {
+                            return "<i style='color:" + row.color + "' class='fas fa-tag'></i>";
+                        },
+                    },
+                    {
+                        field: 'idFrame',
+                        title: 'idFrame',
+                        hidden: true,
+                    },
+                    {
+                        field: 'frame',
+                        title: 'Frame',
+                    },
+                    {
+                        field: 'idFE',
+                        title: 'idFE',
+                        hidden: true,
+                    },
+                    {
+                        field: 'fe',
+                        title: 'FE',
+                    },
+                    {
+                        field: 'name',
+                        title: 'Name',
+                        hidden: true,
+                    },
+                    {
+                        field: 'startFrame',
+                        title: 'Start',
+                    },
+                    {
+                        field: 'endFrame',
+                        title: 'End',
+                    },
+                    {
+                        field: 'status',
+                        width: 24,
+                        title: '<i class="fas fa-info"></i>',
+                        formatter: function (value, row, index) {
+                            console.log(row);
+                            if ((row.idFE != null) && (row.idFE != -1)) {
+                                return "<i style='color:green' class='fas fa-check'></i>";
+                            } else {
+                                return "<i style='color:gold' class='fas fa-exclamation-triangle'></i>";
+                            }
+                        },
+                    },
+                ];
+                $('#gridObjects').datagrid({
+                    data: [],
+                    title: '',
+                    showHeader: true,
+                    singleSelect: true,
+                    columns: [
+                        columns
+                    ],
+                    onClickRow: function (index, row) {
+                        if (that.fieldClicked == 'locked') {
+                                console.log('locked ' + row.idObject);
+                            that.$store.dispatch('lockObject', row.idObject);
+                        } else if (that.fieldClicked == 'hidden') {
+                            console.log('hidden ' + row.idObject);
+                            that.$store.dispatch('hideObject', row.idObject);
+                        } else {
+                            that.$store.commit('currentFrame', row.startFrame);
+                            that.$store.dispatch('selectObject', row.idObject);
+                        }
+                    },
+                    onClickCell: function(index,field,value) {
+                        that.fieldClicked = field;
+                    },
+                    onBeforeSelect: function () {
+                        return false;
+                    },
+                });
+                this.currentState = this.$store.state.currentState;
+                console.log('*** grid current state = ' + this.currentState);
+                this.$store.watch(
+                    (state, getters) => getters.currentState,
+                    (currentState) => {
+                        this.currentState = currentState;
+                    }
+                )
+            },
+            methods: {
+                updateObjects() {
+                    $('#gridObjects').datagrid({
+                        data: this.objects
+                    })
+                },
+            },
+        }
+    );
+</script>
+
+<script type="text/x-template" id="grid-pane">
+    <div>
+        <div ref="gridObjects" id="gridObjects" style="width: 100%">
+        </div>
+    </div>
+</script>
+

@@ -157,6 +157,17 @@ class FrameElement extends map\FrameElementMap
         return $criteria;
     }
 
+    public function listForLookupDecorated($idFrame = '')
+    {
+        $criteria = $this->getCriteria()->select('idFrameElement,entries.name as name, color.rgbFg, color.rgbBg')->orderBy('entries.name');
+        Base::entryLanguage($criteria);
+        if ($idFrame) {
+            Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
+            $criteria->where("frame.idFrame = {$idFrame}");
+        }
+        return $criteria;
+    }
+
     public function listForReport($idFrame = '')
     {
         $criteria = $this->getCriteria()->select('idFrameElement,entry,entries.name as name, entries.description as description, entries.nick as nick, typeinstance.entry as coreType')->orderBy('entries.name');

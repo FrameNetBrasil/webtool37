@@ -849,7 +849,7 @@ Visible Changes and Possible Incompatibilities:
   also changed for the internal functions to size and draw text (ProcessText*,
   SizeText*) due to font data storage changes.
 
-+ Changes were made to internal class variables used to store label
++ Changes were made to internal class variables used to _store label
   formatting information. Anything relying on these internals may break.
 
 
@@ -1092,7 +1092,7 @@ Bug Fixes in 5.0.4:
 #1208054 Localization of number formatting in 'data' format type. PHPlot
   will attempt to format the numbers in a way appropriate to your locale.
   You can also force the formatting with the new function SetNumberFormat.
-  Credit to David Hernández Sanz.
+  Credit to David Hernï¿½ndez Sanz.
 
 #937944 X/Y Tick counts: PHPlot could draw one two few Y tick counts, and
   one too many X tick counts. This is not a perfect fix, and more work is
@@ -1104,7 +1104,7 @@ New Features in 5.0.4:
 New function SetLegendStyle allows control of the alignment of text and
   color boxes within the legend.  Also allows removing the color boxes.
   Based on bug #1208054.
-  Credit to David Hernández Sanz.
+  Credit to David Hernï¿½ndez Sanz.
 
 New function SetNumberFormat. See bug report #1208054 above.
 

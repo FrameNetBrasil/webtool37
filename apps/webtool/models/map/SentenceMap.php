@@ -34,7 +34,8 @@ class SentenceMap extends \MBusinessModel {
                 'paragraph' => array('toClass' => 'fnbr\models\Paragraph', 'cardinality' => 'oneToOne' , 'keys' => 'idParagraph:idParagraph'), 
                 'language' => array('toClass' => 'fnbr\models\Language', 'cardinality' => 'oneToOne' , 'keys' => 'idLanguage:idLanguage'), 
                 'annotationsets' => array('toClass' => 'fnbr\models\AnnotationSet', 'cardinality' => 'oneToMany' , 'keys' => 'idSentence:idSentence'), 
-                'timelines' => array('toClass' => 'fnbr\models\Timeline', 'cardinality' => 'oneToMany' , 'keys' => 'timeline:timeline'), 
+                'timelines' => array('toClass' => 'fnbr\models\Timeline', 'cardinality' => 'oneToMany' , 'keys' => 'timeline:timeline'),
+                'sentencemm' => array('toClass' => 'fnbr\models\SentenceMM', 'cardinality' => 'oneToMany' , 'keys' => 'idSentence:idSentence'),
             )
         );
     }
@@ -77,6 +78,7 @@ class SentenceMap extends \MBusinessModel {
     protected $language;
     protected $annotationsets;
     protected $timelines;
+    protected $sentencemm;
     
 
     /**
@@ -226,7 +228,31 @@ class SentenceMap extends \MBusinessModel {
         $this->retrieveAssociation("timelines");
     }
 
-    
+    /**
+     *
+     * @return Association
+     */
+    public function getSentenceMM() {
+        if (is_null($this->timelines)){
+            $this->retrieveAssociation("sentencemm");
+        }
+        return  $this->sentencemm;
+    }
+    /**
+     *
+     * @param Association $value
+     */
+    public function setSentenceMM($value) {
+        $this->sentenceMM = $value;
+    }
+    /**
+     *
+     * @return Association
+     */
+    public function getAssociationSentenceMM() {
+        $this->retrieveAssociation("sentencemm");
+    }
+
 
 }
 // end - wizard

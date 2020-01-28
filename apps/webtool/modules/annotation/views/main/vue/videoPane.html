@@ -1,0 +1,906 @@
+<script>
+    Vue.component('video-pane', {
+            template: '#video-pane',
+            props: ['segment', 'scale'],
+            data() {
+                return {
+                    framesManager: this.$store.state.framesManager,
+                    annotatedObjectsTracker: null,
+                    mouse: {
+                        x: 0,
+                        y: 0,
+                        startX: 0,
+                        startY: 0
+                    },
+                    framesRange: {},// this.$store.state.model.framesRange,
+                    originalDimensions: {
+                        width: 0,
+                        height: 0
+                    },
+                    currentDimensions: {
+                        width: 0,
+                        height: 0
+                    },
+                    tempAnnotatedObject: null,
+                    currentState: '',
+                    currentTime: 0,
+                    firstFrame: 0,
+                    lastFrame: 0,
+                    currentFrame: 0,
+                    currentScale: 0.5,
+                    isPlaying: false,
+                    isReady: false,
+                    timeout: null,
+                    showControls: false,
+                    ctx: null,
+                    //timeInterval: 0.0,
+                    config: {
+                        // Should be higher than real FPS to not skip real frames
+                        // Hardcoded due to JS limitations
+                        fps: 25,//30,
+
+                        // Low rate decreases the chance of losing frames with poor browser performances
+                        playbackRate: 1.0,//0.4,
+
+                        // Format of the extracted frames
+                        imageMimeType: 'image/jpeg',
+                        imageExtension: '.jpg',
+
+                        // Name of the extracted frames zip archive
+                        framesZipFilename: 'extracted-frames.zip',
+
+                        duration: 0.0,
+                        timeInterval: 40,
+                        url: '',
+                    }
+                }
+            },
+            computed: {
+                displayTime: function () {
+                    let dt = this.currentTime + '00';
+                    return dt.substr(0, 9);
+                    //return $.jPlayer.convertTime( this.currentTime);
+                }
+            },
+            created() {
+                console.log('video segment = ' + this.segment);
+                this.$store.dispatch('objectsTrackerInit');
+            },
+            mounted() {
+                //this.timeInterval = 1000 / (this.config.fps * parseFloat(this.config.playbackRate));
+                //console.log('=====' + this.timeInterval);
+                this.ctx = this.$refs.canvas.getContext('2d');
+                this.showControls = false;
+                this.$store.watch(
+                    (state, getters) => getters.currentFrame,
+                    (currentFrame) => {
+                        this.currentFrame = currentFrame;
+                        console.log('currentFrame changed to ' + currentFrame)
+                        if (this.isPlaying) {
+                        } else {
+                            let currentState = this.$store.state.currentState;
+                            if (currentState != 'dragging') {
+                                this.pause();
+                            }
+                        }
+                    }
+                )
+                this.$store.watch(
+                    (state, getters) => getters.currentState,
+                    (currentState) => {
+                        console.log('changed state to ' + currentState)
+                        if (currentState == 'playing') {
+                            this.play();
+                        }
+                        if (currentState == 'paused') {
+                            this.pause();
+                        }
+                    }
+                )
+                this.$store.watch(
+                    (state, getters) => getters.currentObjectState,
+                    (currentObjectState) => {
+                        console.log('currentObjectState = ' + currentObjectState)
+                        if ((currentObjectState == 'updated') || (currentObjectState == 'unselected') || (currentObjectState == 'cleared')) {
+                            console.log('object updated or unselected or cleared');
+                            this.drawFrame(this.currentFrame);
+                        }
+                    }
+                )
+                this.$store.watch(
+                    (state, getters) => getters.idObjectSelected,
+                    (idObjectSelected) => {
+                        console.log('idObjectSelected = ' + idObjectSelected)
+                        let currentObjectState = this.$store.state.currentObjectState;
+                        if (currentObjectState == 'selected') {
+                            console.log('object selected');
+                            this.drawFrame(this.currentFrame);
+                        }
+                    }
+                )
+                this.$store.watch(
+                    (state, getters) => state.redrawFrame,
+                    (redrawFrame) => {
+                        if (redrawFrame) {
+                            console.log('redraw frame');
+                            this.drawFrame(this.currentFrame);
+                        }
+                    }
+                )
+                this.currentState = this.$store.state.currentState;
+                this.$store.watch(
+                    (state, getters) => getters.currentState,
+                    (currentState) => {
+                        this.currentState = currentState;
+                    }
+                )
+                this.$store.watch(
+                    (state, getters) => getters.videoLoaded,
+                    (videoLoaded) => {
+                        if (videoLoaded) {
+                            this.config.timeInterval = 1000 / this.config.fps;
+                            this.framesRange = {
+                                first: 0,
+                                last: parseInt((this.config.duration * 1000) / this.config.timeInterval)
+                            }
+                            console.log('timeInterval = ' + this.config.timeInterval);
+                            this.initializeFrameObject();
+                        }
+                    }
+                )
+                this.$store.watch(
+                    (state, getters) => getters.allLoaded,
+                    (allLoaded) => {
+                        if (allLoaded) {
+                            this.showControls = true;
+                        }
+                    }
+                )
+
+                this.$nextTick(() => {
+                    //this.extractionFileZip();
+                    //this.initializeFrameObject();
+                });
+
+                this.$nextTick(() => {
+                    console.log('visual pane mounted');
+                    let that = this;
+                    $("#jquery_jplayer_1").jPlayer({
+                        ready: function () {
+                            console.log('jplayer ready');
+                            $(this).jPlayer("setMedia", {
+                                title: "",
+                                //m4a: "http://127.0.0.1/webtool/apps/webtool/files/multimodal/audio/PedroPeloMundo_Se01_Ep06_Bl01_Par01.mp4"
+                                m4v: "http://server2.framenetbr.ufjf.br/webtooldev/apps/webtool/files/multimodal/video/PedroPeloMundo_Se01_Ep06_Bl01_Par01.mp4"
+                            });
+                        },
+                        size: {
+                            width: "640px",
+                            height: "360px",
+                            cssClass: "jp-video-360p"
+                        },
+                        defaultPlaybackRate: 1.0,//0.5,
+                        cssSelectorAncestor: "#jp_container",
+                        swfPath: "/js",
+                        supplied: "m4v",
+                        useStateClassSkin: false,
+                        autoBlur: false,
+                        smoothPlayBar: false,
+                        keyEnabled: false,
+                        remainingDuration: false,
+                        toggleDuration: false,
+                        loadeddata: event => {
+                            console.log('**** jplayer loaded data!');
+                            console.log('currenttime = ' + event.jPlayer.status.currentTime);
+                            console.log('duration = ' + event.jPlayer.status.duration);
+                            console.log('width = ' + event.jPlayer.status.videoWidth);
+                            console.log('height = ' + event.jPlayer.status.videoHeight);
+                            this.config.duration = event.jPlayer.status.duration;
+
+                            this.originalDimensions = {
+                                width: event.jPlayer.status.videoWidth,
+                                height: event.jPlayer.status.videoHeight
+                            }
+
+                            this.updateCurrentDimensions();
+                            this.initializeCanvasDimensions();
+                            //this.ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, img.width * this.currentScale, img.height * this.currentScale);
+                            //console.log('Video dimensions determined: ' + img.width + 'x' + img.height);
+
+
+                            this.$store.commit('videoLoaded');
+                            //$("#jquery_jplayer_1").jPlayer('pause', 0);
+                            //this.initializeFrameObject();
+                        },
+                        timeupdate: event => {
+                            this.currentTime = event.jPlayer.status.currentTime;
+                            console.log('== event time update - jplayer1 - ' + this.currentTime);
+                            if (this.isPlaying) {
+                                let currentFrame = parseInt((event.jPlayer.status.currentTime * 1000) / this.config.timeInterval);
+                                //this.$store.commit('currentFrame', currentFrame);
+                                this.$store.commit('playFrame', currentFrame);
+                                this.currentFrame = currentFrame;
+                            }
+                        },
+                    });
+                    $("#jquery_jplayer_2").jPlayer({
+                        ready: function () {
+                            console.log('jplayer2 ready');
+                            $(this).jPlayer("setMedia", {
+                                title: "",
+                                // m4v: "http://127.0.0.1/webtool/apps/webtool/files/multimodal/video/PedroPeloMundo_Se01_Ep06_Bl01_Par01.mp4"
+								m4v: "http://server2.framenetbr.ufjf.br/webtooldev/apps/webtool/files/multimodal/video/PedroPeloMundo_Se01_Ep06_Bl01_Par01.mp4"
+
+                            });
+                        },
+                        size: {
+                            width: "640px",
+                            height: "360px",
+                            cssClass: "jp-video-360p"
+                        },
+                        defaultPlaybackRate: 1.0,//0.5,
+                        cssSelectorAncestor: "#jp_container",
+                        swfPath: "/js",
+                        supplied: "m4v",
+                        useStateClassSkin: false,
+                        autoBlur: false,
+                        smoothPlayBar: false,
+                        keyEnabled: false,
+                        remainingDuration: false,
+                        toggleDuration: false,
+                        loadeddata: event => {
+                            console.log('**** jplayer2 loaded data!');
+                            //console.log('currenttime = ' + event.jPlayer.status.currentTime);
+                            //console.log('duration = ' + event.jPlayer.status.duration);
+                            this.$store.commit('video2Loaded');
+                            //$("#jquery_jplayer_2").jPlayer('pause', 0);
+
+                        },
+                        timeupdate: event => {
+                            if (!this.isPlaying && this.showControls){
+                                this.drawFrame(this.currentFrame);
+                            }
+                        },
+
+                    });
+                })
+            },
+            methods: {
+                clearAllAnnotatedObjects() {
+                    this.$store.dispatch('objectsTrackerClearAll');
+                },
+                clearAnnotatedObject(i) {
+                    this.$store.dispatch('clearAnnotatedObject', i);
+                },
+                addAnnotatedObjectControls(annotatedObject) {
+                    console.log(annotatedObject);
+                    annotatedObject.name = '';
+                    annotatedObject.visible = true;
+                    annotatedObject.hidden = false;
+                    annotatedObject.locked = false;
+                    annotatedObject.idFrame = -1;
+                    annotatedObject.frame = '';
+                    annotatedObject.idFE = -1;
+                    annotatedObject.fe = '';
+                    annotatedObject.color = 'white';
+                    annotatedObject.startFrame = this.currentFrame;
+                    annotatedObject.endFrame = this.framesRange.last;// this.currentFrame;
+                    this.$store.dispatch('objectsTrackerAdd', annotatedObject);
+                },
+                initialize: function () {
+                    this.currentFrame = 0;
+                    this.isPlaying = false;
+                    this.isReady = false;
+                    this.clearAllAnnotatedObjects();
+                    //this.$store.commit('currentState', 'paused');
+                    this.$store.commit('currentState', 'loading');
+                },
+                ready: function () {
+                    this.isReady = true;
+                    //$('#btnPlay').linkbutton('enable');
+                    //playButton.disabled = false;
+                },
+
+                seek: function (frameNumber) {
+                    if (!this.isReady) {
+                        return;
+                    }
+                    console.log('playre.seek = ' + frameNumber);
+
+                    this.pause();
+
+                    //if (frameNumber >= 0 && frameNumber < framesManager.frames.totalFrames()) {
+                    if (frameNumber >= 0 && frameNumber < this.framesRange.last) {
+                        this.drawFrame(frameNumber);
+                        this.currentFrame = frameNumber;
+                    }
+                },
+
+                forward: function () {
+                    this.seek(this.currentFrame + 1);
+                },
+
+                backward: function () {
+                    this.seek(this.currentFrame - 1);
+                },
+
+                play: function () {
+                    if (!this.isReady) {
+                        return;
+                    }
+                    //this.$store.commit('currentState', 'playing');
+                    console.log('playing ' + this.currentFrame);
+                    $("#jquery_jplayer_1").jPlayer('play', (((this.currentFrame) * this.config.timeInterval) / 1000));
+                    this.isPlaying = true;
+                    //this.nextFrame();
+                },
+                pause: function () {
+                    if (!this.isReady) {
+                        return;
+                    }
+
+                    this.isPlaying = false;
+                    //this.$store.commit('currentState', 'paused');
+                    let timeForFrame = (this.currentFrame * this.config.timeInterval) / 1000;
+                    console.log('== paused = ' + this.currentFrame + '  ' + timeForFrame);
+
+                    $("#jquery_jplayer_1").jPlayer('pause', timeForFrame);
+                    $("#jquery_jplayer_2").jPlayer('pause', timeForFrame);
+
+                    //if (this.timeout != null) {
+                    //    clearTimeout(this.timeout);
+                    //    this.timeout = null;
+                    //}
+                },
+                toogle: function () {
+                    if (!this.isPlaying) {
+                        this.play();
+                    } else {
+                        this.pause();
+                    }
+                },
+                nextFrame: function () {
+                    if (!this.isPlaying) {
+                        return;
+                    }
+                    if (this.currentFrame == this.lastFrame) {
+                        this.done();
+                        return;
+                    }
+                    this.currentFrame++;
+                    this.$store.commit('currentFrame', this.currentFrame);
+                },
+
+                done: function () {
+                    this.currentFrame = this.firstFrame;
+                    this.isPlaying = false;
+                    this.$store.commit('currentState', 'paused');
+                },
+                updateCurrentDimensions() {
+                    this.currentDimensions = {
+                        width: parseInt(this.originalDimensions.width * this.currentScale),
+                        height: parseInt(this.originalDimensions.height * this.currentScale),
+                    }
+                },
+                toAbsoluteCoord(x, y, width, height) {
+                    return {
+                        x: Math.round(x / this.currentScale),
+                        y: Math.round(y / this.currentScale),
+                        width: Math.round(width / this.currentScale),
+                        height: Math.round(height / this.currentScale)
+                    }
+                },
+                toScaledCoord(x, y, width, height) {
+                    return {
+                        x: Math.round(x * this.currentScale),
+                        y: Math.round(y * this.currentScale),
+                        width: Math.round(width * this.currentScale),
+                        height: Math.round(height * this.currentScale)
+                    }
+                },
+                drawFrameObjects: function (frameNumber) {
+                    console.log('drawFrameObjects ' + frameNumber);
+                    let annotatedObjectsTracker = this.$store.getters.objectsTracker;
+                    let result = annotatedObjectsTracker.getObjectsByFrame(frameNumber);
+                    console.log(result);
+                    for (let i = 0; i < result.length; i++) {
+                        let object = result[i];
+                        let annotatedObject = object.annotatedObject;
+                        if (annotatedObject.hidden) {
+                            annotatedObject.dom.style.display = 'none';
+                        } else {
+                            let annotatedFrame = object.annotatedFrame;
+                            if (annotatedFrame.isVisible()) {
+                                let scaledBox = this.toScaledCoord(annotatedFrame.bbox.x, annotatedFrame.bbox.y, annotatedFrame.bbox.width, annotatedFrame.bbox.height);
+                                annotatedObject.dom.style.display = 'block';
+                                annotatedObject.dom.style.width = scaledBox.width + 'px';
+                                annotatedObject.dom.style.height = scaledBox.height + 'px';
+                                annotatedObject.dom.style.left = scaledBox.x + 'px';
+                                annotatedObject.dom.style.top = scaledBox.y + 'px';
+                                annotatedObject.dom.style.borderStyle = 'solid';
+                                annotatedObject.dom.style.borderColor = annotatedObject.color;
+                                annotatedObject.dom.style.backgroundColor = 'transparent';
+                                annotatedObject.dom.style.opacity = 1;
+                                annotatedObject.visible = true;
+                                if (annotatedFrame.blocked) {
+                                    annotatedObject.dom.style.opacity = 0.5;
+                                    annotatedObject.dom.style.backgroundColor = 'white';
+                                    annotatedObject.dom.style.borderStyle = 'dashed';
+                                }
+                            } else {
+                                annotatedObject.dom.style.display = 'none';
+                                annotatedObject.visible = false;
+                            }
+                        }
+                    }
+                },
+                drawFrame: function (frameNumber) {
+                    let that = this;
+                    //return new Promise((resolve, _) => {
+                    console.log('drawFrame ' + frameNumber);
+                    jQuery('.bbox').css("display","none");
+                    let annotatedObjectsTracker = this.$store.getters.objectsTracker;
+                    annotatedObjectsTracker.getFrameWithObjects(frameNumber).then((frameWithObjects) => {
+                        let currentState = '';
+                        let currentObject = that.$store.state.currentObject;
+                        if (currentObject) {
+                            currentState = that.$store.state.currentObjectState;
+                        }
+                        let img = frameWithObjects.img;
+                        this.ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, img.width * this.currentScale, img.height * this.currentScale);
+                        console.log(frameWithObjects);
+                        for (let i = 0; i < frameWithObjects.objects.length; i++) {
+                            let object = frameWithObjects.objects[i];
+                            let annotatedObject = object.annotatedObject;
+                            if (annotatedObject.hidden) {
+                                annotatedObject.dom.style.display = 'none';
+                            } else {
+                                let annotatedFrame = object.annotatedFrame;
+                                if (annotatedFrame.isVisible()) {
+                                    //if ((annotatedFrame.isVisible()) && (frameNumber >= annotatedObject.startFrame) && (frameNumber <= annotatedObject.endFrame)) {
+                                    //console.log(annotatedFrame.blocked);
+                                    let scaledBox = this.toScaledCoord(annotatedFrame.bbox.x, annotatedFrame.bbox.y, annotatedFrame.bbox.width, annotatedFrame.bbox.height);
+                                    annotatedObject.dom.style.display = 'block';
+                                    annotatedObject.dom.style.width = scaledBox.width + 'px';
+                                    annotatedObject.dom.style.height = scaledBox.height + 'px';
+                                    annotatedObject.dom.style.left = scaledBox.x + 'px';
+                                    annotatedObject.dom.style.top = scaledBox.y + 'px';
+                                    annotatedObject.dom.style.borderStyle = 'solid';
+                                    annotatedObject.dom.style.borderColor = annotatedObject.color;
+                                    annotatedObject.dom.style.backgroundColor = 'transparent';
+                                    annotatedObject.dom.style.opacity = 1;
+                                    annotatedObject.visible = true;
+                                    if (currentObject) {
+                                        if (annotatedObject.idObject == currentObject.idObject) {
+                                            if (currentState == 'selected') {
+                                                annotatedObject.dom.style.backgroundColor = annotatedObject.color;
+                                                annotatedObject.dom.style.opacity = 0.5;
+                                            }
+                                        }
+                                    }
+                                    if (annotatedFrame.blocked) {
+                                        annotatedObject.dom.style.opacity = 0.5;
+                                        annotatedObject.dom.style.backgroundColor = 'white';
+                                        annotatedObject.dom.style.borderStyle = 'dashed';
+                                    }
+                                } else {
+                                    annotatedObject.dom.style.display = 'none';
+                                    annotatedObject.visible = false;
+                                }
+                            }
+                        }
+                        that.$store.commit('redrawFrame', false);
+                        //resolve();
+                    });
+                    //});
+                }
+
+                ,
+                initializeCanvasDimensions: function () {
+                    let doodle = this.$refs.doodle;
+                    let canvas = this.$refs.canvas;
+                    //let videoPane = this.$refs.videoPaneContainer;
+                    canvas.width = this.currentDimensions.width;
+                    canvas.height = this.currentDimensions.height;
+                    doodle.style.width = canvas.width + 'px';
+                    doodle.style.height = canvas.height + 'px';
+                    //videoPaneContainer.style.width = canvas.width + 'px';
+                    let jpContainer = this.$refs.jp_container;
+                    jp_container.style.width = canvas.width + 'px';
+                },
+                framesLoaded(firstFrame, lastFrame) {
+                    //console.log('Frames Loaded! ' + firstFrame + ' to ' + lastFrame);
+                    //this.framesRange = {
+                    //    first: firstFrame,
+                    //    last: lastFrame
+                    // }
+                    this.$store.dispatch('updateFramesRange', this.framesRange);
+                },
+                /*
+                extractionFileZip: function () {
+                    this.$store.commit('currentState', 'loading');
+                    this.initialize();
+                    let promise;
+                    let zip = null;
+                    let url = this.$store.state.model.documentMM.framesPath + '/' + this.segment + '.zip';
+                    console.log(url);
+                    promise = extractFramesFromZipUrl(this.config, url, this.segment);
+                    promise.then((frames) => {
+                        const startTime = performance.now();
+
+                        console.log(frames);
+                        this.firstFrame = 1;//this.segment * 1000;
+                        this.lastFrame = this.firstFrame + frames.totalFrames() - 1;
+                        this.currentFrame = this.firstFrame;
+                        if (frames.totalFrames() > 0) {
+                            frames.getFrame(this.firstFrame).then((blob) => {
+                                blobToImage(blob).then((img) => {
+                                    this.originalDimensions = {
+                                        width: img.width,
+                                        height: img.height
+                                    }
+                                    this.updateCurrentDimensions();
+                                    this.initializeCanvasDimensions();
+                                    this.ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, img.width * this.currentScale, img.height * this.currentScale);
+                                    console.log('Video dimensions determined: ' + img.width + 'x' + img.height);
+                                    this.framesManager.set(frames);
+                                    console.log('pos framesManager');
+                                    this.ready();
+                                    this.framesLoaded(this.firstFrame, this.lastFrame);
+                                    this.loadObjects();
+                                    //this.$store.commit('currentState', 'loaded');
+                                    this.$store.commit('currentState', 'paused');
+                                    this.$store.commit('zipLoaded');
+
+                                });
+                            });
+                        }
+
+                    });
+                },
+                */
+                initializeFrameObject: function () {
+                    this.$store.commit('currentState', 'loading');
+                    this.initialize();
+                    //let promise;
+                    //let zip = null;
+                    //let url = this.$store.state.model.documentMM.framesPath + '/' + this.segment + '.zip';
+                    //promise = extractFramesFromZipUrl(this.config, url, this.segment);
+                    //this.config.url = this.$store.state.model.documentMM.framesPath;
+                    //console.log(this.config.url);
+                    //let objectsToLoaded = this.$store.state.model.objects;
+                    //getFramesForObjects(this.framesManager, this.config).then((framesObject) => {
+                    getFramesForObjects(this.framesManager, this.config);
+                    //    console.log(framesObject);
+                        this.firstFrame = this.framesRange.first;//15;//this.segment * 1000;
+                        this.lastFrame = this.framesRange.last;//this.firstFrame + frames.totalFrames() - 1;
+                    //    this.currentFrame = this.firstFrame;
+                        //if (frames.totalFrames() > 0) {
+                     //   if (this.lastFrame > 0) {
+
+                     //       framesObject.getFrame(this.firstFrame).then((blob) => {
+                     //           blobToImage(blob).then((img) => {
+
+                    //                this.originalDimensions = {
+                    //                    width: img.width,
+                    //                    height: img.height
+                    //                }
+
+                    //                this.updateCurrentDimensions();
+                    //                this.initializeCanvasDimensions();
+                                    //this.ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, img.width * this.currentScale, img.height * this.currentScale);
+                    //                console.log('Video dimensions determined: ' + img.width + 'x' + img.height);
+                                    //this.framesManager.set(frames);
+                                    //console.log('pos framesManager');
+                                    this.ready();
+                                    //this.framesLoaded(this.firstFrame, this.lastFrame);
+                                    this.$store.dispatch('updateFramesRange', this.framesRange);
+                                    this.loadObjects();
+                                    //this.$store.commit('currentState', 'loaded');
+                                    this.$store.commit('currentState', 'paused');
+                                    this.$store.commit('objectLoaded');
+                                    //$("#jquery_jplayer_1").jPlayer('pause',0);
+
+                    //            });
+                    //        });
+
+                    //    }
+                    //})
+                },
+
+                loadObjects() {
+                    let objectsLoaded = this.$store.state.model.objects;
+                    let i = 0;
+                    for (var object of objectsLoaded) {
+                        if ((object.startFrame >= this.framesRange.first) && (object.startFrame <= this.framesRange.last)) {
+                            let annotatedObject = new AnnotatedObject();
+                            annotatedObject.idObject = i++;
+                            annotatedObject.name = object.name;
+                            annotatedObject.idFrame = object.idFrame ? parseInt(object.idFrame) : null;
+                            annotatedObject.frame = object.frame;
+                            annotatedObject.idFE = object.idFE ? parseInt(object.idFE) : null;
+                            annotatedObject.fe = object.fe;
+                            annotatedObject.color = object.idFE ? '#' + object.color : 'white';
+                            annotatedObject.hidden = false;
+                            annotatedObject.locked = false;
+                            annotatedObject.startFrame = parseInt(object.startFrame);
+                            annotatedObject.endFrame = parseInt(object.endFrame);
+                            annotatedObject.dom = this.newBboxElement();
+                            this.$store.dispatch("objectsTrackerPush", annotatedObject);
+                            this.interactify(
+                                annotatedObject,
+                                (x, y, width, height) => {
+                                    //let bbox = new BoundingBox(x, y, width, height);
+                                    console.log('annotated loaded object changing - box frame ' + this.currentFrame);
+                                    console.log(x + ' ' + y + ' ' + width + ' ' + height);
+                                    let absolute = this.toAbsoluteCoord(x, y, width, height);
+                                    console.log(absolute);
+                                    let bbox = new BoundingBox(absolute.x, absolute.y, absolute.width, absolute.height);
+                                    annotatedObject.add(new AnnotatedFrame(this.currentFrame, bbox, true));
+                                }
+                            );
+
+                            //addAnnotatedObjectControls(annotatedObject);
+
+                            let lastFrame = -1;
+                            let bbox = null;
+                            let polygons = object.frames;
+                            for (let j = 0; j < polygons.length; j++) {
+                                let polygon = object.frames[j];
+                                let frameNumber = parseInt(polygon.frameNumber);
+                                let isGroundThrough = true;// parseInt(topLeft.find('l').text()) == 1;
+                                let x = parseInt(polygon.x);
+                                let y = parseInt(polygon.y);
+                                let w = parseInt(polygon.width);
+                                let h = parseInt(polygon.height);
+
+                                /*
+                                if (lastFrame + 1 != frameNumber) {
+                                    let annotatedFrame = new AnnotatedFrame(lastFrame + 1, null, true);
+                                    annotatedObject.add(annotatedFrame);
+                                }
+
+                                 */
+                                if (lastFrame == -1) {
+                                    while (lastFrame < frameNumber) {
+                                        let annotatedFrame = new AnnotatedFrame(lastFrame + 1, bbox, false);
+                                        annotatedObject.add(annotatedFrame);
+                                        lastFrame++;
+                                    }
+                                }
+
+                                bbox = new BoundingBox(x, y, w, h);
+                                let annotatedFrame = new AnnotatedFrame(frameNumber, bbox, isGroundThrough);
+                                annotatedFrame.blocked = (parseInt(polygon.blocked) == 1);
+                                annotatedObject.add(annotatedFrame);
+
+                                lastFrame = frameNumber;
+                            }
+
+                            /*
+                            if (lastFrame + 1 < framesManager.frames.totalFrames()) {
+                                let annotatedFrame = new AnnotatedFrame(lastFrame + 1, null, true);
+                                annotatedObject.add(annotatedFrame);
+                            }
+                            */
+                            lastFrame = annotatedObject.endFrame;
+                            if ((lastFrame + 1) < this.framesRange.last) {
+                                let annotatedFrame = new AnnotatedFrame(lastFrame + 1, null, true);
+                                annotatedObject.add(annotatedFrame);
+                            }
+                            console.log(annotatedObject)
+
+                        }
+                    }
+                    //this.drawFrame(this.currentFrame);
+                    this.$store.commit('objectsTrackerState', 'dirty');
+                },
+
+                newBboxElement() {
+                    let dom = document.createElement('div');
+                    dom.className = 'bbox';
+                    this.$refs.doodle.appendChild(dom);
+                    return dom;
+                }
+                ,
+                interactify(annotatedObject, onChange) {
+
+                    let that = this;
+
+                    let dom = annotatedObject.dom;
+                    let bbox = $(dom);
+                    bbox.addClass('bbox');
+
+                    let createHandleDiv = (className, content = null) => {
+                        console.log('className = ' + className + '  content = ' + content);
+                        let handle = document.createElement('div');
+                        handle.className = className;
+                        bbox.append(handle);
+                        if (content !== null) {
+                            handle.innerHTML = content;
+                        }
+                        return handle;
+                    };
+
+                    bbox.resizable({
+                        handles: "n, e, s, w",
+                        onStopResize: (e) => {
+                            let position = bbox.position();
+                            onChange(Math.round(position.left), Math.round(position.top), Math.round(bbox.width()), Math.round(bbox.height()));
+                        }
+                    });
+
+                    let x = createHandleDiv('handle center-drag');
+                    let i = createHandleDiv('objectId', annotatedObject.idObject);
+                    i.addEventListener("click", function () {
+                        that.$store.dispatch('selectObject', parseInt(this.innerHTML))
+                    });
+
+                    bbox.draggable({
+                        //containment: 'parent',
+                        handle: $(x),
+                        onDrag: (e) => {
+                            var d = e.data;
+                            if (d.left < 0) {
+                                d.left = 0
+                            }
+                            if (d.top < 0) {
+                                d.top = 0
+                            }
+                            if (d.left + $(d.target).outerWidth() > $(d.parent).width()) {
+                                d.left = $(d.parent).width() - $(d.target).outerWidth();
+                            }
+                            if (d.top + $(d.target).outerHeight() > $(d.parent).height()) {
+                                d.top = $(d.parent).height() - $(d.target).outerHeight();
+                            }
+                        },
+                        //stop: (e, ui) => {
+                        onStopDrag: (e) => {
+                            let position = bbox.position();
+                            onChange(Math.round(position.left), Math.round(position.top), Math.round(bbox.width()), Math.round(bbox.height()));
+                        }
+                    });
+                }
+                ,
+
+                onMouseMove(event) {
+                    if (event.pageX) {
+                        this.mouse.x = event.pageX;
+                        this.mouse.y = event.pageY;
+                    } else if (event.clientX) {
+                        this.mouse.x = event.clientX;
+                        this.mouse.y = event.clientY;
+                    }
+                    this.mouse.x -= this.$refs.doodle.offsetLeft;
+                    this.mouse.y -= this.$refs.doodle.offsetTop;
+
+                    if (this.tempAnnotatedObject !== null) {
+                        this.tempAnnotatedObject.width = Math.abs(this.mouse.x - this.mouse.startX);
+                        this.tempAnnotatedObject.height = Math.abs(this.mouse.y - this.mouse.startY);
+                        this.tempAnnotatedObject.x = (this.mouse.x - this.mouse.startX < 0) ? this.mouse.x : this.mouse.startX;
+                        this.tempAnnotatedObject.y = (this.mouse.y - this.mouse.startY < 0) ? this.mouse.y : this.mouse.startY;
+
+                        this.tempAnnotatedObject.dom.style.width = this.tempAnnotatedObject.width + 'px';
+                        this.tempAnnotatedObject.dom.style.height = this.tempAnnotatedObject.height + 'px';
+                        this.tempAnnotatedObject.dom.style.left = this.tempAnnotatedObject.x + 'px';
+                        this.tempAnnotatedObject.dom.style.top = this.tempAnnotatedObject.y + 'px';
+                    }
+
+                }
+                ,
+                onMouseClick(event) {
+                    console.log(event);
+                    let doodle = this.$refs.doodle;
+                    if (doodle.style.cursor != 'crosshair') {
+                        return;
+                    }
+console.log('click');
+                    if (this.tempAnnotatedObject != null) {
+                        let annotatedObject = new AnnotatedObject();
+                        annotatedObject.dom = this.tempAnnotatedObject.dom;
+                        let absolute = this.toAbsoluteCoord(this.tempAnnotatedObject.x, this.tempAnnotatedObject.y, this.tempAnnotatedObject.width, this.tempAnnotatedObject.height);
+                        console.log(absolute);
+                        let bbox = new BoundingBox(absolute.x, absolute.y, absolute.width, absolute.height);
+                        annotatedObject.add(new AnnotatedFrame(this.currentFrame, bbox, true));
+                        this.addAnnotatedObjectControls(annotatedObject);
+                        this.tempAnnotatedObject = null;
+
+                        this.interactify(
+                            annotatedObject,
+                            (x, y, width, height) => {
+                                console.log('annotated object changing - box frame ' + this.currentFrame);
+                                console.log(x + ' ' + y + ' ' + width + ' ' + height);
+                                let absolute = this.toAbsoluteCoord(x, y, width, height);
+                                console.log(absolute);
+                                let bbox = new BoundingBox(absolute.x, absolute.y, absolute.width, absolute.height);
+                                annotatedObject.add(new AnnotatedFrame(this.currentFrame, bbox, true));
+                            }
+                        );
+                        doodle.style.cursor = 'default';
+                    } else {
+                        this.mouse.startX = this.mouse.x;
+                        this.mouse.startY = this.mouse.y;
+                        let dom = this.newBboxElement();
+                        dom.style.left = this.mouse.x + 'px';
+                        dom.style.top = this.mouse.y + 'px';
+                        this.tempAnnotatedObject = {
+                            dom: dom
+                        };
+                    }
+                },
+                onNewObjectClick(currentFrame) {
+                    console.log('newObject');
+                    this.$refs.doodle.style.cursor = 'crosshair';
+                },
+            },
+            watch: {
+                scale(value) {
+                    this.currentScale = value / 100;
+                    console.log('change scale to ' + this.currentScale);
+                    this.updateCurrentDimensions();
+                    this.initializeCanvasDimensions();
+                    console.log(this.currentDimensions);
+                    $("#jquery_jplayer_1").jPlayer({
+                        size: {
+                            width: this.currentDimensions.width + "px",
+                            height: this.currentDimensions.height + "px",
+                        },
+                    });
+                    this.drawFrame(this.currentFrame);
+                },
+                /*
+                segment(value) {
+                    console.log('segment = ' + value);
+                    this.extractionFileZip();
+                    $("#jquery_jplayer_1").jPlayer({
+                        ready: function () {
+                            console.log('jplayer ready');
+                            $(this).jPlayer("setMedia", {
+                                title: "Bubble",
+                                m4v: "http://127.0.0.1/webtool/apps/webtool/files/multimodal/video/PedroPeloMundo_Se01_Ep06_Bl01_Par01_0" + value + ".mp4"
+                            });
+                        }
+                    });
+                },
+                */
+            }
+        }
+    );
+</script>
+
+<script type="text/x-template" id="video-pane">
+    <div style="display:flex; flex-direction: row;padding-left: 16px; width:auto">
+        <div ref="videoPaneContainer" id="videoPaneContainer">
+            <div ref="doodle" id="doodle" @mousemove="onMouseMove" @click="onMouseClick">
+                <div id="jquery_jplayer_1" class="jp-jplayer"></div>
+            </div>
+            <div ref="jp_container" id="jp_container" role="application" aria-label="media player" style="text-align:left">
+
+                <div id="controlsPane" style="margin-bottom: 0px">
+                    <controls-pane v-if="showControls"></controls-pane>
+                </div>
+                <div id="jcontrols" v-if="showControls">
+                    <span>{{displayTime}} / {{config.duration}}</span>
+                </div>
+                <!--
+                <div class="jp-current-time" role="timer" aria-label="time"
+                     style="color:white;fonte-size:1em;background-color:#777;height:32px">&nbsp;
+                </div>
+                -->
+
+            </div>
+
+        </div>
+        <div>
+            <div id="jquery_jplayer_2" class="jp-jplayer" style="display:none"></div>
+            <canvas ref="canvas" id="canvas" style="display:none">
+            </canvas>
+        </div>
+        <div id="toolsPane">
+            <tools-pane v-if="showControls"
+                        v-on:newObjectClick="onNewObjectClick"
+            ></tools-pane>
+        </div>
+    </div>
+</script>
+

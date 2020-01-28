@@ -694,7 +694,7 @@
             var g = guid++;
             obj.__ta = obj.__ta || {};
             obj.__ta[event] = obj.__ta[event] || {};
-            // store each handler with a unique guid.
+            // _store each handler with a unique guid.
             obj.__ta[event][g] = fn;
             // set the guid on the handler.
             fn.__tauid = g;
@@ -774,7 +774,7 @@
                 obj.__taSmartClicks = [];
             }
 
-            // store in the list of callbacks
+            // _store in the list of callbacks
             obj.__taSmartClicks.push(fn);
             // the unstore function removes this function from the object's listener list for this type.
             fn.__taUnstore = function () {
@@ -3228,7 +3228,7 @@
                 }
 
                 for (i = 0; i < o.length; i++) {
-                    // if a string, convert to object representation so that we can store the typeid on it.
+                    // if a string, convert to object representation so that we can _store the typeid on it.
                     // also assign an id.
                     var fo = jsPlumb.convertToFullOverlaySpec(o[i]);
                     oo[fo[1].id] = fo;
@@ -5139,7 +5139,7 @@
             }
             if (recalc || (!offset && offsets[elId] == null)) { // if forced repaint or no offset available, we recalculate.
 
-                // get the current size and offset, and store them
+                // get the current size and offset, and _store them
                 s = managedElements[elId] ? managedElements[elId].el : null;
                 if (s != null) {
                     sizes[elId] = _currentInstance.getSize(s);
@@ -5432,7 +5432,7 @@
 
                 _doOne = function (el) {
 
-                    // get the element's id and store the endpoint definition for it.  jsPlumb.connect calls will look for one of these,
+                    // get the element's id and _store the endpoint definition for it.  jsPlumb.connect calls will look for one of these,
                     // and use the endpoint definition if found.
                     // decode the info for this element (id and element)
                     var elInfo = _info(el),
@@ -5450,7 +5450,7 @@
                         dropOptions.rank = -1;
                     }
 
-                    // store the definition
+                    // _store the definition
                     var _def = {
                         def: root.jsPlumb.extend({}, p),
                         uniqueEndpoint: p.uniqueEndpoint,
@@ -5505,7 +5505,7 @@
             var maxConnections = p.maxConnections || -1,
                 onMaxConnections = p.onMaxConnections,
                 _doOne = function (elInfo) {
-                    // get the element's id and store the endpoint definition for it.  jsPlumb.connect calls will look for one of these,
+                    // get the element's id and _store the endpoint definition for it.  jsPlumb.connect calls will look for one of these,
                     // and use the endpoint definition if found.
                     var elid = elInfo.id,
                         _del = this.getElement(elInfo.el);
@@ -5593,7 +5593,7 @@
                             return;
                         }
 
-                        // TODO store def on element.
+                        // TODO _store def on element.
                         var def = this.sourceEndpointDefinitions[elid][type];
 
                         // if disabled, return.
@@ -6274,7 +6274,7 @@
             if (type.overlays) {
                 var to = {};
                 for (var i = 0; i < type.overlays.length; i++) {
-                    // if a string, convert to object representation so that we can store the typeid on it.
+                    // if a string, convert to object representation so that we can _store the typeid on it.
                     // also assign an id.
                     var fo = this.convertToFullOverlaySpec(type.overlays[i]);
                     to[fo[1].id] = fo;
@@ -6292,7 +6292,7 @@
             if (type.overlays) {
                 var to = {};
                 for (var i = 0; i < type.overlays.length; i++) {
-                    // if a string, convert to object representation so that we can store the typeid on it.
+                    // if a string, convert to object representation so that we can _store the typeid on it.
                     // also assign an id.
                     var fo = this.convertToFullOverlaySpec(type.overlays[i]);
                     to[fo[1].id] = fo;
@@ -7870,7 +7870,7 @@
 
                     _makeDraggablePlaceholder(placeholderInfo, _jsPlumb, ipco, ips);
 
-                    // store the id of the dragging div and the source element. the drop function will pick these up.                   
+                    // _store the id of the dragging div and the source element. the drop function will pick these up.                   
                     _jsPlumb.setAttributes(this.canvas, {
                         "dragId": placeholderInfo.id,
                         "elId": this.elementId
@@ -7932,7 +7932,7 @@
                         var anchorIdx = jpc.endpoints[0].id === this.id ? 0 : 1;
                         this.detachFromConnection(jpc, null, true);                         // detach from the connection while dragging is occurring. but dont cleanup automatically.
 
-                        // store the original scope (issue 57)
+                        // _store the original scope (issue 57)
                         var dragScope = _jsPlumb.getDragScope(canvasElement);
                         _jsPlumb.setAttribute(this.canvas, "originalScope", dragScope);
 
@@ -7953,7 +7953,7 @@
                             _jsPlumb.anchorManager.updateOtherEndpoint(jpc.sourceId, jpc.endpoints[anchorIdx].elementId, jpc.targetId, jpc);
                         }
 
-                        // store the original endpoint and assign the new floating endpoint for the drag.
+                        // _store the original endpoint and assign the new floating endpoint for the drag.
                         jpc.suspendedEndpoint = jpc.endpoints[anchorIdx];
 
                         // PROVIDE THE SUSPENDED ELEMENT, BE IT A SOURCE OR TARGET (ISSUE 39)
@@ -8021,7 +8021,7 @@
                                     jpc.targetId = existingJpcParams[1];
                                 }
 
-                                var fe = this._jsPlumb.floatingEndpoint; // store for later removal.
+                                var fe = this._jsPlumb.floatingEndpoint; // _store for later removal.
                                 // restore the original scope (issue 57)
                                 _jsPlumb.setDragScope(existingJpcParams[2], existingJpcParams[3]);
                                 jpc.endpoints[idx] = jpc.suspendedEndpoint;
@@ -8868,7 +8868,7 @@
             var _anchors = null;
             // this also results in the creation of objects.
             if (t.anchor) {
-                // note that even if the param was anchor, we store `anchors`.
+                // note that even if the param was anchor, we _store `anchors`.
                 _anchors = this.getCachedTypeItem("anchors", typeMap.anchor);
                 if (_anchors == null) {
                     _anchors = [ this._jsPlumb.instance.makeAnchor(t.anchor), this._jsPlumb.instance.makeAnchor(t.anchor) ];
@@ -9566,7 +9566,7 @@
                 listToAddTo.splice(insertIdx, 0, values);
             }
 
-            // store this for next time.
+            // _store this for next time.
             endpoint._continuousAnchorEdge = edgeId;
         };
 
@@ -10055,13 +10055,13 @@
             // the canvas this refers to.
             refCanvas = params.referenceCanvas,
             size = _jp.getSize(refCanvas),
-            // these are used to store the current relative position of our
+            // these are used to _store the current relative position of our
             // anchor wrt the reference anchor. they only indicate
             // direction, so have a value of 1 or -1 (or, very rarely, 0). these
             // values are written by the compute method, and read
             // by the getOrientation method.
             xDir = 0, yDir = 0,
-            // temporary member used to store an orientation when the floating
+            // temporary member used to _store an orientation when the floating
             // anchor is hovering over another anchor.
             orientation = null,
             _lastResult = null;

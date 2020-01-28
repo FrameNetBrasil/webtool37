@@ -277,7 +277,7 @@
         },
         stringCase: {
             'default': 'Udfyld venligst kun dette felt med små bogstaver',
-            upper: 'Udfyld venligst kun dette felt med store bogstaver'
+            upper: 'Udfyld venligst kun dette felt med _store bogstaver'
         },
         stringLength: {
             'default': 'Udfyld venligst dette felt med en værdi af gyldig længde',

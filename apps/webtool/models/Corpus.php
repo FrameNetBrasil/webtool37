@@ -827,4 +827,25 @@ HERE;
 
     }
 
+    public function listMultimodalByFilter($filter)
+    {
+        $criteria = $this->getCriteria();
+        $criteria->setAssociationAlias('entries', 'centry');
+        $criteria->select('distinct idCorpus, entry, centry.name as name')->orderBy('centry.name');
+        Base::entryLanguage($criteria);
+        $criteria->where("documents.documentmm.idDocumentMM IS NOT NULL");
+
+        if ($filter->idCorpus) {
+            $criteria->where("idCorpus = '{$filter->idCorpus}'");
+        }
+        if ($filter->corpus) {
+            $criteria->where("upper(centry.name) LIKE upper('%{$filter->corpus}%')");
+        }
+        if ($filter->entry) {
+            $criteria->where("upper(entry) LIKE upper('%{$filter->entry}%')");
+        }
+        return $criteria;
+    }
+
+
 }

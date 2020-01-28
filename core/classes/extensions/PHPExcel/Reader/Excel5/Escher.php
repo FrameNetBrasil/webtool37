@@ -626,10 +626,10 @@ class PHPExcel_Reader_Excel5_Escher
 				$complexData = substr($splicedComplexData, 0, $op);
 				$splicedComplexData = substr($splicedComplexData, $op);
 
-				// we store string value with complex data
+				// we _store string value with complex data
 				$value = $complexData;
 			} else {
-				// we store integer value
+				// we _store integer value
 				$value = $op;
 			}
 

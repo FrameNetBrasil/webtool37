@@ -1,0 +1,44 @@
+<script>
+    Vue.component('scale-pane', {
+            template: '#scale-pane',
+            props: [],
+            data() {
+                return {
+                    scale: {
+                        min: 50,
+                        max: 100,
+                        value: 50,
+                    },
+                }
+            },
+            computed: {},
+            created() {
+            },
+            mounted() {
+                let that = this;
+                $('#scale').slider({
+                    min: that.scale.min,
+                    max: that.scale.max,
+                    showTip: true,
+                    //range: true,
+                    mode: 'v',
+                    tipFormatter: function (value) {
+                        return value + '%';
+                    },
+                    onChange: function (value) {
+                        that.$emit('scaleChanged', value);
+                    }
+                });
+            },
+            methods: {},
+            watch: {}
+        }
+    );
+</script>
+
+<script type="text/x-template" id="scale-pane">
+    <div style="width:100%; padding: 0px 10px 10px 40px">
+        <div id="scale" style="height:250px"></div>
+    </div>
+</script>
+

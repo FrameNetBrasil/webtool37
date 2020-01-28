@@ -1,6 +1,7 @@
 ﻿##
 ## PHPExcel
-##
+##
+
 ## Copyright (c) 2006 - 2011 PHPExcel
 ##
 ## This library is free software; you can redistribute it and/or
@@ -410,8 +411,8 @@ CODE			= KODE					##	Returnerer en numerisk kode for det første tegnet i en tek
 CONCATENATE		= KJEDE.SAMMEN				##	Slår sammen flere tekstelementer til ett tekstelement
 DOLLAR			= VALUTA				##	Konverterer et tall til tekst, og bruker valutaformatet $ (dollar)
 EXACT			= EKSAKT				##	Kontrollerer om to tekstverdier er like
-FIND			= FINN					##	Finner en tekstverdi inne i en annen (skiller mellom store og små bokstaver)
-FINDB			= FINNB					##	Finner en tekstverdi inne i en annen (skiller mellom store og små bokstaver)
+FIND			= FINN					##	Finner en tekstverdi inne i en annen (skiller mellom _store og små bokstaver)
+FINDB			= FINNB					##	Finner en tekstverdi inne i en annen (skiller mellom _store og små bokstaver)
 FIXED			= FASTSATT				##	Formaterer et tall som tekst med et bestemt antall desimaler
 JIS			= JIS					##	Endrer halvbreddes (enkeltbyte) engelske bokstaver eller katakana i en tegnstreng, til fullbreddes (dobbeltbyte) tegn
 LEFT			= VENSTRE				##	Returnerer tegnene lengst til venstre i en tekstverdi
@@ -428,11 +429,11 @@ REPLACEB		= ERSTATTB				##	Erstatter tegn i en tekst
 REPT			= GJENTA				##	Gjentar tekst et gitt antall ganger
 RIGHT			= HØYRE					##	Returnerer tegnene lengst til høyre i en tekstverdi
 RIGHTB			= HØYREB				##	Returnerer tegnene lengst til høyre i en tekstverdi
-SEARCH			= SØK					##	Finner en tekstverdi inne i en annen (skiller ikke mellom store og små bokstaver)
-SEARCHB			= SØKB					##	Finner en tekstverdi inne i en annen (skiller ikke mellom store og små bokstaver)
+SEARCH			= SØK					##	Finner en tekstverdi inne i en annen (skiller ikke mellom _store og små bokstaver)
+SEARCHB			= SØKB					##	Finner en tekstverdi inne i en annen (skiller ikke mellom _store og små bokstaver)
 SUBSTITUTE		= BYTT.UT				##	Bytter ut gammel tekst med ny tekst i en tekststreng
 T			= T					##	Konverterer argumentene til tekst
 TEXT			= TEKST					##	Formaterer et tall og konverterer det til tekst
 TRIM			= TRIMME				##	Fjerner mellomrom fra tekst
-UPPER			= STORE					##	Konverterer tekst til store bokstaver
+UPPER			= STORE					##	Konverterer tekst til _store bokstaver
 VALUE			= VERDI					##	Konverterer et tekstargument til et tall
