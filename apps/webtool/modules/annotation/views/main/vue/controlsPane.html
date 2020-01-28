@@ -149,16 +149,16 @@
                                             },
                                             */
                     onComplete: function (value) {
-                        console.log('on complete ' + value);
+                        //console.log('on complete ' + value);
                         let v = Math.round(that.slider.min + (that.slider.max - that.slider.min) * (value / 100));
                         //let v = value;
-                        console.log('v = ' + v);
+                        //console.log('v = ' + v);
                         if ((v >= that.slider.min) && (v <= that.slider.max)) {
                             that.$store.commit('currentFrame', v);
                         }
                     },
                     onSlideStart: function () {
-                        console.log('slider start');
+                        //console.log('slider start');
                         that.$store.commit('currentState', 'dragging');
                     },
                     onSlideEnd: function () {

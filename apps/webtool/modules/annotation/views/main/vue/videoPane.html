@@ -63,7 +63,7 @@
                 }
             },
             created() {
-                console.log('video segment = ' + this.segment);
+                //console.log('video segment = ' + this.segment);
                 this.$store.dispatch('objectsTrackerInit');
             },
             mounted() {
@@ -75,7 +75,7 @@
                     (state, getters) => getters.currentFrame,
                     (currentFrame) => {
                         this.currentFrame = currentFrame;
-                        console.log('currentFrame changed to ' + currentFrame)
+                        //console.log('currentFrame changed to ' + currentFrame)
                         if (this.isPlaying) {
                         } else {
                             let currentState = this.$store.state.currentState;
@@ -88,7 +88,7 @@
                 this.$store.watch(
                     (state, getters) => getters.currentState,
                     (currentState) => {
-                        console.log('changed state to ' + currentState)
+                        //console.log('changed state to ' + currentState)
                         if (currentState == 'playing') {
                             this.play();
                         }
@@ -100,9 +100,9 @@
                 this.$store.watch(
                     (state, getters) => getters.currentObjectState,
                     (currentObjectState) => {
-                        console.log('currentObjectState = ' + currentObjectState)
+                        //console.log('currentObjectState = ' + currentObjectState)
                         if ((currentObjectState == 'updated') || (currentObjectState == 'unselected') || (currentObjectState == 'cleared')) {
-                            console.log('object updated or unselected or cleared');
+                            //console.log('object updated or unselected or cleared');
                             this.drawFrame(this.currentFrame);
                         }
                     }
@@ -110,10 +110,10 @@
                 this.$store.watch(
                     (state, getters) => getters.idObjectSelected,
                     (idObjectSelected) => {
-                        console.log('idObjectSelected = ' + idObjectSelected)
+                        //console.log('idObjectSelected = ' + idObjectSelected)
                         let currentObjectState = this.$store.state.currentObjectState;
                         if (currentObjectState == 'selected') {
-                            console.log('object selected');
+                            //console.log('object selected');
                             this.drawFrame(this.currentFrame);
                         }
                     }
@@ -122,7 +122,7 @@
                     (state, getters) => state.redrawFrame,
                     (redrawFrame) => {
                         if (redrawFrame) {
-                            console.log('redraw frame');
+                            //console.log('redraw frame');
                             this.drawFrame(this.currentFrame);
                         }
                     }
@@ -143,7 +143,7 @@
                                 first: 0,
                                 last: parseInt((this.config.duration * 1000) / this.config.timeInterval)
                             }
-                            console.log('timeInterval = ' + this.config.timeInterval);
+                            //console.log('timeInterval = ' + this.config.timeInterval);
                             this.initializeFrameObject();
                         }
                     }
@@ -163,15 +163,19 @@
                 });
 
                 this.$nextTick(() => {
-                    console.log('visual pane mounted');
+                    //console.log('visual pane mounted');
                     let that = this;
                     $("#jquery_jplayer_1").jPlayer({
                         ready: function () {
-                            console.log('jplayer ready');
+                            //console.log('jplayer ready');
+                            let videoPath = that.$store.state.model.documentMM.videoPath;
+                            //console.log('video path = ' + videoPath);
                             $(this).jPlayer("setMedia", {
                                 title: "",
                                 //m4a: "http://127.0.0.1/webtool/apps/webtool/files/multimodal/audio/PedroPeloMundo_Se01_Ep06_Bl01_Par01.mp4"
-                                m4v: "http://server2.framenetbr.ufjf.br/webtooldev/apps/webtool/files/multimodal/video/PedroPeloMundo_Se01_Ep06_Bl01_Par01.mp4"
+                                //m4v: "http://server2.framenetbr.ufjf.br/webtooldev/apps/webtool/files/multimodal/videos/PedroPeloMundoSe01Ep06Bl01.mp4"
+                                //m4v: "http://server2.framenetbr.ufjf.br/webtooldev/apps/webtool/files/multimodal/videos/PedroPeloMundoSe01Ep06Bl01.mp4"
+                                m4v: videoPath
                             });
                         },
                         size: {
@@ -190,11 +194,11 @@
                         remainingDuration: false,
                         toggleDuration: false,
                         loadeddata: event => {
-                            console.log('**** jplayer loaded data!');
-                            console.log('currenttime = ' + event.jPlayer.status.currentTime);
-                            console.log('duration = ' + event.jPlayer.status.duration);
-                            console.log('width = ' + event.jPlayer.status.videoWidth);
-                            console.log('height = ' + event.jPlayer.status.videoHeight);
+                            //console.log('**** jplayer loaded data!');
+                            //console.log('currenttime = ' + event.jPlayer.status.currentTime);
+                            //console.log('duration = ' + event.jPlayer.status.duration);
+                            //console.log('width = ' + event.jPlayer.status.videoWidth);
+                            //console.log('height = ' + event.jPlayer.status.videoHeight);
                             this.config.duration = event.jPlayer.status.duration;
 
                             this.originalDimensions = {
@@ -214,7 +218,7 @@
                         },
                         timeupdate: event => {
                             this.currentTime = event.jPlayer.status.currentTime;
-                            console.log('== event time update - jplayer1 - ' + this.currentTime);
+                            //console.log('== event time update - jplayer1 - ' + this.currentTime);
                             if (this.isPlaying) {
                                 let currentFrame = parseInt((event.jPlayer.status.currentTime * 1000) / this.config.timeInterval);
                                 //this.$store.commit('currentFrame', currentFrame);
@@ -225,12 +229,15 @@
                     });
                     $("#jquery_jplayer_2").jPlayer({
                         ready: function () {
-                            console.log('jplayer2 ready');
+                            //console.log('jplayer2 ready');
+                            let videoPath = that.$store.state.model.documentMM.videoPath;
+                            console.log('video path = ' + videoPath);
                             $(this).jPlayer("setMedia", {
                                 title: "",
                                 // m4v: "http://127.0.0.1/webtool/apps/webtool/files/multimodal/video/PedroPeloMundo_Se01_Ep06_Bl01_Par01.mp4"
-								m4v: "http://server2.framenetbr.ufjf.br/webtooldev/apps/webtool/files/multimodal/video/PedroPeloMundo_Se01_Ep06_Bl01_Par01.mp4"
-
+								//m4v: "http://server2.framenetbr.ufjf.br/webtooldev/apps/webtool/files/multimodal/video/PedroPeloMundo_Se01_Ep06_Bl01_Par01.mp4"
+                                //m4v: "http://server2.framenetbr.ufjf.br/webtooldev/apps/webtool/files/multimodal/videos/PedroPeloMundoSe01Ep06Bl01.mp4"
+                                m4v: videoPath
                             });
                         },
                         size: {
@@ -249,7 +256,7 @@
                         remainingDuration: false,
                         toggleDuration: false,
                         loadeddata: event => {
-                            console.log('**** jplayer2 loaded data!');
+                            //console.log('**** jplayer2 loaded data!');
                             //console.log('currenttime = ' + event.jPlayer.status.currentTime);
                             //console.log('duration = ' + event.jPlayer.status.duration);
                             this.$store.commit('video2Loaded');
@@ -273,7 +280,7 @@
                     this.$store.dispatch('clearAnnotatedObject', i);
                 },
                 addAnnotatedObjectControls(annotatedObject) {
-                    console.log(annotatedObject);
+                    //console.log(annotatedObject);
                     annotatedObject.name = '';
                     annotatedObject.visible = true;
                     annotatedObject.hidden = false;
@@ -305,7 +312,7 @@
                     if (!this.isReady) {
                         return;
                     }
-                    console.log('playre.seek = ' + frameNumber);
+                    //console.log('playre.seek = ' + frameNumber);
 
                     this.pause();
 
@@ -329,7 +336,7 @@
                         return;
                     }
                     //this.$store.commit('currentState', 'playing');
-                    console.log('playing ' + this.currentFrame);
+                    //console.log('playing ' + this.currentFrame);
                     $("#jquery_jplayer_1").jPlayer('play', (((this.currentFrame) * this.config.timeInterval) / 1000));
                     this.isPlaying = true;
                     //this.nextFrame();
@@ -342,7 +349,7 @@
                     this.isPlaying = false;
                     //this.$store.commit('currentState', 'paused');
                     let timeForFrame = (this.currentFrame * this.config.timeInterval) / 1000;
-                    console.log('== paused = ' + this.currentFrame + '  ' + timeForFrame);
+                    //console.log('== paused = ' + this.currentFrame + '  ' + timeForFrame);
 
                     $("#jquery_jplayer_1").jPlayer('pause', timeForFrame);
                     $("#jquery_jplayer_2").jPlayer('pause', timeForFrame);
@@ -399,10 +406,10 @@
                     }
                 },
                 drawFrameObjects: function (frameNumber) {
-                    console.log('drawFrameObjects ' + frameNumber);
+                    //console.log('drawFrameObjects ' + frameNumber);
                     let annotatedObjectsTracker = this.$store.getters.objectsTracker;
                     let result = annotatedObjectsTracker.getObjectsByFrame(frameNumber);
-                    console.log(result);
+                    //console.log(result);
                     for (let i = 0; i < result.length; i++) {
                         let object = result[i];
                         let annotatedObject = object.annotatedObject;
@@ -437,7 +444,7 @@
                 drawFrame: function (frameNumber) {
                     let that = this;
                     //return new Promise((resolve, _) => {
-                    console.log('drawFrame ' + frameNumber);
+                    //console.log('drawFrame ' + frameNumber);
                     jQuery('.bbox').css("display","none");
                     let annotatedObjectsTracker = this.$store.getters.objectsTracker;
                     annotatedObjectsTracker.getFrameWithObjects(frameNumber).then((frameWithObjects) => {
@@ -448,7 +455,7 @@
                         }
                         let img = frameWithObjects.img;
                         this.ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, img.width * this.currentScale, img.height * this.currentScale);
-                        console.log(frameWithObjects);
+                        //console.log(frameWithObjects);
                         for (let i = 0; i < frameWithObjects.objects.length; i++) {
                             let object = frameWithObjects.objects[i];
                             let annotatedObject = object.annotatedObject;
@@ -631,10 +638,10 @@
                                 annotatedObject,
                                 (x, y, width, height) => {
                                     //let bbox = new BoundingBox(x, y, width, height);
-                                    console.log('annotated loaded object changing - box frame ' + this.currentFrame);
-                                    console.log(x + ' ' + y + ' ' + width + ' ' + height);
+                                    //console.log('annotated loaded object changing - box frame ' + this.currentFrame);
+                                    //console.log(x + ' ' + y + ' ' + width + ' ' + height);
                                     let absolute = this.toAbsoluteCoord(x, y, width, height);
-                                    console.log(absolute);
+                                    //console.log(absolute);
                                     let bbox = new BoundingBox(absolute.x, absolute.y, absolute.width, absolute.height);
                                     annotatedObject.add(new AnnotatedFrame(this.currentFrame, bbox, true));
                                 }
@@ -688,7 +695,7 @@
                                 let annotatedFrame = new AnnotatedFrame(lastFrame + 1, null, true);
                                 annotatedObject.add(annotatedFrame);
                             }
-                            console.log(annotatedObject)
+                            //console.log(annotatedObject)
 
                         }
                     }
@@ -712,7 +719,7 @@
                     bbox.addClass('bbox');
 
                     let createHandleDiv = (className, content = null) => {
-                        console.log('className = ' + className + '  content = ' + content);
+                        //console.log('className = ' + className + '  content = ' + content);
                         let handle = document.createElement('div');
                         handle.className = className;
                         bbox.append(handle);
@@ -789,17 +796,17 @@
                 }
                 ,
                 onMouseClick(event) {
-                    console.log(event);
+                    //console.log(event);
                     let doodle = this.$refs.doodle;
                     if (doodle.style.cursor != 'crosshair') {
                         return;
                     }
-console.log('click');
+//console.log('click');
                     if (this.tempAnnotatedObject != null) {
                         let annotatedObject = new AnnotatedObject();
                         annotatedObject.dom = this.tempAnnotatedObject.dom;
                         let absolute = this.toAbsoluteCoord(this.tempAnnotatedObject.x, this.tempAnnotatedObject.y, this.tempAnnotatedObject.width, this.tempAnnotatedObject.height);
-                        console.log(absolute);
+                        //console.log(absolute);
                         let bbox = new BoundingBox(absolute.x, absolute.y, absolute.width, absolute.height);
                         annotatedObject.add(new AnnotatedFrame(this.currentFrame, bbox, true));
                         this.addAnnotatedObjectControls(annotatedObject);
@@ -808,10 +815,10 @@ console.log('click');
                         this.interactify(
                             annotatedObject,
                             (x, y, width, height) => {
-                                console.log('annotated object changing - box frame ' + this.currentFrame);
-                                console.log(x + ' ' + y + ' ' + width + ' ' + height);
+                                //console.log('annotated object changing - box frame ' + this.currentFrame);
+                                //console.log(x + ' ' + y + ' ' + width + ' ' + height);
                                 let absolute = this.toAbsoluteCoord(x, y, width, height);
-                                console.log(absolute);
+                                //console.log(absolute);
                                 let bbox = new BoundingBox(absolute.x, absolute.y, absolute.width, absolute.height);
                                 annotatedObject.add(new AnnotatedFrame(this.currentFrame, bbox, true));
                             }
@@ -829,17 +836,17 @@ console.log('click');
                     }
                 },
                 onNewObjectClick(currentFrame) {
-                    console.log('newObject');
+                    //console.log('newObject');
                     this.$refs.doodle.style.cursor = 'crosshair';
                 },
             },
             watch: {
                 scale(value) {
                     this.currentScale = value / 100;
-                    console.log('change scale to ' + this.currentScale);
+                    //console.log('change scale to ' + this.currentScale);
                     this.updateCurrentDimensions();
                     this.initializeCanvasDimensions();
-                    console.log(this.currentDimensions);
+                    //console.log(this.currentDimensions);
                     $("#jquery_jplayer_1").jPlayer({
                         size: {
                             width: this.currentDimensions.width + "px",
