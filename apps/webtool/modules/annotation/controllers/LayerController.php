@@ -15,7 +15,8 @@ class LayerController extends MController
     {
         $this->data->query = Manager::getAppURL('', 'annotation/layer/gridData');
         $this->data->action = "@annotation/layer/save|formManager";
-        $fnbrLayers = Manager::getSession()->fnbrLayers;
+        $user = Manager::getLogin()->getUser();
+        $fnbrLayers = $user->getConfigData('fnbrLayers');//Manager::getSession()->fnbrLayers;
         $this->data->layersToShow = MJSON::encode($fnbrLayers ?: []);
         $this->render();
     }
