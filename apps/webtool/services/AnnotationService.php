@@ -453,7 +453,7 @@ class AnnotationService extends MService
                 'coreType' => $row['coreType']
             ];
         }
-mdump($result);
+//mdump($result);
         // UDTree
         $UDTreeLayer = [];
         $UDTreeLayer['none'] = '';
@@ -571,11 +571,11 @@ mdump($result);
         if ($level == 'BEGINNER') {
             $layersToShow = Manager::getConf('fnbr.beginnerLayers');
         } else {
-            $layersToShow = Manager::getSession()->fnbrLayers;
-            if ($layersToShow == '') {
+            //$layersToShow = Manager::getSession()->fnbrLayers;
+            //if ($layersToShow == '') {
                 $user = Manager::getLogin()->getUser();
                 $layersToShow = Manager::getSession()->fnbrLayers = $user->getConfigData('fnbrLayers');
-            }
+            //}
         }
 
         $wordsChars = $as->getWordsChars($idSentence);
