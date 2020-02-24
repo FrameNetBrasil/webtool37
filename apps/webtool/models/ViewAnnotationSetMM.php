@@ -22,7 +22,7 @@ class ViewAnnotationSetMM extends map\ViewAnnotationSetMMMap {
 
     public function listByDocumentMM($idDocumentMM, $sortable = NULL) {
         $criteria = $this->getCriteria()->
-        select('idAnnotationSetMM, idSentenceMM, sentencemm.sentence.text, sentencemm.startTimestamp, sentencemm.endTimestamp' )->
+        select('idAnnotationSetMM, idSentenceMM, sentencemm.sentence.idSentence, sentencemm.sentence.text, sentencemm.startTimestamp, sentencemm.endTimestamp' )->
         where("sentencemm.sentence.paragraph.document.documentmm.idDocumentMM = {$idDocumentMM}");
         if ($sortable) {
             if ($sortable->field == 'idSentenceMM') {

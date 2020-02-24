@@ -12,6 +12,7 @@ let store = new Vuex.Store({
         currentFrame: 0,
         playFrame: 0,
         currentState: 'loading', // playing, paused, loading, loaded
+        currentSlider: 0,
         objects: [],
         currentObject: null,
         currentObjectState: 'none',// creating, created, selected,editingFE, editingBox, stopping, updated
@@ -37,6 +38,9 @@ let store = new Vuex.Store({
         },
         currentObject(state) {
             return state.currentObject
+        },
+        currentSlider(state) {
+            return state.currentSlider
         },
         currentObjectState(state) {
             return state.currentObjectState
@@ -78,6 +82,9 @@ let store = new Vuex.Store({
         },
         playFrame(state, value) {
             state.playFrame = value;
+        },
+        currentSlider(state, value) {
+            state.currentSlider = value;
         },
         currentState(state, value) {
             state.currentState = value;

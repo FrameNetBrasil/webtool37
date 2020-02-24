@@ -169,6 +169,9 @@
                         //let v = Math.round(that.slider.min + (that.slider.max-that.slider.min)*(value/100));
                         //that.$store.commit('currentFrame', v);
                     },
+                    onChange(newValue) {
+                        that.$store.commit('currentSlider', newValue);
+                    }
                 });
 
 

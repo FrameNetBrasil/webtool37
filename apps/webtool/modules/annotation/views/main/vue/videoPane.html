@@ -57,9 +57,10 @@
             },
             computed: {
                 displayTime: function () {
-                    let dt = this.currentTime + '00';
-                    return dt.substr(0, 9);
-                    //return $.jPlayer.convertTime( this.currentTime);
+                    return this.formatTime(this.currentTime);
+                },
+                totalDuration: function() {
+                    return this.formatTime(this.config.duration);
                 }
             },
             created() {
@@ -105,6 +106,13 @@
                             //console.log('object updated or unselected or cleared');
                             this.drawFrame(this.currentFrame);
                         }
+                    }
+                )
+                this.$store.watch(
+                    (state, getters) => getters.currentSlider,
+                    (currentSlider) => {
+                        let currentTime = (this.config.duration * (currentSlider /100));
+                        this.currentTime = currentTime;
                     }
                 )
                 this.$store.watch(
@@ -273,6 +281,18 @@
                 })
             },
             methods: {
+                formatTime(timeToFormat) {
+                    let dt1 = timeToFormat + '00';
+                    let ft = parseFloat(dt1);
+                    let i = parseInt(dt1);
+                    let horas = parseInt(i /3600);
+                    let resto = i - (horas * 3600);
+                    let minutos = parseInt(resto /60);
+                    let segundos = resto - (minutos * 60);
+                    let ms = parseInt((ft - i) * 1000);
+                    let show = horas + ':' + minutos + ':' + segundos + '.' + ms;
+                    return show;
+                },
                 clearAllAnnotatedObjects() {
                     this.$store.dispatch('objectsTrackerClearAll');
                 },
@@ -887,7 +907,7 @@
                     <controls-pane v-if="showControls"></controls-pane>
                 </div>
                 <div id="jcontrols" v-if="showControls">
-                    <span>{{displayTime}} / {{config.duration}}</span>
+                    <span>{{displayTime}} / {{totalDuration}}</span>
                 </div>
                 <!--
                 <div class="jp-current-time" role="timer" aria-label="time"

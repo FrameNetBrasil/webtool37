@@ -990,18 +990,23 @@ class AnnotationService extends MService
 
     public function listAnnotationSetMultimodal($idDocumentMM, $sortable = NULL)
     {
+        $documentMM = new fnbr\models\DocumentMM();
+        $documentMM->getById($idDocumentMM);
+        $document = new fnbr\models\Document($documentMM->getIdDocument());
+        $idSubCorpus = $document->getRelatedSubCorpus();
+
         $as = new fnbr\models\ViewAnnotationSetMM();
         $sentences = $as->listByDocumentMM($idDocumentMM, $sortable)->asQuery()->getResult();
-        //$annotation = $as->listFECEBySubCorpus($idSubCorpus);
+        $annotation = $as->listFECEBySubCorpus($idSubCorpus);
         $result = array();
         foreach ($sentences as $sentence) {
             $node = array();
             $node['idAnnotationSetMM'] = $sentence['idAnnotationSetMM'];
             $node['idSentenceMM'] = $sentence['idSentenceMM'];
-            $node['text'] = $sentence['text'];
+            //$node['text'] = $sentence['text'];
             $node['startTimestamp'] = $sentence['startTimestamp'];
             $node['endTimestamp'] = $sentence['endTimestamp'];
-            /*
+
             if ($annotation[$sentence['idSentence']]) {
                 $node['text'] = $this->decorateSentence($sentence['text'], $annotation[$sentence['idSentence']]);
             } else {
@@ -1009,7 +1014,7 @@ class AnnotationService extends MService
                 $node['text'] = $this->decorateSentence($sentence['text'], $targets);
                 //$node['text'] = $sentence['text'];
             }
-            */
+
             $node['status'] = $sentence['annotationStatus'];
             $node['rgbBg'] = $sentence['rgbBg'];
             $result[] = $node;
