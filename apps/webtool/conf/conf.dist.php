@@ -96,7 +96,7 @@ return [
             'host' => 'db',
             'dbname' => 'webtool_db',
             'user' => 'webtool',
-            'password' => '',
+            'password' => 'webtool',
             'formatDate' => '%e/%m/%Y',
             'formatDateWhere' => '%Y/%m/%e',
             'formatTime' => '%T',

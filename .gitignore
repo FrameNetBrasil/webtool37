@@ -54,6 +54,7 @@ core/var/templates/*
 core/var/log/*
 core/var/trace/*
 core/var/files/*
+core/var/sessions/*
 
 # Config Files #
 ################
