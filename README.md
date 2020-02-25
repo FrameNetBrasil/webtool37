@@ -19,48 +19,29 @@ In order to run this container you'll need docker installed.
 
 Create a local installation for Webtool:
 
-* Clone this repository at an accesible folder (e.g. home/webtool)
+* Clone this repository at an accesible folder
 
 ```sh
 $ git clone https://github.com/FrameNetBrasil/webtool.git
+$ cd webtool
 ```
 
 * Create conf files from dist
 
 ```sh
-$ cd /home/webtool/core/conf
-$ cp conf.dist.php conf.php
-
-$ cd /home/webtool/apps/webtool/conf
+$ cd core/conf
 $ cp conf.dist.php conf.php
 ```
 
-* Restore/create the MySQL database from the dump located at /home/webtool/apps/webtool/doc/database/webtool_github_bkp.zip
-
-    - You must have a local database installation (MySQL or MariaDb)
-    - Configure the database server to allow external connections
-    - Create user "webtool" at database server (and choose a local password)
-    - Restore/create database using webtool/<local-password> 
-
-* Configure database access at /home/webtool/apps/webtool/conf/conf.php
-
 ```sh
-    'db' => [
-        'webtool' => [
-            'driver' => 'pdo_mysql',
-            'host' => 'host.docker.internal',
-            'dbname' => 'webtool_db',
-            'user' => 'webtool',
-            'password' => '', // inform the password <local-password>
-            ...
-        ]
-    ],
+$ cd apps/webtool/conf
+$ cp conf.dist.php conf.php
 ```
 
 * Start the container
 
 ```sh
-$ cd /home/webtool/devops/docker
+$ cd devops/docker
 $ docker-compose up
 ```
  
@@ -77,6 +58,8 @@ Parameters are available to the container (mainly the webserver port) at
 ## Built With
 
 * PHP 7.4
+* MariaDb 10.4
+* PhpMyAdmin 5.0.1
 * Framework Maestro 3.0
 * Vue 2.7
 
