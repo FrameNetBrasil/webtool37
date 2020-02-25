@@ -21,10 +21,7 @@
   "require": {
     "psr/log": "1.0.0",
     "phpmailer/phpmailer": "~6.0",
-    "zendframework/zend-session": "2.8.*",
-    "zendframework/zend-config": "2.6.*",
-    "zendframework/zend-validator": "2.8.*",
-    "zendframework/zend-captcha": "2.6.*",
+    "aura/session": "^2.1",
     "beberlei/assert": "dev-master",
     "php-di/php-di": "5.2.*",
     "latte/latte": "2.4.*"
@@ -47,7 +44,6 @@
       "core/classes/mvc",
       "core/classes/results",
       "core/classes/persistence",
-      "core/classes/extensions",
       "core/classes/security",
       "core/classes/types",
       "core/classes/ui",

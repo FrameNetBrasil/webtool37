@@ -1,0 +1,20 @@
+version: "3.3"
+services:
+    webserver:
+        build:
+            context: ./bin/webserver
+        container_name: 'fnbr-webserver'
+#        restart: 'always'
+        ports:
+            - ${WWW_PORT}:80
+        volumes:
+            - ${DOCUMENT_ROOT}:/var/www/html
+#            - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
+            - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
+            - ${LOG_DIR-./logs/apache2}:/var/log/apache2
+#        build: .
+#        command: bash -c "cd /var/www/html && composer install --ignore-platform-reqs && cd /var/www/html/apps/webtool && composer install --ignore-platform-reqs && cd /var/www/html/apps/webtool/vue && npm install"
+        command: bash -c "cd /var/www/html && composer install --ignore-platform-reqs && cd /var/www/html/apps/webtool && composer install --ignore-platform-reqs && apache2-foreground"
+#        restart: on-failure
+        networks:
+            - default

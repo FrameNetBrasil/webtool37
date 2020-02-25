@@ -93,7 +93,7 @@ return [
     'db' => [
         'webtool' => [
             'driver' => 'pdo_mysql',
-            'host' => 'localhost',
+            'host' => '10.0.75.1',
             'dbname' => 'webtool_db',
             'user' => 'webtool',
             'password' => '',
