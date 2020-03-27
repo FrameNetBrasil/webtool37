@@ -697,11 +697,11 @@ HERE;
             $layer->save();
             if ($lt['entry'] == 'lty_target') {
                 if (isset($data->chars)) {
-                    $startChar = $endChar = 0;
+                    $startChar = $endChar = -1;
                     array_push($data->chars, '');
                     foreach($data->chars as $i => $char) {
                         if ($char == '') {
-                            if ($startChar != 0) {
+                            if ($startChar != -1) {
                                 $label = new Label();
                                 $label->setMulti(0);
                                 $label->setIdInstantiationTypeFromEntry('int_normal');
@@ -714,7 +714,7 @@ HERE;
                                 $startChar = $endChar = 0;
                             }
                         } else {
-                            if ($startChar == 0) {
+                            if ($startChar == -1) {
                                 $startChar = $i;
                             }
                             $endChar = $i;
