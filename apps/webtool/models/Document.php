@@ -471,12 +471,16 @@ where (d.idDocument = {$this->getIdDocument()})
 order by s.idSentence
 
 HERE;
+
+        print_r($cmd."\n");
+
         $query = $this->getDb()->getQueryCommand($cmd);
         return $query;
     }
 
     public function listAnnotationSetForXML($idSentence, $idLanguage = 1)
     {
+        /*
         $cmd = <<<HERE
 
 select a.idAnnotationSet, lb.layerTypeEntry, lb.startChar, lb.endChar, f.idFrame, e1.name frameName, fe.idFrameElement, e3.name feName, gl.idGenericLabel, gl.name glName, lu.idLU, lu.name luName, pos.POS, lx.name lexeme
@@ -503,6 +507,38 @@ and ((e3.idLanguage = {$idLanguage}) or (e3.idLanguage is null))
 and (lb.startChar <> -1)
 and a.idSentence = {$idSentence}
 order by a.idAnnotationset
+
+HERE;
+
+        */
+
+        $cmd = <<<HERE
+
+        select l1.idAnnotationSet, l1.layerTypeEntry, l1.startChar, l1.endChar, l1.instantiationType, l1.idLU, l1.luName, l1.POS, l1.lexeme, l1.idFrame, l1.frameName, l1.idFrameElement, l2.name feName, l1.idGenericLabel, ge.name glName
+FROM (
+    select distinct a.idAnnotationSet, lb.layerTypeEntry, lb.startChar, lb.endChar, lb.instantiationType, lu.idLU, lu.name luName, pos.POS, lx.name lexeme, f.idFrame, lb.idFrameElement, lb.idGenericLabel, e1.name frameName
+FROM annotationset a
+  INNER JOIN view_labelfecetarget lb on (a.idAnnotationSet = lb.idAnnotationSet)
+  INNER JOIN view_subcorpuslu sc ON (a.idSubCorpus = sc.idSubCorpus)
+  INNER JOIN view_lu lu ON (sc.idLU = lu.idLU)
+  INNER JOIN lemma lm on (lu.idLemma = lm.idLemma)
+  INNER JOIN lexemeentry le ON (lm.idLemma = le.idLemma)
+  INNER JOIN lexeme lx on (le.idLexeme = lx.idLexeme)
+  INNER JOIN pos ON (lu.idPOS = pos.idPOS)
+  INNER JOIN frame f on (lu.idFrame = f.idFrame)
+  INNER JOIN entry e1 ON (f.entry = e1.entry)
+where (e1.idLanguage = {$idLanguage})
+and (lb.idLanguage = {$idLanguage})
+and a.idSentence = {$idSentence}
+) l1
+LEFT JOIN (
+        select fe.idFrameElement, efe.name
+FROM frameElement fe
+JOIN entry efe on (fe.entry = efe.entry)
+where (efe.idLanguage = 2)
+) l2 on (l1.idFrameElement = l2.idFrameElement)
+LEFT JOIN genericLabel ge on (l1.idGenericLabel = ge.idGenericLabel)
+order by l1.idAnnotationset
 
 HERE;
         $query = $this->getDb()->getQueryCommand($cmd);
