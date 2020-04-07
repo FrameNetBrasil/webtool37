@@ -1,29 +1,29 @@
 <script src={{$manager->getStaticURL($manager->getApp(), 'scripts/auth0/lock.min.js')}}></script>
 
 <script>
-  var AUTH0_CLIENT_ID = {{$data->client_id}};
-  var AUTH0_DOMAIN = {{$data->domain}};
-  var AUTH0_CALLBACK_URL = {{$data->redirect_uri}};
+    var AUTH0_CLIENT_ID = {{$data->client_id}};
+    var AUTH0_DOMAIN = {{$data->domain}};
+    var AUTH0_CALLBACK_URL = {{$data->redirect_uri}};
 
-  $(document).ready(function() {
-      var lock = new Auth0Lock(AUTH0_CLIENT_ID, AUTH0_DOMAIN, { auth: {
-          redirectUrl: AUTH0_CALLBACK_URL
-          , responseType: 'code'
-          , params: {
-              scope: 'openid'
-          }
-      }});
+    $(document).ready(function() {
+        var lock = new Auth0Lock(AUTH0_CLIENT_ID, AUTH0_DOMAIN, { auth: {
+                redirectUrl: AUTH0_CALLBACK_URL
+                , responseType: 'code'
+                , params: {
+                    scope: 'openid'
+                }
+            }});
 
-      $('.btn-login').click(function(e) {
-          e.preventDefault();
-          lock.show();
-      });
+        $('.btn-login').click(function(e) {
+            e.preventDefault();
+            lock.show();
+        });
 
-      $('.btn-logout').click(function(e) {
-          e.preventDefault();
-          window.location={{$manager->getAppURL($manager->getApp(),'auth/login/logout')}};
-      });
-  });
+        $('.btn-logout').click(function(e) {
+            e.preventDefault();
+            window.location={{$manager->getAppURL($manager->getApp(),'auth/login/logout')}};
+        });
+    });
 </script>
 
 <style>
@@ -45,11 +45,11 @@
         text-transform: uppercase;
         letter-spacing: 1px;
         border: 0;
-        background-color: #b30000;
+        background-color: #6d8daa;
         color: white;
     }
     .btn:hover {
-        background-color: #ff6666;
+        background-color: #5fb6ff;
     }
     .btn:focus {
         outline: none !important;
@@ -66,9 +66,9 @@
 
 <div class="containerLogin">
     <div class="login-page">
-      <div class="login-box auth0-box before">
-            <img src = {{$manager->getStaticURL($manager->getApp(),'images/fnbr_logo.png')}} />
+        <div class="login-box auth0-box before">
+            <img src = {{$manager->getStaticURL($manager->getApp(),'images/mlfn_logo.jpg')}} style="margin:8px" />
             <a class="btn btn-primary btn-lg btn-login btn-block">Sign In</a>
-      </div>
+        </div>
     </div>
 </div>
