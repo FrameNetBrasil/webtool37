@@ -697,7 +697,7 @@ HERE;
             $layer->save();
             if ($lt['entry'] == 'lty_target') {
                 if (isset($data->chars)) {
-                    $startChar = $endChar = 0;
+                    $startChar = $endChar = -1;
                     array_push($data->chars, '');
                     foreach($data->chars as $i => $char) {
                         if ($char == '') {

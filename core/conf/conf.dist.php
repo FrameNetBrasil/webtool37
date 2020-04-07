@@ -50,7 +50,7 @@ return [
         'check' => true
     ],
     'logs' => [
-        'path' => sys_get_temp_dir() . '/maestro3/log',
+        'path' => sys_get_temp_dir() . '/log',
         'level' => 2,
         'handler' => "socket",
         'peer' => '127.0.0.1',
