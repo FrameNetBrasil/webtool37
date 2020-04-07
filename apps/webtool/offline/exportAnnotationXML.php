@@ -19,6 +19,7 @@ Manager::loadConf($configFile);
 Manager::setConf('logs.level', 2);
 Manager::setConf('logs.port', 9998);
 
+//var_dump(Manager::getConf('logs'));
 Manager::setConf('fnbr.db', $db);
 
 mdump("documentEntry = " . $documentEntry);
