@@ -376,12 +376,13 @@ class DataService extends MService
 
     public function exportDocumentToXML($corpus, $document)
     {
-        //$document = new \fnbr\models\Document();
-        //$document->getByEntry($this->data->documentEntry);
-        //$corpus = $document->getCorpus();
+        print_r($this->data);
+        $document = new \fnbr\models\Document();
+        $document->getByEntry($this->data->documentEntry);
+        $corpus = $document->getCorpus();
 
-        //$idLanguage = \fnbr\models\Base::getIdLanguage($this->data->language);
-        $idLanguage = $this->data->idLanguage;
+        $idLanguage = \fnbr\models\Base::getIdLanguage($this->data->language);
+        //$idLanguage = $this->data->idLanguage;
 
         print_r("idlanguage = " . $idLanguage . "\n");
 
@@ -405,10 +406,12 @@ HERE;
         $sentences = $document->listSentenceForXML()->getResult();
         $i = 0;
         foreach ($sentences as $sentence) {
+            print_r($sentence['idSentence'] . ' - ' . $sentence['text']. "\n");
             $s = $sxe->addChild('sentence');
             $s->addAttribute('ID', $sentence['idSentence']);
             $t = $s->addChild('text', $sentence['text']);
             $queryAS = $document->listAnnotationSetForXML($sentence['idSentence'], $idLanguage);
+            //print_r(count($queryAS). "\n");
             $idAS = 0;
             $layer = '';
             $labels = $queryAS->getResult();
@@ -433,12 +436,16 @@ HERE;
                 $lb->addAttribute('name', $label['feName'] . $label['glName']);
                 $lb->addAttribute('start', $label['startChar']);
                 $lb->addAttribute('end', $label['endChar']);
+                if ($label['startChar'] == -1) {
+                    $lb->addAttribute('itype', $label['instantiationType']);
+                }
             }
             if ((++$i % 5) == 0) {
                 print_r($i . ' sentence(s)' . "\n");
             }
         }
-        file_put_contents($this->data->fileName, $sxe->asXML());
+        print_r($this->data->filename . "\n");
+        file_put_contents($this->data->filename, $sxe->asXML());
     }
 
     public function exportDocumentToCONLL($document)

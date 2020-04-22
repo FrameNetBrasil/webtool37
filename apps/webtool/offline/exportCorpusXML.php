@@ -35,7 +35,6 @@ try {
     Manager::loadConf($configFile);
     Manager::setConf('logs.level', 2);
     Manager::setConf('logs.port', 9999);
-var_dump(Manager::getConf('logs'));
     Manager::setConf('fnbr.db', $db);
 
     Manager::processRequest(true);
