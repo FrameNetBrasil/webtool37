@@ -613,13 +613,13 @@ class StructureFrameService extends MService
                 $constraint = Base::createEntity('CN', 'con');
                 $cf = new fnbr\models\FrameElement($data->idFrameElement);
                 $frame = new fnbr\models\Frame($data->idFrame);
-                Base::createConstraintInstance($constraint->getIdEntity(), 'con__frame', $cf->getIdEntity(), $frame->getIdEntity());
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_frame', $cf->getIdEntity(), $frame->getIdEntity());
             }
             if ($data->idSemanticType != '') {
                 $constraint = Base::createEntity('CN', 'con');
                 $cf = new fnbr\models\FrameElement($data->idFrameElement);
                 $st = new fnbr\models\SemanticType($data->idSemanticType);
-                Base::createConstraintInstance($constraint->getIdEntity(), 'con__semtype', $cf->getIdEntity(), $st->getIdEntity());
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_semtype', $cf->getIdEntity(), $st->getIdEntity());
             }
             if ($data->idFEQualia != '') {
                 $fe = new fnbr\models\FrameElement($data->idFrameElement);
