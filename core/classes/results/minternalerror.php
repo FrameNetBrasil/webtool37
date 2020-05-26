@@ -40,7 +40,7 @@ class MInternalError extends MResult
             mtrace('InternalError: ' . $this->exception->getMessage());
             $template = new MTemplate();
             $template->context('result', $this->exception);
-            $errorHtml = MTemplateLocator::fetch($template, 'errors', $response->getStatus() . "." . ($format == null ? "html" : $format));
+            $errorHtml = MTemplateLocator::fetch($template, 'errors', '500.html');
 
             if ($request->isAjax() && ($format == "html")) {
                 if ($this->ajax->isEmpty()) {
