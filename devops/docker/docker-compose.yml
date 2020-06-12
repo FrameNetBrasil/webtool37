@@ -3,7 +3,7 @@ services:
     webserver:
         build:
             context: ./bin/webserver
-        container_name: 'fnbr-webserver'
+        container_name: 'fnbr-webserver-webtool'
         #        restart: 'always'
         ports:
             - ${WWW_PORT}:80
@@ -23,7 +23,7 @@ services:
             - default
     db: # This service *must* be called 'db'
         build: ./bin/mariadb
-        container_name: 'fnbr-mariadb'
+        container_name: 'fnbr-mariadb-webtool'
         #        restart: 'always'
         ports:
             - ${DB_PORT}:3306
@@ -43,7 +43,7 @@ services:
             - default
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
-        container_name: 'fnbr-phpmyadmin'
+        container_name: 'fnbr-phpmyadmin-webtool'
         links:
             - db:db
         ports:
