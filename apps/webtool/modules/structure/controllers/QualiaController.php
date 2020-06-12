@@ -187,7 +187,8 @@ class QualiaController extends MController
         try {
             $model = new fnbr\models\Qualia();
             $model->saveRelation($this->data->qualia);
-            $this->renderPrompt('ok', 'Qualia Relation created.',"!$('#formLUQualia_dialog').dialog('close');");
+            //$this->renderPrompt('ok', 'Qualia Relation created.',"!$('#formLUQualia_dialog').dialog('close');");
+            $this->renderPrompt('ok', 'Qualia Relation created.');
         } catch (\Exception $e) {
             $this->renderPrompt('error', $e->getMessage());
         }
