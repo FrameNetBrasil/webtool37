@@ -19,8 +19,8 @@ services:
         #        restart: on-failure
         depends_on:
             - db
-        networks:
-            - default
+        #networks:
+        #    - default
     db: # This service *must* be called 'db'
         build: ./bin/mariadb
         container_name: 'fnbr-mariadb-webtool'
@@ -39,8 +39,8 @@ services:
             - ./mariadb/conf:/etc/mysql/conf.d
             - persistent:/var/lib/mysql
         #            - ./mariadb/data:/var/lib/mysql
-        networks:
-            - default
+        #networks:
+        #    - default
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
         container_name: 'fnbr-phpmyadmin-webtool'
@@ -56,6 +56,8 @@ services:
             - /sessions
 
 volumes:
-    persistent: { driver: local }
+    #persistent: { driver: local }
+    daisy_persistent:
+
 
 
