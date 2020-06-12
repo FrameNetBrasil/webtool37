@@ -37,7 +37,7 @@ services:
         volumes:
             - ./mariadb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
             - ./mariadb/conf:/etc/mysql/conf.d
-            - persistent:/var/lib/mysql
+            - webtool_persistent:/var/lib/mysql
         #            - ./mariadb/data:/var/lib/mysql
         #networks:
         #    - default
