@@ -729,7 +729,7 @@ class GrapherService extends MService
         if (count($entities)) {
             $relations = $this->getEntityDomainRelationsById($entities, $chosen, $idDomain);
         }
-        return $relations;
+        return json_encode($relations);
     }
 
     public function getEntityDomainRelationsById($entities, $chosen, $idDomain)
@@ -820,7 +820,7 @@ class GrapherService extends MService
                 $relations = array_merge($relations, $r);
             }
         }
-        return $relations;
+        return json_encode($relations);
     }
 
     public function getConstraintRelationsByFrame($idEntityFrame, $chosen)

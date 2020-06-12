@@ -21,8 +21,10 @@
             <div id="grapherArea" style="width:100%; height:95%"></div>
         </div>
     </div>
-</div>    
+</div>
 {{include $manager->getThemePath('css/graph.css')}}
+{{include 'grapher_d3_v5.js'}}
+
 <script type="text/javascript">
 
     $(function () {
@@ -30,6 +32,13 @@
         $('#grapherLayout').layout({
             fit:true
         });
+
+        grapher.instance = new grapher.graph("grapherArea");
+
+        grapher.reload = function () {
+            $('#grapherArea').html('');
+            $('#frameTree').tree('reload');
+        }
 
         var relation = {
             entry: JSON.parse({{$data->relationEntry}}),
@@ -43,6 +52,7 @@
         }
         console.log(relation);
 
+        /*
         grapher = new D3Graph({
             isMaster: {{$data->isMaster|noescape}},
             element: "grapherArea"
@@ -65,11 +75,21 @@
             grapher.showLink(link);
         }
 
+         */
+
+        grapher.onClick =  function(node) {
+            if (d3.event.shiftKey) {
+                console.log("Mouse+Shift pressed");
+                console.log(node);
+                grapher.showLU(node.id);
+            }
+        }
+
         grapher.isShowing = false;
 
-        grapher.reload = function () {
-            $('#grapherArea').html('');
-            $('#frameTree').tree('reload');
+        grapher.clearGraph = function () {
+            grapher.instance.clear();
+            grapher.instance.update();
         }
 
         grapher.loadGraph = function () {
@@ -78,6 +98,7 @@
             $.each(rt, function(index, r) {
                 chosen[r] = r;
             });
+            console.log(chosen);
             var checkedNodes = $('#frameTree').tree('getChecked');
             var treeNodes = [];
             for(var i = 0; i < checkedNodes.length; i++){
@@ -86,18 +107,21 @@
             var idDomain = $('#idDomain').combobox('getValue');
             grapher.isShowing = false;
             manager.doAjax({{$manager->getURL('api/grapher/getDomainRelations')}}, function(data) {
-                var links = data;
-                grapher.clear();
+                //console.log(data);
+                var links = JSON.parse(data);
+                grapher.instance.clear();
                 $.each(links, function(index, link) {
+                    console.log(link);
                     if (chosen[link.type] || (link.type == 'rel_none')) {
                         grapher.addLinkObj(link);
                     }
                 });
-                grapher.start();
+                //grapher.start();
+                grapher.instance.update();
             }, {frames: 'json:' + JSON.stringify(treeNodes), chosen: chosen, idDomain: idDomain});
         }
 
-        grapher.updateGraph = function (idEntity) {
+        grapher.show = function (idEntity) {
             grapher.currentEntity = idEntity;
             var chosen = {};
             var rt = $('#relationEntry').combogrid('getValues');
@@ -106,13 +130,15 @@
             });
             var idDomain = $('#idDomain').combobox('getValue');
             manager.doAjax({{$manager->getURL('api/grapher/getDomainRelations')}}, function(data) {
+                //console.log(data);
                 var links = JSON.parse(data);
                 $.each(links, function(index, link) {
-                    if (chosen[link.type]) {
+                    console.log(link);
+                    if (chosen[link.type] || (link.type == 'rel_none')) {
                         grapher.addLinkObj(link);
                     }
                 });
-                grapher.update();
+                grapher.instance.update();
             }, {frames: 'json:' + JSON.stringify(['f'+idEntity]), chosen: chosen, idDomain: idDomain});
         }
 
@@ -127,7 +153,7 @@
             if (target) {
                 $('#frameTree').tree('check', target.target);
             }
-            grapher.addLink(linkObj);
+            grapher.instance.addLink(linkObj);
         }
 
         grapher.showLink = function (linkObj) {
@@ -143,15 +169,15 @@
             }
             var idDomain = $('#idDomain').combobox('getValue');
             manager.doAjax({{$manager->getURL('api/grapher/getEntitiesRelations')}}, function(data) {
+                console.log(data);
                 var links = JSON.parse(data);
-                console.log(links);
-                grapher.clear();
-                grapher.isShowing = true;
+                grapher.instance.clearLink();
+                grapher.instance.clearNode();
                 $.each(links, function(index, link) {
-                    console.log(link);
-                    grapher.addLinkObj(link);
+                    //console.log(link);
+                    grapher.instance.addLink(link);
                 });
-                grapher.start();
+                grapher.instance.update();
             }, {idEntity1: linkObj.source.id, idEntity2: linkObj.target.id, type: linkObj.type, idDomain: idDomain});
         }
 
@@ -164,15 +190,17 @@
             });
             var idDomain = $('#idDomain').combobox('getValue');
             manager.doAjax({{$manager->getURL('api/grapher/getConstraintRelations')}}, function(data) {
-                grapher.clear();
+                console.log(data);
                 grapher.isShowing = true;
                 var links = JSON.parse(data);
+                grapher.instance.clear();
                 $.each(links, function(index, link) {
+                    console.log(link);
                     if (chosen[link.type]) {
                         grapher.addLinkObj(link);
                     }
                 });
-                grapher.start();
+                grapher.instance.update();
             }, {frames: 'json:' + JSON.stringify(['f'+idEntity]), chosen: chosen, idDomain: idDomain});
         }
 
@@ -233,7 +261,7 @@
             valueField:'idDomain',
             textField:'name',
             onSelect: function() {
-            console.log('selected');
+                console.log('selected');
                 //$('#framesTree').tree({queryParams: {idDomain: $('#idDomain').combobox('getValue')}});
             },
             onChange: function() {

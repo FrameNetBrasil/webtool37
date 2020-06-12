@@ -56,7 +56,7 @@
             });
             var level = $('#level').combogrid('getValue');
             manager.doAjax({{$manager->getURL('api/grapher/getRelations')}}, function(data) {
-                //console.log(data);
+                console.log(data);
                 var links = JSON.parse(data);
                 if (!isUpdate) {
                     grapher.instance.clear();
