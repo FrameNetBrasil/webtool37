@@ -57,7 +57,7 @@ services:
 
 volumes:
     #persistent: { driver: local }
-    daisy_persistent:
+    webtool_persistent:
 
 
 
