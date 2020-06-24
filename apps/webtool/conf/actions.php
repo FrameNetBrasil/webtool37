@@ -52,7 +52,7 @@ return [
         ]],
         'utils' => ['Utils', 'main/utils/', 'fa fa-briefcase fa16px', 'MASTER', A_ACCESS, [
             'mailmsg' => ['Mail Message', 'auth/message/formMail', 'fa fa-envelope-o fa16px', '', A_ACCESS, []],
-            'importWSDoc' => ['Import WS/Documen', 'utils/import/formImportWSDoc', 'fa fa-upload fa16px', 'ADMIN', A_ACCESS, []],
+            'importWSDoc' => ['Import WS/Document', 'utils/import/formImportWSDoc', 'fa fa-upload fa16px', 'ADMIN', A_ACCESS, []],
             'exportDocWf' => ['Export Doc-Wf', 'utils/export/formExportDocWf', 'fa fa-download fa16px', 'ADMIN', A_ACCESS, []],
             'importLexWf' => ['Import Wf-Lexeme', 'utils/import/formImportLexWf', 'fa fa-upload fa16px', 'MASTER', A_ACCESS, []],
             'wflex' => ['Search Wf-Lexeme', 'admin/wflex/main', 'fa fa-cog fa16px', '', A_ACCESS, []],

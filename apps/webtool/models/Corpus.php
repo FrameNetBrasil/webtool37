@@ -287,27 +287,25 @@ class Corpus extends map\CorpusMap
     */
     /**
      * Upload sentenças do WordSketch com Documento anotado em cada linha. Documentos já devem estar cadastrados.
+     * Atualização em 24/06/2020: LU vem marcada com word/lemma - mudança no formato do header e das linhas
      * @param type $data
      * @param type $file
      */
     public function uploadSentences($data, $file)
-    {  // em cada linha: url,doc
+    {
+        // em cada linha: url,doc // atualizado em 24/06/2020: cada linha é uma sentença
         $idLU = $data->idLU;
-//        $idCorpus = $data->idCorpus;
         $subCorpus = $data->subCorpus;
         $idLanguage = $data->idLanguage;
-        //$layers = $this->getLayersByLingua($idLexUnit, $lingua);
         $transaction = $this->beginTransaction();
-        //$subCorpus = $this->createSubCorpus($idLexUnit, $subCorpusName);
         $subCorpus = $this->createSubCorpus($data);
         $idDocument = $data->idDocument;
         $document = new Document($idDocument);
-//        $documents = array();
         try {
             $sentenceNum = 0;
             $rows = file($file->getTmpName());
             foreach ($rows as $row) {
-                $row = preg_replace('/#([0-9]*)/', '', $row);
+                //$row = preg_replace('/#([0-9]*)/', '', $row);
                 $row = trim($row);
                 if (($row[0] != '#') && ($row[0] != ' ') && ($row[0] != '')) {
                     $row = str_replace('&', 'e', $row);
@@ -315,7 +313,6 @@ class Corpus extends map\CorpusMap
                     $row = str_replace(' >', '>', $row);
                     $row = str_replace(['$.', '$,', '$:', '$;', '$!', '$?', '$(', '$)', '$\'', '$"', '$--'], ['.', ',', ':', ';', '!', '?', '(', ')', '\'', '"', '--'], $row);
                     $row = str_replace('</s>', ' ', $row);
-                    // -- $result .= $row . "\n";
                     $tokens = preg_split('/  /', $row);
                     $tokensSize = count($tokens);
                     if ($tokensSize == 0) {
@@ -328,16 +325,17 @@ class Corpus extends map\CorpusMap
                     } else {
                         $baseToken = 0;
                     }
-                    //mdump($tokens);
                     $sentenceNum += 1;
-                    // Nesta versão, considera que cada linha é uma sentença
+                    // Nesta versão, considera que cada linha é uma sentença terminada por um ponto
                     $sentence = utf8_decode($row);
                     // Build sentence and Find target
                     mdump($sentence);
                     $replace = [' .' => ".", ' ,' => ',', ' ;' => ';', ' :' => ':', ' !' => '!', ' ?' => '?', ' >' => '>'];
                     $search = array_keys($replace);
-                    $base = str_replace($search, $replace, $sentence);
+                    $base = preg_replace('/([^\s]*)\/([^\s]*)/i', '<$1>', $sentence);
+                    $base = str_replace($search, $replace, $base);
                     $sentence = '';
+                    // find target
                     $targetStart = -1;
                     $targetEnd = -1;
                     for ($charCounter = 0; $charCounter < strlen($base); $charCounter++) {
@@ -352,28 +350,19 @@ class Corpus extends map\CorpusMap
                     }
                     // Ignores lines where the target word was not detected
                     if (($targetStart == -1) || ($targetEnd == -1)) {
-                        //  mdump('sem target: ' . $sentence);
                         continue;
                     }
-                    mdump($sentence);
-                    mdump($targetStart . ' - ' . $targetEnd);
-                    mdump(substr($sentence, $targetStart, $targetEnd - $targetStart + 1));
                     $text = utf8_encode($sentence);
-                    // -- $result .= $text . "\n";
                     $paragraph = $document->createParagraph();
                     $sentenceObj = $document->createSentence($paragraph, $sentenceNum, $text, $idLanguage);
                     $data->idSentence = $sentenceObj->getId();
                     $data->startChar = $targetStart;
                     $data->endChar = $targetEnd;
                     $subCorpus->createAnnotation($data);
-                    //$data->idSentence = $sentence->getId();
-                    //$data->startChar = $targetStart;
-                    //$data->endChar =  $targetEnd;
-                    //$subCorpus->createAnnotation($data);
                 }
             }
             $transaction->commit();
-        } catch (\EModelException $e) {
+        } catch (\Exception $e) {
             // rollback da transação em caso de algum erro
             $transaction->rollback();
             throw new EModelException($e->getMessage());
