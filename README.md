@@ -41,7 +41,7 @@ $ cp conf.dist.php conf.php
 * Start the container
 
 ```sh
-$ cd devops/docker
+$ cd devops/webtool
 $ docker-compose up
 ```
  
