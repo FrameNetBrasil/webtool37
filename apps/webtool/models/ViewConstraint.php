@@ -71,42 +71,42 @@ class ViewConstraint extends map\ViewConstraintMap
         $idLanguage = \Manager::getSession()->idLanguage;
 
         $cmd = <<<HERE
-SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2fe.name, e2fe.entry as cxEntry, e2fe.nick, c.prefix, c.constrainedByType
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2fe.name, e2fe.entry as cxEntry, e2fe.nick, c.prefix, c.constrainedByType, c.idConstraintInstance
 FROM View_Constraint c
 JOIN View_Frame e2f ON (c.idConstrainedBy = e2f.idEntity)
 JOIN View_EntryLanguage e2fe ON (e2f.entry = e2fe.entry)
 WHERE (c.idConstrained = {$idConstrained})
 AND (e2fe.idLanguage = {$idLanguage})
 UNION
-SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2ce.name, e2ce.entry as cxEntry, e2ce.nick, c.prefix, c.constrainedByType
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2ce.name, e2ce.entry as cxEntry, e2ce.nick, c.prefix, c.constrainedByType, c.idConstraintInstance
 FROM View_Constraint c
 JOIN View_Construction e2c ON (c.idConstrainedBy = e2c.idEntity)
 JOIN View_EntryLanguage e2ce ON (e2c.entry = e2ce.entry)
 WHERE (c.idConstrained = {$idConstrained})
 AND (e2ce.idLanguage = {$idLanguage})
 UNION
-SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2se.name, e2se.entry as cxEntry, e2se.nick, c.prefix, c.constrainedByType
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2se.name, e2se.entry as cxEntry, e2se.nick, c.prefix, c.constrainedByType, c.idConstraintInstance
 FROM View_Constraint c
 JOIN View_SemanticType e2s ON (c.idConstrainedBy = e2s.idEntity)
 JOIN View_EntryLanguage e2se ON (e2s.entry = e2se.entry)
 WHERE (c.idConstrained = {$idConstrained})
 AND (e2se.idLanguage = {$idLanguage})
 UNION
-SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2ce2.name, e2ce2.entry as cxEntry, e2ce2.nick, c.prefix, c.constrainedByType
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2ce2.name, e2ce2.entry as cxEntry, e2ce2.nick, c.prefix, c.constrainedByType, c.idConstraintInstance
 FROM View_Constraint c
 JOIN View_ConstructionElement e2cel ON (c.idConstrainedBy = e2cel.idEntity)
 JOIN View_EntryLanguage e2ce2 ON (e2cel.entry = e2ce2.entry)
 WHERE (c.idConstrained = {$idConstrained})
 AND (e2ce2.idLanguage = {$idLanguage})
 UNION
-SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2cne.name, e2cne.entry as cxEntry, e2cne.nick, c.prefix, c.constrainedByType
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2cne.name, e2cne.entry as cxEntry, e2cne.nick, c.prefix, c.constrainedByType, c.idConstraintInstance
 FROM View_Constraint c
 JOIN View_Constraint e2cn ON (c.idConstrainedBy = e2cn.idConstraint)
 JOIN View_EntryLanguage e2cne ON (e2cn.entry = e2cne.entry)
 WHERE (c.idConstrained = {$idConstrained})
 AND (e2cne.idLanguage = {$idLanguage})
 UNION
-SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e3ce.name, e3ce.entry as cxEntry, e3ce.nick, c.prefix, c.constrainedByType
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e3ce.name, e3ce.entry as cxEntry, e3ce.nick, c.prefix, c.constrainedByType, c.idConstraintInstance
 FROM View_Constraint c
 JOIN View_Constraint e3cn ON (c.idConstrainedBy = e3cn.idConstraint)
 JOIN View_Construction e3c ON (e3cn.idConstrainedBy = e3c.idEntity)
@@ -114,27 +114,27 @@ JOIN View_EntryLanguage e3ce ON (e3c.entry = e3ce.entry)
 WHERE (c.idConstrained = {$idConstrained})
 AND (e3ce.idLanguage = {$idLanguage})
 UNION
-SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2lex.name, e2lex.name  as cxEntry, e2lex.name as nick, c.prefix, c.constrainedByType
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2lex.name, e2lex.name  as cxEntry, e2lex.name as nick, c.prefix, c.constrainedByType, c.idConstraintInstance
 FROM View_Constraint c
 JOIN Lexeme e2lex ON (c.idConstrainedBy = e2lex.idEntity)
 WHERE (c.idConstrained = {$idConstrained})
 UNION
-SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2lem.name, e2lem.name  as cxEntry, e2lem.name as nick, c.prefix, c.constrainedByType
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2lem.name, e2lem.name  as cxEntry, e2lem.name as nick, c.prefix, c.constrainedByType, c.idConstraintInstance
 FROM View_Constraint c
 JOIN Lemma e2lem ON (c.idConstrainedBy = e2lem.idEntity)
 WHERE (c.idConstrained = {$idConstrained})
 UNION
-SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2lun.name, e2lun.name  as cxEntry, e2lun.name as nick, c.prefix, c.constrainedByType
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2lun.name, e2lun.name  as cxEntry, e2lun.name as nick, c.prefix, c.constrainedByType, c.idConstraintInstance
 FROM View_Constraint c
 JOIN LU e2lun ON (c.idConstrainedBy = e2lun.idEntity)
 WHERE (c.idConstrained = {$idConstrained})
 UNION
-SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2udf.info, e2udf.info  as cxEntry, e2udf.info as nick, c.prefix, c.constrainedByType
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2udf.info, e2udf.info  as cxEntry, e2udf.info as nick, c.prefix, c.constrainedByType, c.idConstraintInstance
 FROM View_Constraint c
 JOIN UDFeature e2udf ON (c.idConstrainedBy = e2udf.idEntity)
 WHERE (c.idConstrained = {$idConstrained})
 UNION
-SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2udr.info, e2udr.info  as cxEntry, e2udr.info as nick, c.prefix, c.constrainedByType
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2udr.info, e2udr.info  as cxEntry, e2udr.info as nick, c.prefix, c.constrainedByType, c.idConstraintInstance
 FROM View_Constraint c
 JOIN UDRelation e2udr ON (c.idConstrainedBy = e2udr.idEntity)
 WHERE (c.idConstrained = {$idConstrained})
@@ -148,6 +148,7 @@ HERE;
             $constraints[$i]['entry'] = $constraint['cxEntry'];
             $constraints[$i]['relationType'] = $constraint['entry'];
             $constraints[$i]['idConstraint'] = $constraint['idConstraint'];
+            $constraints[$i]['idConstraintInstance'] = $constraint['idConstraintInstance'];
         }
         return $constraints;
     }
@@ -219,6 +220,22 @@ HERE;
 
     public function hasChild($idConstraint)
     {
+        $cmd = <<<HERE
+        SELECT c.idConstraint
+        FROM View_Constraint c
+        WHERE (c.idConstrained = {$idConstraint})
+HERE;
+        return count($this->getDb()->getQueryCommand($cmd)->getResult()) > 0;
+    }
+
+    public function hasInstanceChild($idConstraintInstance)
+    {
+        $cmd = <<<HERE
+        SELECT c.idConstraint
+        FROM ConstraintInstance c
+        WHERE (c.idConstraintInstance = {$idConstraintInstance})
+HERE;
+        $idConstraint = $this->getDb()->getQueryCommand($cmd)->getResult()[0]['idConstraint'];
         $cmd = <<<HERE
         SELECT c.idConstraint
         FROM View_Constraint c

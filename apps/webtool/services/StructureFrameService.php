@@ -597,7 +597,7 @@ class StructureFrameService extends MService
      * Constraints
      */
 
-    public function listConstraintsFE($idFrameElement, $idLanguage)
+    public function listConstraintsFE($idFrameElement)
     {
         $service = Manager::getAppService('StructureConstraintInstance');
         $result = $service->listConstraintsFE($idFrameElement);

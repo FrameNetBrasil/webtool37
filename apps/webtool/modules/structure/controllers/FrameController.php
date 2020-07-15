@@ -39,6 +39,7 @@ class FrameController extends MController
             $json = $structure->listLUSubCorpusConstraints(substr($this->data->id, 1));
         } elseif ($this->data->id{0} == 'e') {
             $json = $structure->listConstraintsFE(substr($this->data->id, 1));
+            mdump($json);
         }
         $this->renderJson($json);
     }
@@ -233,9 +234,9 @@ class FrameController extends MController
 
     public function formDeleteConstraintFE()
     {
-        $structure = Manager::getAppService('structureconstraints');
-        list($type, $idEntityFE, $idEntityConstraint) = explode('_', $this->data->id);
-        $hasChild = $structure->constraintHasChild($idEntityConstraint);
+        $structure = Manager::getAppService('structureconstraintinstance');
+        $idConstraintInstance = $this->data->id;
+        $hasChild = $structure->constraintInstanceHasChild($idConstraintInstance);
         if (!$hasChild) {
             $ok = "^structure/frame/deleteConstraintFE/" . $this->data->id;
             $this->renderPrompt('confirmation', 'Warning: Constraint will be deleted! Continue?', $ok);
@@ -247,15 +248,10 @@ class FrameController extends MController
     public function deleteConstraintFE()
     {
         try {
-            list($type, $idEntityFE, $idEntityConstraint) = explode('_', $this->data->id);
-            $model = fnbr\models\ConstraintType::create($idEntityConstraint);
-            if ($type == 'fr') {
-                $model->delete();
-            } elseif ($type == 'fe') {
-                $model->deleteConstraintMetonymyFEFE($idEntityFE, $idEntityConstraint);
-            } elseif ($type == 'lu') {
-                $model->deleteConstraintMetonymyFELU($idEntityFE, $idEntityConstraint);
-            }
+            //list($type, $idEntityFE, $idEntityConstrainedBy) = explode('_', $this->data->id);
+
+            $model = new fnbr\models\ConstraintInstance($this->data->id);
+            $model->deleteConstraint();
             $this->renderPrompt('information', 'Constraint deleted.', "!structure.reloadFrameParent();");
         } catch (\Exception $e) {
             $this->renderPrompt('error', "Delete Constraint failed.", "!structure.reloadFrame();");

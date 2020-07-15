@@ -97,6 +97,21 @@ class ConstraintInstance extends map\ConstraintInstanceMap
         $transaction->commit();
     }
 
+    public function deleteConstraint()
+    {
+        $transaction = $this->beginTransaction();
+        try {
+            $entity = Entity::create($this->idConstraint);
+            parent::delete();
+            Base::deleteAllEntityRelation($entity->getId());
+            $entity->delete();
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollback();
+            throw new \Exception($e->getMessage());
+        }
+    }
+
     public function deleteConstraintMetonymyFEFE($idEntity1FE, $idEntity2FE)
     {
         Base::deleteEntityRelation($idEntity1FE, 'rel_festandsforfe', $idEntity2FE);

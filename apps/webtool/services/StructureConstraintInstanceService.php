@@ -11,7 +11,8 @@ class StructureConstraintInstanceService extends MService
         mdump($constraints);
         foreach ($constraints as $constraint) {
             $node = [];
-            $node['id'] = 'x' . strtolower($constraint['type']) . '_' . $fe->getIdEntity() . '_' . $constraint['idConstraint'];
+            //$node['id'] = 'x' . strtolower($constraint['type']) . '_' . $fe->getIdEntity() . '_' . $constraint['idConstraint'];
+            $node['id'] = 'x' . $constraint['idConstraintInstance'];
             $node['text'] = $constraint['name'];
             $node['state'] = 'closed';
             $node['iconCls'] = 'icon-blank fa-icon fa fa-crosshairs';
@@ -142,6 +143,12 @@ class StructureConstraintInstanceService extends MService
     {
         $constraint = new fnbr\models\ViewConstraint();
         return $constraint->hasChild($idConstraintInstance);
+    }
+
+    public function constraintInstanceHasChild($idConstraintInstance)
+    {
+        $constraint = new fnbr\models\ViewConstraint();
+        return $constraint->hasInstanceChild($idConstraintInstance);
     }
 
 }
