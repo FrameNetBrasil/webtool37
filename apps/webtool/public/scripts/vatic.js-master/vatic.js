@@ -183,6 +183,7 @@ class FramesManager {
 function blobToImage(blob) {
     return new Promise((result, _) => {
         let img = new Image();
+        img.crossOrigin = "anonymous";
         img.onload = function () {
             result(img);
             URL.revokeObjectURL(this.src);

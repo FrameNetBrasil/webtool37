@@ -48,5 +48,3 @@ class Sentence extends map\SentenceMap {
     }
 
 }
-
-?>

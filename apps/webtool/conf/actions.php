@@ -31,7 +31,7 @@ return [
             'lexicalAnnotation' => ['Frame Mode', 'annotation/main/formLexicalAnnotation', 'fa fa-file-text-o fa16px', '', A_ACCESS, []],
             //cnxAnnotation' => ['Construction Mode', 'annotation/main/formConstructionalAnnotation', 'fa fa-th fa16px', '', A_ACCESS, []],
             'corpusAnnotation' => ['Corpus Mode', 'annotation/main/formCorpusAnnotation', 'fa fa-file-text fa16px', '', A_ACCESS, []],
-            //'mmAnnotation' => ['Multimodal Mode', 'annotation/main/formMultimodalAnnotation', 'fa fa-file-video fa16px', '', A_ACCESS, []],
+            'mmAnnotation' => ['Multimodal Mode', 'annotation/main/formMultimodalAnnotation', 'fa fa-file-video fa16px', '', A_ACCESS, []],
             'layers' => ['Manage Layers', '^annotation/layer/formManager', 'fa fa-list fa16px', 'JUNIOR', A_ACCESS, []],
         ]],
         'reports' => ['Reports', 'main/reports', 'fa fa-newspaper-o fa16px', '', '', [

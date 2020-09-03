@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formPreprocessingDocumentMM">
+        <property title="$this->data->title" onClose="structure.reloadCorpus();"/>
+        <fields>
+            <mhiddenfield id="document_idDocument" value="$this->data->id"/>
+            <mselection id="document_idLanguage" label="Language" options="$this->data->languages"/>
+            <mtextfield id="document_webfile" label="Web file:" width="250px"/>
+            <mlabel text="--OR--"/>
+            <mfilefield id="document_localfile" label="Local file:" width="250px"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseDocument" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveDocument" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+        <data load="$this->data->object"/>
+    </mformdialog>
+</view>

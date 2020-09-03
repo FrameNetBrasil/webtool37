@@ -360,6 +360,7 @@ class MainController extends MController
         $this->data->urlLookupFrame = Manager::getBaseURL() . '/index.php/webtool/data/frame/lookupData';
         $this->data->urlLookupFE =  Manager::getBaseURL() . '/index.php/webtool/data/frameelement/lookupDataDecorated';
         // todo: dynamic segments
+
         $this->data->segments = json_encode([
             ['value' => 1, 'text' => 'Segment1'],
             ['value' => 2, 'text' => 'Segment2'],
@@ -370,6 +371,7 @@ class MainController extends MController
             'first' => 1,
             'last' => 3284
         ]);
+
         $this->render();
     }
 

@@ -22,11 +22,11 @@ class CorpusController extends MController
         $structure = Manager::getAppService('structurecorpus');
         if ($this->data->id == '') {
             $children = $structure->listCorpus($this->data, $this->idLanguage);
-            $data = (object) [
-                        'id' => 'root',
-                        'state' => 'open',
-                        'text' => 'Corpus',
-                        'children' => $children
+            $data = (object)[
+                'id' => 'root',
+                'state' => 'open',
+                'text' => 'Corpus',
+                'children' => $children
             ];
             $json = json_encode([$data]);
         } elseif ($this->data->id{0} == 'c') {
@@ -47,7 +47,7 @@ class CorpusController extends MController
     {
         $model = new fnbr\models\Corpus($this->data->id);
         $this->data->object = $model->getData();
-        $this->data->object->entry = strtolower(str_replace('crp_','',$this->data->object->entry));
+        $this->data->object->entry = strtolower(str_replace('crp_', '', $this->data->object->entry));
         $this->data->save = "@structure/corpus/updateCorpus|formUpdateCorpus";
         $this->data->close = "!$('#formUpdateCorpus_dialog').dialog('close');";
         $this->data->title = 'Corpus: ' . $model->getEntry() . '  [' . $model->getName() . ']';
@@ -91,7 +91,7 @@ class CorpusController extends MController
     {
         try {
             $model = new fnbr\models\Corpus();
-            $this->data->corpus->entry = 'crp_' . strtolower(str_replace('crp_','',$this->data->corpus->entry));
+            $this->data->corpus->entry = 'crp_' . strtolower(str_replace('crp_', '', $this->data->corpus->entry));
             $model->setData($this->data->corpus);
             $model->save($this->data->corpus);
             $this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->corpus->entry}');");
@@ -104,7 +104,7 @@ class CorpusController extends MController
     {
         try {
             $model = new fnbr\models\Corpus($this->data->corpus->idCorpus);
-            $this->data->corpus->entry = 'crp_' . strtolower(str_replace('crp_','',$this->data->corpus->entry));
+            $this->data->corpus->entry = 'crp_' . strtolower(str_replace('crp_', '', $this->data->corpus->entry));
             $model->updateEntry($this->data->corpus->entry);
             $this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->corpus->entry}');");
         } catch (\Exception $e) {
@@ -149,5 +149,32 @@ class CorpusController extends MController
             $this->renderPrompt('error', $e->getMessage());
         }
     }
+
+    public function formPreprocessingDocumentMM()
+    {
+        $model = new fnbr\models\Document($this->data->id);
+        $this->data->object = $model->getData();
+        $language = new fnbr\models\Language();
+        $this->data->languages = $language->listAll()->asQuery()->chunkResult('idLanguage', 'language');
+        $this->data->save = "@structure/corpus/preprocessingDocumentMM|formPreprocessingDocumentMM";
+        $this->data->close = "!$('#formUpdateDocument_dialog').dialog('close');";
+        $this->data->title = 'Document: ' . $model->getEntry() . '  [' . $model->getName() . ']';
+        mdump($this->data->object);
+        $this->render();
+    }
+
+    public function preprocessingDocumentMM()
+    {
+        try {
+            $structure = Manager::getAppService('documentmm');
+            $video = $this->data->document;
+            $structure->uploadVideo($video);
+            $this->renderPrompt('information', 'OK');
+        } catch (\Exception $e) {
+            mdump($e->getMessage());
+            $this->renderPrompt('error', "Error preprocessing Document MM.");
+        }
+    }
+
 
 }

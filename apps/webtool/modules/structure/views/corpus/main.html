@@ -27,6 +27,7 @@
 <div id="menuDocument" style="display:none, width:120px;">
 <div onclick="structure.editDocument()" data-options="iconCls:'icon-edit'">{{_'Edit Document'}}</div>
 <div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
+<div onclick="structure.preprocessingDocumentMM()" data-options="iconCls:'icon-edit'">Preprocessing Document MM</div>
 </div>
 
 <script type="text/javascript">
@@ -82,6 +83,24 @@
                 idDocument = structure.node.id.substr(1);
             }
             manager.doGet({{$manager->getURL('structure/corpus/formNewDocumentMM')}} + '/' + idDocument,'structureCenterPane');
+        }
+
+        structure.preprocessingDocumentMM = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            console.log(id);
+            manager.doGet({{$manager->getURL('structure/corpus/formPreprocessingDocumentMM')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.progress = function(){
+            var win = $.messager.progress({
+                title:'Please waiting',
+                msg:'Loading data...'
+            });
+            setTimeout(function(){
+                $.messager.progress('close');
+            },5000)
         }
 
         structure.contextMenuFrame = function(e, node) {
