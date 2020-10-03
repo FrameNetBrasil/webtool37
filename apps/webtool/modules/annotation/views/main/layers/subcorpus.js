@@ -32,7 +32,7 @@
             var startChar = 4000;
             var endChar = -1;
             var rowsChecked = $('#mwe').datagrid('getChecked');
-            var chars = [];
+            var chars = {};
             for (w in rowsChecked) {
                 word = rowsChecked[w];
                 for(var i = word.startChar; i <= word.endChar; ++i) {
