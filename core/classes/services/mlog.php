@@ -86,8 +86,8 @@ class MLog
 
         $conf = $db->getName();
         $ip = substr($this->host . '        ', 0, 15);
-        $login = Manager::getLogin();
-        $uid = sprintf("%-10s", ($login ? $login->getLogin() : ''));
+        $login = Manager::isLogged() ? Manager::getLogin()->getLogin() : '';
+        $uid = sprintf("%-10s", $login);
 
         $line = "[$dts] $ip - $conf - $uid : \"$sql\"";
 

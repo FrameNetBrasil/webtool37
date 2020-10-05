@@ -7,7 +7,7 @@
             <mselection id="document_idLanguage" label="Language" options="$this->data->languages"/>
             <mtextfield id="document_webfile" label="Web file:" width="250px"/>
             <mlabel text="--OR--"/>
-            <mfilefield id="document_localfile" label="Local file:" width="250px"/>
+            <mfilefield id="localfile" label="Local file:" width="250px"/>
         </fields>
         <tools>
             <mlinkbutton id="lbCloseDocument" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>

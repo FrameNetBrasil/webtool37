@@ -63,7 +63,8 @@ class MAuth
         if ($this->login instanceof MLogin) {
             return $this->login;
         } else {
-            $login = Manager::getSession()->getValue('__sessionLogin');
+            $session = Manager::getSession() ?? NULL;
+            $login = $session ? $session->getValue('__sessionLogin') : '';
             if ($login instanceof MLogin) {
                 return $login;
             }
@@ -131,7 +132,8 @@ class MAuth
         if ($this->login instanceof MLogin) {
             return ($this->login->getLogin() != NULL);
         } else {
-            $login = Manager::getSession()->getValue('__sessionLogin');
+            $session = Manager::getSession() ?? NULL;
+            $login = $session ? $session->getValue('__sessionLogin') : '';
             if ($login instanceof MLogin) {
                 return ($login->getLogin() != NULL);
             }

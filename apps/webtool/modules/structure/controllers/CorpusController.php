@@ -166,13 +166,20 @@ class CorpusController extends MController
     public function preprocessingDocumentMM()
     {
         try {
+            $user = fnbr\models\Base::getCurrentUser();
             $structure = Manager::getAppService('documentmm');
             $video = $this->data->document;
+            if ($video->webfile == '') {
+                $files = Mutil::parseFiles('localfile');
+                if ($files[0]->getName() == '') {
+                    throw new \Exception('File not informed.');
+                }
+                $video->localfile = $files[0];
+            }
             $structure->uploadVideo($video);
-            $this->renderPrompt('information', 'OK');
+            $this->renderPrompt('information',"OK. File will be processed. A notification will be sent to {$user->getEmail()}.");
         } catch (\Exception $e) {
-            mdump($e->getMessage());
-            $this->renderPrompt('error', "Error preprocessing Document MM.");
+            $this->renderPrompt('error', "Error preprocessing Document MM. " . $e->getMessage());
         }
     }
 

@@ -58,7 +58,6 @@ class Entry extends map\EntryMap {
             $criteria->where("entry = '{$filter->entry}'");
         }
         $criteria->orderBy("language.language");
-        mdump($criteria->asQuery()->getResult());
         return $criteria;
     }
     

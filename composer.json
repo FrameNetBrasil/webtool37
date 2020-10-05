@@ -24,7 +24,8 @@
     "aura/session": "^2.1",
     "beberlei/assert": "dev-master",
     "php-di/php-di": "5.2.*",
-    "latte/latte": "2.4.*"
+    "latte/latte": "2.4.*",
+    "ext-json": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "*"

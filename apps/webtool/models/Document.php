@@ -601,12 +601,12 @@ HERE;
     /**
      * Upload MultimodalText - plain text (without processing) - UTF8
      * Format: start_timestamp|end_timestamp|text
-     * @param type $data
+     * @param type $data {idDocument, idLanguage}
      * @param type $file
      * @return type
      * @throws EModelException
      */
-    public function uploadMultimodalText($data, $file)
+    public function uploadMultimodalText($data, $file): string
     {
         // each sentence from multimodal text must be associated two subcorpus/two annotationSet:
         // 1. for fulltext annotation alone (without video)
@@ -661,12 +661,12 @@ HERE;
                 }
             }
             $transaction->commit();
+            return '';
         } catch (\EModelException $e) {
             // rollback da transação em caso de algum erro
             $transaction->rollback();
             throw new EModelException($e->getMessage());
         }
-        return $result;
     }
 
     public function uploadMultimodalVideo($data, $file)
