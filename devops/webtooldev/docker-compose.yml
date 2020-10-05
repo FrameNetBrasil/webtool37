@@ -3,7 +3,7 @@ services:
     webserver:
         build:
             context: ./bin/webserver
-        container_name: 'fnbr-webserver-webtool'
+        container_name: 'fnbr-webserver-webtooldev'
         #        restart: 'always'
         ports:
             - ${WWW_PORT}:80
@@ -23,7 +23,7 @@ services:
         #    - default
     db: # This service *must* be called 'db'
         build: ./bin/mariadb
-        container_name: 'fnbr-mariadb-webtool'
+        container_name: 'fnbr-mariadb-webtooldev'
         #        restart: 'always'
         ports:
             - ${DB_PORT}:3306
@@ -37,13 +37,13 @@ services:
         volumes:
             - ./mariadb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
             - ./mariadb/conf:/etc/mysql/conf.d
-            - webtool_persistent:/var/lib/mysql
+            - webtooldev_persistent:/var/lib/mysql
         #            - ./mariadb/data:/var/lib/mysql
         #networks:
         #    - default
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
-        container_name: 'fnbr-phpmyadmin-webtool'
+        container_name: 'fnbr-phpmyadmin-webtooldev'
         links:
             - db:db
         ports:
@@ -57,7 +57,7 @@ services:
 
 volumes:
     #persistent: { driver: local }
-    webtool_persistent:
+    webtooldev_persistent:
 
 
 
