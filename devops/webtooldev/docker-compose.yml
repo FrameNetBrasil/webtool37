@@ -1,0 +1,63 @@
+version: "3.3"
+services:
+    webserver:
+        build:
+            context: ./bin/webserver
+        container_name: 'fnbr-webserver-webtooldev'
+        #        restart: 'always'
+        ports:
+            - ${WWW_PORT}:80
+        links:
+            - db
+        volumes:
+            - ${DOCUMENT_ROOT}:/var/www/html
+            #            - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
+            - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
+            - ${LOG_DIR-./logs/apache2}:/var/log/apache2
+        #        build: .
+        command: bash -c "cd /var/www/html && composer install --ignore-platform-reqs && cd /var/www/html/apps/webtool && composer install --ignore-platform-reqs && apache2-foreground"
+        #        restart: on-failure
+        depends_on:
+            - db
+        #networks:
+        #    - default
+    db: # This service *must* be called 'db'
+        build: ./bin/mariadb
+        container_name: 'fnbr-mariadb-webtooldev'
+        #        restart: 'always'
+        ports:
+            - ${DB_PORT}:3306
+        command: --default-authentication-plugin=mysql_native_password
+        environment:
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_INITDB_SKIP_TZINFO: 1
+        volumes:
+            - ./mariadb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+            - ./mariadb/conf:/etc/mysql/conf.d
+            - webtooldev_persistent:/var/lib/mysql
+        #            - ./mariadb/data:/var/lib/mysql
+        #networks:
+        #    - default
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: 'fnbr-phpmyadmin-webtooldev'
+        links:
+            - db:db
+        ports:
+            - ${PMA_PORT}:80
+        environment:
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+        volumes:
+            - /sessions
+
+volumes:
+    #persistent: { driver: local }
+    webtooldev_persistent:
+
+
+
