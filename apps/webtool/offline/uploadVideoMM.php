@@ -12,6 +12,7 @@ require_once($dirScript . '/../vendor/autoload.php');
 include $dirScript . "/../services/EmailService.php";
 
 use thiagoalessio\TesseractOCR\TesseractOCR;
+use GuzzleHttp\Client;
 
 $app = 'webtool';
 $db = 'webtool';
@@ -29,8 +30,9 @@ try {
     Manager::setConf('logs.level', 2);
     Manager::setConf('logs.port', 9999);
     Manager::setConf('fnbr.db', $db);
+    Manager::setConf('options.lang', $idLanguage);
 
-
+/*
     // preprocess the video
     $config = [
         'dataPath' => '/var/www/html/apps/webtool/files/multimodal/',
@@ -231,14 +233,11 @@ try {
             if ($flag === 1)
                 break;
         }
-        mdump($parsed_transcript[$key]);
-        $parsed_transcript[$key][1] = implode(' ', $tr_ar);
 
-        $date = DateTime::createFromFormat('!s.v', sprintf("%06.3f", $parsed_transcript[$key][0]));
-        $parsed_transcript[$key][3] = $date->format("H:i:s.v");
-        $date = DateTime::createFromFormat('!s.v', sprintf("%06.3f", $parsed_transcript[$key][2]));
-        $parsed_transcript[$key][4] = $date->format("H:i:s.v");
-        //mdump($parsed_transcript[$key]);
+        list($sec, $ms) = explode('.', $parsed_transcript[$key][0]);
+        $parsed_transcript[$key][3] = gmdate("H:i:s", $sec) . '.' . substr($ms . '000', 0, 3);
+        list($sec, $ms) = explode('.', $parsed_transcript[$key][2]);
+        $parsed_transcript[$key][4] = gmdate("H:i:s", $sec) . '.' . substr($ms . '000', 0, 3);
         //fwrite($combined_file, $parsed_transcript[$key][0] . "\n" . $parsed_transcript[$key][1] . "\n" . $parsed_transcript[$key][2] . "\n\n");
         fwrite($combined_file, $parsed_transcript[$key][3] . "|" . $parsed_transcript[$key][4] . "|" . $parsed_transcript[$key][1] . "\n");
     }
@@ -272,6 +271,8 @@ try {
     mdump("Youtube Video Download finished! Now check the file\r\n");
 
     //echo nl2br("Return to Home Page\r\n");
+*/
+    charon('frames', $videoFile);
 
 
     $emailService = new EmailService();
@@ -279,6 +280,35 @@ try {
 
 } catch (Exception $e) {
     mdump($e->getMessage());
+}
+
+
+function charon($action, $videoFile) {
+    $videoURL = str_replace("/var/www/html", "http://server3.framenetbr.ufjf.br:8201", $videoFile);
+    mdump($videoURL);
+    $client = new Client([
+        // Base URI is used with relative requests
+        'base_uri' => 'http://200.17.70.211:13652',
+        // You can set any number of default request options.
+        'timeout'  => 300.0,
+    ]);
+    try {
+        $response = $client->request('post', 'frames', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json'
+            ],
+            'json' => [
+                'url_video' => $videoURL,
+            ]
+        ]);
+        $body = json_decode($response->getBody());
+        mdump($body);
+        return $body;
+    } catch (Exception $e) {
+        echo $e->getMessage()  . "\n";
+        return '';
+    }
 }
 
 function rrmdir($dir)

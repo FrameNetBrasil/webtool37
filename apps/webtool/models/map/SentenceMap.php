@@ -233,7 +233,7 @@ class SentenceMap extends \MBusinessModel {
      * @return Association
      */
     public function getSentenceMM() {
-        if (is_null($this->timelines)){
+        if (is_null($this->sentencemm)){
             $this->retrieveAssociation("sentencemm");
         }
         return  $this->sentencemm;
@@ -243,7 +243,7 @@ class SentenceMap extends \MBusinessModel {
      * @param Association $value
      */
     public function setSentenceMM($value) {
-        $this->sentenceMM = $value;
+        $this->sentencemm = $value;
     }
     /**
      *

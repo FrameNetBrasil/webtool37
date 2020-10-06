@@ -601,9 +601,9 @@ HERE;
     /**
      * Upload MultimodalText - plain text (without processing) - UTF8
      * Format: start_timestamp|end_timestamp|text
-     * @param type $data {idDocument, idLanguage}
-     * @param type $file
-     * @return type
+     * @param object $data {idDocument, idLanguage}
+     * @param string $file
+     * @return string
      * @throws EModelException
      */
     public function uploadMultimodalText($data, $file): string
@@ -611,9 +611,10 @@ HERE;
         // each sentence from multimodal text must be associated two subcorpus/two annotationSet:
         // 1. for fulltext annotation alone (without video)
         // 2. for parallel annotation (text + video)
-
+        mdump($data);
         $idLanguage = $data->idLanguage;
         $transaction = $this->beginTransaction();
+        $this->deleteSentences();
         try {
             $this->createSubCorpusMultimodalText($data);
             $breakParagraph = $breakSentence = false;
@@ -717,6 +718,24 @@ HERE;
         $annotationSetMM = new AnnotationSetMM();
         $data->idAnnotationSet = $annotationSet->getId();
         $annotationSetMM->save($data);
+    }
+
+    public function deleteSentences() {
+        $cmd = <<<HERE
+
+select distinct s.idSentence
+FROM document d
+  INNER JOIN paragraph p ON (d.idDocument = p.idDocument)
+  INNER JOIN sentence s ON (p.idParagraph = s.idParagraph)
+where (d.idDocument = {$this->getIdDocument()})
+
+HERE;
+        $result = $this->getDb()->getQueryCommand($cmd)->getResult();
+        foreach($result as $row) {
+            $sentence = Sentence::create($row['idSentence']);
+            $sentence->delete();
+        }
+
     }
 
 }

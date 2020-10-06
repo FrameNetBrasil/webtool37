@@ -42,7 +42,7 @@ class Base {
     }
 
     static public function entryLanguage($criteria, $association = '') {
-        $idLanguage = \Manager::getSession()->idLanguage;
+        $idLanguage = \Manager::getSession()->idLanguage ?? \Manager::getOptions('lang');
         if ($association == '') {
             $associationCriteria = $criteria->getAssociation('entries');
             $alias = ($associationCriteria ? $associationCriteria->getAlias() : '');
