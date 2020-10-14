@@ -52,7 +52,6 @@ class EntryController extends MController {
             'entry' => $this->data->id
         ];
         $criteria = $model->listForUpdate($filter);
-        mdump($criteria->asQuery()->getResult());
         $this->renderJSON($model->gridDataAsJSON($criteria));
     }
     

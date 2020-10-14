@@ -167,7 +167,7 @@ class CorpusController extends MController
     {
         try {
             $user = fnbr\models\Base::getCurrentUser();
-            $structure = Manager::getAppService('documentmm');
+            $documentMMService = Manager::getAppService('documentmm');
             $video = $this->data->document;
             if ($video->webfile == '') {
                 $files = Mutil::parseFiles('localfile');
@@ -176,7 +176,7 @@ class CorpusController extends MController
                 }
                 $video->localfile = $files[0];
             }
-            $structure->uploadVideo($video);
+            $documentMMService->uploadVideo($video);
             $this->renderPrompt('information',"OK. File will be processed. A notification will be sent to {$user->getEmail()}.");
         } catch (\Exception $e) {
             $this->renderPrompt('error', "Error preprocessing Document MM. " . $e->getMessage());

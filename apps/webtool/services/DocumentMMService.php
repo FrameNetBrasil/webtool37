@@ -29,25 +29,24 @@ class DocumentMMService extends MService
                 $videoDetails = $videoData['videoDetails'];
                 $streamingData = $videoData['streamingData'];
                 $streamingDataFormats = $streamingData['formats'];
-                $video_title = $videoDetails["title"];
-                $video = $streamingDataFormats[1]['url'];
-                $shaval = sha1($video_title);
-                $fileName = $shaval . '.mp4';
-                $target_dir = $dataPath . "Video_Store/full/";
-                $target_file = $target_dir . $fileName;
-                file_put_contents($target_file, fopen($video, 'r'));
+                $videoTitle = $videoDetails["title"];
+                $videoUrl = $streamingDataFormats[1]['url'];
+                $shaNameOriginal = sha1($videoTitle) . '_original';
+                $fileName = $shaNameOriginal . '.mp4';
+                $targetDir = $dataPath . "Video_Store/full/";
+                $targetFile = $targetDir . $fileName;
+                file_put_contents($targetFile, fopen($videoUrl, 'r'));
             }
         } else {
             list($name, $extension) = explode('.', $dataVideo->localfile->getName());
-            $shaval = sha1($name);
-            $fileName = $shaval . '.' . $extension;
-            $target_dir = $dataPath . "Video_Store/full/";
-            $target_file = $target_dir . $fileName;
-            file_put_contents($target_file, file_get_contents($dataVideo->localfile->getTmpName()));
+            $shaNameOriginal = sha1($name) . '_original';
+            $fileName = $shaNameOriginal . '.' . $extension;
+            $targetDir = $dataPath . "Video_Store/full/";
+            $targetFile = $targetDir . $fileName;
+            file_put_contents($targetFile, file_get_contents($dataVideo->localfile->getTmpName()));
         }
         $user = fnbr\models\Base::getCurrentUser();
-        $timeWrapper = realpath(Manager::getAppPath() . "/offline/timewrapper.php");
-        $offline = '"' . addslashes(realpath(Manager::getAppPath() . "/offline/uploadVideoMM.php")) . '" ' . "{$target_file} {$dataVideo->idDocument} {$dataVideo->idLanguage} {$user->getIdUser()} {$user->getEmail()}";
+        $offline = '"' . addslashes(realpath(Manager::getAppPath() . "/offline/uploadVideoMM.php")) . '" ' . "{$targetFile} {$dataVideo->idDocument} {$dataVideo->idLanguage} {$user->getIdUser()} {$user->getEmail()}";
         mdump("php {$offline} > /dev/null &");
         exec("php {$offline} > /dev/null &");
 

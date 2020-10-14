@@ -14,7 +14,7 @@
 
 namespace fnbr\models;
 
-class AnnotationSetMM extends map\AnnotationSetMMMap
+class AnnotationMM extends map\AnnotationMMMap
 {
 
     public static function config()

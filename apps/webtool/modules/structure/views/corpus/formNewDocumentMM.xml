@@ -8,9 +8,6 @@
             <mtextfield id="documentmm_entry" label="Entry:" prefix="doc_" width="250px"/>
             <include component="MLookupGenre.php" id="documentmm_idGenre" label="Genre"/>
             <mtextfield id="documentmm_author" label="Author:" width="250px"/>
-            <mtextfield id="documentmm_audioPath" label="Audio path:" width="250px"/>
-            <mtextfield id="documentmm_visualPath" label="Visual path:" width="250px"/>
-            <mtextfield id="documentmm_alignPath" label="Align path:" width="250px"/>
         </fields>
         <tools>
             <mlinkbutton id="lbCloseDocument" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
