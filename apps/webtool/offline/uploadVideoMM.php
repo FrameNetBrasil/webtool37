@@ -28,7 +28,10 @@ require_once($dirScript . '/../vendor/autoload.php');
 include $dirScript . "/../services/EmailService.php";
 
 use thiagoalessio\TesseractOCR\TesseractOCR;
+use GuzzleHttp\Psr7;
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+
 
 $app = 'webtool';
 $db = 'webtool';
@@ -112,15 +115,17 @@ try {
         ], @$logger);
         $videoFileOriginal = $videoFile;
         $videoFile = str_replace("_original", "", $videoFile);
-        $newWidth = floor(((480/$height) * $width) / 2) * 2;
-        $originalVideo = $ffmpeg->open($videoFileOriginal);
-        $originalVideo
-            ->filters()
-            ->resize(new FFMpeg\Coordinate\Dimension($newWidth, 480), FFMpeg\Filters\Video\ResizeFilter::RESIZEMODE_SCALE_HEIGHT, true)
-            ->synchronize();
-        $originalVideo
-            ->save(new FFMpeg\Format\Video\X264('copy'), $videoFile);
-        mdump('compressed file saved');
+        if (!file_exists($videoFile)) {
+            $newWidth = floor(((480 / $height) * $width) / 2) * 2;
+            $originalVideo = $ffmpeg->open($videoFileOriginal);
+            $originalVideo
+                ->filters()
+                ->resize(new FFMpeg\Coordinate\Dimension($newWidth, 480), FFMpeg\Filters\Video\ResizeFilter::RESIZEMODE_SCALE_HEIGHT, true)
+                ->synchronize();
+            $originalVideo
+                ->save(new FFMpeg\Format\Video\X264('copy'), $videoFile);
+            mdump('compressed file saved');
+        }
         // getting frame
         $document = new fnbr\models\Document($idDocument);
         $shaName = basename($videoFile, '.mp4');
@@ -133,23 +138,61 @@ try {
         $output_format->setAudioCodec("flac");
         $audioPath = $dataPath . "Audio_Store/audio/";
         $audioFile = $audioPath . $shaName . ".flac";
-        mdump("saving audio " . $audioFile);
-        $video->save($output_format, $audioFile);
+        if (!file_exists($audioFile)) {
+            mdump("saving audio " . $audioFile);
+            $video->save($output_format, $audioFile);
+        }
         mdump("calling Watson");
-        $client = new \GuzzleHttp\Client([
-            'base_uri' => 'https://stream.watsonplatform.net/'
-        ]);
+
 
         $audio = fopen($audioFile, 'r');
+
+        $stream = Psr7\stream_for($audio);
+
+        $client = new \GuzzleHttp\Client([
+            'base_uri' => 'https://stream.watsonplatform.net/',
+
+        ]);
+
+        $response = $client->request(
+            'POST',
+            'speech-to-text/api/v1/recognize?end_of_phrase_silence_time=1.0&split_transcript_at_phrase_end=true&speaker_labels=true',
+            [
+                'auth' => ['apikey', '0J34Y-yMVfdnaZpxdEwc8c-FoRPrpeTXcOOsxYM6lLls'],
+                //'auth' => ['apikey', "jHVAXaIqW_Zj7iPA8HzNk2Mf-qnROtm5ZQ7IOJyX9Zb1"],
+                //'auth' => ['apikey', "jrdLqCqvqz9JU8Eu8Ls7c40_uXTmCFrb3iWbLk77KgvJ"],
+
+                'multipart' => [
+                    [
+                        'name'     => 'FileContents',
+                        'contents' => $audio,
+                        'headers' => [
+                            'Content-Type' => 'audio/flac',
+                        ],
+                    ],
+                ],
+                'debug' => true,
+            ]
+        );
+
+        /*
         $resp = $client->request('POST', 'speech-to-text/api/v1/recognize?end_of_phrase_silence_time=1.0&split_transcript_at_phrase_end=true&speaker_labels=true', [
             'auth' => ['apikey', '0J34Y-yMVfdnaZpxdEwc8c-FoRPrpeTXcOOsxYM6lLls'],
+            //'auth' => ['apikey', "jHVAXaIqW_Zj7iPA8HzNk2Mf-qnROtm5ZQ7IOJyX9Zb1"],
+            //'auth' => ['apikey', "jrdLqCqvqz9JU8Eu8Ls7c40_uXTmCFrb3iWbLk77KgvJ"],
             'headers' => [
                 'Content-Type' => 'audio/flac',
             ],
-            'body' => $audio
+            'body' => $audio,
+            'debug' => true,
+            'verify' => false,
+            'curl.options' =>[ 'CURLOPT_BUFFERSIZE' =>'120000L'],
+            'timeout' => 3000
         ]);
+        */
+        mdump($response);
 
-        $transcript = $resp->getBody();
+        $transcript = $response->getBody();
         $transcriptPath = $dataPath . "Text_Store/transcripts/";
         $transcriptFile = $transcriptPath . $shaName . ".txt";
         //$myfile = fopen($target_file1, "w");

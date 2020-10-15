@@ -25,7 +25,8 @@
     "beberlei/assert": "dev-master",
     "php-di/php-di": "5.2.*",
     "latte/latte": "2.4.*",
-    "ext-json": "*"
+    "ext-json": "*",
+    "ext-curl": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "*"
