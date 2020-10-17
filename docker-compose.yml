@@ -1,0 +1,56 @@
+version: "3.3"
+services:
+    webserver:
+        build:
+            context: ./docker/bin/webserver
+        container_name: 'fnbr-webserver-$PROJECT_NAME'
+        restart: unless-stopped
+        ports:
+            - ${WWW_PORT}:80
+        links:
+            - db
+        volumes:
+            - ${DOCUMENT_ROOT}:/var/www/html
+            #            - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
+            - ${APACHE_VHOSTS_DIR-./docker/config/vhosts}:/etc/apache2/sites-enabled
+            - ${APACHE_LOG_DIR-./docker/logs/apache2}:/var/log/apache2
+        #command: bash -c "cd /var/www/html && chmod -R 777 core/var & composer install --ignore-platform-reqs && cd /var/www/html/apps/webtool && composer install --ignore-platform-reqs && apache2-foreground"
+        command: bash /var/www/html/install.sh
+        depends_on:
+            - db
+    db:
+        build:
+            context: ./docker/bin/mariadb
+        container_name: 'fnbr-mariadb-$PROJECT_NAME'
+        restart: unless-stopped
+        command: --default-authentication-plugin=mysql_native_password
+        environment:
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_INITDB_SKIP_TZINFO: 1
+        volumes:
+            - ./mariadb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+            - ./mariadb/conf:/etc/mysql/conf.d
+            - /var/lib/mysql
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: 'fnbr-phpmyadmin-$PROJECT_NAME'
+        restart: unless-stopped
+        links:
+            - db:db
+        ports:
+            - ${PMA_PORT}:80
+        environment:
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+        volumes:
+            - /sessions
+
+#volumes:
+#  ${VOLUME_NAME}:
+
+
+

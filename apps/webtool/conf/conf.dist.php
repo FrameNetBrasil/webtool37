@@ -76,7 +76,6 @@ return [
             'rel_evokes' => '#0000FF',
             'rel_inheritance_cxn' => '#FF0000',
             'rel_elementof' => '#000000',
-            'rel_elementof' => '#000000',
             'rel_hassemtype' => '#000000',
             'rel_formal_qualia' => '#092834',
             'rel_constitutive_qualia' => '#66B032',
