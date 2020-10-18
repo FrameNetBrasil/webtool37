@@ -1,13 +1,13 @@
 <div id="grapherLayout" style="width:100%;height:100%;">
     <div data-options="region:'north',title:'Grapher: Constructicon'">
     </div>
-    <div data-options="region:'west',split:true,title:'CxN'" style="width:250px;padding:10px;">
+    <div data-options="region:'west',split:true,title:'CxN'" style="width:350px;padding:10px;">
         <input id="cxn" name="cxn" type="text" style="width:200px; padding:5px">
         <ul id="cxnTree"></ul>
     </div>
     <div id="grapherCenterPane" data-options="region:'center'" style="width: 100%">
-        <div id="grapherPanel" style="height: 95%">
-            <div id="grapherToolbar">
+        <div id="grapherPanel" style="width:100%;height: 100%; display:flex;flex-flow: column nowrap;">
+            <div id="grapherToolbar" style="height:32px;">
                 <div id="grToolBar" class="datagrid-toolbar">
                     <form id="formGrapher" name="formGrapher">
                         <input type="hidden" id="rt" name="rt"/>
@@ -17,7 +17,7 @@
                     </form>
                 </div>
             </div>
-            <div id="grapherArea" style="width:100%; height:95%;"></div>            
+            <div id="grapherArea" style="flex: 1 1 auto; margin:16px;"></div>
         </div>
     </div>
 </div>
