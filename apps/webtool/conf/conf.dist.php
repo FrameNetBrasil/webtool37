@@ -88,6 +88,7 @@ return [
             'rel_constraint_frame' => '#F5DEB3',
             'rel_standsfor' => '#808000',
             'rel_inhibits' => '#FFFF00',
+            'con_cxn' => '#000000',
         ],
         'beginnerLayers' => [
             '1'

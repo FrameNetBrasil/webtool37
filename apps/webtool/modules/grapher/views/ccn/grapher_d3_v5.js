@@ -25,8 +25,8 @@ for (relation in grapher.relationEntry) {
 grapher.graph = function (element) {
 
     var $element = $('#' + element);
-    var w = $element.innerWidth() - 10;
-    var h = $element.innerHeight() - 10;
+    var w = $element.innerWidth() - 16;
+    var h = $element.innerHeight() - 16;
 
     var type = {
         cxn: {symbol: d3.symbolCircle, size:260},
@@ -141,7 +141,7 @@ grapher.graph = function (element) {
 
     this.findNode = function (id) {
         for (var i = 0; i < this.nodes.length; i++) {
-            console.log (this.nodes[i].id + ' ?? ' + id);
+            //console.log (this.nodes[i].id + ' ?? ' + id);
             if (this.nodes[i].id == id) {
                 console.log('return node');
                 return this.nodes[i]
@@ -341,6 +341,8 @@ console.log('update...');
 
             node
                 .attr("transform", function(d) {
+                    d.x = Math.max(0, Math.min(w, d.x));
+                    d.y = Math.max(16, Math.min(h - 16, d.y));
                     return "translate(" + d.x + "," + d.y + ")";
                 });
 
