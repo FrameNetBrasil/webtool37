@@ -31,8 +31,8 @@ services:
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
             MYSQL_INITDB_SKIP_TZINFO: 1
         volumes:
-            - ./mariadb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-            - ./mariadb/conf:/etc/mysql/conf.d
+            - ./docker/mariadb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+            - ./docker/mariadb/conf:/etc/mysql/conf.d
             - /var/lib/mysql
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
