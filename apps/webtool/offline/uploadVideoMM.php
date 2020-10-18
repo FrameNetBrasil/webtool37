@@ -65,8 +65,8 @@ try {
         $logger = null;
         // video attributes
         $ffprobe = FFMpeg\FFProbe::create([
-            //'ffmpeg.binaries' => $config['ffmpeg.binaries'],
-            //'ffprobe.binaries' => $config['ffprobe.binaries'],
+            'ffmpeg.binaries' => $config['ffmpeg.binaries'],
+            'ffprobe.binaries' => $config['ffprobe.binaries'],
             'timeout' => 3600, // The timeout for the underlying process
             'ffmpeg.threads' => 12, // The number of threads that FFMpeg should use
         ], @$logger);
@@ -131,7 +131,7 @@ try {
         $shaName = basename($videoFile, '.mp4');
         $path = $dataPath . "Images_Store/thumbs/$size/";
         $name = "{$shaName}.jpeg";
-        $video = $ffmpeg->open($videoFile);
+        $video = $ffmpeg->open($videoFileOriginal);
         $video->frame(FFMpeg\Coordinate\TimeCode::fromSeconds(5))->save($path . $name);
         // Set the formats
         $output_format = new FFMpeg\Format\Audio\Flac(); // Here you choose your output format
@@ -143,18 +143,10 @@ try {
             $video->save($output_format, $audioFile);
         }
         mdump("calling Watson");
-        sendFileAction($audioFile);
-        /*
-
         $audio = fopen($audioFile, 'r');
-
-        $stream = Psr7\stream_for($audio);
-
         $client = new \GuzzleHttp\Client([
             'base_uri' => 'https://stream.watsonplatform.net/',
-
         ]);
-
         $response = $client->request(
             'POST',
             'speech-to-text/api/v1/recognize?end_of_phrase_silence_time=1.0&split_transcript_at_phrase_end=true&speaker_labels=true',
@@ -162,38 +154,17 @@ try {
                 'auth' => ['apikey', '0J34Y-yMVfdnaZpxdEwc8c-FoRPrpeTXcOOsxYM6lLls'],
                 //'auth' => ['apikey', "jHVAXaIqW_Zj7iPA8HzNk2Mf-qnROtm5ZQ7IOJyX9Zb1"],
                 //'auth' => ['apikey', "jrdLqCqvqz9JU8Eu8Ls7c40_uXTmCFrb3iWbLk77KgvJ"],
-
-                'multipart' => [
-                    [
-                        'name'     => 'FileContents',
-                        'contents' => $audio,
-                        'headers' => [
-                            'Content-Type' => 'audio/flac',
-                        ],
-                    ],
+                'headers' => [
+                    'Content-Type' => 'audio/flac',
                 ],
-                'debug' => true,
+                'body' => $audio,
+                //'debug' => true,
+                //'verify' => false,
+                //'curl.options' =>[ 'CURLOPT_BUFFERSIZE' =>'120000L'],
+                //'timeout' => 3000
             ]
         );
-          */
 
-        /*
-        $resp = $client->request('POST', 'speech-to-text/api/v1/recognize?end_of_phrase_silence_time=1.0&split_transcript_at_phrase_end=true&speaker_labels=true', [
-            'auth' => ['apikey', '0J34Y-yMVfdnaZpxdEwc8c-FoRPrpeTXcOOsxYM6lLls'],
-            //'auth' => ['apikey', "jHVAXaIqW_Zj7iPA8HzNk2Mf-qnROtm5ZQ7IOJyX9Zb1"],
-            //'auth' => ['apikey', "jrdLqCqvqz9JU8Eu8Ls7c40_uXTmCFrb3iWbLk77KgvJ"],
-            'headers' => [
-                'Content-Type' => 'audio/flac',
-            ],
-            'body' => $audio,
-            'debug' => true,
-            'verify' => false,
-            'curl.options' =>[ 'CURLOPT_BUFFERSIZE' =>'120000L'],
-            'timeout' => 3000
-        ]);
-        */
-        //mdump($response);
-/*
         $transcript = $response->getBody();
         $transcriptPath = $dataPath . "Text_Store/transcripts/";
         $transcriptFile = $transcriptPath . $shaName . ".txt";
@@ -349,7 +320,7 @@ try {
         //} else {
         //    echo nl2br("Error: " . $sql . "<br>" . $con->error . "\r\n");
         // }
-*/
+
         mdump("Youtube Video Download finished! Now check the file\r\n");
     }
     if (($testingPhase == 2) || ($testingPhase == 3)) {

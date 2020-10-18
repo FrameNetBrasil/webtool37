@@ -21,9 +21,9 @@
   "require": {
     "easyrdf/easyrdf": "*",
     "ml/json-ld" : "~1.0",
-    "auth0/auth0-php": "~5.0",
+    "auth0/auth0-php": "^7.0",
     "php-ffmpeg/php-ffmpeg": "^0.16.0",
-    "guzzlehttp/guzzle": "^6.0",
+    "guzzlehttp/guzzle": "^7.0",
     "thiagoalessio/tesseract_ocr": "^2.9",
     "james-heinrich/getid3": "^1.9"
   },
