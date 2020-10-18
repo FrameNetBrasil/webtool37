@@ -59,6 +59,12 @@ core/var/sessions/*
 # Config Files #
 ################
 core/conf/conf.php
+.env
+
+# Log Files #
+################
+docker/logs/apache2/error.log
+docker/logs/apache2/other_vhosts_access.log
 
 # Customizable index.html #
 ###########################

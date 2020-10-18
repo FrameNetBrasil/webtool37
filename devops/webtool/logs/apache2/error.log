@@ -1,0 +1,768 @@
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.20.0.3. Set the 'ServerName' directive globally to suppress this message
+[Fri Mar 27 15:02:31.940993 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.1 configured -- resuming normal operations
+[Fri Mar 27 15:02:31.941028 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+[Mon Mar 30 15:23:58.430367 2020] [mpm_prefork:notice] [pid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.20.0.5. Set the 'ServerName' directive globally to suppress this message
+[Wed May 13 02:55:51.983202 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.1 configured -- resuming normal operations
+[Wed May 13 02:55:51.983831 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+[Wed May 13 03:00:13.273062 2020] [mpm_prefork:notice] [pid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.25.0.4. Set the 'ServerName' directive globally to suppress this message
+[Mon Jun 15 19:53:58.685605 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.1 configured -- resuming normal operations
+[Mon Jun 15 19:53:58.685899 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+[Tue Jun 16 15:04:29.053998 2020] [mpm_prefork:notice] [pid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.22.0.3. Set the 'ServerName' directive globally to suppress this message
+[Tue Jun 16 15:22:28.614647 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.1 configured -- resuming normal operations
+[Tue Jun 16 15:22:28.615349 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+[Tue Jun 16 15:23:00.706479 2020] [autoindex:error] [pid 35] [client 172.22.0.1:37964] AH01276: Cannot serve directory /var/www/html/api/: No matching DirectoryIndex (index.php,index.html) found, and server-generated directory index forbidden by Options directive
+[Tue Jun 16 15:28:35.850182 2020] [autoindex:error] [pid 33] [client 172.22.0.1:37968] AH01276: Cannot serve directory /var/www/html/api/: No matching DirectoryIndex (index.php,index.html) found, and server-generated directory index forbidden by Options directive
+[Tue Jun 16 15:28:42.062626 2020] [autoindex:error] [pid 37] [client 172.22.0.1:37970] AH01276: Cannot serve directory /var/www/html/api/: No matching DirectoryIndex (index.php,index.html) found, and server-generated directory index forbidden by Options directive
+[Tue Jun 16 15:28:44.540165 2020] [autoindex:error] [pid 37] [client 172.22.0.1:37970] AH01276: Cannot serve directory /var/www/html/api/: No matching DirectoryIndex (index.php,index.html) found, and server-generated directory index forbidden by Options directive
+[Tue Jun 16 15:28:45.551944 2020] [autoindex:error] [pid 37] [client 172.22.0.1:37970] AH01276: Cannot serve directory /var/www/html/api/: No matching DirectoryIndex (index.php,index.html) found, and server-generated directory index forbidden by Options directive
+[Tue Jun 16 15:29:14.131530 2020] [autoindex:error] [pid 32] [client 172.22.0.1:37972] AH01276: Cannot serve directory /var/www/html/api/: No matching DirectoryIndex (index.php,index.html) found, and server-generated directory index forbidden by Options directive
+[Tue Jun 16 15:29:15.065551 2020] [autoindex:error] [pid 32] [client 172.22.0.1:37972] AH01276: Cannot serve directory /var/www/html/api/: No matching DirectoryIndex (index.php,index.html) found, and server-generated directory index forbidden by Options directive
+[Tue Jun 16 15:29:15.514358 2020] [autoindex:error] [pid 32] [client 172.22.0.1:37972] AH01276: Cannot serve directory /var/www/html/api/: No matching DirectoryIndex (index.php,index.html) found, and server-generated directory index forbidden by Options directive
+[Tue Jun 16 15:29:15.739672 2020] [autoindex:error] [pid 32] [client 172.22.0.1:37972] AH01276: Cannot serve directory /var/www/html/api/: No matching DirectoryIndex (index.php,index.html) found, and server-generated directory index forbidden by Options directive
+[Tue Jun 16 17:47:23.644742 2020] [mpm_prefork:notice] [pid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.22.0.3. Set the 'ServerName' directive globally to suppress this message
+[Tue Jun 16 17:47:48.762103 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.1 configured -- resuming normal operations
+[Tue Jun 16 17:47:48.762584 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+[Tue Jun 16 19:02:37.590965 2020] [mpm_prefork:notice] [pid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.22.0.3. Set the 'ServerName' directive globally to suppress this message
+[Tue Jun 16 19:24:51.352217 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.1 configured -- resuming normal operations
+[Tue Jun 16 19:24:51.352567 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+[Tue Jun 16 19:26:07.392613 2020] [mpm_prefork:notice] [pid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.22.0.3. Set the 'ServerName' directive globally to suppress this message
+[Tue Jun 16 19:46:15.130723 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.1 configured -- resuming normal operations
+[Tue Jun 16 19:46:15.131009 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+[Wed Jun 17 01:37:52.450903 2020] [mpm_prefork:notice] [pid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.22.0.3. Set the 'ServerName' directive globally to suppress this message
+[Wed Jun 17 01:38:38.125396 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.1 configured -- resuming normal operations
+[Wed Jun 17 01:38:38.125687 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+[Fri Jun 19 21:34:48.147531 2020] [mpm_prefork:notice] [pid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.22.0.4. Set the 'ServerName' directive globally to suppress this message
+[Fri Jun 19 21:36:48.482274 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.1 configured -- resuming normal operations
+[Fri Jun 19 21:36:48.482883 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+[Fri Jun 19 21:37:08.181415 2020] [mpm_prefork:notice] [pid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.22.0.3. Set the 'ServerName' directive globally to suppress this message
+[Fri Jun 19 21:37:37.174585 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.1 configured -- resuming normal operations
+[Fri Jun 19 21:37:37.174896 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+[Wed Jun 24 13:59:23.707474 2020] [mpm_prefork:notice] [pid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.22.0.4. Set the 'ServerName' directive globally to suppress this message
+[Wed Jun 24 19:07:10.770698 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.1 configured -- resuming normal operations
+[Wed Jun 24 19:07:10.771242 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+[Sun Jun 28 11:37:11.433232 2020] [mpm_prefork:notice] [pid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.22.0.4. Set the 'ServerName' directive globally to suppress this message
+[Wed Jul 08 03:28:29.547715 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.1 configured -- resuming normal operations
+[Wed Jul 08 03:28:29.548139 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+[Wed Jul 08 03:29:54.827455 2020] [php7:error] [pid 35] [client 172.22.0.1:48270] script '/var/www/html/api/public/index.php' not found or unable to stat
+[Fri Jul 10 12:04:53.382494 2020] [mpm_prefork:notice] [pid 1] AH00169: caught SIGTERM, shutting down
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.22.0.3. Set the 'ServerName' directive globally to suppress this message
+[Thu Sep 03 11:47:07.027804 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.1 configured -- resuming normal operations
+[Thu Sep 03 11:47:07.028096 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+1599146343.381310: There was a problem sending 221 bytes on socket 10: Broken pipe
+[Thu Sep 03 15:20:40.112089 2020] [mpm_prefork:notice] [pid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.22.0.3. Set the 'ServerName' directive globally to suppress this message
+[Thu Sep 03 15:20:57.586853 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.1 configured -- resuming normal operations
+[Thu Sep 03 15:20:57.587234 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+[Thu Sep 03 15:43:42.512145 2020] [mpm_prefork:notice] [pid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.22.0.4. Set the 'ServerName' directive globally to suppress this message
+[Thu Sep 03 15:44:02.040753 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.1 configured -- resuming normal operations
+[Thu Sep 03 15:44:02.041047 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+ffmpeg version 4.2.1-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc-6 --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libaom --enable-libfribidi --enable-libass --enable-libvmaf --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libdav1d --enable-libxvid --enable-libzvbi --enable-libzimg
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/var/www/html/apps/webtool/files/multimodal/Video_Store/full/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    creation_time   : 2020-01-27T16:53:47.000000Z
+    encoder         : Google
+  Duration: 00:00:30.09, start: 0.000000, bitrate: 1275 kb/s
+    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 1280x720 [SAR 1:1 DAR 16:9], 1145 kb/s, 23.98 fps, 23.98 tbr, 24k tbn, 47.95 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+    Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x624b800] deprecated pixel format used, make sure you did set range correctly
+Output #0, image2, to '/tmp/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd/img%02d.jpg':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    encoder         : Lavf58.29.100
+    Stream #0:0(und): Video: mjpeg, yuvj420p(pc), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 0.20 fps, 0.20 tbn, 0.20 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+      encoder         : Lavc58.54.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=    2 fps=0.0 q=3.7 size=N/A time=00:00:10.00 bitrate=N/A speed=19.8x    frame=    5 fps=4.9 q=1.6 size=N/A time=00:00:25.00 bitrate=N/A speed=24.7x    frame=    6 fps=4.8 q=1.6 Lsize=N/A time=00:00:30.00 bitrate=N/A speed=  24x    
+video:229kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+ffmpeg version 4.2.1-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc-6 --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libaom --enable-libfribidi --enable-libass --enable-libvmaf --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libdav1d --enable-libxvid --enable-libzvbi --enable-libzimg
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/var/www/html/apps/webtool/files/multimodal/Video_Store/full/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    creation_time   : 2020-01-27T16:53:47.000000Z
+    encoder         : Google
+  Duration: 00:00:30.09, start: 0.000000, bitrate: 1275 kb/s
+    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 1280x720 [SAR 1:1 DAR 16:9], 1145 kb/s, 23.98 fps, 23.98 tbr, 24k tbn, 47.95 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+    Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x632a800] deprecated pixel format used, make sure you did set range correctly
+Output #0, image2, to '/tmp/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd/img%02d.jpg':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    encoder         : Lavf58.29.100
+    Stream #0:0(und): Video: mjpeg, yuvj420p(pc), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 0.20 fps, 0.20 tbn, 0.20 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+      encoder         : Lavc58.54.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=    2 fps=0.0 q=3.7 size=N/A time=00:00:10.00 bitrate=N/A speed=  20x    frame=    5 fps=5.0 q=1.6 size=N/A time=00:00:25.00 bitrate=N/A speed=  25x    frame=    6 fps=5.4 q=1.6 Lsize=N/A time=00:00:30.00 bitrate=N/A speed=26.8x    
+video:229kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+ffmpeg version 4.2.1-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc-6 --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libaom --enable-libfribidi --enable-libass --enable-libvmaf --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libdav1d --enable-libxvid --enable-libzvbi --enable-libzimg
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/var/www/html/apps/webtool/files/multimodal/Video_Store/full/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    creation_time   : 2020-01-27T16:53:47.000000Z
+    encoder         : Google
+  Duration: 00:00:30.09, start: 0.000000, bitrate: 1275 kb/s
+    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 1280x720 [SAR 1:1 DAR 16:9], 1145 kb/s, 23.98 fps, 23.98 tbr, 24k tbn, 47.95 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+    Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x70b8800] deprecated pixel format used, make sure you did set range correctly
+Output #0, image2, to '/tmp/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd/img%02d.jpg':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    encoder         : Lavf58.29.100
+    Stream #0:0(und): Video: mjpeg, yuvj420p(pc), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 0.20 fps, 0.20 tbn, 0.20 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+      encoder         : Lavc58.54.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=    2 fps=0.0 q=3.7 size=N/A time=00:00:10.00 bitrate=N/A speed=19.9x    frame=    5 fps=5.0 q=1.6 size=N/A time=00:00:25.00 bitrate=N/A speed=24.8x    frame=    6 fps=4.7 q=1.6 Lsize=N/A time=00:00:30.00 bitrate=N/A speed=23.5x    
+video:229kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+ffmpeg version 4.2.1-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc-6 --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libaom --enable-libfribidi --enable-libass --enable-libvmaf --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libdav1d --enable-libxvid --enable-libzvbi --enable-libzimg
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/var/www/html/apps/webtool/files/multimodal/Video_Store/full/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    creation_time   : 2020-01-27T16:53:47.000000Z
+    encoder         : Google
+  Duration: 00:00:30.09, start: 0.000000, bitrate: 1275 kb/s
+    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 1280x720 [SAR 1:1 DAR 16:9], 1145 kb/s, 23.98 fps, 23.98 tbr, 24k tbn, 47.95 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+    Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x5c88800] deprecated pixel format used, make sure you did set range correctly
+Output #0, image2, to '/tmp/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd/img%02d.jpg':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    encoder         : Lavf58.29.100
+    Stream #0:0(und): Video: mjpeg, yuvj420p(pc), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 0.20 fps, 0.20 tbn, 0.20 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+      encoder         : Lavc58.54.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=    2 fps=0.0 q=3.7 size=N/A time=00:00:10.00 bitrate=N/A speed=19.9x    frame=    5 fps=5.0 q=1.6 size=N/A time=00:00:25.00 bitrate=N/A speed=24.9x    frame=    6 fps=4.9 q=1.6 Lsize=N/A time=00:00:30.00 bitrate=N/A speed=24.4x    
+video:229kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+ffmpeg version 4.2.1-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc-6 --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libaom --enable-libfribidi --enable-libass --enable-libvmaf --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libdav1d --enable-libxvid --enable-libzvbi --enable-libzimg
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/var/www/html/apps/webtool/files/multimodal/Video_Store/full/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    creation_time   : 2020-01-27T16:53:47.000000Z
+    encoder         : Google
+  Duration: 00:00:30.09, start: 0.000000, bitrate: 1275 kb/s
+    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 1280x720 [SAR 1:1 DAR 16:9], 1145 kb/s, 23.98 fps, 23.98 tbr, 24k tbn, 47.95 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+    Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x6bc2800] deprecated pixel format used, make sure you did set range correctly
+Output #0, image2, to '/tmp/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd/img%02d.jpg':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    encoder         : Lavf58.29.100
+    Stream #0:0(und): Video: mjpeg, yuvj420p(pc), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 0.20 fps, 0.20 tbn, 0.20 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+      encoder         : Lavc58.54.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=    2 fps=0.0 q=3.7 size=N/A time=00:00:10.00 bitrate=N/A speed=  20x    frame=    5 fps=5.0 q=1.6 size=N/A time=00:00:25.00 bitrate=N/A speed=  25x    frame=    6 fps=4.9 q=1.6 Lsize=N/A time=00:00:30.00 bitrate=N/A speed=24.5x    
+video:229kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+ffmpeg version 4.2.1-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc-6 --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libaom --enable-libfribidi --enable-libass --enable-libvmaf --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libdav1d --enable-libxvid --enable-libzvbi --enable-libzimg
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/var/www/html/apps/webtool/files/multimodal/Video_Store/full/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    creation_time   : 2020-01-27T16:53:47.000000Z
+    encoder         : Google
+  Duration: 00:00:30.09, start: 0.000000, bitrate: 1275 kb/s
+    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 1280x720 [SAR 1:1 DAR 16:9], 1145 kb/s, 23.98 fps, 23.98 tbr, 24k tbn, 47.95 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+    Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x5afc800] deprecated pixel format used, make sure you did set range correctly
+Output #0, image2, to '/tmp/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd/img%02d.jpg':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    encoder         : Lavf58.29.100
+    Stream #0:0(und): Video: mjpeg, yuvj420p(pc), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 0.20 fps, 0.20 tbn, 0.20 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+      encoder         : Lavc58.54.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=    2 fps=0.0 q=3.7 size=N/A time=00:00:10.00 bitrate=N/A speed=19.8x    frame=    4 fps=4.0 q=1.6 size=N/A time=00:00:20.00 bitrate=N/A speed=19.8x    frame=    6 fps=4.4 q=1.6 Lsize=N/A time=00:00:30.00 bitrate=N/A speed=21.8x    
+video:229kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+ffmpeg version 4.2.1-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc-6 --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libaom --enable-libfribidi --enable-libass --enable-libvmaf --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libdav1d --enable-libxvid --enable-libzvbi --enable-libzimg
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/var/www/html/apps/webtool/files/multimodal/Video_Store/full/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    creation_time   : 2020-01-27T16:53:47.000000Z
+    encoder         : Google
+  Duration: 00:00:30.09, start: 0.000000, bitrate: 1275 kb/s
+    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 1280x720 [SAR 1:1 DAR 16:9], 1145 kb/s, 23.98 fps, 23.98 tbr, 24k tbn, 47.95 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+    Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x5f29800] deprecated pixel format used, make sure you did set range correctly
+Output #0, image2, to '/tmp/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd/img%02d.jpg':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    encoder         : Lavf58.29.100
+    Stream #0:0(und): Video: mjpeg, yuvj420p(pc), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 0.20 fps, 0.20 tbn, 0.20 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+      encoder         : Lavc58.54.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=    2 fps=0.0 q=3.7 size=N/A time=00:00:10.00 bitrate=N/A speed=19.9x    frame=    5 fps=5.0 q=1.6 size=N/A time=00:00:25.00 bitrate=N/A speed=24.9x    frame=    6 fps=5.2 q=1.6 Lsize=N/A time=00:00:30.00 bitrate=N/A speed=25.8x    
+video:229kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+ffmpeg version 4.2.1-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc-6 --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libaom --enable-libfribidi --enable-libass --enable-libvmaf --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libdav1d --enable-libxvid --enable-libzvbi --enable-libzimg
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/var/www/html/apps/webtool/files/multimodal/Video_Store/full/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    creation_time   : 2020-01-27T16:53:47.000000Z
+    encoder         : Google
+  Duration: 00:00:30.09, start: 0.000000, bitrate: 1275 kb/s
+    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 1280x720 [SAR 1:1 DAR 16:9], 1145 kb/s, 23.98 fps, 23.98 tbr, 24k tbn, 47.95 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+    Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x633d800] deprecated pixel format used, make sure you did set range correctly
+Output #0, image2, to '/tmp/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd/img%02d.jpg':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    encoder         : Lavf58.29.100
+    Stream #0:0(und): Video: mjpeg, yuvj420p(pc), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 0.20 fps, 0.20 tbn, 0.20 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+      encoder         : Lavc58.54.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=    2 fps=0.0 q=3.7 size=N/A time=00:00:10.00 bitrate=N/A speed=  20x    frame=    5 fps=5.0 q=1.6 size=N/A time=00:00:25.00 bitrate=N/A speed=  25x    frame=    6 fps=5.2 q=1.6 Lsize=N/A time=00:00:30.00 bitrate=N/A speed=25.9x    
+video:229kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+ffmpeg version 4.2.1-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc-6 --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libaom --enable-libfribidi --enable-libass --enable-libvmaf --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libdav1d --enable-libxvid --enable-libzvbi --enable-libzimg
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/var/www/html/apps/webtool/files/multimodal/Video_Store/full/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    creation_time   : 2020-01-27T16:53:47.000000Z
+    encoder         : Google
+  Duration: 00:00:30.09, start: 0.000000, bitrate: 1275 kb/s
+    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 1280x720 [SAR 1:1 DAR 16:9], 1145 kb/s, 23.98 fps, 23.98 tbr, 24k tbn, 47.95 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+    Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x62d8800] deprecated pixel format used, make sure you did set range correctly
+Output #0, image2, to '/tmp/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd/img%02d.jpg':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    encoder         : Lavf58.29.100
+    Stream #0:0(und): Video: mjpeg, yuvj420p(pc), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 0.20 fps, 0.20 tbn, 0.20 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+      encoder         : Lavc58.54.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=    2 fps=0.0 q=3.7 size=N/A time=00:00:10.00 bitrate=N/A speed=19.9x    frame=    4 fps=4.0 q=1.6 size=N/A time=00:00:20.00 bitrate=N/A speed=19.9x    frame=    6 fps=4.2 q=1.6 Lsize=N/A time=00:00:30.00 bitrate=N/A speed=21.1x    
+video:229kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+ffmpeg version 4.2.1-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc-6 --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libaom --enable-libfribidi --enable-libass --enable-libvmaf --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libdav1d --enable-libxvid --enable-libzvbi --enable-libzimg
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/var/www/html/apps/webtool/files/multimodal/Video_Store/full/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    creation_time   : 2020-01-27T16:53:47.000000Z
+    encoder         : Google
+  Duration: 00:00:30.09, start: 0.000000, bitrate: 1275 kb/s
+    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 1280x720 [SAR 1:1 DAR 16:9], 1145 kb/s, 23.98 fps, 23.98 tbr, 24k tbn, 47.95 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+    Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x7483800] deprecated pixel format used, make sure you did set range correctly
+Output #0, image2, to '/tmp/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd/img%02d.jpg':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    encoder         : Lavf58.29.100
+    Stream #0:0(und): Video: mjpeg, yuvj420p(pc), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 0.20 fps, 0.20 tbn, 0.20 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+      encoder         : Lavc58.54.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=    2 fps=0.0 q=3.7 size=N/A time=00:00:10.00 bitrate=N/A speed=  20x    frame=    4 fps=4.0 q=1.6 size=N/A time=00:00:20.00 bitrate=N/A speed=19.9x    frame=    6 fps=4.2 q=1.6 Lsize=N/A time=00:00:30.00 bitrate=N/A speed=21.1x    
+video:229kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+ffmpeg version 4.2.1-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc-6 --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libaom --enable-libfribidi --enable-libass --enable-libvmaf --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libdav1d --enable-libxvid --enable-libzvbi --enable-libzimg
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/var/www/html/apps/webtool/files/multimodal/Video_Store/full/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    creation_time   : 2020-01-27T16:53:47.000000Z
+    encoder         : Google
+  Duration: 00:00:30.09, start: 0.000000, bitrate: 1275 kb/s
+    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 1280x720 [SAR 1:1 DAR 16:9], 1145 kb/s, 23.98 fps, 23.98 tbr, 24k tbn, 47.95 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+    Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x60c1800] deprecated pixel format used, make sure you did set range correctly
+Output #0, image2, to '/tmp/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd/img%02d.jpg':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    encoder         : Lavf58.29.100
+    Stream #0:0(und): Video: mjpeg, yuvj420p(pc), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 0.20 fps, 0.20 tbn, 0.20 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+      encoder         : Lavc58.54.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=    2 fps=0.0 q=3.7 size=N/A time=00:00:10.00 bitrate=N/A speed=19.9x    frame=    5 fps=5.0 q=1.6 size=N/A time=00:00:25.00 bitrate=N/A speed=24.9x    frame=    6 fps=5.0 q=1.6 Lsize=N/A time=00:00:30.00 bitrate=N/A speed=24.8x    
+video:229kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+ffmpeg version 4.2.1-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc-6 --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libaom --enable-libfribidi --enable-libass --enable-libvmaf --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libdav1d --enable-libxvid --enable-libzvbi --enable-libzimg
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/var/www/html/apps/webtool/files/multimodal/Video_Store/full/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    creation_time   : 2020-01-27T16:53:47.000000Z
+    encoder         : Google
+  Duration: 00:00:30.09, start: 0.000000, bitrate: 1275 kb/s
+    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 1280x720 [SAR 1:1 DAR 16:9], 1145 kb/s, 23.98 fps, 23.98 tbr, 24k tbn, 47.95 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+    Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x6828800] deprecated pixel format used, make sure you did set range correctly
+Output #0, image2, to '/tmp/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd/img%02d.jpg':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    encoder         : Lavf58.29.100
+    Stream #0:0(und): Video: mjpeg, yuvj420p(pc), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 0.20 fps, 0.20 tbn, 0.20 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+      encoder         : Lavc58.54.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=    2 fps=0.0 q=3.7 size=N/A time=00:00:10.00 bitrate=N/A speed=19.7x    frame=    4 fps=4.0 q=1.6 size=N/A time=00:00:20.00 bitrate=N/A speed=19.8x    frame=    6 fps=4.3 q=1.6 Lsize=N/A time=00:00:30.00 bitrate=N/A speed=21.3x    
+video:229kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+ffmpeg version 4.2.1-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc-6 --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libaom --enable-libfribidi --enable-libass --enable-libvmaf --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libdav1d --enable-libxvid --enable-libzvbi --enable-libzimg
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/var/www/html/apps/webtool/files/multimodal/Video_Store/full/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    creation_time   : 2020-01-27T16:53:47.000000Z
+    encoder         : Google
+  Duration: 00:00:30.09, start: 0.000000, bitrate: 1275 kb/s
+    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 1280x720 [SAR 1:1 DAR 16:9], 1145 kb/s, 23.98 fps, 23.98 tbr, 24k tbn, 47.95 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+    Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x615a800] deprecated pixel format used, make sure you did set range correctly
+Output #0, image2, to '/tmp/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd/img%02d.jpg':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    encoder         : Lavf58.29.100
+    Stream #0:0(und): Video: mjpeg, yuvj420p(pc), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 0.20 fps, 0.20 tbn, 0.20 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+      encoder         : Lavc58.54.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=    2 fps=0.0 q=3.7 size=N/A time=00:00:10.00 bitrate=N/A speed=  20x    frame=    5 fps=5.0 q=1.6 size=N/A time=00:00:25.00 bitrate=N/A speed=  25x    frame=    6 fps=5.3 q=1.6 Lsize=N/A time=00:00:30.00 bitrate=N/A speed=26.7x    
+video:229kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+ffmpeg version 4.2.1-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc-6 --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libaom --enable-libfribidi --enable-libass --enable-libvmaf --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libdav1d --enable-libxvid --enable-libzvbi --enable-libzimg
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/var/www/html/apps/webtool/files/multimodal/Video_Store/full/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    creation_time   : 2020-01-27T16:53:47.000000Z
+    encoder         : Google
+  Duration: 00:00:30.09, start: 0.000000, bitrate: 1275 kb/s
+    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 1280x720 [SAR 1:1 DAR 16:9], 1145 kb/s, 23.98 fps, 23.98 tbr, 24k tbn, 47.95 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+    Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x66cb800] deprecated pixel format used, make sure you did set range correctly
+Output #0, image2, to '/tmp/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd/img%02d.jpg':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    encoder         : Lavf58.29.100
+    Stream #0:0(und): Video: mjpeg, yuvj420p(pc), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 0.20 fps, 0.20 tbn, 0.20 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+      encoder         : Lavc58.54.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=    2 fps=0.0 q=3.7 size=N/A time=00:00:10.00 bitrate=N/A speed=  20x    frame=    4 fps=4.0 q=1.6 size=N/A time=00:00:20.00 bitrate=N/A speed=  20x    frame=    6 fps=4.6 q=1.6 Lsize=N/A time=00:00:30.00 bitrate=N/A speed=  23x    
+video:229kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+ffmpeg version 4.2.1-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 6.3.0 (Debian 6.3.0-18+deb9u1) 20170516
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc-6 --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libaom --enable-libfribidi --enable-libass --enable-libvmaf --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libdav1d --enable-libxvid --enable-libzvbi --enable-libzimg
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/var/www/html/apps/webtool/files/multimodal/Video_Store/full/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    creation_time   : 2020-01-27T16:53:47.000000Z
+    encoder         : Google
+  Duration: 00:00:30.09, start: 0.000000, bitrate: 1275 kb/s
+    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 1280x720 [SAR 1:1 DAR 16:9], 1145 kb/s, 23.98 fps, 23.98 tbr, 24k tbn, 47.95 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+    Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x5e76800] deprecated pixel format used, make sure you did set range correctly
+Output #0, image2, to '/tmp/2bfb129dea9d7d149b79b7bbc96f9d4eb037f8bd/img%02d.jpg':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: isommp42
+    encoder         : Lavf58.29.100
+    Stream #0:0(und): Video: mjpeg, yuvj420p(pc), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 0.20 fps, 0.20 tbn, 0.20 tbc (default)
+    Metadata:
+      creation_time   : 2020-01-27T16:53:47.000000Z
+      handler_name    : ISO Media file produced by Google Inc. Created on: 01/27/2020.
+      encoder         : Lavc58.54.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
+frame=    2 fps=0.0 q=3.7 size=N/A time=00:00:10.00 bitrate=N/A speed=  20x    frame=    5 fps=5.0 q=1.6 size=N/A time=00:00:25.00 bitrate=N/A speed=24.9x    frame=    6 fps=5.3 q=1.6 Lsize=N/A time=00:00:30.00 bitrate=N/A speed=26.6x    
+video:229kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+[Fri Sep 04 00:12:18.549020 2020] [mpm_prefork:notice] [pid 1] AH00169: caught SIGTERM, shutting down
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.22.0.2. Set the 'ServerName' directive globally to suppress this message
+[Fri Sep 04 00:34:27.878940 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.1 configured -- resuming normal operations
+[Fri Sep 04 00:34:27.878997 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.22.0.2. Set the 'ServerName' directive globally to suppress this message
+[Fri Sep 18 01:41:19.861503 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.1 configured -- resuming normal operations
+[Fri Sep 18 01:41:19.861870 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+[Sun Sep 20 12:31:46.303316 2020] [mpm_prefork:notice] [pid 1] AH00169: caught SIGTERM, shutting down

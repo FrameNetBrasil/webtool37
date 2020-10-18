@@ -53,8 +53,8 @@ return [
         'path' => sys_get_temp_dir() . '/log',
         'level' => 2,
         'handler' => "socket",
-        'peer' => '127.0.0.1',
-        'strict' => '127.0.0.1',
+        'peer' => 'host.docker.internal',
+        'strict' => 'host.docker.internal',
         'port' => 0,
         'errorCodes' => [
             E_ERROR,

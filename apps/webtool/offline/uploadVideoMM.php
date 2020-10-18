@@ -143,7 +143,8 @@ try {
             $video->save($output_format, $audioFile);
         }
         mdump("calling Watson");
-
+        sendFileAction($audioFile);
+        /*
 
         $audio = fopen($audioFile, 'r');
 
@@ -174,6 +175,7 @@ try {
                 'debug' => true,
             ]
         );
+          */
 
         /*
         $resp = $client->request('POST', 'speech-to-text/api/v1/recognize?end_of_phrase_silence_time=1.0&split_transcript_at_phrase_end=true&speaker_labels=true', [
@@ -190,8 +192,8 @@ try {
             'timeout' => 3000
         ]);
         */
-        mdump($response);
-
+        //mdump($response);
+/*
         $transcript = $response->getBody();
         $transcriptPath = $dataPath . "Text_Store/transcripts/";
         $transcriptFile = $transcriptPath . $shaName . ".txt";
@@ -347,7 +349,7 @@ try {
         //} else {
         //    echo nl2br("Error: " . $sql . "<br>" . $con->error . "\r\n");
         // }
-
+*/
         mdump("Youtube Video Download finished! Now check the file\r\n");
     }
     if (($testingPhase == 2) || ($testingPhase == 3)) {
@@ -411,4 +413,82 @@ function rrmdir($dir)
         reset($objects);
         rmdir($dir);
     }
+}
+
+function sendFileAction($audioFile)
+{
+    $filename  = $audioFile;
+    $filesize  = filesize($filename);
+    //$boundary  = '----iCEBrkUploaderBoundary' . uniqid();
+
+    $fileout = str_replace('.flac', '.chunked', $audioFile);
+    $fo        = fopen($fileout, 'w');
+    $fh        = fopen($filename, 'r');
+    $chunkSize = 1024 * 1000;
+    rewind($fh); // probably not necessary
+    while (! feof($fh)) {
+        $pos = ftell($fh);
+        $chunk = fread($fh, $chunkSize);
+        fwrite($fo, sprintf("%x\r\n", strlen($chunk)));
+        fwrite($fo, $chunk);
+        fwrite($fo, "\r\n");
+    }
+    fwrite($fo, "0\r\n\r\n");
+    fclose($fo);
+    $fi        = fopen($fileout, 'r');
+
+    $client = new \GuzzleHttp\Client([
+        'base_uri' => 'https://stream.watsonplatform.net/',
+
+    ]);
+
+    $request = $client->request(
+        'POST',
+        'speech-to-text/api/v1/recognize?end_of_phrase_silence_time=1.0&split_transcript_at_phrase_end=true&speaker_labels=true',
+        [
+            'auth' => ['apikey', '0J34Y-yMVfdnaZpxdEwc8c-FoRPrpeTXcOOsxYM6lLls'],
+            'headers' => [
+                'Content-Type' => 'audio/flac',
+                'Transfer-Encoding'   => 'chunked',
+            ],
+            'debug'   => true,
+            'verify'  => false,
+            'body' => $fi
+        ]
+    );
+    $transcript = $request->getBody();
+    mdump($transcript);
+
+
+    /*
+    rewind($fh); // probably not necessary
+    while (! feof($fh)) {
+        $pos   = ftell($fh);
+        $chunk = fread($fh, $chunkSize);
+        $calc  = $pos + strlen($chunk)-1;
+
+        // Not sure if this is needed.
+        //if (ftell($fh) > $chunkSize) {
+        //    $pos++;
+        //}
+
+        $request = $client->request(
+            'POST',
+            'speech-to-text/api/v1/recognize?end_of_phrase_silence_time=1.0&split_transcript_at_phrase_end=true&speaker_labels=true',
+            [
+                'auth' => ['apikey', '0J34Y-yMVfdnaZpxdEwc8c-FoRPrpeTXcOOsxYM6lLls'],
+                'headers' => [
+                    'Content-Type' => 'audio/flac',
+                    'Transfer-Encoding'   => 'chunked',
+                ],
+                'debug'   => true,
+                'verify'  => false,
+                'body' => $chunk
+            ]
+        );
+        $transcript = $request->getBody();
+        mdump($transcript);
+    }
+    */
+
 }

@@ -25,35 +25,20 @@ Create a local installation for Webtool:
 $ git clone https://github.com/FrameNetBrasil/webtool.git
 $ cd webtool
 ```
-
-* Create conf files from dist
-
-```sh
-$ cd core/conf
-$ cp conf.dist.php conf.php
-```
-
-```sh
-$ cd apps/webtool/conf
-$ cp conf.dist.php conf.php
-```
+* If necessary, modify the docker-compose configuration file (.env)
 
 * Start the container
 
 ```sh
-$ cd devops/webtool
 $ docker-compose up
 ```
- 
+
+* Application configuration files will be created from dist
+
+  * webtool/core/conf/conf.php
+  * webtool/apps/webtool/conf/conf.php
+  
 * Access the app at http://localhost:8001 (with user = webtool password = test)
-
-#### Container Parameters
-
-Parameters are available to the container (mainly the webserver port) at
-
-```shell
-/home/webtool/devops/docker/.env
-```
 
 ## Built With
 
