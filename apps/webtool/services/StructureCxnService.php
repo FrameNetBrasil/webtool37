@@ -627,6 +627,14 @@ class StructureCxnService extends MService
         return $result;
     }
 
+    public function listOptionsUDPOS()
+    {
+        $ud = new fnbr\models\UDPOS();
+        $result = $ud->listForLookupEntity('*')->chunkResult('idEntity', 'POS');
+        mdump($result);
+        return $result;
+    }
+
     public function listCEsConstraintsEvokesCX($idCxn, $idLanguage)
     {
         $result = [];
@@ -845,6 +853,11 @@ class StructureCxnService extends MService
                 $constraint = Base::createEntity('CN', 'con');
                 $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);
                 Base::createConstraintInstance($constraint->getIdEntity(), 'con_udrelation', $ce->getIdEntity(), $data->idUDRelation);
+            }
+            if ($data->idUDPOS != '') {
+                $constraint = Base::createEntity('CN', 'con');
+                $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_udpos', $ce->getIdEntity(), $data->idUDPOS);
             }
             if ($data->idSemanticTypeLU != '') {
                 $constraint = Base::createEntity('CN', 'con');

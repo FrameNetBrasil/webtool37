@@ -138,6 +138,11 @@ SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2udr.info, 
 FROM View_Constraint c
 JOIN UDRelation e2udr ON (c.idConstrainedBy = e2udr.idEntity)
 WHERE (c.idConstrained = {$idConstrained})
+UNION
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, lower(e2udp.POS), e2udp.entry  as cxEntry, e2udp.entry as nick, c.prefix, c.constrainedByType, c.idConstraintInstance
+FROM View_Constraint c
+JOIN UDPOS e2udp ON (c.idConstrainedBy = e2udp.idEntity)
+WHERE (c.idConstrained = {$idConstrained})
 
 HERE;
         $query = $this->getDb()->getQueryCommand($cmd);

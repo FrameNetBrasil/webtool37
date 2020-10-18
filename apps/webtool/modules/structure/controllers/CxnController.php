@@ -214,8 +214,8 @@ class CxnController extends MController
         $this->data->idConstruction = $this->data->id;
         $cxn = new fnbr\models\Construction($this->data->idConstruction);
         $this->data->cxn = 'Cxn: ' . $cxn->getName();
-        $this->data->ces = $cxn->listCEConstraints();
-        mdump($this->data->ces);
+        //$this->data->ces = $cxn->listCEConstraints();
+        //mdump($this->data->ces);
         $this->data->relations = ['rel_evokes' => 'rel_evokes'];
         mdump($this->data->relations);
         $this->data->save = "@structure/cxn/addConstraintCX|formAddConstraintCX";
@@ -236,6 +236,7 @@ class CxnController extends MController
         $this->data->optionsNumber = $structure->listOptionsNumber();
         $this->data->optionsSTLU = $structure->listOptionsSTLU();
         $this->data->optionsUDRelation = $structure->listOptionsUDRelation();
+        $this->data->optionsUDPOS = $structure->listOptionsUDPOS();
         //
         $this->data->save = "@structure/cxn/addConstraintCE|formAddConstraintCE";
         $this->data->close = "!$('#formAddConstraintCE_dialog').dialog('close');";
