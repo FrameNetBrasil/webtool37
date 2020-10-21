@@ -58,12 +58,13 @@ try {
         // preprocess the video
         $config = [
             'dataPath' => '/var/www/html/apps/webtool/files/multimodal/',
-            'ffmpeg.binaries' => '/var/www/html/core/support/charon/bin/ffmpeg',
-            'ffprobe.binaries' => '/var/www/html/core/support/charon/bin/ffprobe',
+            'ffmpeg.binaries' => 'ffmpeg', // '/var/www/html/core/support/charon/bin/ffmpeg',
+            'ffprobe.binaries' => 'ffprobe',//'/var/www/html/core/support/charon/bin/ffprobe',
         ];
         $dataPath = $config['dataPath'];
         $logger = null;
         // video attributes
+        var_dump($config);
         $ffprobe = FFMpeg\FFProbe::create([
             'ffmpeg.binaries' => $config['ffmpeg.binaries'],
             'ffprobe.binaries' => $config['ffprobe.binaries'],
@@ -149,10 +150,10 @@ try {
         ]);
         $response = $client->request(
             'POST',
-            'speech-to-text/api/v1/recognize?end_of_phrase_silence_time=1.0&split_transcript_at_phrase_end=true&speaker_labels=true',
+            'speech-to-text/api/v1/recognize?end_of_phrase_silence_time=0.3&split_transcript_at_phrase_end=true&speaker_labels=true&model=pt-BR_NarrowbandModel',
             [
-                'auth' => ['apikey', '0J34Y-yMVfdnaZpxdEwc8c-FoRPrpeTXcOOsxYM6lLls'],
-                //'auth' => ['apikey', "jHVAXaIqW_Zj7iPA8HzNk2Mf-qnROtm5ZQ7IOJyX9Zb1"],
+                //'auth' => ['apikey', '0J34Y-yMVfdnaZpxdEwc8c-FoRPrpeTXcOOsxYM6lLls'],
+                'auth' => ['apikey', "jHVAXaIqW_Zj7iPA8HzNk2Mf-qnROtm5ZQ7IOJyX9Zb1"],
                 //'auth' => ['apikey', "jrdLqCqvqz9JU8Eu8Ls7c40_uXTmCFrb3iWbLk77KgvJ"],
                 'headers' => [
                     'Content-Type' => 'audio/flac',
