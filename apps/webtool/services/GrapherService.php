@@ -114,7 +114,7 @@ class GrapherService extends MService
         $constraintType = new \fnbr\models\ConstraintType();
         $constraints = $constraintType->listAll()->asQuery()->getResult();
         foreach($constraints as $constraint) {
-            if (in_array($constraint['entry'], ['con_cxn','con_udfeature','con_udrelation'])) {
+            if (in_array($constraint['entry'], ['con_cxn', 'con_element', 'con_udfeature','con_udrelation','con_lexeme','con_lemma','con_lu'])) {
                 $id = $constraint['entry'];
                 $node = [];
                 $node['id'] = $id;
@@ -341,6 +341,9 @@ class GrapherService extends MService
 
     public function getEntityRelationsById($idEntity, $chosen)
     {
+        mdump('======================================');
+        mdump('getEntityRelationsById - ' . $idEntity);
+        mdump('======================================');
         $entity = new \fnbr\models\Entity($idEntity);
         $relations = array_merge($this->getEntityDirectRelations($idEntity, $chosen), $this->getEntityInverseRelations($idEntity, $chosen));
 
@@ -352,11 +355,16 @@ class GrapherService extends MService
             ];
             $relations[] = ['source' => $node, 'type' => 'rel_none', 'target' => $node];
         }
+        mdump($relations);
+        mdump('======================================');
         return $relations;
     }
 
     public function getEntityDirectRelations($idEntity, $chosen)
     {
+        mdump('======================================');
+        mdump('getEntityDirectRelations - ' . $idEntity);
+        mdump('======================================');
         $entity = new \fnbr\models\Entity($idEntity);
         $relations = [];
         $node0 = (object)[
@@ -377,11 +385,17 @@ class GrapherService extends MService
                 }
             }
         }
+        mdump($relations);
+        mdump('======================================');
         return $relations;
     }
 
     public function getEntityInverseRelations($idEntity, $chosen)
     {
+        mdump('======================================');
+        mdump('getEntityInverseRelations - ' . $idEntity);
+        mdump('======================================');
+
         $entity = new \fnbr\models\Entity($idEntity);
         $relations = [];
         $node1 = (object)[
@@ -403,6 +417,8 @@ class GrapherService extends MService
                 }
             }
         }
+        mdump($relations);
+        mdump('======================================');
         return $relations;
     }
 
@@ -910,6 +926,10 @@ class GrapherService extends MService
 
     public function getEntityConstraintRelations($idEntity, $chosen)
     {
+        mdump('======================================');
+        mdump('getEntityConstraintRelations - ' . $idEntity);
+        mdump('======================================');
+
         $entity = new \fnbr\models\Entity($idEntity);
         $node1 = (object)[
             'id' => $idEntity,
@@ -923,13 +943,16 @@ class GrapherService extends MService
             mdump($row);
             if ($chosen[$row['relationType']]) {
                 $node0 = (object)[
-                    'id' => $row['idConstrainedBy'],
+                    //'id' => $row['idConstrainedBy'],
+                    'id' => $row['idConstraint'],
                     'type' => strtolower($row['type']),
                     'name' => $row['name']
                 ];
                 $relations[] = ['source' => $node1, 'type' => $row['relationType'], 'target' => $node0];
             }
         }
+        mdump($relations);
+        mdump('======================================');
         return $relations;
     }
 
