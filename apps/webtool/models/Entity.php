@@ -78,6 +78,11 @@ class Entity extends map\EntityMap
             'FR' => 'frame',
             'FE' => 'fe',
             'CX' => 'cxn',
+            'CE' => 'ce',
+            'CN' => 'constraint',
+            'LU' => 'lu',
+            'LM' => 'lemma',
+            'LX' => 'lexeme',
             'CP' => 'concept',
             'ST' => 'st'
         ];
@@ -89,7 +94,15 @@ class Entity extends map\EntityMap
         $idLanguage = \Manager::getSession()->idLanguage;
         $type = $this->getType();
         $model = self::$entityModel[$type];
-        if (($type != 'UR' && ($type != 'UV'))) {
+        if (($type == 'UR' && ($type == 'UV'))) {
+            $cmd = <<<HERE
+        SELECT info as name
+        FROM {$model}
+        WHERE (idEntity = {$this->getIdEntity()})
+HERE;
+        } else if ($type == 'CN') {
+            return $this->getAlias();
+        } else {
             $cmd = <<<HERE
         SELECT entry.name
         FROM {$model}
@@ -98,13 +111,6 @@ class Entity extends map\EntityMap
         WHERE (entry.idLanguage = {$idLanguage} )
         and ({$model}.idEntity = {$this->getIdEntity()})
 HERE;
-        } else {
-            $cmd = <<<HERE
-        SELECT info as name
-        FROM {$model}
-        WHERE (idEntity = {$this->getIdEntity()})
-HERE;
-
         }
         $result = $this->getDb()->getQueryCommand($cmd)->getResult();
         return $result[0]['name'];

@@ -8,6 +8,7 @@
                 <mlabel text="$this->data->cxn" />
             </mvcontainer>
             <maccordion id="accordionAddConstraintCX" style="width:400px;height:350px;">
+                <!--
                 <div title="CE &lt; Qualia &gt; CE" style="overflow:auto;padding:10px;">
                     <div><mlabel text="CE"/></div>
                     <mselection id="idEntityA1" options="$this->data->ces" style="width:250px;"/>
@@ -24,6 +25,7 @@
                     <div><mlabel text="CE"/></div>
                     <mselection id="idEntityC2" options="$this->data->ces" style="width:250px;"/>
                 </div>
+                -->
                 <div title="CE &gt; Evokes &gt; Frame" style="overflow:auto;padding:10px;">
                     <div><mlabel text="CE"/></div>
                     <mselection id="idEntityCE" options="$this->data->ces" style="width:250px;"/>
