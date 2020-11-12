@@ -89,6 +89,10 @@ return [
             'rel_standsfor' => '#808000',
             'rel_inhibits' => '#FFFF00',
             'con_cxn' => '#000000',
+            'con_element' => '#000000',
+            'con_lu' => '#000000',
+            'con_lexeme' => '#000000',
+            'con_lemma' => '#000000',
         ],
         'beginnerLayers' => [
             '1'
