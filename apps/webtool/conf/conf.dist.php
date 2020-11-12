@@ -93,6 +93,8 @@ return [
             'con_lu' => '#000000',
             'con_lexeme' => '#000000',
             'con_lemma' => '#000000',
+            'con_udrelation' => '#000000',
+            'con_udfeature' => '#000000',
         ],
         'beginnerLayers' => [
             '1'
