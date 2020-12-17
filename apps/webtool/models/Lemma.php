@@ -240,6 +240,19 @@ class Lemma extends map\LemmaMap
         }
     }
 
+    public function updateEntity()
+    {
+        try {
+            mdump('update entity');
+            $transaction = $this->beginTransaction();
+            $this->getIdEntity();
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollback();
+            throw new \Exception($e->getMessage());
+        }
+    }
+
     /**
      * Upload de MWE+POS em texto simples (MWE POS)
      *

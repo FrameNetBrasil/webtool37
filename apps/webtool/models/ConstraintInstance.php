@@ -76,6 +76,12 @@ class ConstraintInstance extends map\ConstraintInstanceMap
         return $constraint->getByIdConstrained($this->getId());
     }
 
+    public function listByIdConstrained($idConstrained)
+    {
+        $constraint = new ViewConstraint();
+        return $constraint->getByIdConstrained($idConstrained);
+    }
+
     public function listConstraintsCN()
     {
         $constraint = new ViewConstraint();

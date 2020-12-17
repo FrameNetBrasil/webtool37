@@ -1,8 +1,7 @@
 <?php
 
 
-
-
+use fnbr\models\Base;
 
 class CxnController extends MController
 {
@@ -21,6 +20,9 @@ class CxnController extends MController
     public function main()
     {
         $this->data->isMaster = Manager::checkAccess('MASTER', A_EXECUTE) ? 'true' : 'false';
+        $model = new fnbr\models\Language($this->data->id);
+        $criteria = $model->listForCombo();
+        $this->data->languages = $model->gridDataAsJSON($criteria, true);
         $this->render();
     }
 
@@ -28,7 +30,7 @@ class CxnController extends MController
     {
         $editor = Manager::getAppService('visualeditor');
         if ($this->data->id == '') {
-            $children = $editor->listCxns($this->data, $this->idLanguage);
+            $children = $editor->listCxns($this->data, $this->data->idLanguage);
             $data = (object)[
                 'id' => 'root',
                 'state' => 'open',

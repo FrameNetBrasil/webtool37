@@ -838,6 +838,12 @@ class StructureCxnService extends MService
                 $ceBefore = new fnbr\models\ConstructionElement($data->idConstructionBefore);
                 Base::createConstraintInstance($constraint->getIdEntity(), 'con_before', $ce->getIdEntity(), $ceBefore->getIdEntity());
             }
+            if ($data->idConstructionAfter != '') {
+                $constraint = Base::createEntity('CN', 'con');
+                $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);
+                $ceAfter = new fnbr\models\ConstructionElement($data->idConstructionAfter);
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_after', $ce->getIdEntity(), $ceAfter->getIdEntity());
+            }
             if ($data->idConstructionMeets != '') {
                 $constraint = Base::createEntity('CN', 'con');
                 $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);
@@ -916,7 +922,7 @@ class StructureCxnService extends MService
                 $frame = new fnbr\models\Frame($data->idFrame);
                 //Base::createEntityRelation($constraint->getIdEntity(), 'con_frame', $cn->getId(), $frame->getIdEntity());
                 //Base::createConstraintInstance($constraint->getIdEntity(), 'rel_evokes', $cn->getId(), $frame->getIdEntity());
-                Base::createConstraintInstance($constraint->getIdEntity(), 'rel_evokes', $data->idConstraint, $frame->getIdEntity());
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_evokes', $data->idConstraint, $frame->getIdEntity());
             }
             if ($data->idFrameFamily != '') {
                 $constraint = Base::createEntity('CN', 'con');

@@ -40,6 +40,9 @@
                 <div title="CE > before" style="overflow:auto;padding:10px;">
                     <mselection id="idConstructionBefore" options="$this->data->siblingsCE"/>
                 </div>
+                <div title="CE > after" style="overflow:auto;padding:10px;">
+                    <mselection id="idConstructionAfter" options="$this->data->siblingsCE"/>
+                </div>
                 <div title="CE > meets" style="overflow:auto;padding:10px;">
                     <mselection id="idConstructionMeets" options="$this->data->siblingsCE"/>
                 </div>

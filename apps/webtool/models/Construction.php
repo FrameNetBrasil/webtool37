@@ -91,7 +91,7 @@ class Construction extends map\ConstructionMap
 
     public function listByFilter($filter)
     {
-        $criteria = $this->getCriteria()->select('*, entries.name as name')->orderBy('entries.name');
+        $criteria = $this->getCriteria()->select('*, entries.name as name, language.language')->orderBy('entries.name');
         Base::entryLanguage($criteria);
         if ($filter->idConstruction) {
             $criteria->where("idConstruction = {$filter->idConstruction}");
@@ -101,6 +101,12 @@ class Construction extends map\ConstructionMap
         }
         if ($filter->idEntity != '') {
             $criteria->where("idEntity = {$filter->idEntity}");
+        }
+        if ($filter->idEntity != '') {
+            $criteria->where("idEntity = {$filter->idEntity}");
+        }
+        if ($filter->idLanguage != '') {
+            $criteria->where("idLanguage = {$filter->idLanguage}");
         }
         if ($filter->cxn) {
             $criteria->where("upper(entries.name) LIKE upper('%{$filter->cxn}%')");
@@ -114,7 +120,7 @@ class Construction extends map\ConstructionMap
 
     public function listForLookupName($name = '')
     {
-        $criteria = $this->getCriteria()->select('idConstruction,entries.name as name')->orderBy('entries.name');
+        $criteria = $this->getCriteria()->select("idConstruction, concat(entries.name, ' [', language.language,']') as name")->orderBy('entries.name');
         Base::entryLanguage($criteria);
         $name = (strlen($name) > 1) ? $name : 'none';
         $criteria->where("upper(entries.name) LIKE upper('{$name}%')");
@@ -337,6 +343,37 @@ ORDER BY entry, name
             
 HERE;
         $result = $this->getDb()->getQueryCommand($cmd)->treeResult('entry', 'name,idEntity,idFrame,frameEntry');
+        return $result;
+
+    }
+
+    public function listDaughterRelations()
+    {
+        $idLanguage = \Manager::getSession()->idLanguage;
+        $cmd = <<<HERE
+
+SELECT RelationType.entry, entry_relatedCxn.name, cx1.idEntity, cx1.idConstruction
+FROM Construction cx1
+     INNER JOIN Entity entity1
+        ON (cx1.idEntity = entity1.idEntity)
+     INNER JOIN EntityRelation
+        ON (entity1.idEntity = EntityRelation.idEntity1)
+     INNER JOIN RelationType
+        ON (EntityRelation.idRelationType = RelationType.idRelationType)
+     INNER JOIN Entity entity2
+        ON (EntityRelation.idEntity2 = entity2.idEntity)
+     INNER JOIN Construction cx2
+        ON (entity2.idEntity = cx2.idEntity)
+     INNER JOIN Entry entry_relatedCxn
+        ON (cx1.entry = entry_relatedCxn.entry)
+     WHERE (cx2.idConstruction =  {$this->getId()})
+        AND (RelationType.entry in (
+           'rel_daughter_of'))
+        AND (entry_relatedCxn.idLanguage = {$idLanguage} )
+ORDER BY RelationType.entry, entry_relatedCxn.name
+            
+HERE;
+        $result = $this->getDb()->getQueryCommand($cmd)->getResult();
         return $result;
 
     }
