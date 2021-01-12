@@ -627,6 +627,14 @@ class StructureCxnService extends MService
         return $result;
     }
 
+    public function listOptionsUDFeature()
+    {
+        $ud = new fnbr\models\UDFeature();
+        $result = $ud->listForLookupEntity('*')->chunkResult('idEntity', 'info');
+        mdump($result);
+        return $result;
+    }
+
     public function listOptionsUDPOS()
     {
         $ud = new fnbr\models\UDPOS();
@@ -864,6 +872,11 @@ class StructureCxnService extends MService
                 $constraint = Base::createEntity('CN', 'con');
                 $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);
                 Base::createConstraintInstance($constraint->getIdEntity(), 'con_udpos', $ce->getIdEntity(), $data->idUDPOS);
+            }
+            if ($data->idUDFeature != '') {
+                $constraint = Base::createEntity('CN', 'con');
+                $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_udfeature', $ce->getIdEntity(), $data->idUDFeature);
             }
             if ($data->idSemanticTypeLU != '') {
                 $constraint = Base::createEntity('CN', 'con');

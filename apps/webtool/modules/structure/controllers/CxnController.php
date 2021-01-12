@@ -237,6 +237,7 @@ class CxnController extends MController
         $this->data->optionsSTLU = $structure->listOptionsSTLU();
         $this->data->optionsUDRelation = $structure->listOptionsUDRelation();
         $this->data->optionsUDPOS = $structure->listOptionsUDPOS();
+        $this->data->optionsUDFeature = $structure->listOptionsUDFeature();
         //
         $this->data->save = "@structure/cxn/addConstraintCE|formAddConstraintCE";
         $this->data->close = "!$('#formAddConstraintCE_dialog').dialog('close');";

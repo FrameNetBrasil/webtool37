@@ -37,6 +37,9 @@
                 <div title="CE > UDPos" style="overflow:auto;padding:10px;">
                     <mselection id="idUDPOS" options="$this->data->optionsUDPOS"/>
                 </div>
+                <div title="CE > UDFeature" style="overflow:auto;padding:10px;">
+                    <mselection id="idUDFeature" options="$this->data->optionsUDFeature"/>
+                </div>
                 <div title="CE > before" style="overflow:auto;padding:10px;">
                     <mselection id="idConstructionBefore" options="$this->data->siblingsCE"/>
                 </div>
