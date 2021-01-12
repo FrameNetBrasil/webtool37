@@ -49,7 +49,7 @@ class VisualEditorService extends MService
             $id = $row['idEntity'];
             $node = array();
             $node['id'] = $id;
-            $node['label'] = $row['name'];
+            $node['label'] = $row['name'] . " [{$row['language']}]";
             $node['idType'] = '1';
             $result->$id = $node;
         }
@@ -66,7 +66,7 @@ class VisualEditorService extends MService
             $node = array();
             // no editor usa idEntity porque as relações são entre Entities
             $node['id'] = 'c' . $row['idEntity'];
-            $node['text'] = $row['name'];
+            $node['text'] = $row['name'] . " [{$row['language']}]";
             $node['state'] = 'open';
             $node['entry'] = $row['entry'];
             $result[] = $node;

@@ -56,6 +56,17 @@ class LemmaController extends MController
         }
     }
 
+    public function updateLemma()
+    {
+        try {
+            $model = new fnbr\models\Lemma($this->data->id);
+            $model->updateEntity();
+            $this->renderPrompt('ok', 'Lemma updated.',"!$('#formNewLemma_dialog').dialog('close');");
+        } catch (\Exception $e) {
+            $this->renderPrompt('error', $e->getMessage());
+        }
+    }
+
     public function formDeleteLemma()
     {
         $ok = "^structure/lemma/deleteLemma/" . $this->data->id;

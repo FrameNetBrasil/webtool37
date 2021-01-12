@@ -5,21 +5,35 @@ class ConstraintController extends MController
 
     public function lookupDataByCE()
     {
-        $constraint = new fnbr\models\ConstraintInstance($this->data->id);
+        mdump($this->data);
+        //$constraint = new fnbr\models\ConstraintInstance($this->data->id);
+        $constraint = new fnbr\models\ConstraintInstance();
+        $constraint->getByIdConstraint($this->data->id);
         $constraintData = $constraint->getConstraintData();
-        $constraint->setIdEntity($constraintData->idConstrainedBy);
-        $constraints = $constraint->listConstraints();
+        mdump($constraintData);
+        //$constraint->setIdEntity($constraintData->idConstrainedBy);
+        //$constraints = $constraint->listConstraints();
+        $constraints = $constraint->listByIdConstrained($constraintData->idConstrainedBy);
         mdump($constraints);
         $data = [];
         $cxn = new fnbr\models\Construction();
         foreach ($constraints as $cn) {
-            if ($cn['relationType'] == 'rel_constraint_cxn') {
+            if ($cn['relationType'] == 'con_cxn') {
                 $idConstruction = $cn['idConstrainedBy'];
                 $cxn->getByIdEntity($idConstruction);
                 $data[] = [
                     'idConstruction' => $cxn->getId(),
                     'name' => $cxn->getName()
                 ];
+                $daughters = $cxn->listDaughterRelations();
+                mdump($daughters);
+                foreach($daughters as $daughter) {
+                    $data[] = [
+                        'idConstruction' => $daughter['idConstruction'],
+                        'name' => $daughter['name']
+                    ];
+                }
+                /*
                 $constraint->getById($constraintData->idConstrained);
                 $constraintData = $constraint->getConstraintData();
                 $constraint->setIdEntity($constraintData->idConstrained);
@@ -32,6 +46,7 @@ class ConstraintController extends MController
                         ];
                     }
                 }
+                */
             }
 
         }

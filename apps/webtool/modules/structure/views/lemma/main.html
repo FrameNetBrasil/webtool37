@@ -21,6 +21,7 @@
 <div id="menuLemma" style="display:none, width:120px;">
     <div onclick="structure.deleteLemma()" data-options="iconCls:'icon-remove'">{{_'Delete Lemma'}}</div>
     <div onclick="structure.addLexeme()" data-options="iconCls:'icon-add'">{{_'Add Lexeme'}}</div>
+    <div onclick="structure.updateLemma()" data-options="iconCls:'icon-edit'">{{_'Update Entity'}}</div>
 </div>
 <div id="menuLexeme" style="display:none, width:120px;">
     <div onclick="structure.deleteLexeme()" data-options="iconCls:'icon-remove'">{{_'Remove Lexeme'}}</div>
@@ -62,6 +63,14 @@
             }
             $('#structureCenterPane').html('');
             manager.doGet({{$manager->getURL('structure/lemma/formDeleteLemma')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.updateLemma = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/lemma/updateLemma')}} + '/' + id,'structureCenterPane');
         }
 
         structure.reloadLemma = function () {

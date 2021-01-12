@@ -627,6 +627,14 @@ class StructureCxnService extends MService
         return $result;
     }
 
+    public function listOptionsUDFeature()
+    {
+        $ud = new fnbr\models\UDFeature();
+        $result = $ud->listForLookupEntity('*')->chunkResult('idEntity', 'info');
+        mdump($result);
+        return $result;
+    }
+
     public function listOptionsUDPOS()
     {
         $ud = new fnbr\models\UDPOS();
@@ -838,6 +846,12 @@ class StructureCxnService extends MService
                 $ceBefore = new fnbr\models\ConstructionElement($data->idConstructionBefore);
                 Base::createConstraintInstance($constraint->getIdEntity(), 'con_before', $ce->getIdEntity(), $ceBefore->getIdEntity());
             }
+            if ($data->idConstructionAfter != '') {
+                $constraint = Base::createEntity('CN', 'con');
+                $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);
+                $ceAfter = new fnbr\models\ConstructionElement($data->idConstructionAfter);
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_after', $ce->getIdEntity(), $ceAfter->getIdEntity());
+            }
             if ($data->idConstructionMeets != '') {
                 $constraint = Base::createEntity('CN', 'con');
                 $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);
@@ -858,6 +872,11 @@ class StructureCxnService extends MService
                 $constraint = Base::createEntity('CN', 'con');
                 $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);
                 Base::createConstraintInstance($constraint->getIdEntity(), 'con_udpos', $ce->getIdEntity(), $data->idUDPOS);
+            }
+            if ($data->idUDFeature != '') {
+                $constraint = Base::createEntity('CN', 'con');
+                $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_udfeature', $ce->getIdEntity(), $data->idUDFeature);
             }
             if ($data->idSemanticTypeLU != '') {
                 $constraint = Base::createEntity('CN', 'con');
@@ -916,7 +935,7 @@ class StructureCxnService extends MService
                 $frame = new fnbr\models\Frame($data->idFrame);
                 //Base::createEntityRelation($constraint->getIdEntity(), 'con_frame', $cn->getId(), $frame->getIdEntity());
                 //Base::createConstraintInstance($constraint->getIdEntity(), 'rel_evokes', $cn->getId(), $frame->getIdEntity());
-                Base::createConstraintInstance($constraint->getIdEntity(), 'rel_evokes', $data->idConstraint, $frame->getIdEntity());
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_evokes', $data->idConstraint, $frame->getIdEntity());
             }
             if ($data->idFrameFamily != '') {
                 $constraint = Base::createEntity('CN', 'con');
