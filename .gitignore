@@ -69,3 +69,4 @@ docker/logs/apache2/other_vhosts_access.log
 # Customizable index.html #
 ###########################
 index.html
+

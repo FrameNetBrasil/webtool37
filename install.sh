@@ -10,4 +10,5 @@ chmod -R 777 var
 [ ! -f /var/www/html/apps/webtool/conf/conf.php ] && cp /var/www/html/apps/webtool/conf/conf.dist.php /var/www/html/apps/webtool/conf/conf.php
 [ ! -f /var/www/html/core/conf/conf.php ] && cp /var/www/html/core/conf/conf.dist.php /var/www/html/core/conf/conf.php
 [ ! -f /var/www/html/.env ] && cp /var/www/html/.env.dist /var/www/html/.env
+apt install -y graphviz
 apache2-foreground

@@ -29,7 +29,7 @@ class CCNController extends MController
         $structure = Manager::getAppService('structurecxn');
         if ($this->data->id == '') {
             $children = $structure->listCxnLanguageEntity($this->data);
-            $data = (object) [
+            $data = (object)[
                 'id' => 'root',
                 'state' => 'open',
                 'text' => 'Constructions',
@@ -49,5 +49,13 @@ class CCNController extends MController
         }
         $this->renderJson($json);
     }
-    
+
+    public function simpleGraphviz()
+    {
+        $grapher = Manager::getAppService('grapher');
+        $idLanguage = $this->data->idLanguage ?? 1;
+        $file = $grapher->simpleCCNGraphViz($idLanguage);
+        $this->renderDownload($file);
+    }
+
 }

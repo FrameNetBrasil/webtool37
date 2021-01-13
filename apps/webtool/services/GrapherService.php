@@ -956,4 +956,44 @@ class GrapherService extends MService
         return $relations;
     }
 
+    public function simpleCCNGraphViz($idLanguage = 1) {
+        $cxn = new \fnbr\models\Construction();
+        $filter = (object)['idLanguage' => $idLanguage];
+        $graph = "G:rankdir:RL\n";
+        $nodes = '';
+        $edges = '';
+        $cxns = $cxn->listByFilter($filter)->asQuery()->getResult(\FETCH_ASSOC);
+        foreach ($cxns as $cxn) {
+            $nodes .= "N:{$cxn['idEntity']}:cxn:1:{$cxn['name']}:cxn\n";
+        }
+        $chosen = [
+            'rel_inheritance_cxn' => 1,
+            'rel_evokes' => 1,
+        ];
+        foreach ($cxns as $cxn) {
+            $cx = new \fnbr\models\Construction($cxn['idConstruction']);
+            $relations = $this->getDirectRelations($cx, $chosen);
+            foreach ($relations as $relation) {
+                if ($relation['type'] == 'rel_inheritance_cxn') {
+                    $edges .= "E:{$relation['target']->id}:{$relation['source']->id}:{$relation['type']}:0:0\n";
+                }
+            }
+            $relations = $this->getEvokesRelationsCxn($cx, $chosen);
+            foreach ($relations as $relation) {
+                if ($relation['type'] == 'rel_evokes') {
+                    $nodes .= "N:{$relation['target']->id}:frame:1:{$relation['target']->name}:frame\n";
+                    $edges .= "E:{$relation['source']->id}:{$relation['target']->id}:{$relation['type']}:0:0\n";
+                }
+            }
+        }
+        $tree = $graph . $nodes . $edges;
+        $fileName = md5($tree) . '.txt';
+        $path = \Manager::getFilesPath($fileName);
+        mdump($path);
+        file_put_contents($path , $tree);
+        $service = \Manager::getAppService('graphergraphviz');
+        $imageFile = $service->createFromFile($path);
+        return $imageFile;
+    }
+
 }
