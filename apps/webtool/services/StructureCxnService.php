@@ -796,11 +796,11 @@ class StructureCxnService extends MService
                 $constraintCxn = Base::createEntity('CN', 'con');
                 Base::createConstraintInstance($constraintCxn->getIdEntity(), 'con_cxn', $ce->getIdEntity(), $cxn->getIdEntity());
                 // constraints 'ele' Constraint-CE
-                $ces = $cxn->listCE()->asQuery()->getResult();
-                foreach ($ces as $ce) {
-                    $constraintEle = Base::createEntity('CN', 'con');
-                    Base::createConstraintInstance($constraintEle->getIdEntity(), 'con_element', $constraintCxn->getIdEntity(), $ce['idEntity']);
-                }
+                //$ces = $cxn->listCE()->asQuery()->getResult();
+                //foreach ($ces as $ce) {
+                //    $constraintEle = Base::createEntity('CN', 'con');
+                //    Base::createConstraintInstance($constraintEle->getIdEntity(), 'con_element', $constraintCxn->getIdEntity(), $ce['idEntity']);
+                //}
             }
             if ($data->idFrame != '') {
                 $constraint = Base::createEntity('CN', 'con');

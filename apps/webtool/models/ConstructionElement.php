@@ -66,11 +66,11 @@ class ConstructionElement extends map\ConstructionElementMap {
     public function listByFilter($filter){
         $criteria = $this->getCriteria()->select('*')->orderBy('idConstructionElement');
         if ($filter->idConstructionElement){
-            $criteria->where("idConstructionElement LIKE '{$filter->idConstructionElement}%'");
+            $criteria->where("idConstructionElement = {$filter->idConstructionElement}");
         }
         if ($filter->idConstruction) {
-            Base::relation($criteria, 'ConstructionElement', 'Construction', 'rel_elementof');
-            $criteria->where("construction.idConstruction = {$filter->idConstruction}");
+            //Base::relation($criteria, 'ConstructionElement', 'Construction', 'rel_elementof');
+            $criteria->where("idConstruction = {$filter->idConstruction}");
         }          
         return $criteria;
     }
@@ -176,8 +176,8 @@ HERE;
     {
         $criteria = $this->getCriteria()->select('idConstructionElement, entry, entries.name as name, color.rgbFg, color.rgbBg');
         Base::entryLanguage($criteria);
-        Base::relation($criteria, 'ConstructionElement', 'Construction', 'rel_elementof');
-        $criteria->where("idConstruction = '{$idConstruction}'");
+        //Base::relation($criteria, 'ConstructionElement', 'Construction', 'rel_elementof');
+        $criteria->where("idConstruction = {$idConstruction}");
         $result = $criteria->asQuery()->getResult();
         $styles = [];
         foreach ($result as $ce) {
@@ -193,8 +193,8 @@ HERE;
         $criteria = $this->getCriteria()->select('idConstructionElement,entries.name as name, entries.description as description, entries.nick as nick')->orderBy('entries.name');
         Base::entryLanguage($criteria);
         if ($idConstruction) {
-            Base::relation($criteria, 'ConstructionElement', 'Construction', 'rel_elementof');
-            $criteria->where("construction.idConstruction = {$idConstruction}");
+            //Base::relation($criteria, 'ConstructionElement', 'Construction', 'rel_elementof');
+            $criteria->where("idConstruction = {$idConstruction}");
         }
         return $criteria;
     }

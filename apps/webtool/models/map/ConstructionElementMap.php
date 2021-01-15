@@ -31,10 +31,12 @@ class ConstructionElementMap extends \MBusinessModel {
                 'active' => array('column' => 'active','type' => 'boolean'),
                 'idEntity' => array('column' => 'idEntity','type' => 'integer'),
                 'idColor' => array('column' => 'idColor','type' => 'integer'),
+                'idConstruction' => array('column' => 'idConstruction','type' => 'integer'),
             ),
             'associations' => array(
                 'entity' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity:idEntity'), 
                 'color' => array('toClass' => 'fnbr\models\Color', 'cardinality' => 'oneToOne' , 'keys' => 'idColor:idColor'),
+                'construction' => array('toClass' => 'fnbr\models\Construction', 'cardinality' => 'oneToOne' , 'keys' => 'idConstruction:idConstruction'),
                 'entries' => array('toClass' => 'fnbr\models\Entry', 'cardinality' => 'oneToMany' , 'keys' => 'entry:entry'),
             )
         );
@@ -80,12 +82,18 @@ class ConstructionElementMap extends \MBusinessModel {
      * @var integer 
      */
     protected $idColor;
+    /**
+     *
+     * @var integer
+     */
+    protected $idConstruction;
 
     /**
      * Associations
      */
     protected $entity;
     protected $color;
+    protected $construction;
     protected $entries;
     
 
@@ -155,6 +163,14 @@ class ConstructionElementMap extends \MBusinessModel {
     public function setIdColor($value) {
         $this->idColor = $value;
     }
+
+    public function getIdConstruction() {
+        return $this->idConstruction;
+    }
+
+    public function setIdConstruction($value) {
+        $this->idConstruction = $value;
+    }
     /**
      *
      * @return Association
@@ -202,6 +218,30 @@ class ConstructionElementMap extends \MBusinessModel {
      */
     public function getAssociationColor() {
         $this->retrieveAssociation("color");
+    }
+    /**
+     *
+     * @return Association
+     */
+    public function getConstruction() {
+        if (is_null($this->construction)){
+            $this->retrieveAssociation("construction");
+        }
+        return  $this->construction;
+    }
+    /**
+     *
+     * @param Association $value
+     */
+    public function setConstruction($value) {
+        $this->construction = $value;
+    }
+    /**
+     *
+     * @return Association
+     */
+    public function getAssociationConstruction() {
+        $this->retrieveAssociation("construction");
     }
     /**
      *

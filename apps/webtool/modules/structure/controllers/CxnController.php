@@ -137,6 +137,7 @@ class CxnController extends MController
             $structure->deleteCxn($this->data->id);
             $this->renderPrompt('information', 'Cxn deleted.',"structure.reloadCxn();");
         } catch (\Exception $e) {
+            mdump($e->getMessage());
             $this->renderPrompt('error', "Não é possível remover esta construção.");
         }
         
