@@ -1,6 +1,6 @@
 <div class="reportCxn">
     <div class="cxnName">
-        {{$data->cxn->entry->name|noescape}}  [{{$data->cxn->entry->nick|noescape}}]
+        {{$data->cxn->entry->name|noescape}}  [{{$data->cxn->entry->nick|noescape}}] <span style="font-size:10px">[{{$data->cxn->idEntity|noescape}}]</span>
     </div>
     <div class="divPanel">
         <div id="panelDefinition" class="easyui-panel" title="{{_'repDefinition'}}" collapsible="false" data-options="fit:true"  style="width:100%;">
