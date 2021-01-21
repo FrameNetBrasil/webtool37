@@ -1,3 +1,4 @@
 @CHARSET "UTF-8";
+@import url('fonts/css/ibm-plex.min.css'); /* Font IBM Plex */
 @import url('css/layout.css');   /* Estrutura da página */
 @import url('css/custom.css');   /* Customizações de estilos definidos previamente */

@@ -37,10 +37,10 @@
   padding: 0;
   height: 30px;
   line-height: 30px;
-  font-size: .8125rem;
+  font-size: 12px;
 }
 .pagination span {
-  font-size: .8125rem;
+  font-size: 12px;
 }
 .pagination-link .l-btn-text {
   width: 24px;
