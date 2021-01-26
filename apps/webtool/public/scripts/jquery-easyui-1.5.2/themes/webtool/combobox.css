@@ -1,7 +1,7 @@
 .combobox-item,
 .combobox-group,
 .combobox-stick {
-  font-size: .8125rem;
+  font-size: 12px;
   padding: 3px;
 }
 .combobox-item-disabled {

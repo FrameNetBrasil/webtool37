@@ -27,7 +27,8 @@ body {
     /*font-family: open_sansregular;*/
     /*	font-family: tahoma;*/
     /*font-size: 12px;*/
-    font-family: 'Roboto', sans-serif;
+    /*font-family: 'Roboto', sans-serif;*/
+    font-family: 'IBM Plex Sans';
 }
 
 label {

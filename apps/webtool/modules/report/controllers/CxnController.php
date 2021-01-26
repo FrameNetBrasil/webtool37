@@ -47,6 +47,7 @@ class CxnController extends MController
         $report = Manager::getAppService('reportcxn');
         $cxn = new fnbr\models\Construction($idConstruction);
         $this->data->cxn->entry = $cxn->getEntryObject();
+        $this->data->cxn->idEntity = $cxn->getIdEntity();
         $this->data->ce = $report->getCEData($idConstruction);
         $this->data->cxn->entry->description = $report->decorate($this->data->cxn->entry->description, $this->data->ce['styles']);
         $this->data->relations = $report->getRelations($cxn);

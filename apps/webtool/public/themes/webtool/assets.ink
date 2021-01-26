@@ -1,8 +1,10 @@
+
+
 scripts/bootstrap-3.2.0-dist/css/bootstrap.min.css
 scripts/bootstrap-switch-master/css/bootstrap3/bootstrap-switch.min.css
 ;scripts/jquery-easyui-1.5.5.4/themes/material-teal/easyui.css
 ;scripts/jquery-easyui-1.5.5.4/themes/icon.css
-scripts/jquery-easyui-1.5.2/themes/default/easyui.css
+scripts/jquery-easyui-1.5.2/themes/webtool/easyui.css
 scripts/jquery-easyui-1.5.2/themes/icon.css
 scripts/jointJS/joint.min.css
 scripts/trumbowyg/ui/trumbowyg.css

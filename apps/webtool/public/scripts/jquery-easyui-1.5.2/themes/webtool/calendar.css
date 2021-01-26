@@ -7,13 +7,13 @@
 .calendar table {
   table-layout: fixed;
   border-collapse: separate;
-  font-size: .8125rem;
+  font-size: 12px;
   width: 100%;
   height: 100%;
 }
 .calendar table td,
 .calendar table th {
-  font-size: .8125rem;
+  font-size: 12px;
 }
 .calendar-noborder {
   border: 0;
@@ -33,7 +33,7 @@
   padding: 0 3px;
   height: 18px;
   line-height: 18px;
-  font-size: .8125rem;
+  font-size: 12px;
   cursor: pointer;
   -moz-border-radius: 5px 5px 5px 5px;
   -webkit-border-radius: 5px 5px 5px 5px;
@@ -101,7 +101,7 @@
   width: 180px;
   height: 150px;
   padding: 5px;
-  font-size: .8125rem;
+  font-size: 12px;
   display: none;
   overflow: hidden;
 }
@@ -119,7 +119,7 @@
   margin: 0;
   padding: 2px;
   font-weight: bold;
-  font-size: .8125rem;
+  font-size: 12px;
   -moz-border-radius: 5px 5px 5px 5px;
   -webkit-border-radius: 5px 5px 5px 5px;
   border-radius: 5px 5px 5px 5px;
