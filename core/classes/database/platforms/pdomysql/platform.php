@@ -33,6 +33,10 @@ class Platform extends \Doctrine\DBAL\Platforms\MySqlPlatform
         if ($charset) {
             $this->db->getConnection()->exec("SET CHARACTER SET '{$charset}'");
         }
+        $collate = $this->db->getConfig('collate');
+        if ($collate) {
+            $this->db->getConnection()->exec("SET collation_connection = '{$collate}'");
+        }
     }
 
     public function getTypedAttributes()
