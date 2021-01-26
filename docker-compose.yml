@@ -23,6 +23,8 @@ services:
             context: ./docker/bin/mariadb
         container_name: 'fnbr-mariadb-$PROJECT_NAME'
         restart: unless-stopped
+        ports:
+            - ${DB_PORT}:3306
         command: --default-authentication-plugin=mysql_native_password
         environment:
             MYSQL_DATABASE: ${MYSQL_DATABASE}
