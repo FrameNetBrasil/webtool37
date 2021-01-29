@@ -433,7 +433,7 @@ class MQuery
                 }
                 $s = '';
                 foreach ($group as $g) {
-                    $s .= '[$row[' . $g . ']]';
+                    $s .= '[$row[\'' . $g . '\']]';
                 }
                 eval("\$tree$s" . "[] = \$aNode;");
             }

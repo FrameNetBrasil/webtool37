@@ -267,7 +267,7 @@ HERE;
         $idLanguage = \Manager::getSession()->idLanguage;
         $cmd = <<<HERE
 
-        SELECT RelationType.entry, Entry.name, Construction.idEntity, Construction.idConstruction, Construction.entry as cxnEntry
+        SELECT RelationType.entry, Entry.name, Construction.idEntity, Construction.idConstruction, Construction.entry as cxnEntry, EntityRelation.idEntityRelation
         FROM Construction
             INNER JOIN Entity entity1
                 ON (Construction.idEntity = entity1.idEntity)
@@ -282,13 +282,12 @@ HERE;
             INNER JOIN Entry
                 ON (Entry.entry = Construction.entry)
         WHERE (relatedCxn.idConstruction = {$this->getId()})
-            AND (RelationType.entry in (
-                'rel_inheritance_cxn'))
+            AND (RelationType.entry in ('rel_inheritance_cxn'))
            AND (Entry.idLanguage = {$idLanguage} )
         ORDER BY RelationType.entry, Entry.name
 
 HERE;
-        $result = $this->getDb()->getQueryCommand($cmd)->treeResult('entry', 'name,idEntity,idConstruction,cxnEntry');
+        $result = $this->getDb()->getQueryCommand($cmd)->treeResult('entry', 'name,idEntity,idConstruction,cxnEntry,idEntityRelation');
         return $result;
 
     }

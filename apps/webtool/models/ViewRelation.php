@@ -1,19 +1,20 @@
 <?php
 /**
- * 
+ *
  *
  * @category   Maestro
  * @package    UFJF
- *  @subpackage fnbr
+ * @subpackage fnbr
  * @copyright  Copyright (c) 2003-2012 UFJF (http://www.ufjf.br)
  * @license    http://siga.ufjf.br/license
- * @version    
- * @since      
+ * @version
+ * @since
  */
 
 namespace fnbr\models;
 
-class ViewRelation extends map\ViewRelationMap {
+class ViewRelation extends map\ViewRelationMap
+{
 
     public static function config()
     {
@@ -35,6 +36,27 @@ class ViewRelation extends map\ViewRelationMap {
             $criteria->where("idEntity2 = {$idEntity2}");
         }
         return $criteria;
+    }
+
+    /*
+     * Remove rel_inheritance_cxn
+    */
+    public function deleteInheritanceCxn($idEntityRelation)
+    {
+        $transaction = $this->beginTransaction();
+        try {
+            $cmd = <<<HERE
+DELETE FROM entityrelation
+WHERE idEntityRelation = {$idEntityRelation}
+            
+HERE;
+            $this->getDb()->executeCommand($cmd);
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollback();
+            throw new \exception($e->getMessage());
+        }
+
     }
 
 

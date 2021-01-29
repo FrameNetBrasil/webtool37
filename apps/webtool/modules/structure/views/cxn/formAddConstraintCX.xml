@@ -26,6 +26,10 @@
                     <mselection id="idEntityC2" options="$this->data->ces" style="width:250px;"/>
                 </div>
                 -->
+                <div title="Cxn &gt; Inheritance &gt; Cxn" style="overflow:auto;padding:10px;">
+                    <div><mlabel text="Parent Cxn"/></div>
+                    <include component="MLookupConstruction.php" id="idParentCxn"/>
+                </div>
                 <div title="CE &gt; Evokes &gt; Frame" style="overflow:auto;padding:10px;">
                     <div><mlabel text="CE"/></div>
                     <mselection id="idEntityCE" options="$this->data->ces" style="width:250px;"/>

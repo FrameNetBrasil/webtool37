@@ -121,6 +121,25 @@ class StructureConstraintInstanceService extends MService
         return json_encode($result);
     }
 
+    public function listInheritanceCX($idCxn)
+    {
+        $result = [];
+        $cxn = new fnbr\models\Construction($idCxn);
+        $relations = $cxn->listInheritanceFromRelations();
+        foreach($relations as $relation) {
+            foreach ($relation as $inh) {
+                mdump($inh);
+                $node = [];
+                $node['id'] = 'h' . $inh['idEntityRelation'];
+                $node['text'] = 'inh_' . $inh['name'];
+                $node['state'] = 'closed';
+                $node['iconCls'] = 'icon-blank fa-icon fa fa-crosshairs';
+                $result[] = $node;
+            }
+        }
+        return json_encode($result);
+    }
+
     public function listEvokesCE($idCE)
     {
         $result = [];
@@ -131,6 +150,24 @@ class StructureConstraintInstanceService extends MService
                 $node = [];
                 $node['id'] = 'v' . $evk['idEntity'];
                 $node['text'] = 'evk_' . $evk['name'];
+                $node['state'] = 'closed';
+                $node['iconCls'] = 'icon-blank fa-icon fa fa-crosshairs';
+                $result[] = $node;
+            }
+        }
+        return json_encode($result);
+    }
+
+    public function listInheritanceCE($idCE)
+    {
+        $result = [];
+        $ce = new fnbr\models\ConstructionElement($idCE);
+        $relations = $ce->listInheritanceRelations();
+        foreach($relations as $relation) {
+            foreach ($relation as $inh) {
+                $node = [];
+                $node['id'] = 'h' . $inh['idEntityRelation'];
+                $node['text'] = 'inh_' . $inh['name'];
                 $node['state'] = 'closed';
                 $node['iconCls'] = 'icon-blank fa-icon fa fa-crosshairs';
                 $result[] = $node;

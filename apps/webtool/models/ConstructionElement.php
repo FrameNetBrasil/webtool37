@@ -74,6 +74,43 @@ class ConstructionElement extends map\ConstructionElementMap {
         }          
         return $criteria;
     }
+
+    public function listForLookupInhName($idConstructionElement, $name = '')
+    {
+        $criteria = $this->getCriteria()->select("idConstructionElement, concat(entries.name, ' [', language.language,']') as name")->orderBy('entries.name');
+        $idLanguage = \Manager::getSession()->idLanguage;
+        $cmd = <<<HERE
+
+        SELECT ceParent.idConstructionElement, concat(e1.name, '.', e2.name, ' [',language.language,']') as name
+        FROM ConstructionElement ceBase
+            INNER JOIN Construction base
+                ON (ceBase.idConstruction = base.idConstruction)
+            INNER JOIN EntityRelation
+                ON (base.idEntity = EntityRelation.idEntity2)
+            INNER JOIN RelationType
+                ON (EntityRelation.idRelationType = RelationType.idRelationType)
+            INNER JOIN Construction parent
+                ON (parent.idEntity = EntityRelation.idEntity1)
+            INNER JOIN ConstructionElement ceParent
+                ON (ceParent.idConstruction = parent.idConstruction)
+            INNER JOIN Entry 
+                ON (Entry.entry = base.entry)
+            INNER JOIN Entry e1 
+                ON (e1.entry = parent.entry)
+            INNER JOIN Entry  e2
+                ON (e2.entry = ceParent.entry)
+            INNER JOIN language  
+                ON (Entry.idLanguage = language.idLanguage)
+        WHERE (ceBase.idConstructionElement = {$idConstructionElement})
+            AND (RelationType.entry in ('rel_inheritance_cxn'))
+           AND (Entry.idLanguage = {$idLanguage} )
+           AND (e1.idLanguage = {$idLanguage} )
+           AND (e2.idLanguage = {$idLanguage} )
+
+HERE;
+        $result = $this->getDb()->getQueryCommand($cmd);
+        return $result;
+    }
     
     public function listForEditor($idEntityCxn)
     {
@@ -171,6 +208,41 @@ HERE;
 
     }
 
+    public function listInheritanceRelations()
+    {
+        $idLanguage = \Manager::getSession()->idLanguage;
+        $cmd = <<<HERE
+
+        
+SELECT entry, name, nick, idEntity, idCE, ceEntry, idEntityRelation
+FROM (
+        SELECT RelationType.entry,concat(entry_relatedCXN.name, '.', entry_relatedCE.name) name, entry_relatedCE.nick, ce1.idEntity, ce1.idConstructionElement idCE, ce1.entry as ceEntry, EntityRelation.idEntityRelation
+        FROM ConstructionElement ce1
+            INNER JOIN EntityRelation
+                ON (ce1.idEntity = EntityRelation.idEntity1)
+            INNER JOIN RelationType
+                ON (EntityRelation.idRelationType = RelationType.idRelationType)
+            INNER JOIN ConstructionElement ce2
+                ON (ce2.idEntity = EntityRelation.idEntity2)
+            INNER JOIN Construction parent
+                ON (ce1.idConstruction = parent.idConstruction)
+            INNER JOIN Entry entry_relatedCE
+                ON (ce1.entry = entry_relatedCE.entry)
+            INNER JOIN Entry entry_relatedCXN
+                ON (parent.entry = entry_relatedCXN.entry)
+        WHERE (ce2.idConstructionElement = {$this->getId()})
+            AND (RelationType.entry in (
+                'rel_inheritance_cxn'))
+           AND (entry_relatedCE.idLanguage = {$idLanguage} )
+           AND (entry_relatedCXN.idLanguage = {$idLanguage} )
+) inheritance           
+ORDER BY entry, name
+            
+HERE;
+        $result = $this->getDb()->getQueryCommand($cmd)->treeResult('entry', 'name,idEntity,idCE,ceEntry,idEntityRelation');
+        return $result;
+
+    }
 
     public function getStylesByCxn($idConstruction)
     {

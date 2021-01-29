@@ -61,7 +61,7 @@ class ViewConstruction extends map\ViewConstructionMap
     public function listByLanguageFilter($filter)
     {
         mdump('==== listByFilter');
-        $criteria = $this->getCriteria()->select('language.idLanguage, language.description language, idConstruction, entry, active, idEntity, entries.name as name')->orderBy('entries.name');
+        $criteria = $this->getCriteria()->select('idLanguage, language.description language, idConstruction, entry, active, idEntity, entries.name as name')->orderBy('entries.name');
         Base::entryLanguage($criteria);
         if ($filter->idConstruction) {
             $criteria->where("idConstruction = {$filter->idConstruction}");

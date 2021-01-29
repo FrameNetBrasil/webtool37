@@ -164,6 +164,14 @@ class StructureCxnService extends MService
         }
     }
 
+    /*
+     * Remove rel_inheritance_cxn
+     */
+    public function deleteRelation($idEntityRelation)
+    {
+        $relation = new fnbr\models\ViewRelation();
+        $relation->deleteInheritanceCxn($idEntityRelation);
+    }
 
     /*
      * Annotation
@@ -658,6 +666,10 @@ class StructureCxnService extends MService
         foreach ($evokes as $evoke) {
             $result[] = $evoke;
         }
+        $inhs = json_decode($this->listInheritanceCX($idCxn, $idLanguage));
+        foreach ($inhs as $inh) {
+            $result[] = $inh;
+        }
         return json_encode($result);
     }
 
@@ -671,6 +683,10 @@ class StructureCxnService extends MService
         $evokes = json_decode($this->listEvokesCE($idConstructionElement));
         foreach ($evokes as $evoke) {
             $result[] = $evoke;
+        }
+        $inhs = json_decode($this->listInheritanceCE($idConstructionElement));
+        foreach ($inhs as $inh) {
+            $result[] = $inh;
         }
         return json_encode($result);
     }
@@ -703,6 +719,13 @@ class StructureCxnService extends MService
         return $result;
     }
 
+    public function listInheritanceCX($idConstruction, $idLanguage)
+    {
+        $service = Manager::getAppService('StructureConstraintInstance');
+        $result = $service->listInheritanceCX($idConstruction);
+        return $result;
+    }
+
     public function listConstraintsCE($idConstructionElement)
     {
         $service = Manager::getAppService('StructureConstraintInstance');
@@ -714,6 +737,13 @@ class StructureCxnService extends MService
     {
         $service = Manager::getAppService('StructureConstraintInstance');
         $result = $service->listEvokesCE($idConstructionElement);
+        return $result;
+    }
+
+    public function listInheritanceCE($idConstructionElement)
+    {
+        $service = Manager::getAppService('StructureConstraintInstance');
+        $result = $service->listInheritanceCE($idConstructionElement);
         return $result;
     }
 
@@ -771,6 +801,11 @@ class StructureCxnService extends MService
                 $constraint2 = Base::createEntity('CN', 'con');
                 $cxn = new fnbr\models\Construction($data->idConstruction);
                 Base::createConstraintInstance($constraint2->getIdEntity(), 'con_constraint', $cxn->getIdEntity(), $constraint->getIdEntity());
+            }
+            if ($data->idParentCxn != '') {
+                $parentCxn = new fnbr\models\Construction($data->idParentCxn);
+                $cxn = new fnbr\models\Construction($data->idConstruction);
+                Base::createEntityRelation($parentCxn->getIdEntity(), 'rel_inheritance_cxn', $cxn->getIdEntity());
             }
             if ($data->idConcept != '') {
                 $cxn = new fnbr\models\Construction($data->idConstruction);
@@ -882,6 +917,11 @@ class StructureCxnService extends MService
                 $constraint = Base::createEntity('CN', 'con');
                 $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);
                 Base::createConstraintInstance($constraint->getIdEntity(), 'con_stlu', $ce->getIdEntity(), $data->idSemanticTypeLU);
+            }
+            if ($data->idParentCE != '') {
+                $parentCE = new fnbr\models\ConstructionElement($data->idParentCE);
+                $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);
+                Base::createEntityRelation($parentCE->getIdEntity(), 'rel_inheritance_cxn', $ce->getIdEntity());
             }
             if ($data->idConcept != '') {
                 $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);

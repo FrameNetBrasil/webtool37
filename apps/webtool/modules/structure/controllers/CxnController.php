@@ -295,6 +295,13 @@ class CxnController extends MController
         }
     }
 
+    public function formDeleteRelation()
+    {
+        $structure = Manager::getAppService('StructureConstraintInstance');
+        $ok = "^structure/cxn/deleteRelation/" . $this->data->id;
+        $this->renderPrompt('confirmation', 'Warning: Relation will be deleted! Continue?', $ok);
+    }
+
     public function addConstraintCX() {
         mdump($this->data);
         try {
@@ -337,6 +344,16 @@ class CxnController extends MController
             $this->renderPrompt('information', 'Constraint deleted.', "!structure.reloadCxnParent();");
         } catch (\Exception $e) {
             $this->renderPrompt('error', "Delete Constraint failed.","!structure.reloadCxn();");
+        }
+    }
+
+    public function deleteRelation() {
+        try {
+            $structure = Manager::getAppService('StructureCxn');
+            $structure->deleteRelation($this->data->id);
+            $this->renderPrompt('information', 'Relation deleted.', "!structure.reloadCxnParent();");
+        } catch (\Exception $e) {
+            $this->renderPrompt('error', "Delete Relation failed.","!structure.reloadCxn();");
         }
     }
 

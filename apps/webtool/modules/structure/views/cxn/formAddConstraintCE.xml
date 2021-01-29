@@ -7,7 +7,7 @@
                 <mhiddenfield id="idConstructionElement" value="$this->data->idConstructionElement"/>
                 <mlabel text="$this->data->ce" />
             </mvcontainer>
-            <maccordion id="accordionAddConstraintCE" style="width:400px;height:450px;">
+            <maccordion id="accordionAddConstraintCE" style="width:400px;height:480px;">
                 <div title="CE > Construction" style="overflow:auto;padding:10px;">
                     <include component="MLookupConstruction.php" id="idConstruction"/>
                 </div>
@@ -54,6 +54,9 @@
                 </div>
                 <div title="CE > SemanticType of LU" style="overflow:auto;padding:10px;">
                     <mselection id="idSemanticTypeLU" options="$this->data->optionsSTLU"/>
+                </div>
+                <div title="CE &gt; Inheritance &gt; CE" style="overflow:auto;padding:10px;">
+                    <include component="MLookupCxnCE.php" id="idParentCE"/>
                 </div>
                 <div title="CE &gt; Evokes &gt; Concept" style="overflow:auto;padding:10px;">
                     <div><mlabel text="Concept"/></div>

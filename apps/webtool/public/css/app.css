@@ -36,6 +36,7 @@
     background: url(../images/00.png) no-repeat center center;
 }
 
+/*
 .fnbrFlagPt {
     width:16px;
     height:16px;
@@ -149,4 +150,143 @@
     width:16px;
     height:16px;
     background: url(../images/hi.png) no-repeat center center;
+}
+*/
+
+
+.fnbrFlagPt {
+    width:16px;
+    height:16px;
+    background: url(../images/pt.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+
+.fnbrFlagEn {
+    width:16px;
+    height:16px;
+    background: url(../images/en.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+
+.fnbrFlagFr {
+    width:16px;
+    height:16px;
+    background: url(../images/fr.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+
+.fnbrFlagEs {
+    width:16px;
+    height:16px;
+    background: url(../images/es.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+
+.fnbrFlagIt {
+    width:16px;
+    height:16px;
+    background: url(../images/it.svg) no-repeat center center;
+    background-size: 16px 16px;
+    background-size: 16px 16px;
+}
+.fnbrFlagSe {
+    width:16px;
+    height:16px;
+    background: url(../images/se.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+.fnbrFlagLt {
+    width:16px;
+    height:16px;
+    background: url(../images/lt.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+.fnbrFlagJp {
+    width:16px;
+    height:16px;
+    background: url(../images/jp.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+.fnbrFlagDe {
+    width:16px;
+    height:16px;
+    background: url(../images/de.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+.fnbrFlagIw {
+    width:16px;
+    height:16px;
+    background: url(../images/iw.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+.fnbrFlagZh {
+    width:16px;
+    height:16px;
+    background: url(../images/zh.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+.fnbrFlagRu {
+    width:16px;
+    height:16px;
+    background: url(../images/ru.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+.fnbrFlagKo {
+    width:16px;
+    height:16px;
+    background: url(../images/ko.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+.fnbrFlagAr {
+    width:16px;
+    height:16px;
+    background: url(../images/ar.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+.fnbrFlagSq {
+    width:16px;
+    height:16px;
+    background: url(../images/sq.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+.fnbrFlagFi {
+    width:16px;
+    height:16px;
+    background: url(../images/fi.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+
+.fnbrFlagHi {
+    width:16px;
+    height:16px;
+    background: url(../images/hi.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+
+.fnbrFlagUr {
+    width:16px;
+    height:16px;
+    background: url(../images/ur.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+
+.fnbrFlagEl {
+    width:16px;
+    height:16px;
+    background: url(../images/el.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+
+.fnbrFlagTe {
+    width:16px;
+    height:16px;
+    background: url(../images/hi.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+
+.fnbrFlagKn {
+    width:16px;
+    height:16px;
+    background: url(../images/hi.svg) no-repeat center center;
+    background-size: 16px 16px;
 }
