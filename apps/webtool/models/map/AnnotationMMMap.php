@@ -32,9 +32,8 @@ class AnnotationMMMap extends \MBusinessModel {
             ),
             'associations' => array(
                 'sentencemm' => array('toClass' => 'fnbr\models\SentenceMM', 'cardinality' => 'oneToOne' , 'keys' => 'idSentenceMM:idSentenceMM'),
-                'frameelement' => array('toClass' => 'fnbr\models\ViewFrameElementMM', 'cardinality' => 'oneToOne' , 'keys' => 'idFrameElementMM:idFrameElementMM'),
+                'frameelement' => array('toClass' => 'fnbr\models\ViewFrameElement', 'cardinality' => 'oneToOne' , 'keys' => 'idFrameElement:idFrameElement'),
                 'objectmm' => array('toClass' => 'fnbr\models\ObjectMM', 'cardinality' => 'oneToOne' , 'keys' => 'idObjectMM:idObjectMM'),
-                'timelines' => array('toClass' => 'fnbr\models\Timeline', 'cardinality' => 'oneToMany' , 'keys' => 'timeline:timeline'),
             )
         );
     }

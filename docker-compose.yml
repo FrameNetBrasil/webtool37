@@ -11,7 +11,7 @@ services:
             - db
         volumes:
             - ${DOCUMENT_ROOT}:/var/www/html
-            #            - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
+            - ${PHP_INI-./docker/config/php/php.ini}:/usr/local/etc/php/php.ini
             - ${APACHE_VHOSTS_DIR-./docker/config/vhosts}:/etc/apache2/sites-enabled
             - ${APACHE_LOG_DIR-./docker/logs/apache2}:/var/log/apache2
         #command: bash -c "cd /var/www/html && chmod -R 777 core/var & composer install --ignore-platform-reqs && cd /var/www/html/apps/webtool && composer install --ignore-platform-reqs && apache2-foreground"

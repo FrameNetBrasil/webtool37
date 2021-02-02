@@ -150,6 +150,22 @@ class CorpusController extends MController
         }
     }
 
+    public function formSentences()
+    {
+        $this->data->idDocument = $this->data->id;
+        $model = new fnbr\models\Document($this->data->idDocument);
+        $this->data->title = $model->getName();
+        $this->render();
+    }
+
+    public function sentences()
+    {
+        $this->data->idDocument = $this->data->id;
+        $model = new fnbr\models\Document($this->data->idDocument);
+        $sentences = json_encode($model->listSentence()->getResult());
+        $this->renderJson($sentences);
+    }
+
     public function formPreprocessingDocumentMM()
     {
         $model = new fnbr\models\Document($this->data->id);
@@ -157,8 +173,8 @@ class CorpusController extends MController
         $language = new fnbr\models\Language();
         $this->data->languages = $language->listAll()->asQuery()->chunkResult('idLanguage', 'language');
         $this->data->save = "@structure/corpus/preprocessingDocumentMM|formPreprocessingDocumentMM";
-        $this->data->close = "!$('#formUpdateDocument_dialog').dialog('close');";
-        $this->data->title = 'Document: ' . $model->getEntry() . '  [' . $model->getName() . ']';
+        $this->data->close = "!$('#formPreprocessingDocumentMM_dialog').dialog('close');";
+        $this->data->title = 'Document: ' . $model->getName();
         mdump($this->data->object);
         $this->render();
     }
@@ -169,15 +185,17 @@ class CorpusController extends MController
             $user = fnbr\models\Base::getCurrentUser();
             $documentMMService = Manager::getAppService('documentmm');
             $video = $this->data->document;
-            if ($video->webfile == '') {
-                $files = Mutil::parseFiles('localfile');
-                if ($files[0]->getName() == '') {
-                    throw new \Exception('File not informed.');
+            $fileOk = (isset($_FILES['localfile'])) || ($video->webfile != '');
+            if ($fileOk) {
+                if ($video->webfile == '') {
+                    $files = Mutil::parseFiles('localfile');
+                    $video->localfile = $files[0];
                 }
-                $video->localfile = $files[0];
+                $documentMMService->uploadVideo($video);
+                $this->renderPrompt('information',"OK. File will be processed. A notification will be sent to {$user->getEmail()}.");
+            } else {
+                $this->renderPrompt('error',"No file informed.");
             }
-            $documentMMService->uploadVideo($video);
-            $this->renderPrompt('information',"OK. File will be processed. A notification will be sent to {$user->getEmail()}.");
         } catch (\Exception $e) {
             $this->renderPrompt('error', "Error preprocessing Document MM. " . $e->getMessage());
         }

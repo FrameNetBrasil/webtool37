@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <view>
     <mformdialog id="formPreprocessingDocumentMM">
-        <property title="$this->data->title" onClose="structure.reloadCorpus();"/>
+        <property title="$this->data->title"/>
         <fields>
-            <mhiddenfield id="document_idDocument" value="$this->data->id"/>
+            <mhiddenfield id="document_idDocument" value="$this->data->object->idDocument"/>
             <mselection id="document_idLanguage" label="Language" options="$this->data->languages"/>
-            <mtextfield id="document_webfile" label="Web file:" width="250px"/>
+            <mtextfield id="document_webfile" label="Web file:" width="300px"/>
             <mlabel text="--OR--"/>
-            <mfilefield id="localfile" label="Local file:" width="250px"/>
+            <mfilefield id="localfile" label="Local file:" width="300px"/>
         </fields>
         <tools>
             <mlinkbutton id="lbCloseDocument" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>

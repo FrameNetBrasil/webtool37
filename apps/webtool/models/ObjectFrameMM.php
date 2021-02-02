@@ -12,6 +12,15 @@ class ObjectFrameMM extends map\ObjectFrameMMMap {
         );
     }
 
+
+    public function listByObjectMM($idObjectMM){
+        $criteria = $this->getCriteria()
+            ->select('idObjectFrameMM, frameNumber, x, y, width, height, blocked')
+            ->where("idObjectMM = {$idObjectMM}")
+            ->orderBy('frameNumber');
+        return $criteria;
+    }
+
     public function putFrames($idObjectMM, $frames) {
         $transaction = $this->beginTransaction();
         try {

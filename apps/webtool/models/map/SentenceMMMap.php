@@ -30,6 +30,7 @@ class SentenceMMMap extends \MBusinessModel {
             ),
             'associations' => array(
                 'sentence' => array('toClass' => 'fnbr\models\Sentence', 'cardinality' => 'oneToOne' , 'keys' => 'idSentence:idSentence'),
+                'annotationmm' => array('toClass' => 'fnbr\models\AnnotationMM', 'cardinality' => 'oneToMany' , 'keys' => 'idSentenceMM:idSentenceMM'),
             )
         );
     }
@@ -54,6 +55,7 @@ class SentenceMMMap extends \MBusinessModel {
      * @var string 
      */
     protected $idSentence;
+    protected $annotationMM;
 
     /**
      * Associations
@@ -119,6 +121,30 @@ class SentenceMMMap extends \MBusinessModel {
      */
     public function getAssociationSentence() {
         $this->retrieveAssociation("sentence");
+    }
+    /**
+     *
+     * @return Association
+     */
+    public function getAnnotationMM() {
+        if (is_null($this->sentence)){
+            $this->retrieveAssociation("annotationmm");
+        }
+        return  $this->sentence;
+    }
+    /**
+     *
+     * @param Association $value
+     */
+    public function setAnnotation($value) {
+        $this->annotationmm = $value;
+    }
+    /**
+     *
+     * @return Association
+     */
+    public function getAssociationAnnotationMM() {
+        $this->retrieveAssociation("annotationmm");
     }
 }
 // end - wizard

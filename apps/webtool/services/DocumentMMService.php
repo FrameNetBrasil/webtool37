@@ -43,15 +43,17 @@ class DocumentMMService extends MService
             $fileName = $shaNameOriginal . '.' . $extension;
             $targetDir = $dataPath . "Video_Store/full/";
             $targetFile = $targetDir . $fileName;
+            mdump($targetFile);
+            mdump($dataVideo->localfile->getTmpName());
             file_put_contents($targetFile, file_get_contents($dataVideo->localfile->getTmpName()));
         }
         $user = fnbr\models\Base::getCurrentUser();
+
         $offline = '"' . addslashes(realpath(Manager::getAppPath() . "/offline/uploadVideoMM.php")) . '" ' . "{$targetFile} {$dataVideo->idDocument} {$dataVideo->idLanguage} {$user->getIdUser()} {$user->getEmail()}";
         mdump("php {$offline} > /dev/null &");
-        exec("php {$offline} > /dev/null &");
+        //exec("php {$offline} > /dev/null &");
 
     }
-
 
 
 }

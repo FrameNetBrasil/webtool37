@@ -99,6 +99,7 @@ class MFrontController
             // trata dados
             $this->removeInputSlashes();
             $this->setData($data ?: $_REQUEST);
+            mdump($_REQUEST);
             mtrace('DTO Data:');
             mtrace($this->getData());
             $this->loadExtensions();

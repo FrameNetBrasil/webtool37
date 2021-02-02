@@ -1,0 +1,109 @@
+<table id="sentences"  style="width:100%" >
+    <thead>
+    <tr>
+        <th data-options="field:'chkSentence'" checkbox="true"></th>
+        <th data-options="field:'idSentence',sortable:true" width="9%">idSentence</th>
+        <th data-options="field:'text' {{if ($data->userLanguage == 'ar')}}, align:'right' {{/if}}" width="81%">Sentence</th>
+    </tr>
+    </thead>
+</table>
+
+<script type="text/javascript">
+    $(function () {
+
+        structure.toolbarAS = [
+            {
+                text:'Notify Supervisor',
+                iconCls:'fa fa-share-square-o fa16px',
+                handler: function(){
+                    var data = JSON.stringify(structure.structure.ets);
+                    $('#asForSupervisor').val(data);
+                    manager.doPostBack('formNotifySupervisor');
+                }
+            },
+            {
+                text:'Selecteds > IGNORE',
+                iconCls:'fa fa-ban fa16px',
+                handler: function(){
+                    var as = [];
+                    var checked = $('#structure.et').datagrid('getChecked');
+                    $.each(checked, function(index, row) {
+                        as[as.length] = row.idstructure.et;
+                    });
+                    var data = JSON.stringify(as);
+                    $('#asToChange').val(data);
+                    $('#asNewStatus').val('ast_ignore');
+                    manager.doPostBack('formChangeStatus');
+                }
+            },
+            {
+                text:'Selecteds > DOUBT',
+                iconCls:'fa fa-frown-o fa16px',
+                handler: function(){
+                    var as = [];
+                    var checked = $('#structure.et').datagrid('getChecked');
+                    $.each(checked, function(index, row) {
+                        as[as.length] = row.idstructure.et;
+                    });
+                    var data = JSON.stringify(as);
+                    $('#asToChange').val(data);
+                    $('#asNewStatus').val('ast_doubt');
+                    manager.doPostBack('formChangeStatus');
+                }
+            }
+        ];
+
+        structure.toolbarASMaster = [
+            {
+                text:'Selecteds > IGNORE',
+                iconCls:'fa fa-ban fa16px',
+                handler: function(){
+                    var as = [];
+                    var checked = $('#structure.et').datagrid('getChecked');
+                    $.each(checked, function(index, row) {
+                        as[as.length] = row.idstructure.et;
+                    });
+                    var data = JSON.stringify(as);
+                    $('#asToChange').val(data);
+                    $('#asNewStatus').val('ast_ignore');
+                    manager.doPostBack('formChangeStatus');
+                }
+            },
+            {
+                text:'Selecteds > DOUBT',
+                iconCls:'fa fa-frown-o fa16px',
+                handler: function(){
+                    var as = [];
+                    var checked = $('#structure.et').datagrid('getChecked');
+                    $.each(checked, function(index, row) {
+                        as[as.length] = row.idstructure.et;
+                    });
+                    var data = JSON.stringify(as);
+                    $('#asToChange').val(data);
+                    $('#asNewStatus').val('ast_doubt');
+                    manager.doPostBack('formChangeStatus');
+                }
+            }
+
+        ];
+
+        $('#sentences').datagrid({
+            title: {{$data->title}},
+            singleSelect: true,
+            //collapsible: true,
+            fit: true,
+            nowrap: false,
+            checkOnSelect: false,
+            selectOnCheck: false,
+            idField: 'idSentence',
+            toolbar: structure.isMaster ? structure.toolbarASMaster : structure.toolbarAS,
+            url: {{$manager->getURL('structure/corpus/sentences')}} + '/' + {{$data->idDocument}},
+            method: 'get',
+            onSelect: function (rowIndex, rowData) {
+                $('#layersPane').html('');
+                console.log(rowData);
+                window.open({{$manager->getURL('annotation/main/annotationMultimodal')}} + '/' + rowData.idSentenceMM + '/' + annotation.type, '_blank');
+            }
+        });
+    });
+</script>

@@ -323,7 +323,7 @@ class MainController extends MController
         $annotation = Manager::getAppService('annotation');
         if ($this->data->id == '') {
             $json = $annotation->listCorpusMultimodal($this->data->corpus, $this->idLanguage);
-        } elseif ($this->data->id{0} == 'c') {
+        } elseif ($this->data->id[0] == 'c') {
             $json = $annotation->listCorpusDocumentMultimodal(substr($this->data->id, 1));
         }
         $this->renderJson($json);
@@ -332,7 +332,7 @@ class MainController extends MController
     public function sentencesMultimodal()
     {
         $annotation = Manager::getAppService('annotation');
-        $type = $this->data->id{0};
+        $type = $this->data->id[0];
         if ($type == 'd') {
             $this->data->idDocument = substr($this->data->id, 1);
             $this->data->title = $annotation->getDocumentTitle($this->data->idDocumentoMM, $this->idLanguage);
@@ -343,18 +343,14 @@ class MainController extends MController
 
     public function annotationMultimodal() {
         Manager::getPage()->setTemplateName('content');
-        $this->data->idAnnotationSetMM = $this->data->id;
-        $annotationSetMM = new \fnbr\models\AnnotationSetMM($this->data->idAnnotationSetMM);
-        $this->data->urlObjects = Manager::getURL('annotation/main/objectsData') . "/" . $this->data->idAnnotationSetMM;
+        $this->data->idSentenceMM = $this->data->id;
+        $this->data->urlObjects = Manager::getURL('annotation/main/objectsData') . "/" . $this->data->idSentenceMM;
         $this->data->urlPutObjects = Manager::getURL('annotation/main/putObjects');
-        $sentenceMM = new \fnbr\models\SentenceMM($annotationSetMM->getIdSentenceMM());
+        $sentenceMM = new fnbr\models\SentenceMM($this->data->idSentenceMM);
         $this->data->idSentence = $sentenceMM->getIdSentence();
-        $this->data->idSentenceMM = $sentenceMM->getIdSentenceMM();
         $this->data->sentenceMMRangeTime = $sentenceMM->getStartTimeStamp() . ' - ' . $sentenceMM->getEndTimeStamp();
-        $this->data->idAnnotationSet = $annotationSetMM->getIdAnnotationSet();
-        $this->data->documentMM = json_encode($annotationSetMM->getDocumentData());
-        $objectMM = new \fnbr\models\ObjectMM();
-        $this->data->objects = $objectMM->getObjectsAsJSON($this->data->idAnnotationSetMM);
+        $this->data->documentMM = json_encode($sentenceMM->getDocumentData());
+        $this->data->objects = $sentenceMM->getObjectsAsJSON();
         mdump($this->data->objects);
         $this->data->swfPath = Manager::getBaseURL() . '/apps/webtool/public/scripts/jplayer/';
         $this->data->urlLookupFrame = Manager::getBaseURL() . '/index.php/webtool/data/frame/lookupData';

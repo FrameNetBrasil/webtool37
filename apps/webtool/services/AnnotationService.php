@@ -565,7 +565,7 @@ class AnnotationService extends MService
         $ltCEFE = new fnbr\models\LayerType();
         $ltCEFE->getByEntry('lty_cefe');
         $queryLabelType = $as->getLayerNameCnxFrame($idSentence);
-        $cefe = $queryLabelType->chunkResultMany('idLayer', ['idFrame', 'name','idAnnotationSet'], 'A');
+        $cefe = $queryLabelType->chunkResultMany('idLayer', ['idFrame', 'name', 'idAnnotationSet'], 'A');
 
         $level = Manager::getSession()->fnbrLevel;
         if ($level == 'BEGINNER') {
@@ -573,8 +573,8 @@ class AnnotationService extends MService
         } else {
             //$layersToShow = Manager::getSession()->fnbrLayers;
             //if ($layersToShow == '') {
-                $user = Manager::getLogin()->getUser();
-                $layersToShow = Manager::getSession()->fnbrLayers = $user->getConfigData('fnbrLayers');
+            $user = Manager::getLogin()->getUser();
+            $layersToShow = Manager::getSession()->fnbrLayers = $user->getConfigData('fnbrLayers');
             //}
         }
 
@@ -995,8 +995,8 @@ class AnnotationService extends MService
         $document = new fnbr\models\Document($documentMM->getIdDocument());
         $idSubCorpus = $document->getRelatedSubCorpus();
 
-        $as = new fnbr\models\ViewAnnotationSetMM();
-        $sentences = $as->listByDocumentMM($idDocumentMM, $sortable)->asQuery()->getResult();
+        $as = new fnbr\models\ViewAnnotationSet();
+        $sentences = $as->listByDocumentMM($idDocumentMM, $sortable);//->asQuery()->getResult();
         $annotation = $as->listFECEBySubCorpus($idSubCorpus);
         $result = array();
         foreach ($sentences as $sentence) {
@@ -1012,11 +1012,11 @@ class AnnotationService extends MService
             } else {
                 $targets = $as->listTargetBySentence($sentence['idSentence']);
                 $node['text'] = $this->decorateSentence($sentence['text'], $targets);
-                //$node['text'] = $sentence['text'];
             }
 
-            $node['status'] = $sentence['annotationStatus'];
-            $node['rgbBg'] = $sentence['rgbBg'];
+
+            $node['status'] = '';
+            $node['rgbBg'] = '';
             $result[] = $node;
         }
         return json_encode($result);

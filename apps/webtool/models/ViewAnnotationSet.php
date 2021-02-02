@@ -180,5 +180,24 @@ HERE;
         return $result;
     }
 
+    ///
+    /// Multimodal
+    ///
+
+    public function listByDocumentMM($idDocumentMM, $sortable = NULL) {
+
+        $cmd = <<<HERE
+select s.idSentence, sentenceMM.idSentenceMM, sentenceMM.startTimestamp, sentenceMM.endTimestamp, s.text
+from view_sentence s 
+join sentenceMM on (sentenceMM.idSentence = s.idSentence)
+join documentMM on (documentMM.idDocument = s.idDocument)    
+where (documentMM.idDocumentMM = {$idDocumentMM})
+HERE;
+        $as = $this->getDb()->getQueryCommand($cmd)->getResult();
+        return $as;
+    }
+
+
+
 }
 

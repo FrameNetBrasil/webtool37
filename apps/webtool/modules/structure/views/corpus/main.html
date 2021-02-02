@@ -11,7 +11,7 @@
         <ul id="corpusTree"></ul>
     </div>
     <div id="structureCenterPane" region="center" style="height: 100%">
-        
+        <div id="sentencesPane" region="center" style="width:100%;height:100%"   split="true" data-options="border:1"></div>
     </div>
 </div>
 <div id="menuRootCorpus" style="display:none, width:120px;">
@@ -93,6 +93,12 @@
             manager.doGet({{$manager->getURL('structure/corpus/formPreprocessingDocumentMM')}} + '/' + id,'structureCenterPane');
         }
 
+        structure.showDocument = function (document) {
+            $('#sentencesPane').html('');
+            manager.doGet({{$manager->getURL('structure/corpus/formSentences')}} + '/' + document,'sentencesPane');
+        }
+
+
         structure.progress = function(){
             var win = $.messager.progress({
                 title:'Please waiting',
@@ -149,7 +155,13 @@
         });
         $('#corpusTree').tree({
             url: {{$manager->getURL('structure/corpus/corpusTree')}},
-            onContextMenu: structure.contextMenuFrame
+        onClick: function (node) {
+            console.log(node);
+            if (node.id.charAt(0) == 'd') {
+                structure.showDocument(node.id.substr(1));
+            }
+        },
+        onContextMenu: structure.contextMenuFrame
         });
     });
 </script>

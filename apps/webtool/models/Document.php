@@ -545,6 +545,22 @@ HERE;
         return $query;
     }
 
+    public function listSentence()
+    {
+        $cmd = <<<HERE
+
+select distinct s.idSentence, s.text
+FROM document d
+  INNER JOIN paragraph p ON (d.idDocument = p.idDocument)
+  INNER JOIN sentence s ON (p.idParagraph = s.idParagraph)
+where (d.idDocument = {$this->getIdDocument()})
+order by s.idSentence
+
+HERE;
+        $query = $this->getDb()->getQueryCommand($cmd);
+        return $query;
+    }
+
     public function listSentenceForCONLL()
     {
         $cmd = <<<HERE
