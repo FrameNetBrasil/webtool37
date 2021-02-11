@@ -75,6 +75,20 @@ class CorpusController extends MController
         $this->render();
     }
 
+    public function formUpdateSentence()
+    {
+        $sentence = new fnbr\models\Sentence($this->data->id);
+        if (!$sentence->hasAnnotation()) {
+            $this->data->object = $sentence->getData();
+            $this->data->save = "@structure/corpus/updateSentence|formUpdateSentence";
+            $this->data->close = "!$('#formUpdateSentence_dialog').dialog('close');";
+            $this->data->title = 'Sentence: ' . $sentence->getId();
+            $this->render();
+        } else {
+            $this->renderPrompt('information', 'Sentence has annotations; it can not be edited.');
+        }
+    }
+
     public function formNewDocumentMM()
     {
         $this->data->idCorpus = $this->data->id;
@@ -155,6 +169,9 @@ class CorpusController extends MController
         $this->data->idDocument = $this->data->id;
         $model = new fnbr\models\Document($this->data->idDocument);
         $this->data->title = $model->getName();
+        $documentMM = new fnbr\models\DocumentMM();
+        $documentMM->getByIdDocument($this->data->idDocument);
+        $this->data->idDocumentMM = $documentMM->getId() ?: 0;
         $this->render();
     }
 
@@ -199,6 +216,13 @@ class CorpusController extends MController
         } catch (\Exception $e) {
             $this->renderPrompt('error', "Error preprocessing Document MM. " . $e->getMessage());
         }
+    }
+
+    public function formEditSentences() {
+        $this->data->idDocument = $this->data->id;
+        $model = new fnbr\models\Document($this->data->idDocument);
+        $sentences = json_encode($model->listSentence()->getResult());
+        $this->renderJson($sentences);
     }
 
 

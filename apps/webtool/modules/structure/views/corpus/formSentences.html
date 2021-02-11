@@ -1,7 +1,6 @@
 <table id="sentences"  style="width:100%" >
     <thead>
     <tr>
-        <th data-options="field:'chkSentence'" checkbox="true"></th>
         <th data-options="field:'idSentence',sortable:true" width="9%">idSentence</th>
         <th data-options="field:'text' {{if ($data->userLanguage == 'ar')}}, align:'right' {{/if}}" width="81%">Sentence</th>
     </tr>
@@ -11,81 +10,28 @@
 <script type="text/javascript">
     $(function () {
 
+        structure.isMM = {{$data->idDocumentMM != 0 ? 'true' : 'false'|noescape}};
+
         structure.toolbarAS = [
-            {
-                text:'Notify Supervisor',
-                iconCls:'fa fa-share-square-o fa16px',
-                handler: function(){
-                    var data = JSON.stringify(structure.structure.ets);
-                    $('#asForSupervisor').val(data);
-                    manager.doPostBack('formNotifySupervisor');
-                }
-            },
-            {
-                text:'Selecteds > IGNORE',
-                iconCls:'fa fa-ban fa16px',
-                handler: function(){
-                    var as = [];
-                    var checked = $('#structure.et').datagrid('getChecked');
-                    $.each(checked, function(index, row) {
-                        as[as.length] = row.idstructure.et;
-                    });
-                    var data = JSON.stringify(as);
-                    $('#asToChange').val(data);
-                    $('#asNewStatus').val('ast_ignore');
-                    manager.doPostBack('formChangeStatus');
-                }
-            },
-            {
-                text:'Selecteds > DOUBT',
-                iconCls:'fa fa-frown-o fa16px',
-                handler: function(){
-                    var as = [];
-                    var checked = $('#structure.et').datagrid('getChecked');
-                    $.each(checked, function(index, row) {
-                        as[as.length] = row.idstructure.et;
-                    });
-                    var data = JSON.stringify(as);
-                    $('#asToChange').val(data);
-                    $('#asNewStatus').val('ast_doubt');
-                    manager.doPostBack('formChangeStatus');
-                }
-            }
         ];
 
         structure.toolbarASMaster = [
             {
-                text:'Selecteds > IGNORE',
-                iconCls:'fa fa-ban fa16px',
+                text:'Edit Sentences MM',
+                iconCls:'fa fa-edit fa16px',
                 handler: function(){
-                    var as = [];
-                    var checked = $('#structure.et').datagrid('getChecked');
-                    $.each(checked, function(index, row) {
-                        as[as.length] = row.idstructure.et;
-                    });
-                    var data = JSON.stringify(as);
-                    $('#asToChange').val(data);
-                    $('#asNewStatus').val('ast_ignore');
-                    manager.doPostBack('formChangeStatus');
+                    window.open({{$manager->getURL('structure/corpus/formEditSentences')}} + '/' + {{$data->idDocument}}, '_blank');
                 }
             },
-            {
-                text:'Selecteds > DOUBT',
-                iconCls:'fa fa-frown-o fa16px',
-                handler: function(){
-                    var as = [];
-                    var checked = $('#structure.et').datagrid('getChecked');
-                    $.each(checked, function(index, row) {
-                        as[as.length] = row.idstructure.et;
-                    });
-                    var data = JSON.stringify(as);
-                    $('#asToChange').val(data);
-                    $('#asNewStatus').val('ast_doubt');
-                    manager.doPostBack('formChangeStatus');
-                }
-            }
-
         ];
+
+        structure.editSentence = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            console.log(id);
+            manager.doGet({{$manager->getURL('structure/corpus/formUpdateSentence')}} + '/' + id,'structureCenterPane');
+        }
 
         $('#sentences').datagrid({
             title: {{$data->title}},
@@ -93,16 +39,14 @@
             //collapsible: true,
             fit: true,
             nowrap: false,
-            checkOnSelect: false,
-            selectOnCheck: false,
             idField: 'idSentence',
-            toolbar: structure.isMaster ? structure.toolbarASMaster : structure.toolbarAS,
+            toolbar: (structure.isMaster && structure.isMM) ? structure.toolbarASMaster : structure.toolbarAS,
             url: {{$manager->getURL('structure/corpus/sentences')}} + '/' + {{$data->idDocument}},
             method: 'get',
-            onSelect: function (rowIndex, rowData) {
-                $('#layersPane').html('');
-                console.log(rowData);
-                window.open({{$manager->getURL('annotation/main/annotationMultimodal')}} + '/' + rowData.idSentenceMM + '/' + annotation.type, '_blank');
+            onDblClickRow: function(index,row) {
+                console.log(index);
+                console.log(row);
+                structure.editSentence(row.idSentence);
             }
         });
     });

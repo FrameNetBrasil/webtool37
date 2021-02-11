@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formUpdateSentence">
+        <property title="$this->data->title"/>
+        <fields>
+            <mhiddenfield id="idSentence" value="$this->data->id"/>
+            <mtextfield id="text" label="Text" width="350px"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseDocument" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveDocument" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+        <data load="$this->data->object"/>
+    </mformdialog>
+</view>

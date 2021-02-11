@@ -67,4 +67,8 @@ HERE;
         parent::delete();
     }
 
+    public function hasAnnotation() {
+        return (count($this->getAnnotationsets()) > 0);
+    }
+
 }
