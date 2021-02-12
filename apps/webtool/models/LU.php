@@ -16,7 +16,7 @@ namespace fnbr\models;
 
 class LU extends map\LUMap
 {
-    private $idFrame;
+    //private $idFrame;
 
     public static function config()
     {
@@ -73,7 +73,7 @@ class LU extends map\LUMap
         return $data;
     }
 
-    public function setData($data)
+    public function setData($data, $role ='default')
     {
         parent::setData($data);
         $this->idFrame = $data->idFrame;

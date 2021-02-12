@@ -1,17 +1,5 @@
 <?php
 
-/**
- * 
- *
- * @category   Maestro
- * @package    UFJF
- *  @subpackage fnbr
- * @copyright  Copyright (c) 2003-2012 UFJF (http://www.ufjf.br)
- * @license    http://siga.ufjf.br/license
- * @version    
- * @since      
- */
-
 namespace fnbr\models;
 
 class FrameElement extends map\FrameElementMap
@@ -266,6 +254,7 @@ class FrameElement extends map\FrameElementMap
         try {
             if ($this->isPersistent()) {
                 $coreType = new TypeInstance($this->getIdCoreType());
+                $this->setCoreType($coreType->getEntry());
                 Base::updateEntityRelation($this->getIdEntity(), 'rel_hastype', $coreType->getIdEntity());
                 $this->setActive(true);
                 $criteria = $this->getCriteria()->select('fe1.idFrameElement');
@@ -280,6 +269,7 @@ class FrameElement extends map\FrameElementMap
             } else {
                 if ($data->idFrame) {
                     $schema = new Frame($data->idFrame);
+                    $this->setIdFrame($data->idFrame);
                 } else if ($data->idTemplate) {
                     $schema = new Template($data->idTemplate);
                 }
@@ -292,6 +282,7 @@ class FrameElement extends map\FrameElementMap
                 Base::createEntityRelation($entity->getId(), 'rel_elementof', $schema->getIdEntity());
                 $coreType = new TypeInstance($data->idCoreType);
                 Base::createEntityRelation($entity->getId(), 'rel_hastype', $coreType->getIdEntity());
+                $this->setCoreType($coreType->getEntry());
                 $this->setIdEntity($entity->getId());
                 $this->setActive(true);
             }

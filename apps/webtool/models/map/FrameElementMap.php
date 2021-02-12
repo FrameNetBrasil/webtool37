@@ -26,12 +26,15 @@ class FrameElementMap extends \MBusinessModel {
                 'idFrameElement' => array('column' => 'idFrameElement','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
                 'entry' => array('column' => 'entry','type' => 'string'),
                 'active' => array('column' => 'active','type' => 'integer'),
+                'coreType' => array('column' => 'coreType','type' => 'string'),
                 'idEntity' => array('column' => 'idEntity','type' => 'integer'),
+                'idFrame' => array('column' => 'idFrame','type' => 'integer'),
                 'idColor' => array('column' => 'idColor','type' => 'integer'),
             ),
             'associations' => array(
-                'entity' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity:idEntity'), 
-                'color' => array('toClass' => 'fnbr\models\Color', 'cardinality' => 'oneToOne' , 'keys' => 'idColor:idColor'), 
+                'entity' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity:idEntity'),
+                'frame' => array('toClass' => 'fnbr\models\Frame', 'cardinality' => 'oneToOne' , 'keys' => 'idFrame:idFrame'),
+                'color' => array('toClass' => 'fnbr\models\Color', 'cardinality' => 'oneToOne' , 'keys' => 'idColor:idColor'),
                 'entries' => array('toClass' => 'fnbr\models\Entry', 'cardinality' => 'oneToMany' , 'keys' => 'entry:entry'), 
             )
         );
@@ -53,10 +56,20 @@ class FrameElementMap extends \MBusinessModel {
      */
     protected $active;
     /**
+     *
+     * @var string
+     */
+    protected $coreType;
+    /**
      * 
      * @var integer 
      */
     protected $idEntity;
+    /**
+     *
+     * @var integer
+     */
+    protected $idFrame;
     /**
      * 
      * @var integer 
@@ -68,6 +81,7 @@ class FrameElementMap extends \MBusinessModel {
      */
     protected $entity;
     protected $color;
+    protected $frame;
     protected $entries;
     
 
@@ -98,6 +112,14 @@ class FrameElementMap extends \MBusinessModel {
         $this->active = $value;
     }
 
+    public function getCoreType() {
+        return $this->coreType;
+    }
+
+    public function setCoreType($value) {
+        $this->coreType = $value;
+    }
+
     public function getIdEntity() {
         return $this->idEntity;
     }
@@ -112,6 +134,14 @@ class FrameElementMap extends \MBusinessModel {
 
     public function setIdColor($value) {
         $this->idColor = $value;
+    }
+
+    public function getIdFrame() {
+        return $this->idFrame;
+    }
+
+    public function setIdFrame($value) {
+        $this->idFrame = $value;
     }
     /**
      *
@@ -160,6 +190,30 @@ class FrameElementMap extends \MBusinessModel {
      */
     public function getAssociationColor() {
         $this->retrieveAssociation("color");
+    }
+    /**
+     *
+     * @return Association
+     */
+    public function getFrame() {
+        if (is_null($this->frame)){
+            $this->retrieveAssociation("frame");
+        }
+        return  $this->frame;
+    }
+    /**
+     *
+     * @param Association $value
+     */
+    public function setFrame($value) {
+        $this->frame = $value;
+    }
+    /**
+     *
+     * @return Association
+     */
+    public function getAssociationFrame() {
+        $this->retrieveAssociation("frame");
     }
     /**
      *

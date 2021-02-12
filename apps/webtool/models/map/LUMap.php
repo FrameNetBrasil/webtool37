@@ -31,12 +31,14 @@ class LUMap extends \MBusinessModel {
                 'incorporatedFE' => array('column' => 'incorporatedFE','type' => 'integer'),
                 'bff' => array('column' => 'bff','type' => 'integer'),
                 'bffOther' => array('column' => 'bffOther','type' => 'string'),
+                'idFrame' => array('column' => 'idFrame','type' => 'integer'),
                 'idEntity' => array('column' => 'idEntity','type' => 'integer'),
                 'idLemma' => array('column' => 'idLemma','type' => 'integer'),
             ),
             'associations' => array(
-                'entity' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity:idEntity'), 
-                'lemma' => array('toClass' => 'fnbr\models\Lemma', 'cardinality' => 'oneToOne' , 'keys' => 'idLemma:idLemma'), 
+                'entity' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity:idEntity'),
+                'frame' => array('toClass' => 'fnbr\models\Frame', 'cardinality' => 'oneToOne' , 'keys' => 'idFrame:idFrame'),
+                'lemma' => array('toClass' => 'fnbr\models\Lemma', 'cardinality' => 'oneToOne' , 'keys' => 'idLemma:idLemma'),
             )
         );
     }
@@ -91,12 +93,17 @@ class LUMap extends \MBusinessModel {
      * @var integer 
      */
     protected $idLemma;
-
+    /**
+     *
+     * @var integer
+     */
+    protected $idFrame;
     /**
      * Associations
      */
     protected $entity;
     protected $lemma;
+    protected $frame;
     
 
     /**
@@ -181,6 +188,14 @@ class LUMap extends \MBusinessModel {
     public function setIdLemma($value) {
         $this->idLemma = $value;
     }
+
+    public function getIdFrame() {
+        return $this->idFrame;
+    }
+
+    public function setIdFrame($value) {
+        $this->idFrame = $value;
+    }
     /**
      *
      * @return Association
@@ -229,7 +244,30 @@ class LUMap extends \MBusinessModel {
     public function getAssociationLemma() {
         $this->retrieveAssociation("lemma");
     }
-
+    /**
+     *
+     * @return Association
+     */
+    public function getFrame() {
+        if (is_null($this->frame)){
+            $this->retrieveAssociation("frame");
+        }
+        return  $this->frame;
+    }
+    /**
+     *
+     * @param Association $value
+     */
+    public function setFrame($value) {
+        $this->frame = $value;
+    }
+    /**
+     *
+     * @return Association
+     */
+    public function getAssociationFrame() {
+        $this->retrieveAssociation("frame");
+    }
     
 
 }
