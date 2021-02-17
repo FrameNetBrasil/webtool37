@@ -6,7 +6,6 @@ class FrameElement extends map\FrameElementMap
 {
 
     private $idCoreType;
-    private $idFrame;
 
     public static function config()
     {
