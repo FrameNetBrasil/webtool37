@@ -84,11 +84,11 @@ class FrameElement extends map\FrameElementMap
         $criteria->where("frameelement.idFrameElement = '{$id}'");
         $result = $criteria->asQuery()->getResult();
         $this->setIdCoreType($result[0]['idTypeInstance']);
-        $criteria = $this->getCriteria()->select('frame.idFrame');
-        Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
-        $criteria->where("idFrameElement = '{$id}'");
-        $result = $criteria->asQuery()->getResult();
-        $this->setIdFrame($result[0]['idFrame']);
+        //$criteria = $this->getCriteria()->select('frame.idFrame');
+        //Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
+        //$criteria->where("idFrameElement = '{$id}'");
+        //$result = $criteria->asQuery()->getResult();
+        //$this->setIdFrame($result[0]['idFrame']);
     }
 
     public function getByIdEntity($idEntity)
@@ -109,7 +109,7 @@ class FrameElement extends map\FrameElementMap
     {
         $criteria = $this->getCriteria()->select('idFrameElement, entry, entries.name as name, color.rgbFg, color.rgbBg');
         Base::entryLanguage($criteria);
-        Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
+        //Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
         $criteria->where("idFrame = '{$idFrame}'");
         $result = $criteria->asQuery()->getResult();
         $styles = [];
@@ -127,7 +127,7 @@ class FrameElement extends map\FrameElementMap
             $criteria->where("idFrameElement LIKE '{$filter->idFrameElement}%'");
         }
         if ($filter->idFrame) {
-            Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
+            //Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
             $criteria->where("frame.idFrame = {$filter->idFrame}");
         }        
         return $criteria;
@@ -138,7 +138,7 @@ class FrameElement extends map\FrameElementMap
         $criteria = $this->getCriteria()->select('idFrameElement,entries.name as name')->orderBy('entries.name');
         Base::entryLanguage($criteria);
         if ($idFrame) {
-            Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
+            //Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
             $criteria->where("frame.idFrame = {$idFrame}");
         }
         return $criteria;
@@ -149,7 +149,7 @@ class FrameElement extends map\FrameElementMap
         $criteria = $this->getCriteria()->select('idFrameElement,entries.name as name, color.rgbFg, color.rgbBg')->orderBy('entries.name');
         Base::entryLanguage($criteria);
         if ($idFrame) {
-            Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
+            //Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
             $criteria->where("frame.idFrame = {$idFrame}");
         }
         return $criteria;
@@ -157,11 +157,11 @@ class FrameElement extends map\FrameElementMap
 
     public function listForReport($idFrame = '')
     {
-        $criteria = $this->getCriteria()->select('idFrameElement,entry,entries.name as name, entries.description as description, entries.nick as nick, typeinstance.entry as coreType')->orderBy('entries.name');
+        $criteria = $this->getCriteria()->select('idFrameElement,entry,entries.name as name, entries.description as description, entries.nick as nick, coreType')->orderBy('entries.name');
         Base::entryLanguage($criteria);
         Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
         if ($idFrame) {
-            Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
+            //Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
             $criteria->where("frame.idFrame = {$idFrame}");
         }
         return $criteria;
@@ -171,7 +171,7 @@ class FrameElement extends map\FrameElementMap
     {
         $criteria = $this->getCriteria()->select('idEntity,entries.name as name')->orderBy('entries.name');
         Base::entryLanguage($criteria);
-        Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
+        //Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
         $criteria->where("frame.idEntity = {$idEntityFrame}");
         return $criteria;
     }
@@ -181,7 +181,7 @@ class FrameElement extends map\FrameElementMap
         $criteria = $this->getCriteria()->select('idEntity,entries.name as name')->orderBy('entries.name');
         Base::entryLanguage($criteria);
         Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
-        Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
+        //Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
         $criteria->where("typeinstance.entry = 'cty_core'");
         $criteria->where("frame.idEntity = {$idEntityFrame}");
         return $criteria;
@@ -240,8 +240,8 @@ class FrameElement extends map\FrameElementMap
 
     public function listForExport($idFrame)
     {
-        $criteria = $this->getCriteria()->select('idFrameElement, entry, active, idEntity, idColor, typeinstance.entry as coreType')->orderBy('entry');
-        Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
+        $criteria = $this->getCriteria()->select('idFrameElement, entry, active, idEntity, idColor, coreType')->orderBy('entry');
+        //Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
         Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
         $criteria->where("frame.idFrame = {$idFrame}");
         return $criteria;
