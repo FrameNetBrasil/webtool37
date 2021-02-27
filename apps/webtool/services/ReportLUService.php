@@ -127,14 +127,15 @@ class ReportLUService extends MService
             $node['rgbBg'] = $sentence['rgbBg'];
             $result[] = $node;
         }
+        mdump($result);
         return json_encode($result);
     }
 
     public function decorateSentence($sentence, $labels)
     {
-        $sentence = utf8_decode($sentence);
         mdump($sentence);
-        mdump($labels);
+        //$sentence = utf8_decode($sentence);
+        mdump($sentence);
         $layer = [];
         $tempStartChar = -2;
         foreach($labels as $i => $label) {
@@ -176,12 +177,12 @@ class ReportLUService extends MService
                 $class = 'fe_' . ($label['feEntry'] ?: 'target');
                 if ($label['startChar'] >= 0) {
                     if ($layerNum == 0) {
-                        $decorated .= substr($sentence, $i, $label['startChar'] - $i);
+                        $decorated .= mb_substr($sentence, $i, $label['startChar'] - $i);
                     } else {
-                        $decorated .= "<span style='{$invisible}'>" . substr($sentence, $i, $label['startChar'] - $i) . "</span>";
+                        $decorated .= "<span style='{$invisible}'>" . mb_substr($sentence, $i, $label['startChar'] - $i) . "</span>";
                     }
                     //$decorated .= "<span style='{$style}'>" . substr($sentence, $label['startChar'], $label['endChar'] - $label['startChar'] + 1) . "</span>";
-                    $decorated .= "<span class=\"{$class}\">" . substr($sentence, $label['startChar'], $label['endChar'] - $label['startChar'] + 1) . "</span>";
+                    $decorated .= "<span class=\"{$class}\">" . mb_substr($sentence, $label['startChar'], $label['endChar'] - $label['startChar'] + 1) . "</span>";
                     $i = $label['endChar'] + 1;
                 } else { // null instantiation
                     $ni .= "<span class=\"{$class}\">" . $label['instantiationType'] . "</span> ";
@@ -189,11 +190,14 @@ class ReportLUService extends MService
                 }
             }
             if ($layerNum == 0) {
-                $decorated .= substr($sentence, $i) . $ni;
+                $decorated .= mb_substr($sentence, $i) . $ni;
             } else {
-                $decorated .= "<span style='{$invisible}'>" . substr($sentence, $i) . "</span>";
+                $decorated .= "<span style='{$invisible}'>" . mb_substr($sentence, $i) . "</span>";
             }
-            $result .= ($layerNum > 0 ? '<br/>' : '') . utf8_encode($decorated);
+            mdump($decorated);
+            //mdump(utf8_encode($decorated));
+            //$result .= ($layerNum > 0 ? '<br/>' : '') . utf8_encode($decorated);
+            $result .= ($layerNum > 0 ? '<br/>' : '') . $decorated;
         }
         return $result;
     }

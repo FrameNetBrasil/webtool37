@@ -262,6 +262,8 @@ class CxnController extends MController
         if ($constraintData->constrainedByType == 'CE') {
             $this->data->showCE = true;
         }
+        $structure = Manager::getAppService('structurecxn');
+        $this->data->optionsUDFeature = $structure->listOptionsUDFeature();
         $this->data->save = "@structure/cxn/addConstraintCN|formAddConstraintCN";
         $this->data->close = "!$('#formAddConstraintCN_dialog').dialog('close');";
         $this->data->title = _M('Add Constraint to Constraint');

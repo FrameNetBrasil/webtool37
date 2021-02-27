@@ -158,6 +158,7 @@
         manager.doAjax({{$manager->getURL('api/reportlu/getSentences')}}, function (data) {
             var sentences = JSON.parse(data);
             $.each(sentences, function(index, sentence ) {
+                console.log(sentence);
                 var id = "sentence" + sentence.idSentence;
                 if ($('#' + id).length) {
                     //$(sentence.text).replaceAll('#' + id);
@@ -173,6 +174,7 @@
         manager.doAjax({{$manager->getURL('api/reportlu/getSentences')}}, function (data) {
             var sentences = JSON.parse(data);
             $.each(sentences, function(index, sentence ) {
+                console.log(sentence);
                 var id = "sentence" + sentence.idSentence;
                 if ($('#' + id).length) {
                     //$(sentence.text).replaceAll('#' + id);

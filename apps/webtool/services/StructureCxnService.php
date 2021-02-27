@@ -1005,7 +1005,10 @@ class StructureCxnService extends MService
                 //Base::createConstraintInstance($constraint->getIdEntity(), 'con_lu', $cn->getIdEntity(), $lu->getIdEntity());
                 Base::createConstraintInstance($constraint->getIdEntity(), 'con_lu', $data->idConstraint, $lu->getIdEntity());
             }
-
+            if ($data->idUDFeatureCN != '') {
+                $constraint = Base::createEntity('CN', 'con');
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_udfeature', $data->idConstraint, $data->idUDFeatureCN);
+            }
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();

@@ -31,6 +31,10 @@
                     <label>(minimum 3 letters of Lexeme name to search)</label>
                     <include component="MLookupLexeme.php" id="idLexemeCN"/>
                 </div>
+                <div title="CE > UDFeature" style="overflow:auto;padding:10px;"  process="$this->data->showCE">
+                    <mselection id="idUDFeatureCN" options="$this->data->optionsUDFeature"/>
+                </div>
+
             </maccordion>
         </fields>
         <tools>
