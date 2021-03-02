@@ -5,16 +5,13 @@ class ConstraintController extends MController
 
     public function lookupDataByCE()
     {
-        mdump($this->data);
         //$constraint = new fnbr\models\ConstraintInstance($this->data->id);
         $constraint = new fnbr\models\ConstraintInstance();
         $constraint->getByIdConstraint($this->data->id);
         $constraintData = $constraint->getConstraintData();
-        mdump($constraintData);
         //$constraint->setIdEntity($constraintData->idConstrainedBy);
         //$constraints = $constraint->listConstraints();
         $constraints = $constraint->listByIdConstrained($constraintData->idConstrainedBy);
-        mdump($constraints);
         $data = [];
         $cxn = new fnbr\models\Construction();
         foreach ($constraints as $cn) {
@@ -25,7 +22,17 @@ class ConstraintController extends MController
                     'idConstruction' => $cxn->getId(),
                     'name' => $cxn->getName()
                 ];
+                $heiress = [];
+                $cxn->listAllHeiress($cxn->getId(), $heiress);
+                foreach($heiress as $heir) {
+                    $data[] = [
+                        'idConstruction' => $heir['idConstruction'],
+                        'name' => $heir['name']
+                    ];
+                }
+                /*
                 $daughters = $cxn->listDaughterRelations();
+                mdump('### daughters');
                 mdump($daughters);
                 foreach($daughters as $daughter) {
                     $data[] = [
@@ -33,6 +40,7 @@ class ConstraintController extends MController
                         'name' => $daughter['name']
                     ];
                 }
+                */
                 /*
                 $constraint->getById($constraintData->idConstrained);
                 $constraintData = $constraint->getConstraintData();
@@ -51,6 +59,7 @@ class ConstraintController extends MController
 
         }
         mdump($data);
+        mdump('==');
         $this->renderJSON($constraint->gridDataAsJSON($data));
     }
 
