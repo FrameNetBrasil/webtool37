@@ -64,7 +64,8 @@ class GraphicalController extends MController
         $this->data->isMaster = Manager::checkAccess('MASTER', A_EXECUTE) ? 'true' : 'false';
         Manager::getSession()->idDomain = $this->data->idDomain;
         $as = new \fnbr\models\ViewAnnotationSet();
-        $result = $as->listASCountByLanguage();
+        //$result = $as->listASCountByLanguage();
+        $result = $as->listCorpusASCountByLanguage(1);
         $max = 0;
         foreach($result as $i => $r) {
             $max = ($r['n'] > $max) ? $r['n'] : $max;

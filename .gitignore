@@ -70,3 +70,5 @@ docker/logs/apache2/other_vhosts_access.log
 ###########################
 index.html
 
+devops/mlfn/logs/apache2/error.log
+devops/mlfn/logs/apache2/other_vhosts_access.log

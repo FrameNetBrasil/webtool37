@@ -132,6 +132,22 @@ HERE;
         return $result;
     }
 
+    public function listCorpusASCountByLanguage($idCorpus)
+    {
+        $cmd = <<<HERE
+select substr(s.documentEntry,9,5) as language, count(*) as n
+from view_annotationset a
+join view_sentence s on (a.idSentence = s.idSentence)
+where s.idCorpus = {$idCorpus}
+group by substr(s.documentEntry,9,5)
+order by 1
+
+
+HERE;
+        $result = $this->getDb()->getQueryCommand($cmd)->getResult();
+        return $result;
+    }
+
     public function listCountTargetInTextByLanguage()
     {
         $result = [];
