@@ -957,11 +957,11 @@ class StructureCxnService extends MService
                     //Base::createConstraintInstance($constraintCxn->getIdEntity(), 'con_cxn', $cn->getId(), $cxn->getIdEntity());
                     Base::createConstraintInstance($constraintCxn->getIdEntity(), 'con_cxn', $data->idConstraint, $cxn->getIdEntity());
                     // constraints 'ele' Constraint(CXN)-CE
-                    $ces = $cxn->listCE()->asQuery()->getResult();
-                    foreach ($ces as $ce) {
-                        $constraintEle = Base::createEntity('CN', 'con');
-                        Base::createConstraintInstance($constraintEle->getIdEntity(), 'con_element', $constraintCxn->getIdEntity(), $ce['idEntity']);
-                    }
+                    //$ces = $cxn->listCE()->asQuery()->getResult();
+                    //foreach ($ces as $ce) {
+                    //    $constraintEle = Base::createEntity('CN', 'con');
+                    //    Base::createConstraintInstance($constraintEle->getIdEntity(), 'con_element', $constraintCxn->getIdEntity(), $ce['idEntity']);
+                    //}
                 } else { // constraint is a cxn that is another constraint
                     $cn2 = new fnbr\models\ConstraintType($data->idConstruction);
                     // constraint 'cxn' Constraint(ele)-Constraint(CXN)

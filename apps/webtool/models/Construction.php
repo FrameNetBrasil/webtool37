@@ -377,6 +377,42 @@ HERE;
 
     }
 
+    public function listAllHeiress($idCxn, &$heiress = [])
+    {
+        $idLanguage = \Manager::getSession()->idLanguage;
+        $cmd = <<<HERE
+
+SELECT RelationType.entry, entry_relatedCxn.name, cx2.idEntity, cx2.idConstruction
+FROM Construction cx1
+     INNER JOIN Entity entity1
+        ON (cx1.idEntity = entity1.idEntity)
+     INNER JOIN EntityRelation
+        ON (entity1.idEntity = EntityRelation.idEntity1)
+     INNER JOIN RelationType
+        ON (EntityRelation.idRelationType = RelationType.idRelationType)
+     INNER JOIN Entity entity2
+        ON (EntityRelation.idEntity2 = entity2.idEntity)
+     INNER JOIN Construction cx2
+        ON (entity2.idEntity = cx2.idEntity)
+     INNER JOIN Entry entry_relatedCxn
+        ON (cx2.entry = entry_relatedCxn.entry)
+     WHERE (cx1.idConstruction =  {$idCxn})
+        AND (RelationType.entry in (
+           'rel_inheritance_cxn'))
+        AND (entry_relatedCxn.idLanguage = {$idLanguage} )
+ORDER BY RelationType.entry, entry_relatedCxn.name
+            
+HERE;
+        $result = $this->getDb()->getQueryCommand($cmd)->getResult();
+        if (count($result) > 0) {
+            foreach ($result as $row) {
+                $heiress[] = $row;
+                $this->listAllHeiress($row['idConstruction'], $heiress);
+            }
+        }
+
+    }
+
     public function getStructure()
     {
         $idEntity = $this->getIdEntity();
@@ -620,7 +656,7 @@ HERE;
     {
         if ($data->evokes) {
             $frame = new Frame();
-            foreach($data->evokes as $frameEntry) {
+            foreach ($data->evokes as $frameEntry) {
                 $frame->getByEntry($frameEntry);
                 if ($frame->getIdEntity()) {
                     Base::createEntityRelation($this->getIdEntity(), 'rel_evokes', $frame->getIdEntity());
@@ -629,7 +665,7 @@ HERE;
         }
         if ($data->relations) {
             $cxnRelated = new Construction();
-            foreach($data->relations as $relation) {
+            foreach ($data->relations as $relation) {
                 $cxnRelated->getByEntry($relation[1]);
                 if ($cxnRelated->getIdEntity()) {
                     Base::deleteEntityRelation($this->getIdEntity(), $relation[0], $cxnRelated->getIdEntity());
@@ -639,7 +675,7 @@ HERE;
         }
         if ($data->inverse) {
             $cxnRelated = new Construction();
-            foreach($data->inverse as $relation) {
+            foreach ($data->inverse as $relation) {
                 $cxnRelated->getByEntry($relation[1]);
                 if ($cxnRelated->getIdEntity()) {
                     Base::deleteEntityRelation($cxnRelated->getIdEntity(), $relation[0], $this->getIdEntity());
