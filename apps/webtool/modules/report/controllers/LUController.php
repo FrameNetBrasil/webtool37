@@ -26,9 +26,6 @@ class LUController extends MController
     {
         $report = Manager::getAppService('reportlu');
         if ($this->data->id == '') {
-            if ($this->data->lu == '') {
-                $this->data->lu = '-';
-            }
             $children = $report->listLUs($this->data, $this->idLanguage);
             $data = (object)[
                 'id' => 'root',
