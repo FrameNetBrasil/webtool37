@@ -22,7 +22,7 @@ class ViewLU extends map\ViewLUMap {
 
     public function listByFilter($filter)
     {
-        $criteria = $this->getCriteria()->select('*')->orderBy('name');
+        $criteria = $this->getCriteria()->select('*, frame.entries.name frameName')->orderBy('name');
         if ($filter->idLU) {
             $idLU = $filter->idLU;
             if (is_array($idLU)) {
@@ -37,6 +37,7 @@ class ViewLU extends map\ViewLUMap {
         if ($filter->idLanguage) {
             $criteria->where("idLanguage = {$filter->idLanguage}");
         }
+        $criteria->where("frame.entries.idLanguage = {$filter->idLanguage}");
         $criteria->orderBy('name');
         return $criteria;
     }

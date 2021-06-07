@@ -12,7 +12,7 @@ class ReportLUService extends MService
             if (strpos($row['name'], '#') === false) {
                 $node = array();
                 $node['id'] = 'l' . $row['idLU'];
-                $node['text'] = $row['name'];
+                $node['text'] = $row['name']  . ' [' . $row['frameName'] . ']';
                 $node['state'] = 'closed';
                 $node['entry'] = $row['entry'];
                 $result[] = $node;
