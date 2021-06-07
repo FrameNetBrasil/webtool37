@@ -2,7 +2,24 @@
 
 class ReportLUService extends MService
 {
-
+    public function listLUs($data, $idLanguage = '')
+    {
+        $lu = new fnbr\models\ViewLU();
+        $filter = (object) ['lu' => $data->lu, 'idLanguage' => $idLanguage];
+        $lus = $lu->listByFilter($filter)->asQuery()->getResult(\FETCH_ASSOC);
+        $result = array();
+        foreach ($lus as $row) {
+            if (strpos($row['name'], '#') === false) {
+                $node = array();
+                $node['id'] = 'l' . $row['idLU'];
+                $node['text'] = $row['name'];
+                $node['state'] = 'closed';
+                $node['entry'] = $row['entry'];
+                $result[] = $node;
+            }
+        }
+        return $result;
+    }
     public function getFERealizations($lu)
     {
         $valence = new fnbr\models\Valence();
@@ -29,6 +46,7 @@ class ReportLUService extends MService
             $fes[$row['feEntry']]['as'][$row['idAnnotationSet']] = $row['idAnnotationSet'];
             $fe = $row['feName'];
             $feEntry = $row['feEntry'];
+            $feEntries[$feEntry] = $fe;
             $gf = $row['gfName'] ?: '?';
             $pt = $row['ptName'] ?: '?';
             $it = $row['itEntry'] ?: '?';
@@ -41,12 +59,13 @@ class ReportLUService extends MService
                 $realizations[$feEntry][$row['itName']]['--'] = [$idRealization];
             }
             $realizationAS[$idRealization][] = $row['idAnnotationSet'];
+
             if ($row['idAnnotationSet'] != $idAS) {
                 if ($idAS >= 0) {
                     $vpfe[$idVPFE]['feEntries'] = $feEntries;
                     $vpfe[$idVPFE]['count'] = $vpfe[$idVPFE]['count'] + 1;
                     if (count($pattern) > $maxCountFE) {
-                        $maxCountFE = count($pattern);
+                        $maxCountFE = count($pattern) + 1;
                     }
                     $vp[$idVPFE][$idVP][] = $idAS;
                     if (count($vp[$idVPFE][$idVP]) == 1) {
@@ -57,25 +76,27 @@ class ReportLUService extends MService
                 $idVPFE = 'id';
                 $pattern = [];
                 $feEntries = [];
+                $startCharNI = 1000;
             }
             if ($it == 'int_normal') {
                 $pattern[$startChar][$feEntry][$gf][$pt] = $row['idAnnotationSet'];
             } else {
-                $pattern['0'][$fe][$row['itName']]['--'][] = $row['idAnnotationSet'];
+                $pattern[$startChar][$feEntry][$row['itName']]['--'][] = $row['idAnnotationSet'];
             }
             $idAS = $row['idAnnotationSet'];
-            $feEntries[$feEntry] = $fe;
             $idVPFE = 'id'. md5($idVPFE. $fe);
             $idVP = 'id'. md5($idVP. $fe . $gf . $pt . $it);
         }
-        $vpfe[$idVPFE]['feEntries'] = $feEntries;
-        $vpfe[$idVPFE]['count'] = $vpfe[$idVPFE]['count'] + 1;
-        if (count($pattern) > $maxCountFE) {
-            $maxCountFE = count($pattern);
-        }
-        $vp[$idVPFE][$idVP][] = $idAS;
-        if (count($vp[$idVPFE][$idVP]) == 1) {
-            $patterns[$idVPFE][$idVP] = $pattern;
+        if ($idVPFE != '') {
+            $vpfe[$idVPFE]['feEntries'] = $feEntries;
+            $vpfe[$idVPFE]['count'] = $vpfe[$idVPFE]['count'] + 1;
+            if ($maxCountFE < (count($pattern) + 1)) {
+                $maxCountFE = count($pattern) + 1;
+            }
+            $vp[$idVPFE][$idVP][] = $idAS;
+            if (count($vp[$idVPFE][$idVP]) == 1) {
+                $patterns[$idVPFE][$idVP] = $pattern;
+            }
         }
         $patternFEAS = [];
         $patternAS = [];
@@ -109,6 +130,7 @@ class ReportLUService extends MService
         return $result;
     }
 
+
     public function getSentences() {
         $as = new fnbr\models\ViewAnnotationSet();
         $sentences = $as->listSentencesByAS($this->data->idAS)->asQuery()->getResult();
@@ -127,15 +149,15 @@ class ReportLUService extends MService
             $node['rgbBg'] = $sentence['rgbBg'];
             $result[] = $node;
         }
-        mdump($result);
+        //mdump($result);
         return json_encode($result);
     }
 
     public function decorateSentence($sentence, $labels)
     {
-        mdump($sentence);
+        //mdump($sentence);
         //$sentence = utf8_decode($sentence);
-        mdump($sentence);
+        //mdump($sentence);
         $layer = [];
         $tempStartChar = -2;
         foreach($labels as $i => $label) {
@@ -186,7 +208,6 @@ class ReportLUService extends MService
                     $i = $label['endChar'] + 1;
                 } else { // null instantiation
                     $ni .= "<span class=\"{$class}\">" . $label['instantiationType'] . "</span> ";
-                    mdump($ni);
                 }
             }
             if ($layerNum == 0) {
@@ -194,7 +215,6 @@ class ReportLUService extends MService
             } else {
                 $decorated .= "<span style='{$invisible}'>" . mb_substr($sentence, $i) . "</span>";
             }
-            mdump($decorated);
             //mdump(utf8_encode($decorated));
             //$result .= ($layerNum > 0 ? '<br/>' : '') . utf8_encode($decorated);
             $result .= ($layerNum > 0 ? '<br/>' : '') . $decorated;

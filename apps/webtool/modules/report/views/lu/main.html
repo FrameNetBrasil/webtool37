@@ -1,0 +1,70 @@
+<div id="reportLayout" style="width:100%;height:100%;">
+    <div id="reportNorthPane" data-options="region:'north', title:'LU'" style="height:70px">
+        <div style="float:left;padding:5px">
+            <input id="lu" name="lu" type="text" style="width:200px; padding:5px" placeholder="{{_'Search LU'}}">
+        </div>
+        <div style="float:left;padding:5px" class=""clearfix">
+    </div>
+    </div>
+    <div id="reportLeftPane" region="west" split="true" style="height: 100%">
+        <ul id="luTree"></ul>
+    </div>
+    <div id="reportCenterPane" region="center" style="height: 100%">
+        
+    </div>
+</div>
+
+<script type="text/javascript">
+    var idCenterPane = "reportCenterPane";
+    var report = {
+        isMaster: {{$data->isMaster|noescape}},
+        node: null
+    };
+    $(function () {
+
+        $('#reportLayout').layout({
+            fit: true
+        });
+        
+        report.reloadLU = function () {
+            $('#reportCenterPane').html('');
+            //manager.doGet({{$manager->getURL('report/frame/main')}});
+            $('#luTree').tree('reload');
+        }
+        
+        report.showLU = function (idLU) {
+            $('#reportCenterPane').html('');
+            manager.doGet({{$manager->getURL('report/lu/showLU')}} + '/' + idLU, 'reportCenterPane');
+        }
+
+        $('#lu').textbox({
+            buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search LU'}},
+            onClickButton: function() {
+                $('#luTree').tree({queryParams: {lu: $('#lu').textbox('getValue')}});
+            }
+        });
+
+        $( "#reportNorthPane" ).keypress(function(event) {
+            if ( event.which == 13 ) {
+                event.preventDefault();
+                $('#luTree').tree({
+                    queryParams: {
+                        lu: $('#lu').textbox('getValue')
+                    }
+                });
+            }
+        });
+
+        $('#luTree').tree({
+            url: {{$manager->getURL('report/lu/luTree')}},
+            onSelect: function (node) {
+                console.log(node);
+                if (node.id.charAt(0) == 'l') {
+                    report.showLU(node.id.substr(1));
+                }
+            }
+        });
+    });
+</script>

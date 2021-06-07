@@ -36,6 +36,7 @@ return [
         ]],
         'reports' => ['Reports', 'main/reports', 'fa fa-newspaper-o fa16px', '', '', [
             'framereport' => ['Frames', 'report/frame/main', 'fa fa-list-alt fa16px', '', '', []],
+            'lureport' => ['LU', 'report/lu/main', 'fa fa-list-alt fa16px', '', '', []],
             'cxnreport' => ['Constructions', 'report/cxn/main', 'fa fa-th fa16px', '', '', []],
             'corpusAnnotationReport' => ['Corpus Annotation', 'report/corpus/main', 'fa fa-file-text fa16px', '', A_ACCESS, []],
         ]],

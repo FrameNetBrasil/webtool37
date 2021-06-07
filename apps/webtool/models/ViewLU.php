@@ -20,6 +20,27 @@ class ViewLU extends map\ViewLUMap {
         return [];
     }
 
+    public function listByFilter($filter)
+    {
+        $criteria = $this->getCriteria()->select('*')->orderBy('name');
+        if ($filter->idLU) {
+            $idLU = $filter->idLU;
+            if (is_array($idLU)) {
+                $criteria->where("idLU", "IN", $idLU);
+            } else {
+                $criteria->where("idLU = {$idLU}");
+            }
+        }
+        if ($filter->lu) {
+            $criteria->where("name like '{$filter->lu}%'");
+        }
+        if ($filter->idLanguage) {
+            $criteria->where("idLanguage = {$filter->idLanguage}");
+        }
+        $criteria->orderBy('name');
+        return $criteria;
+    }
+
     public function listByFrame($idFrame, $idLanguage = '', $idLU = NULL)
     {
         $criteria = $this->getCriteria()->select('*')->orderBy('name');

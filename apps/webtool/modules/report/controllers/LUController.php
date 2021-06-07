@@ -22,6 +22,25 @@ class LUController extends MController
         $this->render();
     }
 
+    public function luTree()
+    {
+        $report = Manager::getAppService('reportlu');
+        if ($this->data->id == '') {
+            if ($this->data->lu == '') {
+                $this->data->lu = '-';
+            }
+            $children = $report->listLUs($this->data, $this->idLanguage);
+            $data = (object)[
+                'id' => 'root',
+                'state' => 'open',
+                'text' => 'LUs',
+                'children' => $children
+            ];
+            $json = json_encode([$data]);
+        }
+        $this->renderJson($json);
+    }
+
     public function showLU() {
         $idLU = $this->data->id;
         $report = Manager::getAppService('reportlu');
@@ -38,9 +57,15 @@ class LUController extends MController
         $this->data->maxCountFE = $result['maxCountFE'];
         $this->data->patterns = $result['patterns'];
         $this->data->realizationAS = $result['realizationAS'];
-        $this->data->feAS = MUtil::php2js($result['feAS']);
-        $this->data->patternFEAS = MUtil::php2js($result['patternFEAS']);
-        $this->data->patternAS = MUtil::php2js($result['patternAS']);
+        if (count($result['feAS']) > 0) {
+            $this->data->feAS = MUtil::php2js($result['feAS']);
+            $this->data->patternFEAS = MUtil::php2js($result['patternFEAS']);
+            $this->data->patternAS = MUtil::php2js($result['patternAS']);
+        } else {
+            $this->data->feAS = MUtil::php2js([]);
+            $this->data->patternFEAS = MUtil::php2js([]);
+            $this->data->patternAS = MUtil::php2js([]);
+        }
 
         $report = Manager::getAppService('reportframe');
         $this->data->fe = $report->getFEData($frame->getIdFrame());

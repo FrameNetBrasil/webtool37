@@ -8,7 +8,7 @@ class Valence
     public function FERealizations($idLU)
     {
         $cmd = <<<HERE
-select a.idAnnotationSet, lb.startChar, lb.endChar, l.entry layerEntry, entry_it.entry itEntry, entry_it.name itName, entry_fe.entry feEntry,
+select a.idAnnotationSet, IFNULL(lb.startChar,1000) startChar, lb.endChar, l.entry layerEntry, entry_it.entry itEntry, entry_it.name itName, entry_fe.entry feEntry,
 entry_fe.name feName, fe.idFRameElement feId, fe.typeEntry feTypeEntry, gf.name gfName, pt.name ptName
 FROM view_lu lu join view_subcorpuslu v1 on (lu.idLU = v1.idLU)
 join View_AnnotationSet a on (v1.idSubCorpus = a.idSubCorpus)
@@ -40,7 +40,7 @@ where (lu.idLU = {$idLU})
 and (entry_it.idLanguage = lu.idlanguage)
 and ((entry_fe.idLanguage is null) or (entry_fe.idLanguage = lu.idLanguage))
 and (l.entry in ('lty_fe'))
-order by a.idAnnotationSet, lb.startChar, lb.endChar, l.layerOrder, l.entry
+order by a.idAnnotationSet, 2, lb.endChar, l.layerOrder, l.entry
 HERE;
 
         $query = \Manager::getDatabase(\Manager::getConf('fnbr.db'))->getQueryCommand($cmd);

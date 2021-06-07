@@ -71,16 +71,18 @@
                                     {{$data->vpfe[$idVPFE]['count']}}
                                 </a>
                             </td>
+                            {{php $i = 0}}
                             {{foreach $scfegfptas as $sc => $fegfptas}}
                                 {{foreach $fegfptas as $feEntry => $gfptas}}
                                     {{foreach $gfptas as $gf => $ptas}}
                                         {{foreach $ptas as $pt => $as}}
+                                        {{php $i = $i + 1}}
                             <td><span class="{{$data->feIcon[$data->fes[$feEntry]['type']]}}">&nbsp;&nbsp;</span></span><span class="fe_{{$data->fes[$feEntry]['entry']}}">{{$data->fes[$feEntry]['name']}}</span></td>
                                         {{/foreach}}
                                     {{/foreach}}
                                 {{/foreach}}
                             {{/foreach}}
-                            {{for $i = count($scfegfptas); $i < $data->maxCountFE; $i++}}
+                            {{for $j = $i; $j < ($data->maxCountFE ); $j++}}
                                 <td></td>
                             {{/for}}
                         </tr>
@@ -91,16 +93,18 @@
                                     {{count($data->vp[$idVPFE][$idVP])}}
                                 </a>
                             </td>
+                            {{php $i = 0}}
                             {{foreach $scfegfptas as $sc => $fegfptas}}
                                 {{foreach $fegfptas as $fe => $gfptas}}
                                     {{foreach $gfptas as $gf => $ptas}}
                                         {{foreach $ptas as $pt => $as}}
+                                            {{php $i = $i + 1}}
                                             <td>{{$gf}}<br/>{{$pt}}</td>
                                         {{/foreach}}
                                     {{/foreach}}
                                 {{/foreach}}
                             {{/foreach}}
-                            {{for $i = count($scfegfptas); $i < $data->maxCountFE; $i++}}
+                            {{for $j = $i; $j < ($data->maxCountFE ); $j++}}
                             <td></td>
                             {{/for}}
                         </tr>
