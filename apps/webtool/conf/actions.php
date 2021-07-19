@@ -80,6 +80,7 @@ return [
             'de' => ['German', 'main/changeLanguage/de', 'fnbrFlagDe', '', A_ACCESS, []],
             'el' => ['Greek', 'main/changeLanguage/el', 'fnbrFlagEl', '', A_ACCESS, []],
             'hi' => ['Hindi', 'main/changeLanguage/hi', 'fnbrFlagHi', '', A_ACCESS, []],
+            'hr' => ['Croatian', 'main/changeLanguage/hr', 'fnbrFlagHr', '', A_ACCESS, []],
             'iw' => ['Hebrew', 'main/changeLanguage/iw', 'fnbrFlagIw', '', A_ACCESS, []],
             'it' => ['Italian', 'main/changeLanguage/it', 'fnbrFlagIt', '', A_ACCESS, []],
             'jp' => ['Japanese', 'main/changeLanguage/jp', 'fnbrFlagJp', '', A_ACCESS, []],

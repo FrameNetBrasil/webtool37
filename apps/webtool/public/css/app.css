@@ -280,13 +280,20 @@
 .fnbrFlagTe {
     width:16px;
     height:16px;
-    background: url(../images/hi.svg) no-repeat center center;
+    background: url(../images/te.svg) no-repeat center center;
     background-size: 16px 16px;
 }
 
 .fnbrFlagKn {
     width:16px;
     height:16px;
-    background: url(../images/hi.svg) no-repeat center center;
+    background: url(../images/kn.svg) no-repeat center center;
+    background-size: 16px 16px;
+}
+
+.fnbrFlagHr {
+    width:16px;
+    height:16px;
+    background: url(../images/hr.svg) no-repeat center center;
     background-size: 16px 16px;
 }
