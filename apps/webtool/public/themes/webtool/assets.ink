@@ -32,7 +32,7 @@ scripts/jquery.hotkeys-master/jquery.hotkeys.js
 scripts/bootstrap-wysiwyg-master/bootstrap-wysiwyg.js
 scripts/jquery.class.js
 scripts/cola_v3/cola.v3.js
-scripts/d3_v5/d3.js
+;scripts/d3_v5/d3.js
 ;scripts/d3/d3.min.js
 scripts/d3/d3.graph.js
 scripts/d3/d3.tree.js
@@ -46,9 +46,12 @@ scripts/jointJS/joint.shapes.entity.js
 scripts/jquery.md5.js
 scripts/trumbowyg/trumbowyg.min.js
 scripts/jsplumb/jsplumb.js
-scripts/d3-graphviz/node_modules/viz.js/viz.jsw
-scripts/d3-graphviz/node_modules/d3-graphviz/index.js
+;scripts/d3-graphviz/node_modules/viz.js/viz.jsw
+;scripts/d3-graphviz/node_modules/d3-graphviz/index.js
 scripts/bootstrap-3.2.0-dist/js/bootstrap.min.js
+scripts/d3-7.0.0/d3.min.js
+scripts/@hpcc-js/wasm/dist/index.min.js
+scripts/d3-graphviz-4.0.0/d3-graphviz.js
 
 ;Carrega os scripts usados pelo painter.php
 scripts/theme/extensions.js

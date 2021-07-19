@@ -35,6 +35,16 @@ var manager = {
     },
     afterRequest: function () {
     },
+    onEnter: (id, callback) => {
+        let target = '#' + id;
+        console.log(target);
+        $(target).keypress(function (event) {
+            if (event.which === 13) {
+                event.preventDefault();
+                callback();
+            }
+        })
+    },
     ready: function () {
     },
     events: {},

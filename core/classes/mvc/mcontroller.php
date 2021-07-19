@@ -282,7 +282,7 @@ class MController
         $module = $this->getModule();
         $base = Manager::getAppPath('', $module, $app);
         $path = '/views/' . $controller . '/' . $view;
-        $extensions = ['.xml', '.php', '.html', '.js', '.latte', '.wiki'];
+        $extensions = ['.xml', '.php', '.html', '.js', '.latte', '.blade.php'];
         $content = '';
         foreach ($extensions as $extension) {
             $fileName = $base . $path . $extension;

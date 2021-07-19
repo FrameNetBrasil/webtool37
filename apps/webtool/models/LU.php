@@ -95,13 +95,21 @@ class LU extends map\LUMap
 
     public function listByFilter($filter)
     {
-        $criteria = $this->getCriteria()->select('*')->orderBy('idLU');
+        $idLanguage = \Manager::getSession()->idLanguage;
+        $criteria = $this->getCriteria()->select('*,frame.entries.name as frameName');
+        $criteria->where("frame.entries.idLanguage", "=", $idLanguage);
         if ($filter->idLU) {
             if (is_array($filter->idLU)) {
                 $criteria->where("idLU", "IN", $filter->idLU);
             } else {
                 $criteria->where("idLU = {$filter->idLU}");
             }
+        }
+        if ($filter->name) {
+            $criteria->where("name", "LIKE", "'{$filter->name}%'")->orderBy('name');
+        }
+        if ($filter->idLanguage) {
+            $criteria->where("lemma.idLanguage", "=", $filter->idLanguage);
         }
         return $criteria;
     }

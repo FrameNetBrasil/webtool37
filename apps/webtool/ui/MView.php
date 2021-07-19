@@ -42,12 +42,28 @@ class MView extends MBaseView
 
     protected function processPHP()
     {
-        $viewName = basename($this->viewFile, '.php');
-        include_once $this->viewFile;
-        $control = new $viewName();
-        $control->setView($this);
-        //$control->load();
-        return $control;
+        if (strpos($this->viewFile, '.blade')) {
+            $baseName = basename($this->viewFile, '.blade.php');
+            $template = new MBlade([dirname($this->viewFile)]);
+            $template->context('manager', Manager::getInstance());
+            $template->context('page', Manager::getPage());
+            $template->context('view', $this);
+            $template->context('data', $this->data);
+            $template->context('components', Manager::getAppPath('components'));
+            $template->context('appURL', Manager::getAppURL());
+            $template->context('template', $template);
+            $template->context('isMaster', Manager::checkAccess('MASTER', A_EXECUTE) ? 'true' : 'false');
+            $template->context('isSenior', Manager::checkAccess('SENIOR', A_EXECUTE) ? 'true' : 'false');
+            $template->context('isAnno', Manager::checkAccess('ANNO', A_EXECUTE) ? 'true' : 'false');
+            return $template->fetch($baseName);
+        } else {
+            include_once $this->viewFile;
+            $viewName = basename($this->viewFile, '.php');
+            $control = new $viewName();
+            $control->setView($this);
+            //$control->load();
+            return $control;
+        }
     }
 
     protected function processXML()

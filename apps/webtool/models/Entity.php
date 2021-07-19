@@ -102,6 +102,12 @@ class Entity extends map\EntityMap
 HERE;
         } else if ($type == 'CN') {
             return $this->getAlias();
+        } else if ($type == 'LU') {
+            $cmd = <<<HERE
+        SELECT name
+        FROM {$model}
+        WHERE (idEntity = {$this->getIdEntity()})
+HERE;
         } else {
             $cmd = <<<HERE
         SELECT entry.name
@@ -407,6 +413,66 @@ HERE;
 
 HERE;
         $result = $this->getDb()->getQueryCommand($cmd)->getResult();
+        return $result;
+    }
+
+    public function listQualiaDirectRelations($filter)
+    {
+        $idLanguage = \Manager::getSession()->idLanguage;
+        $relationType = implode(',', array_map(function($i) {return "'{$i}'";},$filter));
+        $cmd = <<<HERE
+        SELECT RelationType.entry, model.name, model.idEntity, model.type, model.frame
+        FROM Entity entity1
+            INNER JOIN EntityRelation
+                ON (entity1.idEntity = EntityRelation.idEntity1)
+            INNER JOIN RelationType 
+                ON (EntityRelation.idRelationType = RelationType.idRelationType)
+            INNER JOIN Entity entity2
+                ON (EntityRelation.idEntity2 = entity2.idEntity)
+            INNER JOIN (
+                select lu.name, lu.idEntity, 'lu' as type, entry.name frame  
+                from LU 
+                    join Frame on (Lu.idFrame = Frame.idFrame)
+                    join entry on (frame.entry = entry.entry)
+                    where (entry.idLanguage = {$idLanguage})
+                ) model
+                ON (entity2.idEntity = model.idEntity)
+        WHERE (entity1.idEntity = {$this->getId()})
+            AND (RelationType.entry in ({$relationType}))
+        ORDER BY RelationType.entry, model.name
+                
+HERE;
+        $result = $this->getDb()->getQueryCommand($cmd)->treeResult('entry', 'name,idEntity,type');
+        return $result;
+    }
+
+    public function listQualiaInverseRelations($filter)
+    {
+        $idLanguage = \Manager::getSession()->idLanguage;
+        $relationType = implode(',', array_map(function($i) {return "'{$i}'";},$filter));
+        $cmd = <<<HERE
+        SELECT RelationType.entry, model.name, model.idEntity, model.type, model.frame
+        FROM Entity entity1
+            INNER JOIN EntityRelation
+                ON (entity1.idEntity = EntityRelation.idEntity1)
+            INNER JOIN RelationType 
+                ON (EntityRelation.idRelationType = RelationType.idRelationType)
+            INNER JOIN Entity entity2
+                ON (EntityRelation.idEntity2 = entity2.idEntity)
+            INNER JOIN (
+                select lu.name, lu.idEntity, 'lu' as type, entry.name frame  
+                from LU 
+                    join Frame on (Lu.idFrame = Frame.idFrame)
+                    join entry on (frame.entry = entry.entry)
+                    where (entry.idLanguage = {$idLanguage})
+                ) model
+                ON (entity1.idEntity = model.idEntity)
+        WHERE (entity2.idEntity = {$this->getId()})
+            AND (RelationType.entry in ({$relationType}))
+        ORDER BY RelationType.entry, model.name
+                
+HERE;
+        $result = $this->getDb()->getQueryCommand($cmd)->treeResult('entry', 'name,idEntity,type');
         return $result;
     }
 
