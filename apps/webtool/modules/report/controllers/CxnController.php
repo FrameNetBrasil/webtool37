@@ -12,7 +12,8 @@ class CxnController extends MController
     public function init()
     {
         Manager::checkLogin(false);
-        $this->idLanguage = Manager::getConf('options.language');
+        //$this->idLanguage = Manager::getConf('options.language');
+        $this->idLanguage = Manager::getSession()->idLanguage;
         $msgDir = Manager::getAppPath('conf/report');
         Manager::$msg->file = 'messages.' . $this->idLanguage . '.php';
         Manager::$msg->addMessages($msgDir);
