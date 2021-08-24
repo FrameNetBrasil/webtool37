@@ -354,7 +354,7 @@ HERE;
         $idLanguage = \Manager::getSession()->idLanguage;
         $transaction = $this->getDb()->beginTransaction();
         $cmd = <<<HERE
-            SELECT concat('lty_cefe_', f.idFrame) as idLayer, f.idFrame, e.name, a.idAnnotationSet
+            SELECT concat('lty_cefe_', f.idFrame, '_', a.idAnnotationSet) as idLayer, f.idFrame, e.name, a.idAnnotationSet
             FROM View_AnnotationSet a
                 INNER JOIN View_SubCorpusCxn sc on (a.idSubCorpus = sc.idSubCorpus)
                 INNER JOIN View_Construction c on (sc.idConstruction = c.idConstruction)
@@ -399,7 +399,7 @@ HERE;
 
         $cmd = <<<HERE
         SELECT a.idAnnotationSet,
-            concat('lty_cefe_', fe.idFrame) as idLayer,
+            concat('lty_cefe_', fe.idFrame, '_', a.idAnnotationSet) as idLayer,
             fe.idEntity AS idLabelType,
             e.name AS labelType,
             fe.idColor,
@@ -453,7 +453,7 @@ HERE;
         return $query;
     }
 
-    public function getCEFEData($idSentence, $idCEFELayer)
+    public function getCEFEData($idSentence, $idCEFELayer, $idAnnotationSet)
     {
         $cmd = <<<HERE
         SELECT ifnull(lb.startChar,-1) AS startChar,
@@ -467,7 +467,8 @@ HERE;
             LEFT JOIN View_FrameElement fe on (r.idEntity2 = fe.idEntity)
         WHERE (r.relationType = 'rel_evokes')
             AND (a.idSentence = {$idSentence})
-            AND (concat('lty_cefe_', fe.idFrame) = '{$idCEFELayer}')
+            AND (a.idAnnotationSet = {$idAnnotationSet})
+            AND (concat('lty_cefe_', fe.idFrame, '_', a.idAnnotationSet) = '{$idCEFELayer}')
 
 HERE;
         $query = $this->getDb()->getQueryCommand($cmd);
@@ -604,7 +605,10 @@ HERE;
                 $labels = array();
                 if ($layer->idLayerType != 0) {
                     if (substr($layer->layerTypeEntry, 0, 8) == 'lty_cefe') {
-                        $idFrame = substr($layer->layerTypeEntry, 9);//$layer->idFrame;
+                        $idFrame = substr($layer->layerTypeEntry, 9);
+                        mdump('************* '. $idFrame);
+                        $idFrame = substr($idFrame, 0, strpos($idFrame, '_'));
+                        mdump('************* '. $idFrame);
                         unset($layer);
                         $layer = clone $layerCE;
                         $layer->layerTypeEntry = 'lty_cefe';

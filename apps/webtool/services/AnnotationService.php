@@ -351,6 +351,7 @@ class AnnotationService extends MService
                 'currentLabelPos' => 0
             ];
         }
+
         $layers['layers'] = MUtil::php2js($result);//json_encode($result);
 
         // get AnnotationSets
@@ -568,7 +569,8 @@ class AnnotationService extends MService
         $ltCEFE = new fnbr\models\LayerType();
         $ltCEFE->getByEntry('lty_cefe');
         $queryLabelType = $as->getLayerNameCnxFrame($idSentence);
-        $cefe = $queryLabelType->chunkResultMany('idLayer', ['idFrame', 'name', 'idAnnotationSet'], 'A');
+        //$cefe = $queryLabelType->chunkResultMany('idLayer', ['idFrame', 'name', 'idAnnotationSet'], 'A');
+        $cefe = $queryLabelType->getResult();
 
         $level = Manager::getSession()->fnbrLevel;
         if ($level == 'BEGINNER') {
@@ -634,17 +636,19 @@ class AnnotationService extends MService
                 $lastLayerTypeEntry = $row['layerTypeEntry'];
                 // if lastLayer=CE, try to add the layers for CE-FE
                 if ($lastLayerTypeEntry == 'lty_ce') {
-                    foreach ($cefe as $idLayerCEFE => $frame) {
-                        if ($frame[2] == $row['idAnnotationSet']) {
+                    //foreach ($cefe as $idLayerCEFE => $frame) {
+                    foreach ($cefe as $frame) {
+                        if ($frame['idAnnotationSet'] == $row['idAnnotationSet']) {
+                            $idLayerCEFE = $frame['idLayer'];
                             $line[$idLayerCEFE] = new \stdclass();
                             $line[$idLayerCEFE]->idAnnotationSet = $row['idAnnotationSet'];
                             $line[$idLayerCEFE]->idLayerType = "{$ltCEFE->getId()}";
                             $line[$idLayerCEFE]->layerTypeEntry = $idLayerCEFE;
                             $line[$idLayerCEFE]->idLayer = $idLayerCEFE;
-                            $line[$idLayerCEFE]->layer = $frame[1] . '.FE';
+                            $line[$idLayerCEFE]->layer = $frame['name'] . '.FE';
                             $line[$idLayerCEFE]->ni = '';
                             $line[$idLayerCEFE]->show = true;
-                            $cefeData = $as->getCEFEData($idSentence, $idLayerCEFE)->getResult();
+                            $cefeData = $as->getCEFEData($idSentence, $idLayerCEFE, $row['idAnnotationSet'])->getResult();
                             foreach ($cefeData as $labelCEFE) {
                                 if ($labelCEFE['startChar'] > -1) {
                                     $posChar = $labelCEFE['startChar'];
