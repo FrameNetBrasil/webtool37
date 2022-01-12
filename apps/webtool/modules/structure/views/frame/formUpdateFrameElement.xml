@@ -4,6 +4,7 @@
         <property title="$this->data->title" onClose="structure.reloadFrame();"/>
         <fields>
             <mhiddenfield id="frameelement_idFrameElement" value="$this->data->id"/>
+            <mhiddenfield id="frameelement_idFrame" value="$this->data->idFrame"/>
             <mtextfield id="frameelement_entry" label="Entry:" width="250px"/> 
             <include component="MLookupCoreType.php" id="frameelement_idCoreType" label="Core Type"/>
             <include component="MLookupColor.php" id="frameelement_idColor" label="Color"/>
