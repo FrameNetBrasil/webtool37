@@ -33,6 +33,8 @@ $ cd webtool
 $ docker-compose up
 ```
 
+⋅⋅* Restore/create the MySQL database from the dump located at webtool/apps/webtool/docs/database/webtool_dump.zip
+
 * Application configuration files will be created from dist
 
   * webtool/core/conf/conf.php
