@@ -89,18 +89,6 @@ class CorpusController extends MController
         }
     }
 
-    public function formNewDocumentMM()
-    {
-        $this->data->idCorpus = $this->data->id;
-        $model = new fnbr\models\Corpus($this->data->idCorpus);
-        $this->data->corpus = $model->getEntry() . '  [' . $model->getName() . ']';
-        $this->data->save = "@structure/corpus/newDocumentMM|formNewDocumentMM";
-        $this->data->close = "!$('#formNewDocumentMM_dialog').dialog('close');";
-        $this->data->title = _M('new Document Multimodal');
-        $this->render();
-    }
-
-
     public function newCorpus()
     {
         try {
@@ -152,26 +140,11 @@ class CorpusController extends MController
         }
     }
 
-    public function newDocumentMM()
-    {
-        try {
-            $model = new fnbr\models\DocumentMM();
-            $this->data->documentmm->entry = 'doc_' . $this->data->documentmm->entry;
-            $model->save($this->data->documentmm);
-            $this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->document->entry}');");
-        } catch (\Exception $e) {
-            $this->renderPrompt('error', $e->getMessage());
-        }
-    }
-
     public function formSentences()
     {
         $this->data->idDocument = $this->data->id;
         $model = new fnbr\models\Document($this->data->idDocument);
         $this->data->title = $model->getName();
-        $documentMM = new fnbr\models\DocumentMM();
-        $documentMM->getByIdDocument($this->data->idDocument);
-        $this->data->idDocumentMM = $documentMM->getId() ?: 0;
         $this->render();
     }
 
@@ -181,41 +154,6 @@ class CorpusController extends MController
         $model = new fnbr\models\Document($this->data->idDocument);
         $sentences = json_encode($model->listSentence()->getResult());
         $this->renderJson($sentences);
-    }
-
-    public function formPreprocessingDocumentMM()
-    {
-        $model = new fnbr\models\Document($this->data->id);
-        $this->data->object = $model->getData();
-        $language = new fnbr\models\Language();
-        $this->data->languages = $language->listAll()->asQuery()->chunkResult('idLanguage', 'language');
-        $this->data->save = "@structure/corpus/preprocessingDocumentMM|formPreprocessingDocumentMM";
-        $this->data->close = "!$('#formPreprocessingDocumentMM_dialog').dialog('close');";
-        $this->data->title = 'Document: ' . $model->getName();
-        mdump($this->data->object);
-        $this->render();
-    }
-
-    public function preprocessingDocumentMM()
-    {
-        try {
-            $user = fnbr\models\Base::getCurrentUser();
-            $documentMMService = Manager::getAppService('documentmm');
-            $video = $this->data->document;
-            $fileOk = (isset($_FILES['localfile'])) || ($video->webfile != '');
-            if ($fileOk) {
-                if ($video->webfile == '') {
-                    $files = Mutil::parseFiles('localfile');
-                    $video->localfile = $files[0];
-                }
-                $documentMMService->uploadVideo($video);
-                $this->renderPrompt('information',"OK. File will be processed. A notification will be sent to {$user->getEmail()}.");
-            } else {
-                $this->renderPrompt('error',"No file informed.");
-            }
-        } catch (\Exception $e) {
-            $this->renderPrompt('error', "Error preprocessing Document MM. " . $e->getMessage());
-        }
     }
 
     public function formEditSentences() {

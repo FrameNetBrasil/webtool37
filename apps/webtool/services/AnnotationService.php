@@ -893,7 +893,7 @@ class AnnotationService extends MService
     public function listCorpusDocument($idCorpus)
     {
         $doc = new fnbr\models\Document();
-        $docs = $doc->listByCorpus($idCorpus)->asQuery()->getResult();
+        $docs = $doc->listByCorpus($idCorpus);
         foreach ($docs as $doc) {
             if ($doc['idDocument']) {
                 $node = array();
@@ -963,69 +963,4 @@ class AnnotationService extends MService
         $asc->save();
     }
 
-    public function listCorpusMultimodal($corpusName = '', $idLanguage = '')
-    {
-        $corpus = new fnbr\models\Corpus();
-        $filter = (object)['corpus' => $corpusName, 'idLanguage' => $idLanguage];
-        $corpora = $corpus->listMultimodalByFilter($filter)->asQuery()->chunkResult('idCorpus', 'name');
-        $result = array();
-        foreach ($corpora as $idCorpus => $name) {
-            $node = array();
-            $node['id'] = 'c' . $idCorpus;
-            $node['text'] = $name;
-            $node['state'] = 'closed';
-            $result[] = $node;
-        }
-        return json_encode($result);
-    }
-
-    public function listCorpusDocumentMultimodal($idCorpus)
-    {
-        $doc = new fnbr\models\DocumentMM();
-        $docs = $doc->listByCorpus($idCorpus)->asQuery()->getResult();
-        foreach ($docs as $doc) {
-            if ($doc['idDocument']) {
-                $node = array();
-                $node['id'] = 'd' . $doc['idDocument'];
-                $node['text'] = $doc['name'] . ' [' . $doc['quant'] . ']';
-                $node['state'] = 'open';
-                $result[] = $node;
-            }
-        }
-        return json_encode($result);
-    }
-
-    public function listAnnotationSetMultimodal($idDocumentMM, $sortable = NULL)
-    {
-        $documentMM = new fnbr\models\DocumentMM();
-        $documentMM->getById($idDocumentMM);
-        $document = new fnbr\models\Document($documentMM->getIdDocument());
-        $idSubCorpus = $document->getRelatedSubCorpus();
-
-        $as = new fnbr\models\ViewAnnotationSet();
-        $sentences = $as->listByDocumentMM($idDocumentMM, $sortable);//->asQuery()->getResult();
-        $annotation = $as->listFECEBySubCorpus($idSubCorpus);
-        $result = array();
-        foreach ($sentences as $sentence) {
-            $node = array();
-            $node['idAnnotationSetMM'] = $sentence['idAnnotationSetMM'];
-            $node['idSentenceMM'] = $sentence['idSentenceMM'];
-            //$node['text'] = $sentence['text'];
-            $node['startTimestamp'] = $sentence['startTimestamp'];
-            $node['endTimestamp'] = $sentence['endTimestamp'];
-
-            if ($annotation[$sentence['idSentence']]) {
-                $node['text'] = $this->decorateSentence($sentence['text'], $annotation[$sentence['idSentence']]);
-            } else {
-                $targets = $as->listTargetBySentence($sentence['idSentence']);
-                $node['text'] = $this->decorateSentence($sentence['text'], $targets);
-            }
-
-
-            $node['status'] = '';
-            $node['rgbBg'] = '';
-            $result[] = $node;
-        }
-        return json_encode($result);
-    }
 }

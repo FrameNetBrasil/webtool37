@@ -18,7 +18,7 @@ return [
         'templateEngine' => 'latte',
         'defaultPassword' => 'default',
         'pageTitle' => 'FNBr Webtool [github]',
-        'mainTitle' => 'FrameNet Brasil Webtool 3.0 [github]',
+        'mainTitle' => 'FrameNet Brasil Webtool 3.6 [github]',
         'baseURL' => 'http://localhost/webtool'
     ],
     'ui' => [

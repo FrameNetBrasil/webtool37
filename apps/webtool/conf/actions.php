@@ -31,7 +31,6 @@ return [
             'lexicalAnnotation' => ['Frame Mode', 'annotation/main/formLexicalAnnotation', 'fa fa-file-text-o fa16px', '', A_ACCESS, []],
             'cnxAnnotation' => ['Construction Mode', 'annotation/main/formConstructionalAnnotation', 'fa fa-th fa16px', '', A_ACCESS, []],
             'corpusAnnotation' => ['Corpus Mode', 'annotation/main/formCorpusAnnotation', 'fa fa-file-text fa16px', '', A_ACCESS, []],
-            'mmAnnotation' => ['Multimodal Mode', 'annotation/main/formMultimodalAnnotation', 'fa fa-file-video fa16px', '', A_ACCESS, []],
             'layers' => ['Manage Layers', '^annotation/layer/formManager', 'fa fa-list fa16px', 'JUNIOR', A_ACCESS, []],
         ]],
         'reports' => ['Reports', 'main/reports', 'fa fa-newspaper-o fa16px', '', '', [
@@ -52,7 +51,6 @@ return [
             'cxnframeeditor' => ['CxN-Frame Relation', 'visualeditor/cxnframe/main', 'fa fa-list-alt fa16px', 'MASTER', A_ACCESS, []],
         ]],
         'utils' => ['Utils', 'main/utils/', 'fa fa-briefcase fa16px', 'MASTER', A_ACCESS, [
-            'mailmsg' => ['Mail Message', 'auth/message/formMail', 'fa fa-envelope-o fa16px', '', A_ACCESS, []],
             'importWSDoc' => ['Import WS/Document', 'utils/import/formImportWSDoc', 'fa fa-upload fa16px', 'ADMIN', A_ACCESS, []],
             'exportDocWf' => ['Export Doc-Wf', 'utils/export/formExportDocWf', 'fa fa-download fa16px', 'ADMIN', A_ACCESS, []],
             'importLexWf' => ['Import Wf-Lexeme', 'utils/import/formImportLexWf', 'fa fa-upload fa16px', 'MASTER', A_ACCESS, []],
@@ -60,14 +58,6 @@ return [
             'registerWfLex' => ['Register Wf-Lexeme', 'utils/register/formRegisterLexWf', 'fa fa-edit fa16px', 'MASTER', A_ACCESS, []],
             'importMWE' => ['Import MWE', 'utils/import/formImportMWE', 'fa fa-upload fa16px', 'MASTER', A_ACCESS, []],
             'importFullText' => ['Import FullText', 'utils/import/formImportFullText', 'fa fa-upload fa16px', 'MASTER', A_ACCESS, []],
-            'importMultimodalText' => ['Import Multimodal Text', 'utils/import/formImportMultimodalText', 'fa fa-upload fa16px', 'MASTER', A_ACCESS, []],
-            'importMultimodalVideo' => ['Import Multimodal Video', 'utils/import/formImportMultimodalVideo', 'fa fa-upload fa16px', 'MASTER', A_ACCESS, []],
-            //'importXMLDoc' => ['Import XML Doc', 'utils/import/formImportXMLDoc', 'fa fa-upload fa16px', 'MASTER', A_ACCESS, []],
-            //'exportFrames' => ['Export Frames', 'utils/export/formExportFrames', 'fa fa-download fa16px', 'ADMIN', A_ACCESS, []],
-            //'importFrames' => ['Import Frames', 'utils/import/formImportFrames', 'fa fa-upload fa16px', 'ADMIN', A_ACCESS, []],
-            //'exportCxnFS' => ['Export Cxn as FS', 'utils/export/formExportCxnFS', 'fa fa-download fa16px', 'ADMIN', A_ACCESS, []],
-            //'exportCxnJson' => ['Export Cxn', 'utils/export/formExportCxn', 'fa fa-download fa16px', 'ADMIN', A_ACCESS, []],
-            //'importCxnJson' => ['Import Cxn', 'utils/import/formImportCxn', 'fa fa-upload fa16px', 'ADMIN', A_ACCESS, []],
         ]],
         'language' => ['Language', 'main/language', 'fa fa-flag-checkered fa16px', '', A_ACCESS, [
             '--' => ['Entry', 'main/changeLanguage/--', 'fnbrFlag--', '', A_ACCESS, []],

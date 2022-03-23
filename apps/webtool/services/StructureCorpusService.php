@@ -25,7 +25,7 @@ class StructureCorpusService extends MService
     public function listDocuments($idCorpus)
     {
         $document = new fnbr\models\Document();
-        $docs = $document->listByCorpus($idCorpus)->asQuery()->getResult();
+        $docs = $document->listByCorpus($idCorpus);
         foreach ($docs as $row) {
             if ($row['idDocument']) {
                 $node = array();

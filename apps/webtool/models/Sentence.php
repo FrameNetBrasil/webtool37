@@ -41,30 +41,23 @@ class Sentence extends map\SentenceMap {
         return $criteria;
     }
 
+    public function listByDocument($idDocument){
+        $criteria = $this->getCriteria()->select('*')->orderBy('idSentence');
+        $criteria->where('paragraph.document.idDocument','=', $idDocument);
+        return $criteria;
+    }
+
+    public function countByDocument($idDocument){
+        $criteria = $this->getCriteria()->select('count(*) as n')->orderBy('idSentence');
+        $criteria->where('paragraph.document.idDocument','=', $idDocument);
+        $result = $criteria->asQuery()->getResult();
+        return $result[0]['n'];
+    }
+
     public function save() {
         $timeline = 'sen_' . md5($this->getText());
         $this->setTimeLine(Base::newTimeLine($timeline, 'S'));
         parent::save();
-    }
-
-    public function delete() {
-        $cmd = <<<HERE
-
-select s.idSentenceMM
-FROM sentenceMM s
-where (s.idSentence = {$this->getId()})
-
-HERE;
-        $result = $this->getDb()->getQueryCommand($cmd)->getResult();
-        foreach($result as $row) {
-            $cmd2 = "delete from AnnotationSetMM where idSentenceMM = {$row['idSentenceMM']}";
-            $this->getDb()->executeCommand($cmd2);
-        }
-        $cmd3 = "delete from SentenceMM where idSentence = {$this->getId()}";
-        $this->getDb()->executeCommand($cmd3);
-        $cmd4 = "delete from AnnotationSet where idSentence = {$this->getId()}";
-        $this->getDb()->executeCommand($cmd4);
-        parent::delete();
     }
 
     public function hasAnnotation() {
