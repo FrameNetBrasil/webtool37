@@ -1,6 +1,6 @@
 # FNBr Webtool [Docker Container]
 
-[![Version](https://grabl.io/api/status/vaticle/typedb-client-java/badge.svg)](https://grabl.io/vaticle/typedb-client-java)
+[![Version](https://img.shields.io/github/v/tag/FrameNetBrasil/webtool)]
 
 Webtool is an annotation and database management application developed by [FrameNet Brasil Project](http://www.ufjf.br/framenetbr-eng/), which can be accessed using any web browser,
 without the need to install any additional software. Webtool handles multilingual framenets and constructicons.
