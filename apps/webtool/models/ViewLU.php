@@ -58,6 +58,24 @@ class ViewLU extends map\ViewLUMap {
         return $criteria;
     }
 
+    public function listByFrameToAnnotation($idFrame, $idLanguage = '', $idLU = NULL)
+    {
+        $criteria = $this->getCriteria()
+            ->select('idLU, name, count(subcorpus.annotationsets.idAnnotationSet) as quant')
+            ->where("idFrame = {$idFrame}")
+            ->where("idLanguage = {$idLanguage}")
+            ->groupBy('idLU,name')
+            ->orderBy('name');
+        if ($idLU) {
+            if (is_array($idLU)) {
+                $criteria->where("idLU", "IN", $idLU);
+            } else {
+                $criteria->where("idLU = {$idLU}");
+            }
+        }
+        return $criteria;
+    }
+
     public function listByLemmaFrame($lemma, $idFrame)
     {
         $criteria = $this->getCriteria()->select('*');

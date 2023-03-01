@@ -27,6 +27,8 @@
     $(function () {
 
         annotation.idSubCorpus = {{$data->idSubCorpus}};
+        annotation.idLU = {{$data->idLU}};
+        annotation.idDocument = {{$data->idDocument}};
 
         annotation.toolbarAS = [
             {
@@ -104,23 +106,44 @@
 
         ];
 
-        $('#annotationSet').datagrid({
-            title: {{$data->title}},
-            singleSelect: true,
-            //collapsible: true,
-            fit: true,
-            nowrap: false,
-            checkOnSelect: false,
-            selectOnCheck: false,
-            idField: 'idAnnotationSet',
-            toolbar: annotation.isMaster ? annotation.toolbarASMaster : annotation.toolbarAS,
-            url: {{$manager->getURL('annotation/main/annotationSet')}} + '/' + {{$data->idSubCorpus}},
-            method: 'get',
-            onSelect: function (rowIndex, rowData) {
-                $('#layersPane').html('');
-                console.log(rowData);
-                window.open({{$manager->getURL('annotation/main/annotation')}} + '/' + rowData.idSentence + '/' + rowData.idAnnotationSet + '/' + annotation.type, '_blank');
-            }
-        });
+        if (annotation.idLU) {
+            $('#annotationSet').datagrid({
+                title: {{$data->title}},
+                singleSelect: true,
+                //collapsible: true,
+                fit: true,
+                nowrap: false,
+                checkOnSelect: false,
+                selectOnCheck: false,
+                idField: 'idAnnotationSet',
+                toolbar: annotation.isMaster ? annotation.toolbarASMaster : annotation.toolbarAS,
+                url: {{$manager->getURL('annotation/main/annotationSet')}} + '/' + {{$data->idLU}},
+                method: 'get',
+                onSelect: function (rowIndex, rowData) {
+                    $('#layersPane').html('');
+                    console.log(rowData);
+                    window.open({{$manager->getURL('annotation/main/annotation')}} + '/' + rowData.idSentence + '/' + rowData.idAnnotationSet + '/' + annotation.type, '_blank');
+                }
+            });
+        } else if (annotation.idDocument) {
+            $('#annotationSet').datagrid({
+                title: {{$data->title}},
+                singleSelect: true,
+                //collapsible: true,
+                fit: true,
+                nowrap: false,
+                checkOnSelect: false,
+                selectOnCheck: false,
+                idField: 'idAnnotationSet',
+                toolbar: annotation.isMaster ? annotation.toolbarASMaster : annotation.toolbarAS,
+                url: {{$manager->getURL('annotation/main/annotationSetDocument')}} + '/' + {{$data->idDocument}},
+                method: 'get',
+                onSelect: function (rowIndex, rowData) {
+                    $('#layersPane').html('');
+                    console.log(rowData);
+                    window.open({{$manager->getURL('annotation/main/annotation')}} + '/' + rowData.idSentence + '/' + '0' + '/' + annotation.type, '_blank');
+                }
+            });
+        }
     });
 </script>

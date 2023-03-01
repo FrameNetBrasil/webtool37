@@ -34,9 +34,9 @@ class MainController extends MController
         $annotation = Manager::getAppService('annotation');
         if ($this->data->id == '') {
             $json = $annotation->listFrames($this->data->lu, $this->idLanguage);
-        } elseif ($this->data->id{0} == 'f') {
+        } elseif ($this->data->id[0] == 'f') {
             $json = $annotation->listLUs(substr($this->data->id, 1), $this->idLanguage);
-        } elseif ($this->data->id{0} == 'l') {
+        } elseif ($this->data->id[0] == 'l') {
             $json = $annotation->listSubCorpus(substr($this->data->id, 1));
         }
         $this->renderJson($json);
@@ -44,31 +44,26 @@ class MainController extends MController
 
     public function sentences()
     {
+        // alterado em 17/08/2022 - id = idLU / ignorando SubCorpus
         $annotation = Manager::getAppService('annotation');
-        $type = $this->data->id{0};
-        if ($type == 'd') {
+        $type = $this->data->id[0];
+        if ($type == 'd') { // document for corpus annotation
             $idDocument = substr($this->data->id, 1);
             $this->data->title = $annotation->getDocumentTitle($idDocument, $this->idLanguage);
-            $document = new fnbr\models\Document($idDocument);
-            $this->data->idSubCorpus = $document->getRelatedSubCorpus();
+            //$document = new fnbr\models\Document($idDocument);
+            //$this->data->idSubCorpus = $document->getRelatedSubCorpus();
+            $this->data->idDocument = $idDocument;
         } else {
-            $this->data->idSubCorpus = $this->data->id;
+            $this->data->idLU = $this->data->id;
+            $this->data->title = $annotation->getLUTitle($this->data->idLU, $this->idLanguage, $this->data->cxn);
         }
-        if ($this->data->idSubCorpus == '') {
-            $this->renderPrompt('warning', 'No SubCorpus for this Document.');
-        } else {
-            $this->data->status = $annotation->getSubCorpusStatus($this->data->idSubCorpus, $this->data->cxn);
-            foreach ($this->data->status->stat as $stat) {
-                $stats .= "({$stat->name}: {$stat->quant})  ";
-            }
-            $this->data->title = $annotation->getSubCorpusTitle($this->data->idSubCorpus, $this->idLanguage, $this->data->cxn) . "  - Stats: {$stats}  -  Status: {$this->data->status->status->msg}";
-            $this->data->userLanguage = fnbr\models\Base::languages()[fnbr\models\Base::getCurrentUser()->getConfigData('fnbrIdLanguage')];
-            $this->render();
-        }
+        $this->data->userLanguage = fnbr\models\Base::languages()[fnbr\models\Base::getCurrentUser()->getConfigData('fnbrIdLanguage')];
+        $this->render();
     }
 
     public function annotationSet()
     {
+        // alterado em 17/08/2022 - id = idLU / ignorando SubCorpus
         $annotation = Manager::getAppService('annotation');
         if ($this->data->sort) {
             $sortable = (object)[
@@ -77,6 +72,19 @@ class MainController extends MController
             ];
         }
         $json = $annotation->listAnnotationSet($this->data->id, $sortable);
+        $this->renderJson($json);
+    }
+
+    public function annotationSetDocument()
+    {
+        $annotation = Manager::getAppService('annotation');
+        if ($this->data->sort) {
+            $sortable = (object)[
+                'field' => $this->data->sort,
+                'order' => $this->data->order
+            ];
+        }
+        $json = $annotation->listAnnotationSetDocument($this->data->id, $sortable);
         $this->renderJson($json);
     }
 

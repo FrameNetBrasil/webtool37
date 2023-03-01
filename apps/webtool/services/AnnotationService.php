@@ -1,5 +1,8 @@
 <?php
 
+use fnbr\models\Construction;
+use fnbr\models\LU;
+
 class AnnotationService extends MService
 {
 
@@ -104,13 +107,14 @@ class AnnotationService extends MService
             return json_encode([[]]);
         }
         $lu = new fnbr\models\ViewLU();
-        $lus = $lu->listByFrame($idFrame, $idLanguage, $idLU)->asQuery()->chunkResult('idLU', 'name');
+        //$lus = $lu->listByFrame($idFrame, $idLanguage, $idLU)->asQuery()->chunkResult('idLU', 'name');
+        $lus = $lu->listByFrameToAnnotation($idFrame, $idLanguage, $idLU)->asQuery()->getResult();
         $result = array();
-        foreach ($lus as $idLU => $name) {
+        foreach ($lus as $lu) {
             $node = array();
-            $node['id'] = 'l' . $idLU;
-            $node['text'] = $name;
-            $node['state'] = 'closed';
+            $node['id'] = 'l' . $lu['idLU'];
+            $node['text'] = $lu['name'] . ' [' . $lu['quant'] . ']';
+            $node['state'] = 'open';
             $result[] = $node;
         }
         return json_encode($result);
@@ -134,6 +138,20 @@ class AnnotationService extends MService
     {
         $sc = $isCxn ? new fnbr\models\ViewSubCorpusCxn() : new fnbr\models\ViewSubCorpusLU();
         $title = $sc->getTitle($idSubCorpus, $idLanguage);
+        return $title;
+    }
+
+    public function getLUTitle($idLU, $idLanguage, $idCxn)
+    {
+        if ($idLU) {
+            $lu = new LU();
+            $lu->getById($idLU);
+            $title = $lu->getFullName();
+        } else if ($idCxn) {
+            $cxn = new Construction();
+            $cxn->getById($idCxn);
+            $title = $cxn->getName();
+        }
         return $title;
     }
 
@@ -165,10 +183,11 @@ class AnnotationService extends MService
 
     public function getDocumentTitle($idDocument, $idLanguage)
     {
-        $doc = new fnbr\models\Document();
-        $filter = (object)['idDocument' => $idDocument];
-        $result = $doc->listByFilter($filter)->asQuery()->getResult();
-        return 'Document:' . $result['name'];
+        $doc = new fnbr\models\Document($idDocument);
+//        $filter = (object)['idDocument' => $idDocument];
+//        $result = $doc->listByFilter($filter)->asQuery()->getResult();
+//        return 'Document:' . $result['name'];
+        return 'Document: ' . $doc->getName();
     }
 
     public function decorateSentence($sentence, $labels)
@@ -192,11 +211,14 @@ class AnnotationService extends MService
         return $decorated;
     }
 
-    public function listAnnotationSet($idSubCorpus, $sortable = NULL)
+    public function listAnnotationSet($idLU, $sortable = NULL)
     {
+        // alterado em 17/08/2022 - id = idLU / ignorando SubCorpus
         $as = new fnbr\models\ViewAnnotationSet();
-        $sentences = $as->listBySubCorpus($idSubCorpus, $sortable)->asQuery()->getResult();
-        $annotation = $as->listFECEBySubCorpus($idSubCorpus);
+        //$sentences = $as->listBySubCorpus($idSubCorpus, $sortable)->asQuery()->getResult();
+        $sentences = $as->listByLU($idLU, $sortable)->asQuery()->getResult();
+        //$annotation = $as->listFECEBySubCorpus($idSubCorpus);
+        $annotation = $as->listFECEByLU($idLU);
         $result = array();
         foreach ($sentences as $sentence) {
             $node = array();
@@ -211,6 +233,35 @@ class AnnotationService extends MService
             }
             $node['status'] = $sentence['annotationStatus'];
             $node['rgbBg'] = $sentence['rgbBg'];
+            $result[] = $node;
+        }
+        return json_encode($result);
+    }
+
+    public function listAnnotationSetDocument($idDocument, $sortable = NULL)
+    {
+        $as = new fnbr\models\ViewAnnotationSet();
+        $status = [
+            5 => ['UNANN', 'black'],
+            6 => ['MANUAL', 'yellow']
+        ];
+        $sentences = $as->listByDocument($idDocument, $sortable);
+        //$annotation = $as->listFECEByDocument($idDocument);
+
+        $result = array();
+        foreach ($sentences as $sentence) {
+            $node = array();
+            $node['idAnnotationSet'] = 0;//$sentence['idAnnotationSet'];
+            $node['idSentence'] = $sentence['idSentence'];
+//            if ($annotation[$sentence['idSentence']]) {
+//                $node['text'] = $this->decorateSentence($sentence['text'], $annotation[$sentence['idSentence']]);
+//            } else {
+                $targets = $as->listTargetBySentence($sentence['idSentence']);
+                $node['text'] = $this->decorateSentence($sentence['text'], $targets);
+                //$node['text'] = $sentence['text'];
+//            }
+            $node['status'] = $status[$sentence['idAnnotationStatus']][0];
+            $node['rgbBg'] = $status[$sentence['idAnnotationStatus']][1];
             $result[] = $node;
         }
         return json_encode($result);
@@ -332,24 +383,28 @@ class AnnotationService extends MService
         $result = array();
         $asLayers = $as->getLayers($idSentence);
         foreach ($asLayers as $row) {
-            $result[$row['idLayer']] = [
-                'idAnnotationSet' => $row['idAnnotationSet'],
-                'nameLayer' => $row['name'],
-                'currentLabel' => '0',
-                'currentLabelPos' => 0
-            ];
+            if (($idAnnotationSet == 0) || ($idAnnotationSet == $row['idAnnotationSet'])) {
+                $result[$row['idLayer']] = [
+                    'idAnnotationSet' => $row['idAnnotationSet'],
+                    'nameLayer' => $row['name'],
+                    'currentLabel' => '0',
+                    'currentLabelPos' => 0
+                ];
+            }
         }
 
         // CE-FE is a "artificial" layer; it needs to be inserts manually
         $queryLabelType = $as->getLabelTypesCEFE($idSentence);
         $rowsCEFE = $queryLabelType->getResult();
         foreach ($rowsCEFE as $row) {
-            $result[$row['idLayer']] = [
-                'idAnnotationSet' => $row['idAnnotationSet'],
-                'nameLayer' => $row['idLayer'],
-                'currentLabel' => '0',
-                'currentLabelPos' => 0
-            ];
+            if (($idAnnotationSet == 0) || ($idAnnotationSet == $row['idAnnotationSet'])) {
+                $result[$row['idLayer']] = [
+                    'idAnnotationSet' => $row['idAnnotationSet'],
+                    'nameLayer' => $row['idLayer'],
+                    'currentLabel' => '0',
+                    'currentLabelPos' => 0
+                ];
+            }
         }
 
         $layers['layers'] = MUtil::php2js($result);//json_encode($result);
@@ -358,12 +413,14 @@ class AnnotationService extends MService
         $result = array();
         $annotationSets = $as->getAnnotationSets($idSentence);
         foreach ($annotationSets as $row) {
-            $result[$row['idAnnotationSet']] = [
-                'idAnnotationSet' => $row['idAnnotationSet'],
-                'name' => $row['name'],
-                'type' => $row['type'],
-                'show' => true
-            ];
+            if (($idAnnotationSet == 0) || ($idAnnotationSet == $row['idAnnotationSet'])) {
+                $result[$row['idAnnotationSet']] = [
+                    'idAnnotationSet' => $row['idAnnotationSet'],
+                    'name' => $row['name'],
+                    'type' => $row['type'],
+                    'show' => true
+                ];
+            }
         }
         $layers['annotationSets'] = MUtil::php2js($result);;//json_encode($result);
 
@@ -681,9 +738,11 @@ class AnnotationService extends MService
 // last, create data
         $data = array();
         foreach ($line as $idLine => $layer) {
-            $data[] = $layer;
+            if (($idAnnotationSet == 0) || ($idAnnotationSet == $layer->idAnnotationSet)) {
+                $data[] = $layer;
+            }
         }
-        //mdump($data);
+//        mdump($data);
         return json_encode($data);
         //return $data;
     }

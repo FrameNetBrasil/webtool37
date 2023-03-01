@@ -36,6 +36,45 @@ class ViewAnnotationSet extends map\ViewAnnotationSetMap {
         return $criteria;
     }
 
+    public function listByLU($idLU, $sortable = NULL) {
+        $criteria = $this->getCriteria()
+            ->select('idAnnotationSet, idSentence, sentence.text, entries.name as annotationStatus, idAnnotationStatus, annotationstatustype.color.rgbBg')
+            ->where("subcorpuslu.idLU = {$idLU}");
+        if ($sortable) {
+            if ($sortable->field == 'status') {
+                $criteria->orderBy('entries.name ' . $sortable->order);
+            }
+            if ($sortable->field == 'idSentence') {
+                $criteria->orderBy('idSentence ' . $sortable->order);
+            }
+        }
+        Base::entryLanguage($criteria);
+        return $criteria;
+    }
+
+    public function listByDocument($idDocument, $sortable = NULL) {
+        $idLanguage = \Manager::getSession()->idLanguage;
+        $sort = '';
+        if ($sortable) {
+            if ($sortable->field == 'status') {
+                $sort .= ' ORDER BY entry.name ' . $sortable->order;
+            } else if ($sortable->field == 'idSentence') {
+                $sort .= ' ORDER BY idSentence ' . $sortable->order;
+            }
+        }
+        $cmd = <<<HERE
+SELECT sentence.idSentence,sentence.text, if(count(annotationset.idAnnotationSet) = 0, 5, 6) as idAnnotationStatus 
+FROM sentence
+JOIN paragraph on (sentence.idParagraph = paragraph.idParagraph)
+LEFT JOIN annotationset ON (sentence.idSentence=annotationset.idSentence)
+WHERE (paragraph.idDocument = {$idDocument})
+GROUP BY sentence.idSentence,sentence.text
+
+HERE;
+        $result = $this->getDb()->getQueryCommand($cmd)->getResult();
+        return $result;
+    }
+
     public function listSentencesByAS($idAnnotationSet) {
         $criteria = $this->getCriteria()->
         select('idAnnotationSet, idSentence, sentence.text, entries.name as annotationStatus, idAnnotationStatus, annotationstatustype.color.rgbBg');
@@ -57,6 +96,39 @@ class ViewAnnotationSet extends map\ViewAnnotationSetMap {
         WHERE (idSubCorpus = {$idSubCorpus})
             AND (idLanguage = {$idLanguage} )
         ORDER BY idSentence,startChar
+
+HERE;
+        $result = $this->getDb()->getQueryCommand($cmd)->treeResult('idSentence', 'startChar,endChar,rgbFg,rgbBg,instantiationType');
+        return $result;
+    }
+
+    public function listFECEByLU($idLU) {
+        $idLanguage = \Manager::getSession()->idLanguage;
+        $cmd = <<<HERE
+SELECT *
+FROM view_labelfecetarget vl
+JOIN subcorpus on (subcorpus.idSubCorpus = vl.idSubCorpus)
+JOIN entityRelation er on (er.idEntity2 = subCorpus.idEntity)
+JOIN lu on (lu.idEntity = er.idEntity1)
+WHERE (lu.idLU ={$idLU})
+AND (idLanguage = {$idLanguage} )
+ORDER BY idSentence,startChar
+
+HERE;
+        $result = $this->getDb()->getQueryCommand($cmd)->treeResult('idSentence', 'startChar,endChar,rgbFg,rgbBg,instantiationType');
+        return $result;
+    }
+
+    public function listFECEByDocument($idDocument) {
+        $idLanguage = \Manager::getSession()->idLanguage;
+        $cmd = <<<HERE
+SELECT *
+FROM view_labelfecetarget vl
+JOIN sentence s on (vl.idSentence = s.idSentence)
+JOIN paragraph p on (s.idParagraph = p.idParagraph)
+WHERE (p.idDocument = {$idDocument})
+AND (vl.idLanguage = {$idLanguage} )
+ORDER BY vl.idSentence,vl.startChar
 
 HERE;
         $result = $this->getDb()->getQueryCommand($cmd)->treeResult('idSentence', 'startChar,endChar,rgbFg,rgbBg,instantiationType');

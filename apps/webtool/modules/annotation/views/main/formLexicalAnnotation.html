@@ -26,6 +26,11 @@
         manager.doGet({{$manager->getURL('annotation/main/sentences')}} + '/' + subCorpus,'sentencesPane');
     }
 
+    annotation.showSentences = function (idLU) {
+        $('#layersPane').html('');
+        manager.doGet({{$manager->getURL('annotation/main/sentences')}} + '/' + idLU,'sentencesPane');
+    }
+
     $(function () {
 
         $('#annoLayout').layout({
@@ -46,8 +51,8 @@
             url: {{$manager->getURL('annotation/main/frameTree')}},
             onSelect: function (node) {
                 console.log(node);
-                if (node.id.charAt(0) == 's') {
-                    annotation.showSubCorpus(node.id.substr(1));
+                if (node.id.charAt(0) == 'l') {
+                    annotation.showSentences(node.id.substr(1));
                 }
             }
         });

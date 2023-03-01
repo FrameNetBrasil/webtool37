@@ -40,6 +40,7 @@ class ViewLUMap extends \MBusinessModel {
             'associations' => array(
                 'frame' => array('toClass' => 'fnbr\models\ViewFrame', 'cardinality' => 'oneToOne' , 'keys' => 'idFrame:idFrame'),
                 'language' => array('toClass' => 'fnbr\models\Language', 'cardinality' => 'oneToOne' , 'keys' => 'idLanguage:idLanguage'),
+                'subcorpus' => array('toClass' => 'fnbr\models\ViewSubCorpusLU', 'cardinality' => 'oneToMany' , 'keys' => 'idLU:idLU'),
             )
         );
     }

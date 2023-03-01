@@ -130,12 +130,14 @@ class AnnotationSet extends map\AnnotationSetMap
 
     public function getWordsChars($idSentence)
     {
-        $criteria = $this->getCriteria()->
-        select('sentence.text')->
-        where("idSentence = {$idSentence}");
-        $result = $criteria->asQuery()->getResult();
-        //$text = utf8_decode($result[0]['text']);
-        $text = $result[0]['text'];
+//        $criteria = $this->getCriteria()->
+//        select('sentence.text')->
+//        where("idSentence = {$idSentence}");
+        $sentence = new Sentence();
+        $sentence->getById($idSentence);
+//        $result = $criteria->asQuery()->getResult();
+//        $text = $result[0]['text'];
+        $text = $sentence->getText();
         $array = array();
         $punctuation = " .,;:?/'][\{\}\"!@#$%&*\(\)-_+=“”";
         $word = "";
