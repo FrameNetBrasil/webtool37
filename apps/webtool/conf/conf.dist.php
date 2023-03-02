@@ -17,8 +17,9 @@ return [
         'painter' => 'EasyUI',
         'templateEngine' => 'latte',
         'defaultPassword' => 'default',
-        'pageTitle' => 'FNBr Webtool [github]',
-        'mainTitle' => 'FrameNet Brasil Webtool 3.6 [github]',
+        'pageTitle' => 'FNBr Webtool 3.6.1 [github]',
+        'mainTitle' => 'FrameNet Brasil Webtool 3.6.1 [github]',
+        'footer' => '&nbsp;© 2014, 2023 FrameNetBrasil Project',
         'baseURL' => 'http://localhost/webtool'
     ],
     'ui' => [
