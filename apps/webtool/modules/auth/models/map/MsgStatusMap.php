@@ -12,7 +12,7 @@ class MsgStatusMap extends \MBusinessModel
         return array(
             'class' => \get_called_class(),
             'database' => \Manager::getConf('fnbr.db'),
-            'table' => 'auth_msgstatus',
+            'table' => 'msgstatus',
             'attributes' => array(
                 'idMsgStatus' => array('column' => 'idMsgStatus', 'key' => 'primary', 'idgenerator' => 'identity', 'type' => 'integer'),
                 'status' => array('column' => 'status', 'type' => 'string'),

@@ -12,7 +12,7 @@ class LogMap extends \MBusinessModel
         return array(
             'class' => \get_called_class(),
             'database' => \Manager::getConf('fnbr.db'),
-            'table' => 'auth_log',
+            'table' => 'log',
             'attributes' => array(
                 'idLog' => array('column' => 'idLog', 'key' => 'primary', 'idgenerator' => 'identity', 'type' => 'integer'),
                 'ts' => array('column' => 'ts', 'type' => 'timestamp'),

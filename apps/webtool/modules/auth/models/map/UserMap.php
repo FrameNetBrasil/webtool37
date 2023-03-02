@@ -12,28 +12,30 @@ class UserMap extends \MBusinessModel
         return array(
             'class' => \get_called_class(),
             'database' => \Manager::getConf('fnbr.db'),
-            'table' => 'auth_user',
+            'table' => '`user`',
             'attributes' => array(
                 'idUser' => array('column' => 'idUser', 'key' => 'primary', 'idgenerator' => 'identity', 'type' => 'integer'),
                 'login' => array('column' => 'login', 'type' => 'string'),
-                'pwd' => array('column' => 'pwd', 'type' => 'string'),
+//                'pwd' => array('column' => 'pwd', 'type' => 'string'),
                 'passMD5' => array('column' => 'passMD5', 'type' => 'string'),
-                'theme' => array('column' => 'theme', 'type' => 'string'),
+//                'theme' => array('column' => 'theme', 'type' => 'string'),
                 'config' => array('column' => 'config', 'type' => 'string'),
                 'active' => array('column' => 'active', 'type' => 'integer'),
                 'status' => array('column' => 'status', 'type' => 'string'),
                 'name' => array('column' => 'name', 'type' => 'string'),
                 'email' => array('column' => 'email', 'type' => 'string'),
-                'nick' => array('column' => 'nick', 'type' => 'string'),
+//                'nick' => array('column' => 'nick', 'type' => 'string'),
                 'auth0IdUser' => array('column' => 'auth0IdUser', 'type' => 'string'),
                 'auth0CreatedAt' => array('column' => 'auth0CreatedAt', 'type' => 'string'),
                 'lastLogin' => array('column' => 'lastLogin', 'type' => 'timestamp'),
-                'idPerson' => array('column' => 'idPerson', 'type' => 'integer'),
+//                'idPerson' => array('column' => 'idPerson', 'type' => 'integer'),
+//                'idLanguage' => array('column' => 'idLanguage', 'type' => 'integer'),
             ),
             'associations' => array(
 //                'person' => array('toClass' => 'fnbr\auth\models\Person', 'cardinality' => 'oneToOne', 'keys' => 'idPerson:idPerson'),
                 'logs' => array('toClass' => 'fnbr\auth\models\Log', 'cardinality' => 'oneToMany', 'keys' => 'idUser:idUser'),
-                'groups' => array('toClass' => 'fnbr\auth\models\Group', 'cardinality' => 'manyToMany', 'associative' => 'auth_user_group'),
+                'groups' => array('toClass' => 'fnbr\auth\models\Group', 'cardinality' => 'manyToMany', 'associative' => 'user_group'),
+//                'language' => array('toClass' => 'fnbr\models\Language', 'cardinality' => 'oneToOne', 'keys' => 'idLanguage:idLanguage'),
             )
         );
     }

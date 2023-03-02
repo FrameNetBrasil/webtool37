@@ -271,8 +271,12 @@ class User extends map\UserMap
             $this->setLogin($userData->email);
             $this->setActive(1);
             $this->setStatus('0');
+            $group = new Group();
+            $group->getByName('BEGINNER');
             $this->setData($userData);
             $this->registerLogin();
+            $this->setGroups([$group]);
+            $this->saveAssociation('groups');
             $transaction->commit();
         } catch (Exception $e) {
             $transaction->rollback();

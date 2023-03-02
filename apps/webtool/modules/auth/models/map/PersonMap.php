@@ -12,7 +12,7 @@ class PersonMap extends \MBusinessModel
         return array(
             'class' => \get_called_class(),
             'database' => \Manager::getConf('fnbr.db'),
-            'table' => 'auth_person',
+            'table' => 'person',
             'attributes' => array(
                 'idPerson' => array('column' => 'idPerson', 'key' => 'primary', 'idgenerator' => 'identity', 'type' => 'integer'),
                 'name' => array('column' => 'name', 'type' => 'string'),

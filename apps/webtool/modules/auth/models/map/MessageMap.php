@@ -12,7 +12,7 @@ class MessageMap extends \MBusinessModel
         return array(
             'class' => \get_called_class(),
             'database' => \Manager::getConf('fnbr.db'),
-            'table' => 'auth_message',
+            'table' => 'message',
             'attributes' => array(
                 'idMessage' => array('column' => 'idMessage', 'key' => 'primary', 'idgenerator' => 'identity', 'type' => 'integer'),
                 'subject' => array('column' => 'subject', 'type' => 'string'),

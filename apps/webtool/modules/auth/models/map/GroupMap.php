@@ -11,7 +11,7 @@ class GroupMap extends \MBusinessModel
         return array(
             'class' => \get_called_class(),
             'database' => \Manager::getConf('fnbr.db'),
-            'table' => 'auth_group',
+            'table' => '`group`',
             'attributes' => array(
                 'idGroup' => array('column' => 'idGroup', 'key' => 'primary', 'idgenerator' => 'identity', 'type' => 'integer'),
                 'name' => array('column' => 'name', 'type' => 'string'),
@@ -19,7 +19,7 @@ class GroupMap extends \MBusinessModel
             ),
             'associations' => array(
                 'access' => array('toClass' => 'fnbr\auth\models\Access', 'cardinality' => 'oneToMany', 'keys' => 'idGroup:idGroup'),
-                'users' => array('toClass' => 'fnbr\auth\models\User', 'cardinality' => 'manyToMany', 'associative' => 'auth_user_group'),
+                'users' => array('toClass' => 'fnbr\auth\models\User', 'cardinality' => 'manyToMany', 'associative' => 'user_group'),
             )
         );
     }

@@ -12,7 +12,7 @@ class AccessMap extends \MBusinessModel
         return array(
             'class' => \get_called_class(),
             'database' => \Manager::getConf('fnbr.db'),
-            'table' => 'auth_access',
+            'table' => 'access',
             'attributes' => array(
                 'idAccess' => array('column' => 'idAccess', 'key' => 'primary', 'idgenerator' => 'identity', 'type' => 'integer'),
                 'rights' => array('column' => 'rights', 'type' => 'integer'),

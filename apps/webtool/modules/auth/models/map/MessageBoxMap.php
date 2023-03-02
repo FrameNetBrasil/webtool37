@@ -12,7 +12,7 @@ class MessageBoxMap extends \MBusinessModel
         return array(
             'class' => \get_called_class(),
             'database' => \Manager::getConf('fnbr.db'),
-            'table' => 'auth_messagebox',
+            'table' => 'messagebox',
             'attributes' => array(
                 'idMessageBox' => array('column' => 'idMessageBox', 'key' => 'primary', 'idgenerator' => 'identity', 'type' => 'integer'),
                 'idUser' => array('column' => 'idUser', 'key' => 'foreign', 'type' => 'integer'),
