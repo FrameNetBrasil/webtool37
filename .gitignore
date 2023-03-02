@@ -58,7 +58,6 @@ core/var/sessions/*
 
 # Config Files #
 ################
-core/conf/conf.php
 .env
 
 # Log Files #

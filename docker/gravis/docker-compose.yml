@@ -1,0 +1,15 @@
+# Usage: Follow the steps in the README file in the directory containing this file
+version: "3"
+services:
+    workspace:
+        build:
+            context: ./
+        container_name: 'fnbr-gravis'
+        restart: unless-stopped
+        ports:
+            - "9800:80" # Jupyter
+        volumes:
+            - .:/workspace
+#        working_dir: /
+        # for some reason the entrypoint doesn't see the full PATH even though it's run by the appropriate user and even sources their .bashrc
+#        command: ./workspace/start.sh

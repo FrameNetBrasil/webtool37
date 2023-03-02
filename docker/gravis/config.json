@@ -1,0 +1,38 @@
+{
+    "listeners": {
+        "*:80": {
+            "pass": "routes"
+        }
+
+    },
+
+    "routes": [
+        {
+            "match": {
+                "uri": [
+                     "~\\.(css|gif|html?|ico|jpg|js(on)?|png|svg|ttf|woff2?)$"
+                ]
+            },
+
+            "action": {
+                 "share": "/workspace/files$uri"
+            }
+        },
+        {
+            "action": {
+                "pass": "applications/fastapi"
+            }
+        }
+    ],
+
+    "applications": {
+        "fastapi": {
+            "type": "python 3.9",
+            "path": "/workspace/app/",
+            "home": "/usr/local",
+            "module": "asgi",
+            "callable": "app"
+        }
+    }
+}
+
