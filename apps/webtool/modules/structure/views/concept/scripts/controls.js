@@ -63,18 +63,30 @@ $(function () {
     $('#menuConcept').menu({});
     $('#menuConceptElement').menu({});
 
-    $('#type').textbox({
+    $('#concept').textbox({
         buttonIcon: 'icon-search',
         iconAlign:'right',
-        prompt: {{_'Search Type'}},
+        prompt: {{_'Search Concept'}},
         onClickButton: function() {
-            $('#conceptsTree').tree({queryParams: {type: $('#type').textbox('getValue')}});
+            $('#conceptsTree').tree({queryParams: {concept: $('#concept').textbox('getValue'), search:1}});
+        }
+    });
+
+    $('#fullTree').linkbutton({
+        onClick: function() {
+            $('#conceptsTree').tree({queryParams: {concept: '', search:0}});
         }
     });
 
     $('#conceptsTree').tree({
         url: {{$manager->getURL('structure/concept/conceptTree')}},
-        onContextMenu: structure.contextMenuConcept
+        onContextMenu: structure.contextMenuConcept,
+        onClick: function (node) {
+            console.log(node);
+            if (node.id.charAt(0) == 'c') {
+                structure.showConcept(node.id.substr(1));
+            }
+        },
     });
 
 });

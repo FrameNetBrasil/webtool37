@@ -56,10 +56,16 @@ class Type extends map\TypeMap {
         $transaction = $this->beginTransaction();
         try {
             if (!$this->isPersistent()) {
+                $entity = new Entity();
+                $entity->setAlias($this->getEntry());
+                $entity->setType('GT');
+                $entity->save();
+                $this->setIdEntity($entity->getId());
                 $entry = new Entry();
-                $entry->newEntry($this->getEntry());
+                $entry->newEntry($this->getEntry(),$entity->getId());
             }
             parent::save();
+            Timeline::addTimeline("type",$this->getId(),"S");
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();

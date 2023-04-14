@@ -9,8 +9,11 @@
         <div style="float:left;padding:5px">
             <input id="fe" name="fe" type="text" style="width:200px; padding:5px" placeholder="{{_'Search FE'}}">
         </div>
-        <div style="float:left;padding:5px" class=""clearfix">
+        <div style="float:left;padding:5px">
             <input id="lu" name="lu" type="text" style="width:200px; padding:5px" placeholder="{{_'Search LU'}}">
+        </div>
+        <div style="float:left;padding:5px" class="clearfix">
+            <a id="btnSearch" href="#">Search</a>
         </div>
     </div>
     <div id="structureLeftPane" region="west" split="true" style="height: 100%">
@@ -334,31 +337,73 @@
 
         $('#lu').textbox({
             //buttonText:{{_'Search'}},
-            buttonIcon: 'icon-search',
+            // buttonIcon: 'icon-search',
             iconAlign:'right',
             prompt: {{_'Search LU'}},
-            onClickButton: function() {
-                $('#framesTree').tree({queryParams: {lu: $('#lu').textbox('getValue')}});
-            }
+            // onClickButton: function() {
+            //     $('#framesTree').tree({queryParams: {lu: $('#lu').textbox('getValue')}});
+            // }
         });
         $('#fe').textbox({
             //buttonText:{{_'Search'}},
-            buttonIcon: 'icon-search',
+            // buttonIcon: 'icon-search',
             iconAlign:'right',
             prompt: {{_'Search FE'}},
-            onClickButton: function() {
-                $('#framesTree').tree({queryParams: {fe: $('#fe').textbox('getValue')}});
-            }
+            // onClickButton: function() {
+            //     $('#framesTree').tree({queryParams: {fe: $('#fe').textbox('getValue')}});
+            // }
         });
         $('#frame').textbox({
             //buttonText:{{_'Search'}},
-            buttonIcon: 'icon-search',
+            // buttonIcon: 'icon-search',
             iconAlign:'right',
             prompt: {{_'Search Frame'}},
-            onClickButton: function() {
-                $('#framesTree').tree({queryParams: {frame: $('#frame').textbox('getValue')}});
+            // onClickButton: function() {
+            //     $('#framesTree').tree({queryParams: {frame: $('#frame').textbox('getValue')}});
+            // }
+        });
+
+        $('#btnSearch').linkbutton({
+            iconCls: 'icon-search',
+            onClick: function() {
+                value = $('#frame').textbox('getValue');
+                if (value !== '') {
+                    $('#framesTree').tree({queryParams: {frame: value}});
+                } else {
+                    value = $('#fe').textbox('getValue');
+                    if (value !== '') {
+                        $('#framesTree').tree({queryParams: {fe: value}});
+                    } else {
+                        value = $('#lu').textbox('getValue');
+                        if (value !== '') {
+                            $('#framesTree').tree({queryParams: {lu: value}});
+                        }
+                    }
+                }
             }
         });
+
+        $( "#structureNorthPane" ).keypress(function( event ) {
+            if ( event.which == 13 ) {
+                var value;
+                event.preventDefault();
+                value = $('#frame').textbox('getValue');
+                if (value !== '') {
+                    $('#framesTree').tree({queryParams: {frame: value}});
+                } else {
+                    value = $('#fe').textbox('getValue');
+                    if (value !== '') {
+                        $('#framesTree').tree({queryParams: {fe: value}});
+                    } else {
+                        value = $('#lu').textbox('getValue');
+                        if (value !== '') {
+                            $('#framesTree').tree({queryParams: {lu: value}});
+                        }
+                    }
+                }
+            }
+        });
+
 
         $('#idDomain').combobox({
             data: JSON.parse({{$data->domain}}),

@@ -26,15 +26,17 @@ class SentenceMap extends \MBusinessModel {
                 'idSentence' => array('column' => 'idSentence','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
                 'text' => array('column' => 'text','type' => 'string'),
                 'paragraphOrder' => array('column' => 'paragraphOrder','type' => 'integer'),
-                'timeline' => array('column' => 'timeline','type' => 'string'),
                 'idParagraph' => array('column' => 'idParagraph','type' => 'integer'),
                 'idLanguage' => array('column' => 'idLanguage','type' => 'integer'),
+                'idDocument' => array('column' => 'idDocument','type' => 'integer'),
             ),
             'associations' => array(
-                'paragraph' => array('toClass' => 'fnbr\models\Paragraph', 'cardinality' => 'oneToOne' , 'keys' => 'idParagraph:idParagraph'), 
-                'language' => array('toClass' => 'fnbr\models\Language', 'cardinality' => 'oneToOne' , 'keys' => 'idLanguage:idLanguage'), 
+                'paragraph' => array('toClass' => 'fnbr\models\Paragraph', 'cardinality' => 'oneToOne' , 'keys' => 'idParagraph:idParagraph'),
+                'document' => array('toClass' => 'fnbr\models\Document', 'cardinality' => 'oneToOne' , 'keys' => 'idDocument:idDocument'),
+                'language' => array('toClass' => 'fnbr\models\Language', 'cardinality' => 'oneToOne' , 'keys' => 'idLanguage:idLanguage'),
                 'annotationsets' => array('toClass' => 'fnbr\models\AnnotationSet', 'cardinality' => 'oneToMany' , 'keys' => 'idSentence:idSentence'), 
-                'timelines' => array('toClass' => 'fnbr\models\Timeline', 'cardinality' => 'oneToMany' , 'keys' => 'timeline:timeline'),
+                'sentencemm' => array('toClass' => 'fnbr\models\SentenceMM', 'cardinality' => 'oneToMany' , 'keys' => 'idSentence:idSentence'),
+                'documents' => array('toClass' => 'fnbr\models\Document', 'cardinality' => 'manyToMany', 'associative' => 'document_sentence'),
             )
         );
     }
@@ -56,11 +58,6 @@ class SentenceMap extends \MBusinessModel {
     protected $paragraphOrder;
     /**
      * 
-     * @var string 
-     */
-    protected $timeline;
-    /**
-     * 
      * @var integer 
      */
     protected $idParagraph;
@@ -70,13 +67,16 @@ class SentenceMap extends \MBusinessModel {
      */
     protected $idLanguage;
 
+    protected $idDocument;
     /**
      * Associations
      */
     protected $paragraph;
+    protected $document;
     protected $language;
     protected $annotationsets;
-    protected $timelines;
+    protected $sentencemm;
+    protected $documents;
 
 
     /**
@@ -106,20 +106,20 @@ class SentenceMap extends \MBusinessModel {
         $this->paragraphOrder = $value;
     }
 
-    public function getTimeline() {
-        return $this->timeline;
-    }
-
-    public function setTimeline($value) {
-        $this->timeline = $value;
-    }
-
     public function getIdParagraph() {
         return $this->idParagraph;
     }
 
     public function setIdParagraph($value) {
         $this->idParagraph = $value;
+    }
+
+    public function getIdDocument() {
+        return $this->idDocument;
+    }
+
+    public function setIdDocument($value) {
+        $this->idDocument = $value;
     }
 
     public function getIdLanguage() {
@@ -152,6 +152,30 @@ class SentenceMap extends \MBusinessModel {
      */
     public function getAssociationParagraph() {
         $this->retrieveAssociation("paragraph");
+    }
+    /**
+     *
+     * @return Association
+     */
+    public function getDocument() {
+        if (is_null($this->document)){
+            $this->retrieveAssociation("document");
+        }
+        return  $this->document;
+    }
+    /**
+     *
+     * @param Association $value
+     */
+    public function setDocument($value) {
+        $this->document = $value;
+    }
+    /**
+     *
+     * @return Association
+     */
+    public function getAssociationDocument() {
+        $this->retrieveAssociation("document");
     }
     /**
      *
@@ -201,31 +225,47 @@ class SentenceMap extends \MBusinessModel {
     public function getAssociationAnnotationsets() {
         $this->retrieveAssociation("annotationsets");
     }
+
     /**
      *
      * @return Association
      */
-    public function getTimelines() {
-        if (is_null($this->timelines)){
-            $this->retrieveAssociation("timelines");
+    public function getSentenceMM() {
+        if (is_null($this->sentencemm)){
+            $this->retrieveAssociation("sentencemm");
         }
-        return  $this->timelines;
+        return  $this->sentencemm;
     }
     /**
      *
      * @param Association $value
      */
-    public function setTimelines($value) {
-        $this->timelines = $value;
+    public function setSentenceMM($value) {
+        $this->sentencemm = $value;
     }
     /**
      *
      * @return Association
      */
-    public function getAssociationTimelines() {
-        $this->retrieveAssociation("timelines");
+    public function getAssociationSentenceMM() {
+        $this->retrieveAssociation("sentencemm");
     }
+
+    public function getDocuments() {
+        if (is_null($this->documents)){
+            $this->retrieveAssociation("documents");
+        }
+        return  $this->documents;
+    }
+    public function setDocuments($value) {
+        $this->documents = $value;
+    }
+    public function getAssociationDocuments() {
+        $this->retrieveAssociation("documents");
+    }
+
 
 }
 // end - wizard
 
+?>

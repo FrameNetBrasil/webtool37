@@ -4,62 +4,6 @@ namespace fnbr\models;
 
 class ViewConstraint extends map\ViewConstraintMap
 {
-    /*
-    public $prefix = [
-        'rel_constraint_frame' => 'frm',
-        'rel_constraint_semtype' => 'sem',
-        'rel_constraint_cxn' => 'cxn',
-        'rel_constraint_framefamily' => 'fam',
-        'rel_constraint_lexeme' => 'lex',
-        'rel_constraint_lemma' => 'lem',
-        'rel_constraint_lu' => 'lun',
-        'rel_constraint_before' => 'bef',
-        'rel_constraint_meets' => 'mee',
-        'rel_constraint_element' => 'ele',
-        'rel_constraint_constraint' => 'cnt',
-        'rel_constraint_udfeature' => 'udf',
-        'rel_constraint_udrelation' => 'udr',
-        'rel_constraint_stlu' => 'slu',
-        'rel_qualia_constitutive' => 'cst',
-        'rel_qualia_agentive' => 'agt',
-        'rel_qualia_telic' => 'tlc',
-        'rel_qualia_formal' => 'fml',
-        'rel_evokes' => 'evk',
-        'rel_hasdomain' => 'dom',
-        'rel_luequivalence' => 'equ',
-        'rel_festandsforfe' => 'mfe',
-        'rel_festandsforlu' => 'mlu',
-        'rel_lustandsforlu' => 'mlu',
-    ];
-
-    public $type = [
-        'rel_constraint_frame' => 'FR',
-        'rel_constraint_semtype' => 'ST',
-        'rel_constraint_cxn' => 'CX',
-        'rel_constraint_framefamily' => 'FR',
-        'rel_constraint_lexeme' => 'LX',
-        'rel_constraint_lemma' => 'LM',
-        'rel_constraint_lu' => 'LU',
-        'rel_constraint_before' => 'CE',
-        'rel_constraint_meets' => 'CE',
-        'rel_constraint_element' => 'CE',
-        'rel_constraint_constraint' => 'CN',
-        'rel_constraint_udfeature' => 'UV',
-        'rel_constraint_udrelation' => 'UR',
-        'rel_constraint_stlu' => 'ST',
-        'rel_qualia_constitutive' => 'LU',
-        'rel_qualia_agentive' => 'LU',
-        'rel_qualia_telic' => 'LU',
-        'rel_qualia_formal' => 'LU',
-        'rel_evokes' => 'FR',
-        'rel_hasdomain' => 'DO',
-        'rel_luequivalence' => 'LU',
-        'rel_festandsforfe' => 'FE',
-        'rel_festandsforlu' => 'LU',
-        'rel_lustandsforlu' => 'LU',
-    ];
-    */
-
     public static function config()
     {
         return [];
@@ -129,9 +73,10 @@ FROM View_Constraint c
 JOIN LU e2lun ON (c.idConstrainedBy = e2lun.idEntity)
 WHERE (c.idConstrained = {$idConstrained})
 UNION
-SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2udf.info, e2udf.info  as cxEntry, e2udf.info as nick, c.prefix, c.constrainedByType, c.idConstraintInstance
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, concat(e2udfti.info,':',e2udf.info) as info, e2udf.info  as cxEntry, e2udf.info as nick, c.prefix, c.constrainedByType, c.idConstraintInstance
 FROM View_Constraint c
 JOIN UDFeature e2udf ON (c.idConstrainedBy = e2udf.idEntity)
+JOIN TypeInstance e2udfti ON (e2udf.idTypeInstance = e2udfti.idTypeInstance)
 WHERE (c.idConstrained = {$idConstrained})
 UNION
 SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2udr.info, e2udr.info  as cxEntry, e2udr.info as nick, c.prefix, c.constrainedByType, c.idConstraintInstance
@@ -161,36 +106,125 @@ HERE;
     public function getByIdConstrainedSet($idConstrainedSet)
     {
 
+//        $idLanguage = \Manager::getSession()->idLanguage;
+//        $idConstrainedSetString = implode(',' , $idConstrainedSet);
+//        $cmd = <<<HERE
+//SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, c.prefix, c.constrainedByType,
+//  ifnull(e2fe.name, ifnull(e2ce.name, ifnull(e2se.name, ifnull(e2ce2.name, ifnull(e3ce.entry,e2cne.name))))) AS name,
+//  ifnull(e2fe.entry, ifnull(e2ce.entry, ifnull(e2se.entry, ifnull(e2ce2.entry, ifnull(e3ce.entry,e2cne.entry))))) AS cxEntry,
+//  ifnull(e2fe.nick, ifnull(e2ce.nick, ifnull(e2se.nick, ifnull(e2ce2.nick, ifnull(e3ce.nick,e2cne.nick))))) AS nick
+//  FROM View_Constraint c
+//  LEFT JOIN View_FrameElement e1fe ON (c.idConstrained = e1fe.idEntity)
+//  LEFT JOIN View_Construction e1ce ON (c.idConstrained = e1ce.idEntity)
+//  LEFT JOIN View_Frame e2f ON (c.idConstrainedBy = e2f.idEntity)
+//  LEFT JOIN View_EntryLanguage e2fe ON (e2f.entry = e2fe.entry)
+//  LEFT JOIN View_Construction e2c ON (c.idConstrainedBy = e2c.idEntity)
+//  LEFT JOIN View_EntryLanguage e2ce ON (e2c.entry = e2ce.entry)
+//  LEFT JOIN View_SemanticType e2s ON (c.idConstrainedBy = e2s.idEntity)
+//  LEFT JOIN View_EntryLanguage e2se ON (e2s.entry = e2se.entry)
+//  LEFT JOIN View_ConstructionElement e2cel ON (c.idConstrainedBy = e2cel.idEntity)
+//  LEFT JOIN View_EntryLanguage e2ce2 ON (e2cel.entry = e2ce2.entry)
+//  LEFT JOIN View_Constraint e2cn ON (c.idConstrainedBy = e2cn.idConstraint)
+//  LEFT JOIN View_EntryLanguage e2cne ON (e2cn.entry = e2cne.entry)
+//  LEFT JOIN View_Constraint e3cn ON (c.idConstrainedBy = e3cn.idConstraint)
+//  LEFT JOIN View_Construction e3c ON (e3cn.idConstrainedBy = e3c.idEntity)
+//  LEFT JOIN View_EntryLanguage e3ce ON (e3c.entry = e3ce.entry)
+//  WHERE (c.idConstrained IN ({$idConstrainedSetString}))
+//      AND ((e2fe.idLanguage = {$idLanguage}) or (e2fe.idLanguage is null))
+//      AND ((e2ce.idLanguage = {$idLanguage}) or (e2ce.idLanguage is null))
+//      AND ((e2se.idLanguage = {$idLanguage}) or (e2se.idLanguage is null))
+//      AND ((e2ce2.idLanguage = {$idLanguage}) or (e2ce2.idLanguage is null))
+//      AND ((e2cne.idLanguage = {$idLanguage}) or (e2cne.idLanguage is null))
+//      AND ((e3ce.idLanguage = {$idLanguage}) or (e3ce.idLanguage is null))
+//
+//HERE;
+//        $query = $this->getDb()->getQueryCommand($cmd);
+//        $constraints = $query->getResult();
+//        foreach ($constraints as $i => $constraint) {
+//            $constraints[$i]['name'] = $constraint['prefix'] . '_' . $constraints[$i]['name'];
+//            $constraints[$i]['type'] = $constraint['constrainedByType'];
+//            $constraints[$i]['entry'] = $constraint['cxEntry'];
+//            $constraints[$i]['relationType'] = $constraint['entry'];
+//            $constraints[$i]['idConstraint'] = $constraint['idConstraint'];
+//        }
+//        return $constraints;
+
         $idLanguage = \Manager::getSession()->idLanguage;
         $idConstrainedSetString = implode(',' , $idConstrainedSet);
         $cmd = <<<HERE
-SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, c.prefix, c.constrainedByType,
-  ifnull(e2fe.name, ifnull(e2ce.name, ifnull(e2se.name, ifnull(e2ce2.name, ifnull(e3ce.entry,e2cne.name))))) AS name,
-  ifnull(e2fe.entry, ifnull(e2ce.entry, ifnull(e2se.entry, ifnull(e2ce2.entry, ifnull(e3ce.entry,e2cne.entry))))) AS cxEntry,
-  ifnull(e2fe.nick, ifnull(e2ce.nick, ifnull(e2se.nick, ifnull(e2ce2.nick, ifnull(e3ce.nick,e2cne.nick))))) AS nick
-  FROM View_Constraint c
-  LEFT JOIN View_FrameElement e1fe ON (c.idConstrained = e1fe.idEntity)
-  LEFT JOIN View_Construction e1ce ON (c.idConstrained = e1ce.idEntity)
-  LEFT JOIN View_Frame e2f ON (c.idConstrainedBy = e2f.idEntity)
-  LEFT JOIN View_EntryLanguage e2fe ON (e2f.entry = e2fe.entry)
-  LEFT JOIN View_Construction e2c ON (c.idConstrainedBy = e2c.idEntity)
-  LEFT JOIN View_EntryLanguage e2ce ON (e2c.entry = e2ce.entry)
-  LEFT JOIN View_SemanticType e2s ON (c.idConstrainedBy = e2s.idEntity)
-  LEFT JOIN View_EntryLanguage e2se ON (e2s.entry = e2se.entry)
-  LEFT JOIN View_ConstructionElement e2cel ON (c.idConstrainedBy = e2cel.idEntity)
-  LEFT JOIN View_EntryLanguage e2ce2 ON (e2cel.entry = e2ce2.entry)
-  LEFT JOIN View_Constraint e2cn ON (c.idConstrainedBy = e2cn.idConstraint)
-  LEFT JOIN View_EntryLanguage e2cne ON (e2cn.entry = e2cne.entry)
-  LEFT JOIN View_Constraint e3cn ON (c.idConstrainedBy = e3cn.idConstraint)
-  LEFT JOIN View_Construction e3c ON (e3cn.idConstrainedBy = e3c.idEntity)
-  LEFT JOIN View_EntryLanguage e3ce ON (e3c.entry = e3ce.entry)
-  WHERE (c.idConstrained IN ({$idConstrainedSetString}))
-      AND ((e2fe.idLanguage = {$idLanguage}) or (e2fe.idLanguage is null))
-      AND ((e2ce.idLanguage = {$idLanguage}) or (e2ce.idLanguage is null))
-      AND ((e2se.idLanguage = {$idLanguage}) or (e2se.idLanguage is null))
-      AND ((e2ce2.idLanguage = {$idLanguage}) or (e2ce2.idLanguage is null))
-      AND ((e2cne.idLanguage = {$idLanguage}) or (e2cne.idLanguage is null))
-      AND ((e3ce.idLanguage = {$idLanguage}) or (e3ce.idLanguage is null))        
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2fe.name, e2fe.entry as cxEntry, e2fe.nick, c.prefix, c.constrainedByType, c.idConstraintInstance
+FROM View_Constraint c
+JOIN View_Frame e2f ON (c.idConstrainedBy = e2f.idEntity)
+JOIN View_EntryLanguage e2fe ON (e2f.entry = e2fe.entry)
+WHERE (c.idConstrained IN ({$idConstrainedSetString}))
+AND (e2fe.idLanguage = {$idLanguage})
+UNION
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2ce.name, e2ce.entry as cxEntry, e2ce.nick, c.prefix, c.constrainedByType, c.idConstraintInstance
+FROM View_Constraint c
+JOIN View_Construction e2c ON (c.idConstrainedBy = e2c.idEntity)
+JOIN View_EntryLanguage e2ce ON (e2c.entry = e2ce.entry)
+WHERE (c.idConstrained IN ({$idConstrainedSetString}))
+AND (e2ce.idLanguage = {$idLanguage})
+UNION
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2se.name, e2se.entry as cxEntry, e2se.nick, c.prefix, c.constrainedByType, c.idConstraintInstance
+FROM View_Constraint c
+JOIN View_SemanticType e2s ON (c.idConstrainedBy = e2s.idEntity)
+JOIN View_EntryLanguage e2se ON (e2s.entry = e2se.entry)
+WHERE (c.idConstrained IN ({$idConstrainedSetString}))
+AND (e2se.idLanguage = {$idLanguage})
+UNION
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2ce2.name, e2ce2.entry as cxEntry, e2ce2.nick, c.prefix, c.constrainedByType, c.idConstraintInstance
+FROM View_Constraint c
+JOIN View_ConstructionElement e2cel ON (c.idConstrainedBy = e2cel.idEntity)
+JOIN View_EntryLanguage e2ce2 ON (e2cel.entry = e2ce2.entry)
+WHERE (c.idConstrained IN ({$idConstrainedSetString}))
+AND (e2ce2.idLanguage = {$idLanguage})
+UNION
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2cne.name, e2cne.entry as cxEntry, e2cne.nick, c.prefix, c.constrainedByType, c.idConstraintInstance
+FROM View_Constraint c
+JOIN View_Constraint e2cn ON (c.idConstrainedBy = e2cn.idConstraint)
+JOIN View_EntryLanguage e2cne ON (e2cn.entry = e2cne.entry)
+WHERE (c.idConstrained IN ({$idConstrainedSetString}))
+AND (e2cne.idLanguage = {$idLanguage})
+UNION
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e3ce.name, e3ce.entry as cxEntry, e3ce.nick, c.prefix, c.constrainedByType, c.idConstraintInstance
+FROM View_Constraint c
+JOIN View_Constraint e3cn ON (c.idConstrainedBy = e3cn.idConstraint)
+JOIN View_Construction e3c ON (e3cn.idConstrainedBy = e3c.idEntity)
+JOIN View_EntryLanguage e3ce ON (e3c.entry = e3ce.entry)
+WHERE (c.idConstrained IN ({$idConstrainedSetString}))
+AND (e3ce.idLanguage = {$idLanguage})
+UNION
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2lex.name, e2lex.name  as cxEntry, e2lex.name as nick, c.prefix, c.constrainedByType, c.idConstraintInstance
+FROM View_Constraint c
+JOIN Lexeme e2lex ON (c.idConstrainedBy = e2lex.idEntity)
+WHERE (c.idConstrained IN ({$idConstrainedSetString}))
+UNION
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2lem.name, e2lem.name  as cxEntry, e2lem.name as nick, c.prefix, c.constrainedByType, c.idConstraintInstance
+FROM View_Constraint c
+JOIN Lemma e2lem ON (c.idConstrainedBy = e2lem.idEntity)
+WHERE (c.idConstrained IN ({$idConstrainedSetString}))
+UNION
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2lun.name, e2lun.name  as cxEntry, e2lun.name as nick, c.prefix, c.constrainedByType, c.idConstraintInstance
+FROM View_Constraint c
+JOIN LU e2lun ON (c.idConstrainedBy = e2lun.idEntity)
+WHERE (c.idConstrained IN ({$idConstrainedSetString}))
+UNION
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, concat(e2udfti.info,':',e2udf.info) as info, e2udf.info  as cxEntry, e2udf.info as nick, c.prefix, c.constrainedByType, c.idConstraintInstance
+FROM View_Constraint c
+JOIN UDFeature e2udf ON (c.idConstrainedBy = e2udf.idEntity)
+JOIN TypeInstance e2udfti ON (e2udf.idTypeInstance = e2udfti.idTypeInstance)
+WHERE (c.idConstrained IN ({$idConstrainedSetString}))
+UNION
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, e2udr.info, e2udr.info  as cxEntry, e2udr.info as nick, c.prefix, c.constrainedByType, c.idConstraintInstance
+FROM View_Constraint c
+JOIN UDRelation e2udr ON (c.idConstrainedBy = e2udr.idEntity)
+WHERE (c.idConstrained IN ({$idConstrainedSetString}))
+UNION
+SELECT c.idConstraint, c.idConstrained, c.idConstrainedBy, c.entry, lower(e2udp.POS), e2udp.entry  as cxEntry, e2udp.entry as nick, c.prefix, c.constrainedByType, c.idConstraintInstance
+FROM View_Constraint c
+JOIN UDPOS e2udp ON (c.idConstrainedBy = e2udp.idEntity)
+WHERE (c.idConstrained IN ({$idConstrainedSetString}))
 
 HERE;
         $query = $this->getDb()->getQueryCommand($cmd);
@@ -201,6 +235,7 @@ HERE;
             $constraints[$i]['entry'] = $constraint['cxEntry'];
             $constraints[$i]['relationType'] = $constraint['entry'];
             $constraints[$i]['idConstraint'] = $constraint['idConstraint'];
+            $constraints[$i]['idConstraintInstance'] = $constraint['idConstraintInstance'];
         }
         return $constraints;
     }

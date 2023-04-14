@@ -43,7 +43,6 @@ class Entity extends map\EntityMap
             'validators' => array(
                 'alias' => array('notnull'),
                 'type' => array('notnull'),
-                'timeline' => array('notnull'),
             ),
             'converters' => array()
         );
@@ -93,8 +92,9 @@ class Entity extends map\EntityMap
     {
         $idLanguage = \Manager::getSession()->idLanguage;
         $type = $this->getType();
+        mdump('========================'. $type);
         $model = self::$entityModel[$type];
-        if (($type == 'UR' && ($type == 'UV'))) {
+        if (($type == 'UR') || ($type == 'UV')) {
             $cmd = <<<HERE
         SELECT info as name
         FROM {$model}
@@ -140,7 +140,10 @@ HERE;
 		   UNION select entry, idEntity, 'cxn' as type from Construction
 		   UNION select entry, idEntity, 'ce' as type from ConstructionElement
 		   UNION select entry, idEntity, 'st' as type from SemanticType
-		   UNION select entry, idEntity, 'concept' as type from Concept
+		   UNION select entry, idEntity, 'conceptsem' as type from Concept where idTypeInstance = 107
+		   UNION select entry, idEntity, 'conceptcxn' as type from Concept where idTypeInstance = 108
+		   UNION select entry, idEntity, 'conceptstr' as type from Concept where idTypeInstance = 109
+		   UNION select entry, idEntity, 'conceptinf' as type from Concept where idTypeInstance = 110
 		) model on (entity2.idEntity = model.idEntity)
             INNER JOIN Entry 
                 ON (model.entry = entry.entry)
@@ -157,7 +160,9 @@ HERE;
                 'rel_evokes',
 	            'rel_inheritance_cxn',
 		        'rel_hassemtype',
-	            'rel_elementof'
+	            'rel_elementof',
+                'rel_subtypeof',
+                'rel_hasconcept'                       
 		))
            AND (entry.idLanguage = {$idLanguage}  )
         ORDER BY RelationType.entry, entry.name
@@ -487,9 +492,14 @@ HERE;
 
     public function save()
     {
-        $timeline = 'ent_' . md5($this->getAlias());
-        $this->setTimeLine(Base::newTimeLine($timeline, 'S'));
         parent::save();
+        Timeline::addTimeline("entity",$this->getId(),"S");
+    }
+
+    public function delete()
+    {
+        Timeline::addTimeline("entity",$this->getId(),"D");
+        parent::delete();
     }
 
 }

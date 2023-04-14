@@ -25,7 +25,6 @@ class LexemeMap extends \MBusinessModel {
             'attributes' => array(
                 'idLexeme' => array('column' => 'idLexeme','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
                 'name' => array('column' => 'name','type' => 'string'),
-                'timeline' => array('column' => 'timeline','type' => 'string'),
                 'idPOS' => array('column' => 'idPOS','type' => 'integer'),
                 'idLanguage' => array('column' => 'idLanguage','type' => 'integer'),
                 'idEntity' => array('column' => 'idEntity','type' => 'integer'),
@@ -35,7 +34,6 @@ class LexemeMap extends \MBusinessModel {
                 'wordforms' => array('toClass' => 'fnbr\models\WordForm', 'cardinality' => 'oneToMany' , 'keys' => 'idLexeme:idLexeme'), 
                 'lexemeentries' => array('toClass' => 'fnbr\models\LexemeEntry', 'cardinality' => 'oneToMany' , 'keys' => 'idLexeme:idLexeme'), 
                 'language' => array('toClass' => 'fnbr\models\Language', 'cardinality' => 'oneToOne' , 'keys' => 'idLanguage:idLanguage'), 
-                'timelines' => array('toClass' => 'fnbr\models\Timeline', 'cardinality' => 'oneToMany' , 'keys' => 'timeline:timeline'),
                 'entity' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity:idEntity'),
             )
         );
@@ -51,11 +49,6 @@ class LexemeMap extends \MBusinessModel {
      * @var string 
      */
     protected $name;
-    /**
-     * 
-     * @var string 
-     */
-    protected $timeline;
     /**
      * 
      * @var integer 
@@ -80,8 +73,6 @@ class LexemeMap extends \MBusinessModel {
     protected $wordforms;
     protected $language;
     protected $lexemeentries;
-    protected $timelines;
-    
 
     /**
      * Getters/Setters
@@ -100,14 +91,6 @@ class LexemeMap extends \MBusinessModel {
 
     public function setName($value) {
         $this->name = $value;
-    }
-
-    public function getTimeline() {
-        return $this->timeline;
-    }
-
-    public function setTimeline($value) {
-        $this->timeline = $value;
     }
 
     public function getIdPOS() {
@@ -254,32 +237,6 @@ class LexemeMap extends \MBusinessModel {
     public function getAssociationLanguage() {
         $this->retrieveAssociation("language");
     }
-    /**
-     *
-     * @return Association
-     */
-    public function getTimelines() {
-        if (is_null($this->timelines)){
-            $this->retrieveAssociation("timelines");
-        }
-        return  $this->timelines;
-    }
-    /**
-     *
-     * @param Association $value
-     */
-    public function setTimelines($value) {
-        $this->timelines = $value;
-    }
-    /**
-     *
-     * @return Association
-     */
-    public function getAssociationTimelines() {
-        $this->retrieveAssociation("timelines");
-    }
-
-    
 
 }
 // end - wizard

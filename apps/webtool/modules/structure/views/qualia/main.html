@@ -21,31 +21,33 @@
     </div>
 </div>
 <div id="menuQualiaRootFrames" style="display:none, width:120px;">
-    <div onclick="structure.reloadFrame()" data-options="iconCls:'icon-reload'">{{_'Reload Frames'}}</div>
-    <div onclick="structure.showStructure()" data-options="iconCls:'icon-more'">{{_'Show Structure'}}</div>
-    <div onclick="structure.showRelations()" data-options="iconCls:'icon-more'">{{_'Show Relations'}}</div>
+    <div onclick="structure.reloadFrame()" data-options="iconCls:'icon-reload'">Reload Frames</div>
+    <div onclick="structure.showStructure()" data-options="iconCls:'icon-more'">Show Structure</div>
+    <div onclick="structure.showRelations()" data-options="iconCls:'icon-more'">Show Relations</div>
 </div>
 <div id="menuQualiaFrame" style="display:none, width:120px;">
-    <div onclick="structure.frameQualiaFormal()" data-options="iconCls:'icon-edit'">{{_'Formal'}}</div>
-    <div onclick="structure.frameQualiaAgentive()" data-options="iconCls:'icon-edit'">{{_'Agentive'}}</div>
-    <div onclick="structure.frameQualiaTelic()" data-options="iconCls:'icon-edit'">{{_'Telic'}}</div>
-    <div onclick="structure.frameQualiaConstitutive()" data-options="iconCls:'icon-edit'">{{_'Constitutive'}}</div>
+    <div onclick="structure.frameQualiaFormal()" data-options="iconCls:'icon-edit'">New Formal Structure</div>
+    <div onclick="structure.frameQualiaAgentive()" data-options="iconCls:'icon-edit'">New Agentive Structure</div>
+    <div onclick="structure.frameQualiaTelic()" data-options="iconCls:'icon-edit'">New Telic Structure</div>
+    <div onclick="structure.frameQualiaConstitutive()" data-options="iconCls:'icon-edit'">New Constitutive Structure</div>
 </div>
 <div id="menuQualiaLU" style="display:none, width:120px;">
-    <div onclick="structure.luQualiaFormal()" data-options="iconCls:'icon-edit'">{{_'Formal'}}</div>
-    <div onclick="structure.luQualiaAgentive()" data-options="iconCls:'icon-edit'">{{_'Agentive'}}</div>
-    <div onclick="structure.luQualiaTelic()" data-options="iconCls:'icon-edit'">{{_'Telic'}}</div>
-    <div onclick="structure.luQualiaConstitutive()" data-options="iconCls:'icon-edit'">{{_'Constitutive'}}</div>
+    <div onclick="structure.luQualiaFormal()" data-options="iconCls:'icon-edit'">New Formal Relation</div>
+    <div onclick="structure.luQualiaAgentive()" data-options="iconCls:'icon-edit'">New Agentive Relation</div>
+    <div onclick="structure.luQualiaTelic()" data-options="iconCls:'icon-edit'">New Telic Relation</div>
+    <div onclick="structure.luQualiaConstitutive()" data-options="iconCls:'icon-edit'">New Constitutive Relation</div>
 </div>
 <div id="menuQualiaQualia" style="display:none, width:120px;">
-    <div onclick="structure.frameDeleteQualia()" data-options="iconCls:'icon-remove'">{{_'Delete Qualia'}}</div>
+    <div onclick="structure.frameDeleteQualia()" data-options="iconCls:'icon-remove'">Delete Qualia Structure</div>
 </div>
 <div id="menuQualiaQualiaRelation" style="display:none, width:120px;">
+    <!--
     <div onclick="structure.luChangeQualia()" data-options="iconCls:'icon-edit'">{{_'Change Qualia Structure'}}</div>
-    <div onclick="structure.luDeleteQualia()" data-options="iconCls:'icon-remove'">{{_'Delete Qualia Relation'}}</div>
+    -->
+    <div onclick="structure.luDeleteQualia()" data-options="iconCls:'icon-remove'">Delete Qualia Relation</div>
 </div>
 <div id="menuQualiaElement" style="display:none, width:120px;">
-    <div onclick="structure.qualiaChangeElement()" data-options="iconCls:'icon-edit'">{{_'Change Element'}}</div>
+    <div onclick="structure.qualiaChangeElement()" data-options="iconCls:'icon-edit'">Change Element</div>
 </div>
 
 {{include $manager->getThemePath('css/graph.css')}}
@@ -278,15 +280,15 @@
 
         $('#framesTree').tree({
             url: {{$manager->getURL('structure/qualia/frameTree')}},
-            onClick: function (node) {
-                console.log(node);
-                if (node.id.charAt(0) == 'f') {
-                    structure.showFrame(node.id.substr(1));
-                }
-                if (node.id.charAt(0) == 'l') {
-                    structure.showLU(node.id.substr(1));
-                }
-            },
+            // onClick: function (node) {
+            //     console.log(node);
+            //     if (node.id.charAt(0) == 'f') {
+            //         structure.showFrame(node.id.substr(1));
+            //     }
+            //     if (node.id.charAt(0) == 'l') {
+            //         structure.showLU(node.id.substr(1));
+            //     }
+            // },
             onContextMenu: structure.contextMenuQualia
         });
     });

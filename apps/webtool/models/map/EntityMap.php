@@ -26,11 +26,9 @@ class EntityMap extends \MBusinessModel {
                 'idEntity' => array('column' => 'idEntity','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
                 'alias' => array('column' => 'alias','type' => 'string'),
                 'type' => array('column' => 'type','type' => 'string'),
-                'timeline' => array('column' => 'timeline','type' => 'string'),
                 'idOld' => array('column' => 'idOld','type' => 'integer'),
             ),
             'associations' => array(
-                'timelines' => array('toClass' => 'fnbr\models\Timeline', 'cardinality' => 'oneToMany' , 'keys' => 'timeline:timeline'), 
             )
         );
     }
@@ -52,20 +50,9 @@ class EntityMap extends \MBusinessModel {
     protected $type;
     /**
      * 
-     * @var string 
-     */
-    protected $timeline;
-    /**
-     * 
      * @var integer 
      */
     protected $idOld;
-
-    /**
-     * Associations
-     */
-    protected $timelines;
-    
 
     /**
      * Getters/Setters
@@ -94,14 +81,6 @@ class EntityMap extends \MBusinessModel {
         $this->type = $value;
     }
 
-    public function getTimeline() {
-        return $this->timeline;
-    }
-
-    public function setTimeline($value) {
-        $this->timeline = $value;
-    }
-
     public function getIdOld() {
         return $this->idOld;
     }
@@ -109,32 +88,6 @@ class EntityMap extends \MBusinessModel {
     public function setIdOld($value) {
         $this->idOld = $value;
     }
-    /**
-     *
-     * @return Association
-     */
-    public function getTimelines() {
-        if (is_null($this->timelines)){
-            $this->retrieveAssociation("timelines");
-        }
-        return  $this->timelines;
-    }
-    /**
-     *
-     * @param Association $value
-     */
-    public function setTimelines($value) {
-        $this->timelines = $value;
-    }
-    /**
-     *
-     * @return Association
-     */
-    public function getAssociationTimelines() {
-        $this->retrieveAssociation("timelines");
-    }
-
-    
 
 }
 // end - wizard

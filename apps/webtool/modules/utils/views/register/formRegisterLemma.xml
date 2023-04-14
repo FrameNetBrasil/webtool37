@@ -1,0 +1,15 @@
+<view>
+    <mformdialog id="formImportLemma" title="Import Lemma"  close=">fnbr/main" >
+        <fields>
+            <mvcontainer>
+                <mspan>Register Lemmas, one Lemma each row</mspan>
+                <mspan>Format: [lemma_name.pos] [lexeme1] [POS1] [lexeme2] [POS2] [lexeme3] [POS3] ... [headWord]</mspan>
+            </mvcontainer>
+            <mselection id="idLanguage" label="Language" options="$this->data->languages"/>
+            <mmultilinefield id="pairs" label="Lines" height="150px" width="400px"></mmultilinefield>
+        </fields>    
+        <buttons>
+            <mbutton id="btnPost" text="{{_M('Send')}}" action="$this->data->action"/>
+        </buttons>
+    </mformdialog>
+</view>

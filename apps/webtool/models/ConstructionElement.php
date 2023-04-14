@@ -179,9 +179,9 @@ HERE;
         $cmd = <<<HERE
 
         
-SELECT entry, name, nick, idEntity, idConcept, conceptEntry
+SELECT entry, name, nick, idEntity, idConcept, conceptEntry,idEntityRelation
 FROM (        
-        SELECT RelationType.entry, entry_relatedConcept.name, entry_relatedConcept.nick, relatedConcept.idEntity, relatedConcept.idConcept idConcept, relatedConcept.entry as conceptEntry
+        SELECT RelationType.entry, entry_relatedConcept.name, entry_relatedConcept.nick, relatedConcept.idEntity, relatedConcept.idConcept idConcept, relatedConcept.entry as conceptEntry, EntityRelation.idEntityRelation
         FROM ConstructionElement
             INNER JOIN Entity entity1
                 ON (ConstructionElement.idEntity = entity1.idEntity)
@@ -197,13 +197,40 @@ FROM (
                 ON (relatedConcept.entry = entry_relatedConcept.entry)
         WHERE (ConstructionElement.idConstructionElement = {$this->getId()})
             AND (RelationType.entry in (
-                'rel_evokes'))
+                'rel_hasconcept'))
            AND (entry_relatedConcept.idLanguage = {$idLanguage} )
-) evokes           
+) evokes
+UNION
+SELECT entry, name, nick, idEntity, idFrameElement, frameElementEntry,idEntityRelation
+FROM (
+        SELECT RelationType.entry, concat(entry_relatedFrame.name,'.',entry_relatedFE.name) as name, entry_relatedFE.nick, relatedFE.idEntity, relatedFE.idFrameElement idFrameElement, relatedFE.entry as frameElementEntry, EntityRelation.idEntityRelation
+        FROM ConstructionElement
+            INNER JOIN Entity entity1
+                ON (ConstructionElement.idEntity = entity1.idEntity)
+            INNER JOIN EntityRelation
+                ON (entity1.idEntity = EntityRelation.idEntity1)
+            INNER JOIN RelationType
+                ON (EntityRelation.idRelationType = RelationType.idRelationType)
+            INNER JOIN Entity entity2
+                ON (EntityRelation.idEntity2 = entity2.idEntity)
+            INNER JOIN FrameElement relatedFE
+                ON (entity2.idEntity = relatedFE.idEntity)
+            INNER JOIN Entry entry_relatedFE
+                ON (relatedFE.entry = entry_relatedFE.entry)
+            INNER JOIN Frame relatedFrame
+                ON (relatedFE.idFrame = relatedFrame.idFrame)
+            INNER JOIN Entry entry_relatedFrame
+                ON (relatedFrame.entry = entry_relatedFrame.entry)
+        WHERE (ConstructionElement.idConstructionElement = {$this->getId()})
+            AND (RelationType.entry in (
+                'rel_evokes'))
+           AND (entry_relatedFE.idLanguage = {$idLanguage} )
+           AND (entry_relatedFrame.idLanguage = {$idLanguage} )
+) evokesFE
 ORDER BY entry, name
             
 HERE;
-        $result = $this->getDb()->getQueryCommand($cmd)->treeResult('entry', 'name,idEntity,idConcept,conceptEntry');
+        $result = $this->getDb()->getQueryCommand($cmd)->treeResult('entry', 'name,idEntity,idConcept,conceptEntry,idEntityRelation');
         return $result;
 
     }
@@ -289,28 +316,27 @@ HERE;
         try {
             $entry = new Entry();
             if ($this->isPersistent()) {
-                mdump('========== persistent!');
                 if ($this->getEntry() != $data->entry) {
                     $entity = new Entity($this->getIdEntity());
-                    Base::updateTimeLine($this->getEntry(), $data->entry);
+//                    Base::updateTimeLine($this->getEntry(), $data->entry);
                     $entity->setAlias($data->entry);
                     $entity->save();
                     $entry->updateEntry($this->getEntry(), $data->entry, $data->name);
+                    $entry->setIdEntity($entity->getId());
                 }
             } else {
-                mdump('========== NOT persistent!');
                 $entity = new Entity();
                 $entity->setAlias($data->entry);
                 $entity->setType('CE');
                 $entity->save();
                 $entry = new Entry();
-                $entry->newEntry($data->entry, $data->name);
-                $this->setIdEntity($entity->getId());
+                $entry->newEntry($data->entry, $entity->getId(), $data->name);
                 Base::createEntityRelation($entity->getId(), 'rel_elementof', $schema->getIdEntity());
             }
             $this->setData($data);
             $this->setActive(true);
             parent::save();
+            Timeline::addTimeline("constructionelement",$this->getId(),"S");
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();
@@ -320,13 +346,15 @@ HERE;
     
     public function saveModel(){
         parent::save();
+        Timeline::addTimeline("constructionelement",$this->getId(),"S");
     }
 
     public function updateEntry($newEntry)
     {
         $transaction = $this->beginTransaction();
         try {
-            Base::updateTimeLine($this->getEntry(), $newEntry);
+//            Base::updateTimeLine($this->getEntry(), $newEntry);
+            Timeline::addTimeline("constructionelement",$this->getId(),"S");
             $entity = new Entity($this->getIdEntity());
             $entity->setAlias($newEntry);
             $entity->save();
@@ -350,8 +378,9 @@ HERE;
             $entry->deleteEntry($this->getEntry());
             // remove ce-relations
             Base::deleteAllEntityRelation($idEntity);
-            Base::entityTimelineDelete($this->getIdEntity());
+//            Base::entityTimelineDelete($this->getIdEntity());
             // remove this ce
+            Timeline::addTimeline("constructionelement",$this->getId(),"D");
             parent::delete();
             // remove entity
             $entity = new Entity($idEntity);
@@ -375,6 +404,7 @@ HERE;
         $this->setHead($data->head);
         $this->setMultiple($data->multiple);
         parent::save();
+        Timeline::addTimeline("constructionelement",$this->getId(),"S");
     }
 
     public function createRelationsFromData($data)

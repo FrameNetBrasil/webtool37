@@ -19,14 +19,14 @@
     </mdialog>
     <script>
         function formNewFrameSave(){
-            manager.doAjax('structure/frame/newFrame', function(response){
+            manager.doAjax('/index.php/webtool/structure/frame/newFrame', function(response){
                 if (response.status == 'error') {
                     theme.message('error','Error',response.message);
                 } else {
                     theme.dialog.refresh('formNewFrameDialog', {
                         toolbar: null,
                         width: 510,
-                        url: 'structure/entry/gridUpdate/frm_' + $('#frame_entry').textbox('getValue')   
+                        url: '/index.php/webtool/structure/entry/gridUpdate/frm_' + $('#frame_entry').textbox('getValue')
                     });
                 }
             }, 'formNewFrame');

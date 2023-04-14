@@ -19,8 +19,8 @@ class Timeline extends map\TimelineMap {
         return array(
             'log' => array(  ),
             'validators' => array(
-                'timeline' => array('notnull'),
-                'order' => array('notnull'),
+//                'timeline' => array('notnull'),
+//                'order' => array('notnull'),
                 'tlDateTime' => array('notnull'),
                 'author' => array('notnull'),
             ),
@@ -29,7 +29,7 @@ class Timeline extends map\TimelineMap {
     }
     
     public function getDescription(){
-        return $this->getTimeline();
+        return '';//$this->getTimeline();
     }
 
     public function listByFilter($filter){
@@ -37,9 +37,9 @@ class Timeline extends map\TimelineMap {
         if ($filter->idTimeline){
             $criteria->where("idTimeline = {$filter->idTimeline}");
         }
-        if ($filter->timeline){
-            $criteria->where("upper(timeline) LIKE uperr('%{$filter->timeline}%')");
-        }
+//        if ($filter->timeline){
+//            $criteria->where("upper(timeline) LIKE uperr('%{$filter->timeline}%')");
+//        }
         return $criteria;
     }
     
@@ -49,10 +49,11 @@ class Timeline extends map\TimelineMap {
         $max = $result[0]['max'];
         $order = ($max ? : 0) + 1;
         $this->setPersistent(false);
-        $this->setTimeline($timeline);
-        $this->setNumOrder($order);
+//        $this->setTimeline($timeline);
+//        $this->setNumOrder($order);
         $this->setOperation($operation);
         $this->setTlDateTime(\Manager::getSysTime());
+        $this->setIdUser(Base::getCurrentUser()->getId());
         $author = \Manager::getLogin() ? \Manager::getLogin()->getLogin() : 'offline';
         $this->setAuthor($author);
         $this->save();
@@ -62,12 +63,27 @@ class Timeline extends map\TimelineMap {
     public function updateTimeline($oldTl, $newTl) {
         $oldTl = 'tl_' . $oldTl;
         $newTl = 'tl_' . $newTl;
-        $criteria = $this->getUpdateCriteria();
-        $criteria->addColumnAttribute('timeline');
-        $criteria->where("timeline = '{$oldTl}'");
-        $criteria->update($newTl);        
+//        $criteria = $this->getUpdateCriteria();
+//        $criteria->addColumnAttribute('timeline');
+//        $criteria->where("timeline = '{$oldTl}'");
+//        $criteria->update($newTl);
         return $newTl;
     }
-    
+
+    public static function addTimeline($tableName, $idTable, $operation = 'S'){
+        $tl = new TimeLine();
+//        $tl->setTimeline('-');
+//        $tl->setNumOrder(1);
+        $tl->setOperation($operation);
+        $tl->setTlDateTime(\Manager::getSysTime());
+        $tl->setIdUser(Base::getCurrentUser()->getId());
+        $author = \Manager::getLogin() ? \Manager::getLogin()->getLogin() : 'offline';
+        $tl->setAuthor($author);
+        $tl->setTableName($tableName);
+        $tl->setIdTable($idTable);
+        $tl->save();
+    }
+
+
 }
 

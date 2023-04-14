@@ -7,7 +7,7 @@
             <mhiddenfield id="qualia_type" value = "$this->data->qualiaType"/>
             <mhiddenfield id="qualia_idLU1" value = "$this->data->idLU"/>
             <mlabel text="$this->data->lu"/>
-            <div><mlabel text="Relation"/></div>
+            <div><mlabel text="Relation [Frame]"/></div>
             <include component="MLookupQualiaFrame.php" id="qualia_idQualia" type="$this->data->qualiaType"/>
             <div><mlabel text="LU2"/></div>
             <include component="MLookupLU.php" id="qualia_idLU2"/>

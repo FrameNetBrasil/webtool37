@@ -35,8 +35,8 @@ class FrameController extends MController
             $json = json_encode([$data]);
         } elseif ($this->data->id{0} == 'f') {
             $json = $structure->listFEsLUs(substr($this->data->id, 1), $this->idLanguage);
-        } elseif ($this->data->id{0} == 'l') {
-            $json = $structure->listLUSubCorpusConstraints(substr($this->data->id, 1));
+        //} elseif ($this->data->id{0} == 'l') {
+        //    $json = $structure->listLUSubCorpusConstraints(substr($this->data->id, 1));
         } elseif ($this->data->id{0} == 'e') {
             $json = $structure->listConstraintsFE(substr($this->data->id, 1));
             mdump($json);

@@ -2,10 +2,13 @@
     </table>
     <div id="qualiaGridToolbar" style="display:none;height:40px">
         <div style="float:left;padding:5px">
-            <input id="qualiaGridIdQualiaType" name="qualiaGridIdQualiaType" placeholder="{{_'Qualia Type'}}">
+            <input id="qualiaGridIdQualiaType" name="qualiaGridIdQualiaType" placeholder="Qualia Type">
         </div>
         <div style="float:left;padding:5px">
-            <input id="qualiaGridFrame" name="frame" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Frame'}}">
+            <input id="qualiaGridFrame" name="frame" type="text" style="width:200px; padding:5px" placeholder="Search Frame">
+        </div>
+        <div style="float:left;padding:5px">
+            <a id="btnSearch"></a>
         </div>
     </div>
 
@@ -17,32 +20,28 @@
 
         $('#qualiaGridFrame').textbox({
             //buttonText:{{_'Search'}},
-            buttonIcon: 'icon-search',
+            // buttonIcon: 'icon-search',
             iconAlign:'right',
-            prompt: {{_'Search Frame'}},
-        onClickButton: function() {
-            $('#qualiaGrid').datagrid('load',{
-                frame: $('#qualiaGridFrame').textbox('getValue')
-            });
-        }
+            prompt: 'Search Frame'
+        // onClickButton: function() {
+        //     $('#qualiaGrid').datagrid('load',{
+        //         frame: $('#qualiaGridFrame').textbox('getValue')
+        //     });
+        // }
     });
 
         $('#qualiaGridIdQualiaType').combobox({
             data: JSON.parse({{$data->qualiaType}}),
-        prompt: {{_'Select Qualia Type'}},
-        valueField:'idQualiaType',
+            prompt: 'Select Qualia Type',
+            valueField:'idQualiaType',
             textField:'name',
-            onSelect: function() {
-            $('#qualiaGrid').datagrid('load',{
-                idQualiaType: $('#qualiaGridIdQualiaType').combobox('getValue')
-            });
-        },
-        onChange: function() {
-            $('#qualiaGrid').datagrid('load',{
-                idQualiaType: $('#qualiaGridIdQualiaType').combobox('getValue')
-            });
-        }
-    });
+            // onSelect: function() {
+            //     $('#qualiaGrid').datagrid('load',{
+            //         idQualiaType: $('#qualiaGridIdQualiaType').combobox('getValue')
+            //     });
+            // },
+        });
+
 
         var iconFE = {
             "cty_core": "fa fa-circle",
@@ -87,4 +86,17 @@
             ]]
         });
     });
+
+    $('#btnSearch').linkbutton({
+        iconCls:'icon-search',
+        plain:true,
+        size:null,
+        onClick: function() {
+            $('#qualiaGrid').datagrid('load',{
+                idQualiaType: $('#qualiaGridIdQualiaType').combobox('getValue'),
+                frame: $('#qualiaGridFrame').textbox('getValue')
+            })
+        }
+    })
+
 </script>

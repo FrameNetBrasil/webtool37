@@ -58,8 +58,13 @@ class Relationgroup extends map\RelationGroupMap {
         $transaction = $this->beginTransaction();
         try {
             if (!$this->isPersistent()) {
+                $entity = new Entity();
+                $entity->setAlias($this->getEntry());
+                $entity->setType('GT');
+                $entity->save();
+                $this->setIdEntity($entity->getId());
                 $entry = new Entry();
-                $entry->newEntry($this->getEntry());
+                $entry->newEntry($this->getEntry(),$entity->getId());
             }
             parent::save();
             $transaction->commit();

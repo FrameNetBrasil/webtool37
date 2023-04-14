@@ -2,9 +2,11 @@
 <view>
     <mformdialog id="formUpdateSentence">
         <property title="$this->data->title"/>
+        <mlabel text="$this->data->warning"/>
         <fields>
             <mhiddenfield id="idSentence" value="$this->data->id"/>
-            <mtextfield id="text" label="Text" width="350px"/>
+            <mlabel label=">" text="$this->data->warning" style="color:red"/>
+            <mtextfield id="text" label="Text" width="400px"/>
         </fields>
         <tools>
             <mlinkbutton id="lbCloseDocument" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>

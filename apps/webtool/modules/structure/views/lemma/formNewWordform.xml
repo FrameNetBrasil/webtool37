@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formNewWordform" onClose="structure.reloadLemma();">
+        <property title="{{_M('New Wordform')}}" />
+        <options modal="true"/>
+        <fields>
+            <mhiddenfield id="wordform_idLemma" value = "$this->data->idLemma"/>
+            <mlabel text="{{'Lemma:  &lt;b&gt;' . $this->data->name . '&lt;/b&gt;  [' . $this->data->language . ']' }}"/>
+            <mlabel text="Select wordform (minimum 3 chars)"/>
+            <mhcontainer style="padding:5px">
+                <include component="MLookupWordformLexeme.php" id="wordform_idWordForm" label=""/>
+            </mhcontainer>
+            <mtextfield id="wordform_lexemeOrder" label="Order:" width="50px"/>
+            <mbooleanfield id="wordform_breakBefore" label="BreakBefore:" width="50px"/>
+            <mbooleanfield id="wordform_headWord" label="HeadWord:" width="50px"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseLemma" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveLemma" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

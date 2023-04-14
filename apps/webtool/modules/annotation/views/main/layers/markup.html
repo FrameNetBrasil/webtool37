@@ -86,6 +86,7 @@
     </form>
 </div>
 
+<!--
 <div id="dlgSubCorpus" title="Choose Subcorpus" style="width:400px;height:250px;padding:0px">
     <div id="dlgSubCorpus_tools">
         <a href='#' name="dlgSubCorpusClose" id="dlgSubCorpusClose" >
@@ -98,6 +99,21 @@
     <input type="hidden" id="dlgSubCorpusField" name="dlgSubCorpusField" value=""/>
     <label><strong>Select a Frame.LU and save</strong></label>
     <div id="dlgSubCorpusList"></div>
+</div>
+-->
+<div id="dlgLU_tools">
+    <a href='#' name="dlgLUClose" id="dlgLUClose" >
+        Close
+    </a>
+    <a href='#' name="dlgLUSave" id="dlgLUSave" >
+        Save
+    </a>
+</div>
+
+<div id="dlgLU" title="Choose LU" style="width:400px;height:250px;padding:0px">
+    <input type="hidden" id="dlgLUField" name="dlgLUField" value=""/>
+    <label><strong>Select a Frame.LU and save</strong></label>
+    <div id="dlgLUList"></div>
 </div>
 
 
@@ -122,7 +138,7 @@
     </table>
 </div>
 
-<div id="dlgASRemove" title="Remove Annotation Sets" style="width:280px;height:200px;padding:0px">
+<div id="dlgASRemove" title="Remove Annotation Sets" style="width:350px;height:200px;padding:0px">
     <div id="dlgASRemove_tools">
         <a href='#' name="dlgASRemoveClose" id="dlgASRemoveClose" >
             Close
@@ -135,8 +151,8 @@
         <thead>
         <tr>
             <th field="ck" checkbox="true"></th>
-            <th field="idAnnotationSet" hidden="true"></th>
             <th field="name" width="200">AnnotationSet</th>
+            <th field="idAnnotationSet">id</th>
         </tr>
         </thead>
     </table>

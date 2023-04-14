@@ -53,7 +53,7 @@ class RelationType extends map\RelationTypeMap {
         }
         return $criteria;
     }
-    
+
     public function listAll(){
         $criteria = $this->getCriteria()->select('idRelationType, entry, nameEntity1, nameEntity2, entries.name as name')->orderBy('entries.name');
         Base::entryLanguage($criteria);
@@ -70,8 +70,13 @@ class RelationType extends map\RelationTypeMap {
         $transaction = $this->beginTransaction();
         try {
             if (!$this->isPersistent()) {
+                $entity = new Entity();
+                $entity->setAlias($this->getEntry());
+                $entity->setType('GT');
+                $entity->save();
+                $this->setIdEntity($entity->getId());
                 $entry = new Entry();
-                $entry->newEntry($this->getEntry());
+                $entry->newEntry($this->getEntry(),$entity->getId());
                 $translation = new Translation();
                 $translation->newResource($this->getNameEntity1());
                 $translation->newResource($this->getNameEntity2());

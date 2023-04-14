@@ -24,7 +24,6 @@ class Lemma extends map\LemmaMap
             'log' => array(),
             'validators' => array(
                 'name' => array('notnull'),
-                'timeline' => array('notnull'),
                 'idPOS' => array('notnull'),
             ),
             'converters' => array()
@@ -125,15 +124,15 @@ class Lemma extends map\LemmaMap
 
     public function listLexemes($idLemma)
     {
-        $criteria = $this->getCriteria()->select('lexemeentries.idLexemeEntry,lexemeentries.lexeme.idLexeme,lexemeentries.lexeme.name,lexemeentries.lexeme.pos.POS,lexemeentries.lexemeOrder,lexemeentries.headWord,lexemeentries.breakBefore')->orderBy('name,lexemeentries.lexemeOrder');
+        $criteria = $this->getCriteria();
+        $criteria->setAssociationType('lexemeentries.wordform', 'left');
+        $criteria->select('lexemeentries.idLexemeEntry,lexemeentries.lexeme.idLexeme,lexemeentries.lexeme.name,lexemeentries.lexeme.pos.POS,' .
+            'lexemeentries.lexemeOrder,lexemeentries.headWord,lexemeentries.breakBefore,' .
+            'lexemeentries.wordform.form'
+        )
+            ->orderBy('name,lexemeentries.lexemeOrder');
         $criteria->where("idLemma = {$idLemma}");
         return $criteria;
-    }
-
-    public function setTimeline()
-    {
-        $timeline = 'lem_' . md5($this->getName() . $this->getIdPOS() . $this->getIdLanguage());
-        parent::setTimeLine(Base::newTimeLine($timeline, 'S'));
     }
 
     public function hasLU()
@@ -146,6 +145,12 @@ class Lemma extends map\LemmaMap
         $lexemeEntry = new LexemeEntry();
         $lexemeEntry->setIdLemma($data->idLemma);
         $lexemeEntry->setPersistent(false);
+        if ($data->idWordForm != '') {
+            $wordForm = new WordForm();
+            $wordForm->getById($data->idWordForm);
+            $data->idLexeme = $wordForm->getIdLexeme();
+            $lexemeEntry->setIdWordform($data->idWordForm);
+        }
         $lexemeEntry->setIdLexeme($data->idLexeme);
         $lexemeEntry->setBreakBefore((boolean)$data->breakBefore ? '1' : '0');
         $lexemeEntry->setHeadWord((boolean)$data->headWord ? '1' : '0');
@@ -186,9 +191,8 @@ class Lemma extends map\LemmaMap
                 $pos->getByPOS($POS);
                 $data->idPOS = $pos->getIdPOS();
                 $this->setData($data);
-                $this->setTimeline();
-                mdump('======'.$this->idLemma);
                 parent::save();
+                Timeline::addTimeline("lemma", $this->getId(), "S");
                 $this->getIdEntity();
             }
             $transaction->commit();
@@ -203,8 +207,8 @@ class Lemma extends map\LemmaMap
         try {
             $transaction = $this->beginTransaction();
             $this->setData($data->lemma);
-            $this->setTimeline();
             parent::save();
+            Timeline::addTimeline("lemma", $this->getId(), "S");
             $this->getIdEntity();
             $lexemeEntry = new LexemeEntry();
             $lexemeEntry->setIdLemma($this->getId());
@@ -229,7 +233,7 @@ class Lemma extends map\LemmaMap
         try {
             $transaction = $this->beginTransaction();
             $idEntity = $this->getIdEntity();
-            Base::entityTimelineDelete($idEntity);
+            Timeline::addTimeline("lemma", $this->getId(), "D");
             parent::delete();
             $entity = new Entity($idEntity);
             $entity->delete();
@@ -357,6 +361,104 @@ class Lemma extends map\LemmaMap
             throw new EModelException($e->getMessage() . ' LineNum: ' . $lineNum);
         }
         return $mfile;
+    }
+
+    /**
+     * Registro de Lemmas em texto simples
+     *
+     * Linha: <lemma_name.<pos> <lexeme1_name> <POS1> <lexeme2_name> <POS2> <lexeme3_name> <POS3> ... <headWord>
+     *
+     * POS: N, A, NUM, V, ART, PRON, ADV, PREP, SCON, CCON
+     * headWord: registrada como 0
+     * breakBefore: registrado como 0
+     *
+     * Parâmetro data informa: idLanguage
+     * @param object $data
+     * @param array $rows
+     */
+    public function registerLemma($data, $rows)
+    {
+        $idLanguage = $data->idLanguage;
+        $pos = new POS();
+        $POS = $pos->listAll()->asQuery()->chunkResult('POS', 'idPOS');
+        $transaction = $this->beginTransaction();
+        try {
+            $lexeme = new Lexeme();
+            $lineNum = 0;
+            foreach ($rows as $row) {
+                $lineNum++;
+                $row = trim($row);
+                if (($row == '') || (substr($row, 0, 2) == "//")) {
+                    continue;
+                }
+                mdump($row);
+                $fields = explode(' ', $row);
+                $n = count($fields) - 1;
+                $dataLemma = (object)[
+                    'name' => str_replace('_', ' ', $fields[0]),
+                    'headWord' => $fields[$n],
+                    'entries' => []
+                ];
+                for ($i = 1; $i < $n; $i = $i + 2) {
+                    $lexemeName = $fields[$i];
+                    $lexemePOS = $fields[$i + 1];
+                    $idPOSLexeme = $POS[$lexemePOS];
+                    if ($idPOSLexeme != '') {
+                        $lx = $lexeme->getCriteria()
+                            ->select('idLexeme')
+                            ->where("(name = '{$lexemeName}') and (idPOS = {$idPOSLexeme}) and (idLanguage = {$idLanguage})")
+                            ->asQuery()->getResult();
+                        $idLexeme = $lx[0]['idLexeme'];
+                        if ($idLexeme != '') {
+                            $dataLemma->entries[$lexemeName] = [
+                                'id' => $idLexeme,
+                                'breakBefore' => 0
+                            ];
+                        }
+                    }
+                }
+                $c = count($dataLemma->entries);
+                if ($c > 0) {
+                    if ($c == 1) {
+                        $dataLemma->headWord = array_key_first($dataLemma->entries);
+                    }
+                    // create/update lemma
+                    $lemma = new Lemma();
+                    $name = trim($dataLemma->name);
+                    list($n, $pos) = explode('.', $name);
+                    $idPOS = $POS[strtoupper($pos)];
+                    $data = (object)[
+                        'lemma' => (object)[
+                            'name' => $dataLemma->name,
+                            'idLanguage' => $idLanguage,
+                            'idPOS' => $idPOS,
+                            'headWord' => $dataLemma->headWord
+                        ],
+                        'lexeme' => $dataLemma->entries
+                    ];
+                    $lemmas = $this->getCriteria()
+                        ->select('idLemma')
+                        ->where("(name = '{$name}') and (idLanguage = {$idLanguage})")
+                        ->asQuery()->getResult();
+                    if ($lemmas[0]['idLemma'] == '') {
+                        $lemma->save($data);
+                    } else {
+                        $idLemma = $lemmas[0]['idLemma'];
+                        $lexemeEntry = new LexemeEntry();
+                        $lexemeEntry->getDeleteCriteria()
+                            ->where("idLemma = {$idLemma}")
+                            ->delete();
+                        $lemma->getById($idLemma);
+                        $lemma->save($data);
+                    }
+                }
+            }
+            $transaction->commit();
+        } catch (\EModelException $e) {
+            // rollback da transação em caso de algum erro
+            $transaction->rollback();
+            throw new EModelException($e->getMessage() . ' LineNum: ' . $lineNum);
+        }
     }
 
 }

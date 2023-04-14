@@ -1,16 +1,4 @@
 <?php
-/**
- * 
- *
- * @category   Maestro
- * @package    UFJF
- *  @subpackage fnbr
- * @copyright  Copyright (c) 2003-2012 UFJF (http://www.ufjf.br)
- * @license    http://siga.ufjf.br/license
- * @version    
- * @since      
- */
-
 namespace fnbr\models;
 
 class Sentence extends map\SentenceMap {
@@ -21,7 +9,6 @@ class Sentence extends map\SentenceMap {
             'validators' => array(
                 'text' => array('notnull'),
                 'paragraphOrder' => array('notnull'),
-                'timeline' => array('notnull'),
                 'idParagraph' => array('notnull'),
                 'idLanguage' => array('notnull'),
             ),
@@ -38,26 +25,30 @@ class Sentence extends map\SentenceMap {
         if ($filter->idSentence){
             $criteria->where("idSentence LIKE '{$filter->idSentence}%'");
         }
+        if ($filter->idDocument){
+            $criteria->where("idDocument =  {$filter->idDocument}");
+        }
         return $criteria;
-    }
-
-    public function listByDocument($idDocument){
-        $criteria = $this->getCriteria()->select('*')->orderBy('idSentence');
-        $criteria->where('paragraph.document.idDocument','=', $idDocument);
-        return $criteria;
-    }
-
-    public function countByDocument($idDocument){
-        $criteria = $this->getCriteria()->select('count(*) as n')->orderBy('idSentence');
-        $criteria->where('paragraph.document.idDocument','=', $idDocument);
-        $result = $criteria->asQuery()->getResult();
-        return $result[0]['n'];
     }
 
     public function save() {
-        $timeline = 'sen_' . md5($this->getText());
-        $this->setTimeLine(Base::newTimeLine($timeline, 'S'));
         parent::save();
+    }
+
+    public function delete() {
+        $cmd = <<<HERE
+
+select s.idSentenceMM
+FROM sentenceMM s
+where (s.idSentence = {$this->getId()})
+
+HERE;
+        $result = $this->getDb()->getQueryCommand($cmd)->getResult();
+        $cmd3 = "delete from SentenceMM where idSentence = {$this->getId()}";
+        $this->getDb()->executeCommand($cmd3);
+        $cmd4 = "delete from AnnotationSet where idSentence = {$this->getId()}";
+        $this->getDb()->executeCommand($cmd4);
+        parent::delete();
     }
 
     public function hasAnnotation() {

@@ -7,8 +7,12 @@
             <mhiddenfield id="qualia_type" value = "$this->data->qualiaType"/>
             <mhiddenfield id="qualia_idFrame" value = "$this->data->idFrame"/>
             <mlabel text="$this->data->frame" label="Frame:"/>
+            <mlabel text="$this->data->qualiaName" label="Qualia:"/>
+            <mtextfield id="qualia_info" label="Relation" width="250px"></mtextfield>
             <include component="MLookupFE.php" id="qualia_idFE1" label="FE1"/>
+            <!--
             <include component="MLookupQualiaRelation.php" id="qualia_idQualia" type="$this->data->qualiaType" label="Relation"/>
+            -->
             <include component="MLookupFE.php" id="qualia_idFE2" label="FE2"/>
         </fields>
         <tools>

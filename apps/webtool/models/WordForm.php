@@ -23,7 +23,6 @@ class WordForm extends map\WordFormMap
             'log' => array(),
             'validators' => array(
                 'form' => array('notnull'),
-                'timeline' => array('notnull'),
                 'idLexeme' => array('notnull'),
                 'idLanguage' => array('notnull'),
             ),
@@ -56,7 +55,7 @@ class WordForm extends map\WordFormMap
             $lu = new LU();
             //$criteria = $lu->getCriteria()->select("idLU, concat(frame.entries.name,'.',name) as fullName, locate(' ', name) as mwe");
             $criteria = $lu->getCriteria()->select("idLU, concat(frame.entries.name,'.',name) as fullName, count(lemma.lexemeentries.idLexemeEntry)-1 as mwe");
-            Base::relation($criteria, 'LU', 'Frame frame', 'rel_evokes');
+            //Base::relation($criteria, 'LU', 'Frame frame', 'rel_evokes');
             Base::entryLanguage($criteria, 'frame');
             $criteria->where("idLU", "IN", $lus);
             $criteria->where("lemma.idLanguage", "=", "frame.entries.idLanguage");
@@ -74,6 +73,18 @@ class WordForm extends map\WordFormMap
         return $criteria->asQuery()->chunkResult('i','form');
     }
 
+    public function listForLookup($wordform = '')
+    {
+        $idLanguage = \Manager::getSession()->idLanguage;
+        $form = trim($wordform);
+        $form = (strlen($wordform) == strlen($form)) ? $form . '%' : $form;
+        $criteria = $this->getCriteria()->select("idWordForm, concat(form, '  [', lexeme.name, '  ', lexeme.pos.entries.name,']','  [',lexeme.language.language,']') as fullname")->orderBy('form');
+        $criteria->where("lexeme.idLanguage = {$idLanguage}");
+        $criteria->where("lexeme.pos.entries.idLanguage = {$idLanguage}");
+        $criteria->where("form LIKE '{$form}'");
+        return $criteria;
+    }
+
     public function listLexemes($words)
     {
         $idLanguage = \Manager::getSession()->idLanguage;
@@ -84,13 +95,33 @@ class WordForm extends map\WordFormMap
     }
 
     public function save() {
-        $timeline = 'wfm_' . md5($this->getForm() . $this->getIdLexeme());
-        $this->setTimeLine(Base::newTimeLine($timeline, 'S'));
         parent::save();
+        Timeline::addTimeline("wordform",$this->getId(),"S");
     }
 
     public function saveOffline() {
         parent::save();
+        Timeline::addTimeline("wordform",$this->getId(),"S");
+    }
+
+    public function hasLU($wordformList)
+    {
+        $idLanguage = \Manager::getSession()->idLanguage;
+        $list = [];
+        foreach($wordformList as $i => $wf) {
+            if ($wf != '') {
+                $wf = str_replace("'","\'", $wf);
+                $list[$i] = "'{$wf}'";
+            }
+        }
+        $in = implode(',', $list);
+        $criteria = $this->getCriteria();
+        $criteria->select('form, count(lexeme.lexemeentries.lemma.lus.idLU) as n');
+        $criteria->where("form IN ($in)");
+        $criteria->where("lemma.idLanguage = {$idLanguage}");
+        $criteria->groupBy("form");
+        $criteria->having("count(lexeme.lexemeentries.lemma.lus.idLU) > 0");
+        return ($criteria->asQuery()->chunkResult('form','n'));
     }
 
 }

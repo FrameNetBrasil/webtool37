@@ -120,7 +120,7 @@ class StructureCxnService extends MService
             $node = array();
             $node['id'] = 'e' . $ce['idConstructionElement'];
             $style = 'background-color:#' . $ce['rgbBg'] . ';color:#' . $ce['rgbFg'] . ';';
-            $node['text'] = "<span style='{$style}'>" . $ce['name'] . "</span>";
+            $node['text'] = "<span style='{$style}'>" . $ce['name'] . "</span>" . ' ' . ($ce['head'] == 1 ? '[h]' : '');
             $node['state'] = 'closed';//'open';
             $node['entry'] = $ce['entry'];
             //$node['iconCls'] = 'icon-blank fa-icon fa fa-circle';
@@ -811,7 +811,7 @@ class StructureCxnService extends MService
                 $cxn = new fnbr\models\Construction($data->idConstruction);
                 $concept = new fnbr\models\Concept($data->idConcept);
                 $conceptType = new fnbr\models\TypeInstance($data->idConceptType);
-                Base::createEntityRelation($cxn->getIdEntity(), 'rel_evokes', $concept->getIdEntity(), $conceptType->getIdEntity());
+                Base::createEntityRelation($cxn->getIdEntity(), 'rel_hasconcept', $concept->getIdEntity(), $conceptType->getIdEntity());
             }
             $transaction->commit();
         } catch (\Exception $e) {
@@ -927,7 +927,25 @@ class StructureCxnService extends MService
                 $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);
                 $concept = new fnbr\models\Concept($data->idConcept);
                 $conceptType = new fnbr\models\TypeInstance($data->idConceptType);
-                Base::createEntityRelation($ce->getIdEntity(), 'rel_evokes', $concept->getIdEntity(), $conceptType->getIdEntity());
+                Base::createEntityRelation($ce->getIdEntity(), 'rel_hasconcept', $concept->getIdEntity(), $conceptType->getIdEntity());
+            }
+            if ($data->idConstructionUGender != '') {
+                $constraint = Base::createEntity('CN', 'con');
+                $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);
+                $ceUGender = new fnbr\models\ConstructionElement($data->idConstructionUGender);
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_ugender', $ce->getIdEntity(), $ceUGender->getIdEntity());
+            }
+            if ($data->idConstructionUPerson != '') {
+                $constraint = Base::createEntity('CN', 'con');
+                $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);
+                $ceUPerson = new fnbr\models\ConstructionElement($data->idConstructionUPerson);
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_uperson', $ce->getIdEntity(), $ceUPerson->getIdEntity());
+            }
+            if ($data->idConstructionUNumber != '') {
+                $constraint = Base::createEntity('CN', 'con');
+                $ce = new fnbr\models\ConstructionElement($data->idConstructionElement);
+                $ceUNumber = new fnbr\models\ConstructionElement($data->idConstructionUNumber);
+                Base::createConstraintInstance($constraint->getIdEntity(), 'con_unumber', $ce->getIdEntity(), $ceUNumber->getIdEntity());
             }
             $transaction->commit();
         } catch (\Exception $e) {

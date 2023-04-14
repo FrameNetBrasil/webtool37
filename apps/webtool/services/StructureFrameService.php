@@ -80,6 +80,16 @@ class StructureFrameService extends MService
             $result[] = $node;
         }
         */
+        $qualia = new fnbr\models\Qualia();
+        $qualias = $qualia->listByFrame($idFrame, $idLanguage);
+        foreach ($qualias as $idQualia => $name) {
+            $node = array();
+            $node['id'] = 'q' . $idQualia;
+            $node['text'] = $name;
+            $node['state'] = 'closed';
+            $node['iconCls'] = 'icon-blank fas fa-arrows-alt-h fa12px entity_lu';
+            $result[] = $node;
+        }
         $lu = new fnbr\models\ViewLU();
         $lus = $lu->listByFrame($idFrame, $idLanguage)->asQuery()->chunkResult('idLU', 'name');
         foreach ($lus as $idLU => $name) {
@@ -88,16 +98,6 @@ class StructureFrameService extends MService
             $node['text'] = $name;
             $node['state'] = 'closed';
             $node['iconCls'] = 'icon-blank fa fa-hashtag fa12px entity_lu';
-            $result[] = $node;
-        }
-        $qualia = new fnbr\models\Qualia();
-        $qualias = $qualia->listByFrame($idFrame, $idLanguage);
-        foreach ($qualias as $idQualia => $name) {
-            $node = array();
-            $node['id'] = 'q' . $idQualia;
-            $node['text'] = $name;
-            $node['state'] = 'closed';
-            $node['iconCls'] = 'icon-blank fas fa-compress fa12px entity_lu';
             $result[] = $node;
         }
         return json_encode($result);

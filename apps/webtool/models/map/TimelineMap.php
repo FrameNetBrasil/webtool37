@@ -24,11 +24,14 @@ class TimelineMap extends \MBusinessModel {
             'table' => 'timeline',
             'attributes' => array(
                 'idTimeline' => array('column' => 'idTimeline','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
-                'timeline' => array('column' => 'timeline','type' => 'string'),
-                'numOrder' => array('column' => 'numorder','type' => 'integer'),
+//                'timeline' => array('column' => 'timeline','type' => 'string'),
+//                'numOrder' => array('column' => 'numorder','type' => 'integer'),
                 'tlDateTime' => array('column' => 'tldateTime','type' => 'timestamp'),
                 'author' => array('column' => 'author','type' => 'string'),
                 'operation' => array('column' => 'operation','type' => 'string'),
+                'tableName' => array('column' => 'tableName','type' => 'string'),
+                'idTable' => array('column' => 'id','type' => 'integer'),
+                'idUser' => array('column' => 'iduser','type' => 'integer'),
             ),
             'associations' => array(
             )
@@ -44,12 +47,12 @@ class TimelineMap extends \MBusinessModel {
      * 
      * @var string 
      */
-    protected $timeline;
+//    protected $timeline;
     /**
      * 
      * @var integer 
      */
-    protected $numOrder;
+//    protected $numOrder;
     /**
      * 
      * @var date 
@@ -65,6 +68,9 @@ class TimelineMap extends \MBusinessModel {
      * @var string
      */
     protected $operation;
+    protected $tableName;
+    protected $idTable;
+    protected $idUser;
 
     /**
      * Associations
@@ -82,21 +88,21 @@ class TimelineMap extends \MBusinessModel {
         $this->idTimeline = $value;
     }
 
-    public function getTimeline() {
-        return $this->timeline;
-    }
-
-    public function setTimeline($value) {
-        $this->timeline = $value;
-    }
-
-    public function getNumOrder() {
-        return $this->numOrder;
-    }
-
-    public function setNumOrder($value) {
-        $this->numOrder = $value;
-    }
+//    public function getTimeline() {
+//        return $this->timeline;
+//    }
+//
+//    public function setTimeline($value) {
+//        $this->timeline = $value;
+//    }
+//
+//    public function getNumOrder() {
+//        return $this->numOrder;
+//    }
+//
+//    public function setNumOrder($value) {
+//        $this->numOrder = $value;
+//    }
 
     public function getTlDateTime() {
         return $this->tlDateTime;
@@ -125,7 +131,29 @@ class TimelineMap extends \MBusinessModel {
         $this->operation = $value;
     }
 
-    
+    public function getTableName() {
+        return $this->tableName;
+    }
+
+    public function setTableName($value) {
+        $this->tableName = $value;
+    }
+
+    public function getIdTable() {
+        return $this->idTable;
+    }
+
+    public function setIdTable($value) {
+        $this->idTable = $value;
+    }
+
+    public function getIdUser() {
+        return $this->idUser;
+    }
+
+    public function setIduser($value) {
+        $this->idUser = $value;
+    }
 
 }
 // end - wizard

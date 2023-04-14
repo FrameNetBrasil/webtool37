@@ -46,6 +46,9 @@
                     text = idLabelType;
                 }
             } else {
+                if (row.idLayerType === 0) {
+                    text = "<span style='color:#AAA'>" + annotation.chars[this.field].char + "</span>";
+                }
                 if ((typeof annotation.layers[row.idLayer] != 'undefined') ) {
                     if (annotation.layers[row.idLayer]['currentLabelPos'] > 0) {
                         annotation.layers[row.idLayer]['currentLabel'] = 0;
@@ -58,12 +61,8 @@
 
         annotation.cellLayerFormatter = function (value,row,index) {
             var text = value;
-            if (row.idLayerType == 0){
-    console.log('---');
-    console.log(row);
-    console.log(row.idAnnotationSet);
-
-    text = '';//text = "<span>[" + row.idAnnotationSet + "]</span>"
+            if (row.idLayerType == 0) {
+            text = '';//text = "<span>[" + row.idAnnotationSet + "]</span>"
                 text = text + "<a class='fa fa-info-circle fa16px' style=':hover {color:green};text-decoration:none;' onclick='annotation.ASInfo(" + row.idAnnotationSet + ")'>&nbsp</a>";
                 text = text + "<a class='fa fa-comment-o fa16px' style=':hover {color:green};text-decoration:none;' onclick='annotation.ASComments(" + row.idAnnotationSet + ")'>&nbsp</a>" + annotation.annotationSets[row.idAnnotationSet]['name'];
             }
@@ -109,6 +108,9 @@
                     } else {
                         idLabelType = value;
                     }
+                    console.log(row);
+                    console.log('idLabelType = ' + idLabelType);
+                    console.log(annotation.labelTypes);
                     idColor = annotation.labelTypes[idLabelType]['idColor'];
                 }
                 //console.log('cellStyler');

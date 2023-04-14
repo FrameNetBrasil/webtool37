@@ -109,6 +109,28 @@ class GrapherService extends MService
             $node['default'] = false;
             $result->$id = $node;
         }
+        $relations = $relation->listByFilter((object)['entry' => 'rel_subtypeof'])->asQuery()->getResult();
+        foreach ($relations as $row) {
+            $id = $row['entry'];
+            $node = array();
+            $node['id'] = $id;
+            $node['label'] = $row['name'];
+            $node['color'] = Manager::getConf("fnbr.color.{$id}");
+            $node['idType'] = 'rel_subtypeof';
+            $node['default'] = false;
+            $result->$id = $node;
+        }
+        $relations = $relation->listByFilter((object)['entry' => 'rel_hasconcept'])->asQuery()->getResult();
+        foreach ($relations as $row) {
+            $id = $row['entry'];
+            $node = array();
+            $node['id'] = $id;
+            $node['label'] = $row['name'];
+            $node['color'] = Manager::getConf("fnbr.color.{$id}");
+            $node['idType'] = 'rel_hasconcept';
+            $node['default'] = false;
+            $result->$id = $node;
+        }
         // constraints
         //
         $constraintType = new \fnbr\models\ConstraintType();
@@ -278,6 +300,8 @@ class GrapherService extends MService
         for ($l = 1; $l <= $level; $l++) {
             if ($l == 1) {
                 $relations = $this->getEntityRelationsById($idEntity, $chosen);
+                $add = $this->getEntityConstraintRelations($idEntity, $chosen);
+                $relations = array_merge($relations, $add);
             } else if ($l == 2) {
                 $base = $relations;
                 $added = [];
@@ -943,8 +967,8 @@ class GrapherService extends MService
             mdump($row);
             if ($chosen[$row['relationType']]) {
                 $node0 = (object)[
-                    //'id' => $row['idConstrainedBy'],
-                    'id' => $row['idConstraint'],
+                    'id' => $row['idConstrainedBy'],
+                    //'id' => $row['idConstraint'],
                     'type' => strtolower($row['type']),
                     'name' => $row['name']
                 ];

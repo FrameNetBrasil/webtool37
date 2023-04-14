@@ -27,11 +27,13 @@ class LexemeEntryMap extends \MBusinessModel {
                 'lexemeOrder' => array('column' => 'lexemeOrder','type' => 'integer'),
                 'breakBefore' => array('column' => 'breakBefore','type' => 'integer'),
                 'headWord' => array('column' => 'headWord','type' => 'integer'),
+                'idWordForm' => array('column' => 'idWordForm','type' => 'integer'),
                 'idLexeme' => array('column' => 'idLexeme','type' => 'integer'),
                 'idLemma' => array('column' => 'idLemma','type' => 'integer'),
             ),
             'associations' => array(
-                'lexeme' => array('toClass' => 'fnbr\models\Lexeme', 'cardinality' => 'oneToOne' , 'keys' => 'idLexeme:idLexeme'), 
+                'wordform' => array('toClass' => 'fnbr\models\WordForm', 'cardinality' => 'oneToOne' , 'keys' => 'idWordForm:idWordForm'),
+                'lexeme' => array('toClass' => 'fnbr\models\Lexeme', 'cardinality' => 'oneToOne' , 'keys' => 'idLexeme:idLexeme'),
                 'lemma' => array('toClass' => 'fnbr\models\Lemma', 'cardinality' => 'oneToOne' , 'keys' => 'idLemma:idLemma'), 
             )
         );
@@ -58,6 +60,11 @@ class LexemeEntryMap extends \MBusinessModel {
      */
     protected $headWord;
     /**
+     *
+     * @var integer
+     */
+    protected $idWordForm;
+    /**
      * 
      * @var integer 
      */
@@ -71,6 +78,7 @@ class LexemeEntryMap extends \MBusinessModel {
     /**
      * Associations
      */
+    protected $wordform;
     protected $lexeme;
     protected $lemma;
     
@@ -110,6 +118,14 @@ class LexemeEntryMap extends \MBusinessModel {
         $this->headWord = $value;
     }
 
+    public function getIdWordForm() {
+        return $this->idWordForm;
+    }
+
+    public function setIdWordForm($value) {
+        $this->idWordForm = $value;
+    }
+
     public function getIdLexeme() {
         return $this->idLexeme;
     }
@@ -124,6 +140,30 @@ class LexemeEntryMap extends \MBusinessModel {
 
     public function setIdLemma($value) {
         $this->idLemma = $value;
+    }
+    /**
+     *
+     * @return Association
+     */
+    public function getWordForm() {
+        if (is_null($this->wordform)){
+            $this->retrieveAssociation("wordform");
+        }
+        return  $this->wordform;
+    }
+    /**
+     *
+     * @param Association $value
+     */
+    public function setWordForm($value) {
+        $this->wordform = $value;
+    }
+    /**
+     *
+     * @return Association
+     */
+    public function getAssociationWordForm() {
+        $this->retrieveAssociation("wordform");
     }
     /**
      *

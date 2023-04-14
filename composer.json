@@ -31,9 +31,6 @@
     "jenssegers/blade": "^1.4",
     "clue/graph": "^0.9.2"
   },
-  "require-dev": {
-    "phpunit/phpunit": "*"
-  },
   "autoload": {
     "files": [
       "core/classes/functions.php"

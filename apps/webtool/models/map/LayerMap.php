@@ -25,7 +25,6 @@ class LayerMap extends \MBusinessModel {
             'attributes' => array(
                 'idLayer' => array('column' => 'idLayer','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
                 'rank' => array('column' => '`rank`','type' => 'integer'),
-                'timeline' => array('column' => 'timeline','type' => 'string'),
                 'idAnnotationSet' => array('column' => 'idAnnotationSet','type' => 'integer'),
                 'idLayerType' => array('column' => 'idLayerType','type' => 'integer'),
             ),
@@ -33,7 +32,6 @@ class LayerMap extends \MBusinessModel {
                 'annotationset' => array('toClass' => 'fnbr\models\AnnotationSet', 'cardinality' => 'oneToOne' , 'keys' => 'idAnnotationSet:idAnnotationSet'), 
                 'layertype' => array('toClass' => 'fnbr\models\LayerType', 'cardinality' => 'oneToOne' , 'keys' => 'idLayerType:idLayerType'), 
                 'labels' => array('toClass' => 'fnbr\models\Label', 'cardinality' => 'oneToMany' , 'keys' => 'idLayer:idLayer'), 
-                'timelines' => array('toClass' => 'fnbr\models\Timeline', 'cardinality' => 'oneToMany' , 'keys' => 'timeline:timeline'), 
             )
         );
     }
@@ -48,11 +46,6 @@ class LayerMap extends \MBusinessModel {
      * @var integer 
      */
     protected $rank;
-    /**
-     * 
-     * @var string 
-     */
-    protected $timeline;
     /**
      * 
      * @var integer 
@@ -70,8 +63,6 @@ class LayerMap extends \MBusinessModel {
     protected $annotationset;
     protected $layertype;
     protected $labels;
-    protected $timelines;
-    
 
     /**
      * Getters/Setters
@@ -90,14 +81,6 @@ class LayerMap extends \MBusinessModel {
 
     public function setRank($value) {
         $this->rank = $value;
-    }
-
-    public function getTimeline() {
-        return $this->timeline;
-    }
-
-    public function setTimeline($value) {
-        $this->timeline = $value;
     }
 
     public function getIdAnnotationSet() {
@@ -187,33 +170,6 @@ class LayerMap extends \MBusinessModel {
     public function getAssociationLabels() {
         $this->retrieveAssociation("labels");
     }
-    /**
-     *
-     * @return Association
-     */
-    public function getTimelines() {
-        if (is_null($this->timelines)){
-            $this->retrieveAssociation("timelines");
-        }
-        return  $this->timelines;
-    }
-    /**
-     *
-     * @param Association $value
-     */
-    public function setTimelines($value) {
-        $this->timelines = $value;
-    }
-    /**
-     *
-     * @return Association
-     */
-    public function getAssociationTimelines() {
-        $this->retrieveAssociation("timelines");
-    }
-
-    
-
 }
 // end - wizard
 

@@ -70,9 +70,10 @@ class Domain extends map\DomainMap
             $entity->save();
             $this->setIdEntity($entity->getId());
             $entry = new Entry();
-            $entry->newEntry($this->getEntry());
-            Base::entityTimelineSave($this->getIdEntity());
+            $entry->newEntry($this->getEntry(),$entity->getId());
+//            Base::entityTimelineSave($this->getIdEntity());
             parent::save();
+            Timeline::addTimeline("domain",$this->getId(),"S");
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();

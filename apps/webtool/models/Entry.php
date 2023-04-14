@@ -43,6 +43,9 @@ class Entry extends map\EntryMap {
         if ($filter->idLanguage){
             $criteria->where("idLanguage = {$filter->idLanguage}");
         }
+        if ($filter->idEntity){
+            $criteria->where("idEntity = {$filter->idEntity}");
+        }
         return $criteria;
     }
 
@@ -71,7 +74,7 @@ class Entry extends map\EntryMap {
         return $languages;
     }
     
-    public function newEntry($entry, $name = null){
+    public function newEntry($entry, $idEntity, $name = null){
         $languages = Base::languages();
         foreach($languages as $idLanguage=>$language) {
             $this->setPersistent(false);
@@ -80,7 +83,17 @@ class Entry extends map\EntryMap {
             $this->setDescription($name ?: $entry);
             $this->setNick($name ?: $entry);
             $this->setIdLanguage($idLanguage);
+            $this->setIdEntity($idEntity);
             $this->save();
+            Timeline::addTimeline("entry",$this->getId(),"S");
+        }
+    }
+
+    public function updateIdEntity($idEntity) {
+        if ($this->isPersistent()) {
+            $this->setIdEntity($idEntity);
+            $this->save();
+            Timeline::addTimeline("entry",$this->getId(),"S");
         }
     }
 
@@ -93,7 +106,9 @@ class Entry extends map\EntryMap {
             $this->setDescription($data->description ?: $data->name);
             $this->setNick($data->nick ?: $data->name);
             $this->setIdLanguage($idLanguage);
+            $this->setIdEntity($data->idEntity);
             $this->save();
+            Timeline::addTimeline("entry",$this->getId(),"S");
         }
     }
 
@@ -117,6 +132,13 @@ class Entry extends map\EntryMap {
         $criteria->delete();
     }
 
+    public function deleteByIdEntity($idEntity){
+        $criteria = $this->getDeleteCriteria();
+        $criteria->addColumnAttribute('idEntity');
+        $criteria->where("idEntity = {$idEntity}");
+        $criteria->delete();
+    }
+
     public function cloneEntry($sourceEntry, $targetEntry){
         $criteria = $this->getCriteria()->select("idEntry, name, description, nick, idLanguage");
         $criteria->where("entry = '{$sourceEntry}'");
@@ -127,7 +149,9 @@ class Entry extends map\EntryMap {
             $entry->setDescription($row['description']);
             $entry->setNick($row['nick']);
             $entry->setIdLanguage($row['idLanguage']);
+            $entry->setIdEntity($row['idEntity']);
             $entry->save();
+            Timeline::addTimeline("entry",$entry->getId(),"S");
         });
     }
     
@@ -141,7 +165,9 @@ class Entry extends map\EntryMap {
             $this->setDescription($entry->description);
             $this->setNick($entry->nick);
             $this->setIdLanguage($idLanguage);
+            $this->setIdEntity($entry->idEntity);
             $this->save();
+            Timeline::addTimeline("entry",$this->getId(),"S");
         }
     }    
     
@@ -152,7 +178,9 @@ class Entry extends map\EntryMap {
         $this->setDescription($entry);
         $this->setNick($entry);
         $this->setIdLanguage($idLanguage);
+        $this->setIdEntity($entry->idEntity);
         $this->save();
+        Timeline::addTimeline("entry",$this->getId(),"S");
     }
     
     

@@ -108,11 +108,12 @@ class StructureConstraintInstanceService extends MService
         $result = [];
         $cxn = new fnbr\models\Construction($idCxn);
         $evokes = $cxn->listEvokesRelations();
-        foreach($evokes as $evoke) {
+        foreach($evokes as $rtEntry => $evoke) {
+            $prefix = ($rtEntry == 'rel_evokes' ? 'evk_' : 'cpt_');
             foreach ($evoke as $evk) {
                 $node = [];
-                $node['id'] = 'v' . $evk['idEntity'];
-                $node['text'] = 'evk_' . $evk['name'];
+                $node['id'] = 'v' . $evk['idEntityRelation'];
+                $node['text'] = $prefix . $evk['name'];
                 $node['state'] = 'closed';
                 $node['iconCls'] = 'icon-blank fa-icon fa fa-crosshairs';
                 $result[] = $node;
@@ -145,11 +146,13 @@ class StructureConstraintInstanceService extends MService
         $result = [];
         $ce = new fnbr\models\ConstructionElement($idCE);
         $evokes = $ce->listEvokesRelations();
-        foreach($evokes as $evoke) {
+        foreach($evokes as $rtEntry => $evoke) {
+            $prefix = ($rtEntry == 'rel_evokes' ? 'evk_' : 'cpt_');
             foreach ($evoke as $evk) {
+                mdump($evk);
                 $node = [];
-                $node['id'] = 'v' . $evk['idEntity'];
-                $node['text'] = 'evk_' . $evk['name'];
+                $node['id'] = 'v' . $evk['idEntityRelation'];
+                $node['text'] = $prefix . $evk['name'];
                 $node['state'] = 'closed';
                 $node['iconCls'] = 'icon-blank fa-icon fa fa-crosshairs';
                 $result[] = $node;

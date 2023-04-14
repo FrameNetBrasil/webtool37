@@ -26,8 +26,10 @@ class GenreMap extends \MBusinessModel {
                 'idGenre' => array('column' => 'idGenre','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
                 'entry' => array('column' => 'entry','type' => 'string'),
                 'idGenreType' => array('column' => 'idGenreType','type' => 'integer','key' => 'foreign'),
+                'idEntity' => array('column' => 'idEntity','type' => 'integer'),
             ),
             'associations' => array(
+                'entity' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity:idEntity'),
                 'genreType' => array('toClass' => 'fnbr\models\GenreType', 'cardinality' => 'oneToOne' , 'keys' => 'idGenreType:idGenreType'),
                 'documents' => array('toClass' => 'fnbr\models\Document', 'cardinality' => 'oneToMany' , 'keys' => 'idGenre:idGenre'),
                 'entries' => array('toClass' => 'fnbr\models\Entry', 'cardinality' => 'oneToMany' , 'keys' => 'entry:entry'),
@@ -157,7 +159,24 @@ class GenreMap extends \MBusinessModel {
         $this->retrieveAssociation("genreType");
     }
 
-    
+    protected $idEntity;
+    protected $entity;
+
+    public function getIdEntity() {
+        return $this->idEntity;
+    }
+
+    public function setIdEntity($value) {
+        $this->idEntity = $value;
+    }
+
+    public function setEntity($value) {
+        $this->entity = $value;
+    }
+
+    public function getAssociationEntity() {
+        $this->retrieveAssociation("entity");
+    }
 
 }
 // end - wizard

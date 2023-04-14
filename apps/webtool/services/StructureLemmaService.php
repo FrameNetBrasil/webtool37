@@ -36,7 +36,7 @@ class StructureLemmaService extends MService
             $order = ' [' . $lexeme['lexemeOrder'] . ']';
             $head = $lexeme['headWord'] ? ' [hw]' : '';
             $break = $lexeme['breakBeforeheadWord'] ? ' [bb]' : '';
-            $node['text'] = $lexeme['name'] . '.' . strtolower($lexeme['POS']) . $order . $head . $break;
+            $node['text'] = ($lexeme['form'] != '' ? "({$lexeme['form']}) " : "") . $lexeme['name'] . '.' . strtolower($lexeme['POS']) . $order . $head . $break;
             $node['state'] = 'closed';
             $node['iconCls'] = 'icon-blank fa-icon far fa-snowflake';
             $result[] = $node;
@@ -70,6 +70,18 @@ class StructureLemmaService extends MService
         $transaction = $lemma->beginTransaction();
         try {
             $lemma->addLexemeEntry($data->lexeme);
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollback();
+            throw new \exception($e->getMessage());
+        }
+    }
+
+    public function addLexemeEntryWordForm($data) {
+        $lemma = new fnbr\models\Lemma();
+        $transaction = $lemma->beginTransaction();
+        try {
+            $lemma->addLexemeEntry($data->wordform);
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();

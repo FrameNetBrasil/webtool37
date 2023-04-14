@@ -59,6 +59,7 @@ class EntryController extends MController {
     {
         $model = new fnbr\models\Entry($this->data->id);
         $this->data->object = $model->getData();
+        mdump( $this->data->object);
         $this->data->title = $model->getEntry() . ' [' . $model->getLanguage()->getLanguage() . ']';
         $this->data->save = "@structure/entry/save/" . $model->getId() . '|formUpdateEntry';
         $this->render();

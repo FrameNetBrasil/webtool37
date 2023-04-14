@@ -131,8 +131,9 @@ HERE;
             $idEntity = $this->getIdEntity();
             // remove relations
             Base::deleteAllEntityRelation($idEntity);
-            Base::entityTimelineDelete($this->getIdEntity());
-            // remove this fe
+//            Base::entityTimelineDelete($this->getIdEntity());
+            // remove this gl
+            Timeline::addTimeline("genericlabel",$this->getId(),"D");
             parent::delete();
             // remove entity
             $entity = new Entity($idEntity);
@@ -146,8 +147,9 @@ HERE;
 
     public function save()
     {
-        Base::entityTimelineSave($this->getIdEntity());
+//        Base::entityTimelineSave($this->getIdEntity());
         parent::save();
+        Timeline::addTimeline("genericlabel",$this->getId(),"S");
     }
 
 }

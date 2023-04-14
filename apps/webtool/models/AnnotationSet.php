@@ -1,17 +1,5 @@
 <?php
 
-/**
- *
- *
- * @category   Maestro
- * @package    UFJF
- * @subpackage fnbr
- * @copyright  Copyright (c) 2003-2012 UFJF (http://www.ufjf.br)
- * @license    http://siga.ufjf.br/license
- * @version
- * @since
- */
-
 namespace fnbr\models;
 
 class AnnotationSet extends map\AnnotationSetMap
@@ -22,7 +10,6 @@ class AnnotationSet extends map\AnnotationSetMap
         return array(
             'log' => array(),
             'validators' => array(
-                'timeline' => array('notnull'),
                 'idSubCorpus' => array('notnull'),
                 'idSentence' => array('notnull'),
                 'idAnnotationStatus' => array('notnull'),
@@ -70,27 +57,30 @@ class AnnotationSet extends map\AnnotationSetMap
         return $criteria;
     }
 
-    public function listBySubCorpus($idSubCorpus)
-    {
-        $criteria = $this->getCriteria()->select('*');
-        $criteria->where("idSubCorpus = {$idSubCorpus}");
-        return $criteria;
-    }
+//    public function listBySubCorpus($idSubCorpus)
+//    {
+//        $criteria = $this->getCriteria()->select('*');
+//        $criteria->where("idSubCorpus = {$idSubCorpus}");
+//        return $criteria;
+//    }
 
     public function getIdLU()
     {
-        return $this->getSubCorpus()->getIdLU();
+        //return $this->getSubCorpus()->getIdLU();
+        return $this->getLU()->getIdLU();
     }
 
     public function getLUFullName()
     {
-        $idLU = $this->getSubCorpus()->getIdLU();
-        if ($idLU) {
-            $lu = new LU($this->getSubCorpus()->getIdLU());
-            return $lu->getFullName();
-        } else {
-            return '';
-        }
+//        $idLU = $this->getSubCorpus()->getIdLU();
+//        if ($idLU) {
+//            $lu = new LU($this->getSubCorpus()->getIdLU());
+//            return $lu->getFullName();
+//        } else {
+//            return '';
+//        }
+        $lu = $this->getLU();
+        return ($lu ? $lu->getFullName() : '');
     }
 
     public function getWords($idSentence)
@@ -192,10 +182,12 @@ class AnnotationSet extends map\AnnotationSetMap
     {
         $as = new ViewAnnotationSet();
         $criteriaLU = $as->getCriteria()
-            ->select("idAnnotationSet, concat(frameEntries.name, '.', view_lu.name) as name, 'lu' as type")
+//            ->select("idAnnotationSet, concat(frameEntries.name, '.', view_lu.name) as name, 'lu' as type")
+            ->select("idAnnotationSet, concat(frameEntries.name, '.', lu.name) as name, 'lu' as type")
             ->where("idSentence = {$idSentence}");
         $criteriaLU->setDistinct(true);
-        $criteriaLU->associationAlias("subcorpuslu.lu.frame.entries", "frameEntries");
+        //$criteriaLU->associationAlias("subcorpuslu.lu.frame.entries", "frameEntries");
+        $criteriaLU->associationAlias("lu.frame.entries", "frameEntries");
         if (!$this->allowManyAnnotationSet()) {
             $criteriaLU->where("idAnnotationSet = {$this->getId()}");
         }
@@ -205,7 +197,8 @@ class AnnotationSet extends map\AnnotationSetMap
             ->select("idAnnotationSet, cxnEntries.name as name, 'cxn' as type")
             ->where("idSentence = {$idSentence}");
         $criteriaCxn->setDistinct(true);
-        $criteriaCxn->associationAlias("subcorpuscxn.construction.entries", "cxnEntries");
+        //$criteriaCxn->associationAlias("subcorpuscxn.construction.entries", "cxnEntries");
+        $criteriaCxn->associationAlias("cxn.entries", "cxnEntries");
         if (!$this->allowManyAnnotationSet()) {
             $criteriaCxn->where("idAnnotationSet = {$this->getId()}");
         }
@@ -289,6 +282,28 @@ class AnnotationSet extends map\AnnotationSetMap
 
         $idLanguage = \Manager::getSession()->idLanguage;
 
+//        $cmd = <<<HERE
+//
+//        SELECT distinct a.idAnnotationSet,
+//            l.idLayer,
+//            fe.idEntity AS idLabelType,
+//            e.name AS labelType,
+//            fe.idColor,
+//            fe.typeEntry AS coreType,
+//            ti.info
+//        FROM View_AnnotationSet a
+//            INNER JOIN View_Layer l on (a.idAnnotationSet = l.idAnnotationSet)
+//            INNER JOIN View_SubCorpusLU sc on (a.idSubCorpus = sc.idSubCorpus)
+//            INNER JOIN View_LU lu on (sc.idLU = lu.idLU)
+//            INNER JOIN View_FrameElement fe on (lu.idFrame = fe.idFrame)
+//            INNER JOIN TypeInstance ti on (fe.typeEntry=ti.entry)
+//            INNER JOIN View_EntryLanguage e on (fe.entry = e.entry)
+//        WHERE (e.idLanguage = {$idLanguage} )
+//            AND (l.entry = 'lty_fe' )
+//            AND (a.idSentence = {$idSentence}) {$condition}
+//        ORDER BY a.idAnnotationSet, l.idLayer, ti.info, fe.typeEntry, e.name
+//HERE;
+
         $cmd = <<<HERE
 
         SELECT distinct a.idAnnotationSet,
@@ -300,8 +315,7 @@ class AnnotationSet extends map\AnnotationSetMap
             ti.info
         FROM View_AnnotationSet a
             INNER JOIN View_Layer l on (a.idAnnotationSet = l.idAnnotationSet)
-            INNER JOIN View_SubCorpusLU sc on (a.idSubCorpus = sc.idSubCorpus)
-            INNER JOIN View_LU lu on (sc.idLU = lu.idLU)
+            INNER JOIN View_LU lu on (a.idLU = lu.idLU)
             INNER JOIN View_FrameElement fe on (lu.idFrame = fe.idFrame)
             INNER JOIN TypeInstance ti on (fe.typeEntry=ti.entry)
             INNER JOIN View_EntryLanguage e on (fe.entry = e.entry)
@@ -323,6 +337,26 @@ HERE;
 
         $idLanguage = \Manager::getSession()->idLanguage;
 
+//        $cmd = <<<HERE
+//
+//        SELECT a.idAnnotationSet,
+//            l.idLayer,
+//            ce.idEntity AS idLabelType,
+//            e.name AS labelType,
+//            ce.idColor,
+//            '' AS coreType
+//        FROM View_AnnotationSet a
+//            INNER JOIN View_Layer l on (a.idAnnotationSet = l.idAnnotationSet)
+//            INNER JOIN View_SubCorpusCxn sc on (a.idSubCorpus = sc.idSubCorpus)
+//            INNER JOIN View_ConstructionElement ce on (sc.idConstruction = ce.idConstruction)
+//            INNER JOIN View_EntryLanguage e on (ce.entry = e.entry)
+//        WHERE (e.idLanguage = {$idLanguage} )
+//            AND (l.entry = 'lty_ce' )
+//            AND (a.idSentence = {$idSentence})
+//            {$condition}
+//        ORDER BY a.idAnnotationSet, l.idLayer, e.name
+//HERE;
+
         $cmd = <<<HERE
 
         SELECT a.idAnnotationSet,
@@ -333,8 +367,7 @@ HERE;
             '' AS coreType
         FROM View_AnnotationSet a
             INNER JOIN View_Layer l on (a.idAnnotationSet = l.idAnnotationSet)
-            INNER JOIN View_SubCorpusCxn sc on (a.idSubCorpus = sc.idSubCorpus)
-            INNER JOIN View_ConstructionElement ce on (sc.idConstruction = ce.idConstruction)
+            INNER JOIN View_ConstructionElement ce on (a.idConstruction = ce.idConstruction)
             INNER JOIN View_EntryLanguage e on (ce.entry = e.entry)
         WHERE (e.idLanguage = {$idLanguage} )
             AND (l.entry = 'lty_ce' )
@@ -342,7 +375,6 @@ HERE;
             {$condition}
         ORDER BY a.idAnnotationSet, l.idLayer, e.name
 HERE;
-
         $query = $this->getDb()->getQueryCommand($cmd);
         return $query;
     }
@@ -355,11 +387,24 @@ HERE;
 
         $idLanguage = \Manager::getSession()->idLanguage;
         $transaction = $this->getDb()->beginTransaction();
+//        $cmd = <<<HERE
+//            SELECT concat('lty_cefe_', f.idFrame, '_', a.idAnnotationSet) as idLayer, f.idFrame, e.name, a.idAnnotationSet
+//            FROM View_AnnotationSet a
+//                INNER JOIN View_SubCorpusCxn sc on (a.idSubCorpus = sc.idSubCorpus)
+//                INNER JOIN View_Construction c on (sc.idConstruction = c.idConstruction)
+//                INNER JOIN View_Relation r on (c.idEntity = r.idEntity1)
+//                INNER JOIN View_Frame f on (r.idEntity2 = f.idEntity)
+//                INNER JOIN View_EntryLanguage e on (f.entry = e.entry)
+//            WHERE (e.idLanguage = {$idLanguage})
+//                AND (r.relationType = 'rel_evokes' )
+//                {$condition}
+//                AND (a.idSentence = {$idSentence})
+//HERE;
+
         $cmd = <<<HERE
             SELECT concat('lty_cefe_', f.idFrame, '_', a.idAnnotationSet) as idLayer, f.idFrame, e.name, a.idAnnotationSet
             FROM View_AnnotationSet a
-                INNER JOIN View_SubCorpusCxn sc on (a.idSubCorpus = sc.idSubCorpus)
-                INNER JOIN View_Construction c on (sc.idConstruction = c.idConstruction)
+                INNER JOIN View_Construction c on (a.idConstruction = c.idConstruction)
                 INNER JOIN View_Relation r on (c.idEntity = r.idEntity1)
                 INNER JOIN View_Frame f on (r.idEntity2 = f.idEntity)
                 INNER JOIN View_EntryLanguage e on (f.entry = e.entry)
@@ -399,6 +444,27 @@ HERE;
 
         $idLanguage = \Manager::getSession()->idLanguage;
 
+//        $cmd = <<<HERE
+//        SELECT a.idAnnotationSet,
+//            concat('lty_cefe_', fe.idFrame, '_', a.idAnnotationSet) as idLayer,
+//            fe.idEntity AS idLabelType,
+//            e.name AS labelType,
+//            fe.idColor,
+//            '' AS coreType
+//        FROM View_AnnotationSet a
+//            INNER JOIN View_SubCorpusCxn sc on (a.idSubCorpus = sc.idSubCorpus)
+//            INNER JOIN View_ConstructionElement ce on (sc.idConstruction = ce.idConstruction)
+//            INNER JOIN View_Relation r on (ce.idEntity = r.idEntity1)
+//            INNER JOIN View_FrameElement fe on (r.idEntity2 = fe.idEntity)
+//            INNER JOIN View_EntryLanguage e on (fe.entry = e.entry)
+//        WHERE (e.idLanguage = {$idLanguage})
+//            AND (r.relationType = 'rel_evokes')
+//            {$condition}
+//            AND (a.idSentence = {$idSentence})
+//        ORDER BY a.idAnnotationSet, idLayer, e.name
+//
+//HERE;
+
         $cmd = <<<HERE
         SELECT a.idAnnotationSet,
             concat('lty_cefe_', fe.idFrame, '_', a.idAnnotationSet) as idLayer,
@@ -407,8 +473,7 @@ HERE;
             fe.idColor,
             '' AS coreType
         FROM View_AnnotationSet a
-            INNER JOIN View_SubCorpusCxn sc on (a.idSubCorpus = sc.idSubCorpus)
-            INNER JOIN View_ConstructionElement ce on (sc.idConstruction = ce.idConstruction)
+            INNER JOIN View_ConstructionElement ce on (a.idConstruction = ce.idConstruction)
             INNER JOIN View_Relation r on (ce.idEntity = r.idEntity1)
             INNER JOIN View_FrameElement fe on (r.idEntity2 = fe.idEntity)
             INNER JOIN View_EntryLanguage e on (fe.entry = e.entry)
@@ -419,7 +484,6 @@ HERE;
         ORDER BY a.idAnnotationSet, idLayer, e.name
 
 HERE;
-
         $query = $this->getDb()->getQueryCommand($cmd);
         return $query;
     }
@@ -571,18 +635,13 @@ HERE;
         }
     }
 
-    public function newTimeline()
-    {
-        $timeline = 'as_' . md5($this->getIdSubCorpus() . $this->getIdSentence());
-        parent::setTimeLine(Base::newTimeLine($timeline, 'S'));
-    }
-
     public function save()
     {
-        if ($this->timeline == '') {
-            $this->newTimeline();
+        mdump('=================='.$this->getIdAnnotationStatus());
+        if ($this->getIdAnnotationStatus() == 6) {
+            parent::save();
+            Timeline::addTimeline("annotationset", $this->getId(), "S");
         }
-        parent::save();
     }
 
     public function putLayers($layers)
@@ -691,6 +750,24 @@ HERE;
         }
     }
 
+    public function addLU($data) {
+        $transaction = $this->beginTransaction();
+        try {
+            $lu = LU::create($data->idLU);
+            $annotationSet = new AnnotationSet();
+            $annotationSet->setIdSentence($data->idSentence);
+            $annotationSet->setIdAnnotationStatus('ast_manual');
+            $annotationSet->setIdEntityLU($lu->getIdEntity());
+            $annotationSet->save();
+            $annotationSet->createLayersForLU($lu, $data);
+            $transaction->commit();
+        } catch (\Exception $ex) {
+            $transaction->rollback();
+            mdump($ex->getMessage());
+            throw new \Exception($ex->getMessage());
+        }
+    }
+
     public function createLayersForLU($lu, $data)
     {
         $layerType = new LayerType();
@@ -742,6 +819,25 @@ HERE;
         }
     }
 
+    public function addCxn($data) {
+        $transaction = $this->beginTransaction();
+        try {
+            $cxn = Construction::create($data->idConstruction);
+            $annotationSet = new AnnotationSet();
+            $annotationSet->setIdSentence($data->idSentence);
+            $annotationSet->setIdAnnotationStatus('ast_manual');
+            $annotationSet->setIdEntityCxn($cxn->getIdEntity());
+            $annotationSet->save();
+            $annotationSet->createLayersForCxn($cxn, $data);
+            $transaction->commit();
+        } catch (\Exception $ex) {
+            $transaction->rollback();
+            mdump($ex->getMessage());
+            throw new \Exception($ex->getMessage());
+        }
+    }
+
+
     public function createLayersForCxn($cxn, $data)
     {
         $layerType = new LayerType();
@@ -755,25 +851,25 @@ HERE;
         }
     }
 
-    public function deleteBySubCorpus($idSubCorpus)
-    {
-        $transaction = $this->beginTransaction();
-        try {
-            $layer = new Layer();
-            $criteria = $this->listBySubCorpus($idSubCorpus);
-            $result = $criteria->asQuery()->getResult();
-            foreach ($result as $as) {
-                $idAS = $as['idAnnotationSet'];
-                $layer->deleteByAnnotationSet($idAS);
-                $deleteCriteria = $this->getDeleteCriteria()->where("idAnnotationSet = {$idAS}");
-                $deleteCriteria->delete();
-            }
-            $transaction->commit();
-        } catch (\Exception $e) {
-            $transaction->rollback();
-            throw new \Exception($e->getMessage());
-        }
-    }
+//    public function deleteBySubCorpus($idSubCorpus)
+//    {
+//        $transaction = $this->beginTransaction();
+//        try {
+//            $layer = new Layer();
+//            $criteria = $this->listBySubCorpus($idSubCorpus);
+//            $result = $criteria->asQuery()->getResult();
+//            foreach ($result as $as) {
+//                $idAS = $as['idAnnotationSet'];
+//                $layer->deleteByAnnotationSet($idAS);
+//                $deleteCriteria = $this->getDeleteCriteria()->where("idAnnotationSet = {$idAS}");
+//                $deleteCriteria->delete();
+//            }
+//            $transaction->commit();
+//        } catch (\Exception $e) {
+//            $transaction->rollback();
+//            throw new \Exception($e->getMessage());
+//        }
+//    }
 
     public function delete()
     {
@@ -784,6 +880,7 @@ HERE;
             $asComments->deleteByAnnotationSet($idAnnotationSet);
             $layer = new Layer();
             $layer->deleteByAnnotationSet($idAnnotationSet);
+            Timeline::addTimeline("annotationset", $this->getId(), "D");
             parent::delete();
             $transaction->commit();
         } catch (\Exception $e) {

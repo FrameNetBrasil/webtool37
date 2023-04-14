@@ -61,7 +61,8 @@ class ViewLU extends map\ViewLUMap {
     public function listByFrameToAnnotation($idFrame, $idLanguage = '', $idLU = NULL)
     {
         $criteria = $this->getCriteria()
-            ->select('idLU, name, count(subcorpus.annotationsets.idAnnotationSet) as quant')
+//            ->select('idLU, name, count(subcorpus.annotationsets.idAnnotationSet) as quant')
+            ->select('idLU, name, count(annotationsets.idAnnotationSet) as quant')
             ->where("idFrame = {$idFrame}")
             ->where("idLanguage = {$idLanguage}")
             ->groupBy('idLU,name')

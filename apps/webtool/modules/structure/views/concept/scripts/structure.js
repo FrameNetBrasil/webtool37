@@ -10,6 +10,11 @@ $(function () {
         fit:true
     });
 
+    structure.showConcept = function (idConcept) {
+        $('#structureCenterPane').html('');
+        manager.doGet({{$manager->getURL('structure/concept/showConcept')}} + '/' + idConcept, 'structureCenterPane');
+    }
+
     structure.newConcept = function () {
         var nodeId = structure.node.id;
         manager.doGet({{$manager->getURL('structure/concept/formNewConcept')}} + '/' + nodeId,'structureCenterPane');
@@ -32,6 +37,13 @@ $(function () {
     structure.delConceptElement = function () {
         var nodeId = structure.node.id;
         manager.doGet({{$manager->getURL('structure/concept/deleteConceptElement')}} + '/' + nodeId,'structureCenterPane');
+    }
+
+    structure.subTypeOf = function (id) {
+        if ($.type(id) === "undefined") {
+            id = structure.node.id.substr(1);
+        }
+        manager.doGet({{$manager->getURL('structure/concept/formSubTypeOf')}} + '/' + id,'structureCenterPane');
     }
 
     structure.reloadConcept = function () {

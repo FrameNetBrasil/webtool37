@@ -40,7 +40,7 @@
         </div>
     </div>
     <div class="divPanel">
-        <div id="panelRelations" class="easyui-panel" title={{_'repRelations'}} collapsible="true" style="width:100%;">
+        <div id="panelRelations" class="easyui-panel" title={{_('repRelations')}} collapsible="true" style="width:100%;">
             <table class="tableRelations">
                 <tbody>
                     {{foreach $data->relations as $name => $cxns}}
@@ -53,6 +53,38 @@
                             </td>
                         </tr>
                     {{/foreach}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="divPanel">
+        <div id="panelConstraints" class="easyui-panel" title="Constraints" collapsible="true" style="width:100%;">
+            <table class="tableRelations">
+                <tbody>
+                {{foreach $data->constraints as $name => $cxns}}
+                <tr>
+                    <td class="relation">{{_$name}}</td>
+                    <td>{{$cxns}}</td>
+                </tr>
+                <tr>
+                    <td class="cespace">
+                    </td>
+                </tr>
+                {{/foreach}}
+                {{foreach $data->ce['element'] as $ce}}
+                <tr>
+                    <td class="ce"><span class="ce_{{$ce['lower']|noescape}}">{{$ce['name']}} [{{$ce['nick']}}]</span></td>
+                    <td></td>
+                </tr>
+                {{foreach $data->constraintsCE[$ce['idConstructionElement']] as $name => $cns}}
+                <tr>
+                    <td class="relation">{{_$name}}</td>
+                    <td>{{$cns}}</td>
+                </tr>
+                {{/foreach}}
+
+                {{/foreach}}
+
                 </tbody>
             </table>
         </div>

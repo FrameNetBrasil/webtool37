@@ -9,13 +9,13 @@ class ConstraintInstanceMap extends \MBusinessModel {
         return array(
             'class' => \get_called_class(),
             'database' => \Manager::getConf('fnbr.db'),
-            'table' => 'constraintInstance',
+            'table' => 'entityrelation',
             'attributes' => array(
-                'idConstraintInstance' => array('column' => 'idConstraintInstance','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
-                'idConstraintType' => array('column' => 'idConstraintType','type' => 'integer'),
-                'idConstraint' => array('column' => 'idConstraint','type' => 'integer'),
-                'idConstrained' => array('column' => 'idConstrained','type' => 'integer'),
-                'idConstrainedBy' => array('column' => 'idConstrainedBy','type' => 'integer'),
+                'idConstraintInstance' => array('column' => 'idEntityRelation','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
+                'idConstraintType' => array('column' => 'idRelationType','type' => 'integer'),
+                'idConstraint' => array('column' => 'idEntity1','type' => 'integer'),
+                'idConstrained' => array('column' => 'idEntity2','type' => 'integer'),
+                'idConstrainedBy' => array('column' => 'idEntity3','type' => 'integer'),
             ),
             'associations' => array(
                 'constrainttype' => array('toClass' => 'fnbr\models\ConstraintType', 'cardinality' => 'oneToOne' , 'keys' => 'idConstraintType:idConstraintType'),

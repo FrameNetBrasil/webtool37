@@ -10,17 +10,19 @@ class ConstraintTypeMap extends \MBusinessModel {
         return array(
             'class' => \get_called_class(),
             'database' => \Manager::getConf('fnbr.db'),
-            'table' => 'constrainttype',
+            'table' => 'relationtype',
             'attributes' => array(
-                'idConstraintType' => array('column' => 'idConstraintType','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
+                'idConstraintType' => array('column' => 'idRelationType','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
                 'entry' => array('column' => 'entry','type' => 'string'),
                 'prefix' => array('column' => 'prefix','type' => 'string'),
-                'typeEntity1' => array('column' => 'typeEntity1','type' => 'string'),
-                'typeEntity2' => array('column' => 'typeEntity2','type' => 'string'),
+                'typeEntity1' => array('column' => 'nameEntity1','type' => 'string'),
+                'typeEntity2' => array('column' => 'nameEntity2','type' => 'string'),
                 'idTypeInstance' => array('column' => 'idTypeInstance','type' => 'integer'),
+                'idRelationGroup' => array('column' => 'idRelationGroup','type' => 'integer'),
             ),
             'associations' => array(
                 'typeinstance' => array('toClass' => 'fnbr\models\TypeInstance', 'cardinality' => 'oneToOne' , 'keys' => 'idTypeInstance:idTypeInstance'),
+                'relationgroup' => array('toClass' => 'fnbr\models\RelationGroup', 'cardinality' => 'oneToOne' , 'keys' => 'idRelationGroup:idRelationGroup'),
                 'entries' => array('toClass' => 'fnbr\models\Entry', 'cardinality' => 'oneToMany' , 'keys' => 'entry:entry'),
             )
         );
@@ -30,7 +32,7 @@ class ConstraintTypeMap extends \MBusinessModel {
      * 
      * @var integer 
      */
-    protected $idConstraint;
+    protected $idConstraintType;
     /**
      * 
      * @var string 

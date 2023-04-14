@@ -1,10 +1,13 @@
 <div id="structureLayout" style="width:100%;height:100%;">
     <div id="structureNorthPane" data-options="region:'north', title:'{{_'Concepts'}}'" style="height:70px">
         <div style="float:left;padding:5px">
-            <input id="type" name="type" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Type'}}">
+            <input id="concept" name="concept" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Concept'}}">
+        </div>
+        <div style="float:left;padding:5px">
+            <input id="fullTree" name="fullTree" type="text" style="width:100px; padding:5px" placeholder="Full tree">
         </div>
     </div>
-    <div id="structureLeftPane" region="west" split="true" style="height: 100%">
+    <div id="structureLeftPane" region="west" split="true" style="width:400px;height: 100%">
         <ul id="conceptsTree"></ul>
     </div>
     <div id="structureCenterPane" region="center" style="height: 100%">
@@ -17,8 +20,11 @@
 </div>
 <div id="menuConcept" style="display:none, width:120px;">
 <div onclick="structure.editConcept()" data-options="iconCls:'icon-edit'">{{_'Edit Concept'}}</div>
+    <!--
 <div onclick="structure.newConcept()" data-options="iconCls:'icon-add'">{{_'New Concept'}}</div>
 <div onclick="structure.addConceptElement()" data-options="iconCls:'icon-add'">{{_'Add ConceptElement'}}</div>
+-->
+<div onclick="structure.subTypeOf()" data-options="iconCls:'icon-add'">{{_'SubType Of'}}</div>
 <div onclick="structure.delConcept()" data-options="iconCls:'icon-remove'">{{_'Delete Concept'}}</div>
 </div>
 <div id="menuConceptElement" style="display:none, width:120px;">

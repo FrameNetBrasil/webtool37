@@ -21,6 +21,7 @@ class ConstraintType extends map\ConstraintTypeMap
     {
         $criteria = $this->getCriteria()->select('idConstraintType, entry, prefix, typeEntity1, typeEntity2, idTypeInstance, entries.name as name')->orderBy('entries.name');
         Base::entryLanguage($criteria);
+        $criteria->where("relationgroup.entry = 'rgp_constraints'");
         return $criteria;
     }
 
@@ -34,6 +35,7 @@ class ConstraintType extends map\ConstraintTypeMap
         if ($filter->constraintType) {
             $criteria->where("upper(entries.name) LIKE upper('{$filter->constraintType}%')");
         }
+        $criteria->where("relationgroup.entry = 'rgp_constraints'");
         return $criteria;
     }
 
@@ -48,13 +50,14 @@ class ConstraintType extends map\ConstraintTypeMap
     }
 
     public function save($data) {
-        $data->entry = 'con_' . mb_strtolower(str_replace('con_','', $data->name));
+        $data->entry = 'rel_' . mb_strtolower(str_replace('rel_','', $data->name));
         $transaction = $this->beginTransaction();
         try {
             $entry = new Entry();
             if ($this->isPersistent()) {
                 $entry->updateEntry($this->getEntry(), $data->entry);
             } else {
+                $data->idEntity = $this->getIdEntity();
                 $entry->newEntryByData($data);
             }
             $this->setData($data);
@@ -64,7 +67,6 @@ class ConstraintType extends map\ConstraintTypeMap
             $transaction->rollback();
             throw new \Exception($e->getMessage());
         }
-
 
     }
 

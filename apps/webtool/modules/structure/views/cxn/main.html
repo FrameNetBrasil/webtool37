@@ -275,7 +275,7 @@
                 $menu = $('#menuCxnConstraint');
             } else if (node.id.charAt(0) == 'n') {
                 $menu = $('#menuCxnDelConstraint');
-            } else if (node.id.charAt(0) == 'h') {
+            } else if ((node.id.charAt(0) == 'h') || (node.id.charAt(0) == 'v')) {
                 $menu = $('#menuCxnDelRelation');
             }
             if ($menu != '') {

@@ -6,6 +6,9 @@
             <mhiddenfield id="concept_idSuperType" value="$this->data->idSuperType"/>
             <mtextfield id="concept_name" label="Name" width="250px"/>
             <mmultilinefield id="concept_description" label="Description" width="350px" height="100px"/>
+            <mtextfield id="concept_aka" label="Aka" width="250px"/>
+            <mtextfield id="concept_keyword" label="Keyword" width="250px"/>
+            <include component="MLookupConceptType.php" id="concept_idTypeInstance" label="Type"/>
         </fields>
         <tools>
             <mlinkbutton id="lbCloseConcept" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>

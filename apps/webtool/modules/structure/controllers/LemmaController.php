@@ -129,5 +129,48 @@ class LemmaController extends MController
         }
     }
 
+    public function formNewWordform()
+    {
+        $this->data->idLemma = $this->data->id;
+        $model = new fnbr\models\Lemma($this->data->idLemma);
+        $this->data->name = $model->getName();
+        $this->data->language = $model->getLanguage()->getLanguage();
+        $this->data->save = "@structure/lemma/newWordform|formNewWordform";
+        $this->data->close = "!$('#formNewWordform_dialog').dialog('close');";
+        $this->data->title = _M('New Wordform');
+        $this->render();
+    }
+
+    public function newWordform()
+    {
+        try {
+            if (trim($this->data->wordform->lexemeOrder) == '') {
+                throw new \Exception("Order is required.");
+            }
+            $structure = Manager::getAppService('structurelemma');
+            $structure->addLexemeEntryWordform($this->data);
+            $this->renderPrompt('information', 'OK', "!$('#formNewWordform_dialog').dialog('close');");
+        } catch (\Exception $e) {
+            $this->renderPrompt('error', $e->getMessage());
+        }
+    }
+
+    public function formDeleteWordform()
+    {
+        $ok = "^structure/lemma/deleteWordform/" . $this->data->id;
+        $this->renderPrompt('confirmation', 'Warning: Wordform will be removed from Lemma! Continue?', $ok);
+    }
+
+    public function deleteWordform()
+    {
+        try {
+            $model = new fnbr\models\LexemeEntry($this->data->id);
+            $model->delete();
+            $this->renderPrompt('information', 'Wordform removed.', "!structure.reloadParent();");
+        } catch (\Exception $e) {
+            $this->renderPrompt('error', $e->getMessage());
+        }
+    }
+
 
 }

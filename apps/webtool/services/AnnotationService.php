@@ -1,5 +1,6 @@
 <?php
 
+use fnbr\models\Base;
 use fnbr\models\Construction;
 use fnbr\models\LU;
 
@@ -141,13 +142,19 @@ class AnnotationService extends MService
         return $title;
     }
 
-    public function getLUTitle($idLU, $idLanguage, $idCxn)
+    public function getLUTitle($idLU, $idLanguage)
     {
         if ($idLU) {
             $lu = new LU();
             $lu->getById($idLU);
             $title = $lu->getFullName();
-        } else if ($idCxn) {
+        }
+        return $title;
+    }
+
+    public function getCxnTitle($idCxn, $idLanguage)
+    {
+        if ($idCxn) {
             $cxn = new Construction();
             $cxn->getById($idCxn);
             $title = $cxn->getName();
@@ -229,10 +236,38 @@ class AnnotationService extends MService
             } else {
                 $targets = $as->listTargetBySentence($sentence['idSentence']);
                 $node['text'] = $this->decorateSentence($sentence['text'], $targets);
-                //$node['text'] = $sentence['text'];
             }
             $node['status'] = $sentence['annotationStatus'];
             $node['rgbBg'] = $sentence['rgbBg'];
+            $result[] = $node;
+        }
+        return json_encode($result);
+    }
+
+    public function listAnnotationSetCxn($idCxn, $sortable = NULL)
+    {
+        $as = new fnbr\models\ViewAnnotationSet();
+        $status = [
+            5 => ['UNANN', 'black'],
+            6 => ['MANUAL', 'yellow']
+        ];
+        $sentences = $as->listByCxn($idCxn, $sortable)->asQuery()->getResult();
+        //$annotation = $as->listFECEByDocument($idDocument);
+
+        $result = array();
+        foreach ($sentences as $sentence) {
+            $node = array();
+            $node['idAnnotationSet'] = 0;//$sentence['idAnnotationSet'];
+            $node['idSentence'] = $sentence['idSentence'];
+//            if ($annotation[$sentence['idSentence']]) {
+//                $node['text'] = $this->decorateSentence($sentence['text'], $annotation[$sentence['idSentence']]);
+//            } else {
+            $targets = $as->listTargetBySentence($sentence['idSentence']);
+            $node['text'] = $this->decorateSentence($sentence['text'], $targets);
+            //$node['text'] = $sentence['text'];
+//            }
+            $node['status'] = $status[$sentence['idAnnotationStatus']][0];
+            $node['rgbBg'] = $status[$sentence['idAnnotationStatus']][1];
             $result[] = $node;
         }
         return json_encode($result);
@@ -246,20 +281,24 @@ class AnnotationService extends MService
             6 => ['MANUAL', 'yellow']
         ];
         $sentences = $as->listByDocument($idDocument, $sortable);
-        //$annotation = $as->listFECEByDocument($idDocument);
+
+        $userAnnotation = new \fnbr\models\UserAnnotation();
+        $sentenceForAnnotation = $userAnnotation->listSentenceByUser(Base::getCurrentUser()->getId(), $idDocument);
+        $hasSentenceForAnnotation = (count($sentenceForAnnotation) > 0);
 
         $result = array();
         foreach ($sentences as $sentence) {
+            if ($hasSentenceForAnnotation) {
+                if (!in_array($sentence['idSentence'], $sentenceForAnnotation)) {
+                    continue;
+                }
+            }
+
             $node = array();
             $node['idAnnotationSet'] = 0;//$sentence['idAnnotationSet'];
             $node['idSentence'] = $sentence['idSentence'];
-//            if ($annotation[$sentence['idSentence']]) {
-//                $node['text'] = $this->decorateSentence($sentence['text'], $annotation[$sentence['idSentence']]);
-//            } else {
-                $targets = $as->listTargetBySentence($sentence['idSentence']);
-                $node['text'] = $this->decorateSentence($sentence['text'], $targets);
-                //$node['text'] = $sentence['text'];
-//            }
+            $targets = $as->listTargetBySentence($sentence['idSentence']);
+            $node['text'] = $this->decorateSentence($sentence['text'], $targets);
             $node['status'] = $status[$sentence['idAnnotationStatus']][0];
             $node['rgbBg'] = $status[$sentence['idAnnotationStatus']][1];
             $result[] = $node;
@@ -293,6 +332,22 @@ class AnnotationService extends MService
         // get words/chars
         $wordsChars = $as->getWordsChars($idSentence);
         $words = $wordsChars->words;
+
+        $wordList = [];
+        foreach($words as $i => $word) {
+            $words[$i]['hasLU'] = false;
+            $wordList[$i] = trim(strtolower($word['word']));
+        }
+        $wf = new fnbr\models\WordForm();
+        $lus = $wf->hasLU($wordList);
+        foreach($lus as $wf => $count) {
+            foreach($wordList as $i => $word) {
+                if ($wf == $word) {
+                    $words[$i]['hasLU'] = true;
+                }
+            }
+        }
+
         $chars = $wordsChars->chars;
 
         $result = [];
@@ -301,7 +356,8 @@ class AnnotationService extends MService
             $result[$fieldData] = (object)[
                 'word' => $word['word'],
                 'startChar' => $word['startChar'],
-                'endChar' => $word['endChar']
+                'endChar' => $word['endChar'],
+                'hasLU' => $word['hasLU']
             ];
         }
         $layers['words'] = MUtil::php2js($result);;//json_encode($result);
@@ -312,8 +368,10 @@ class AnnotationService extends MService
             $result[$fieldData] = (object)[
                 'order' => $char['offset'],
                 'char' => $char['char'],
-                'word' => $char['order']
+                'word' => $char['order'],
+                'hasLU' => $words[$char['order']]['hasLU']
             ];
+            $chars[$i]['hasLU'] = $words[$char['order']]['hasLU'];
         }
         $layers['chars'] = MUtil::php2js($result);//json_encode($result);
 
@@ -371,7 +429,7 @@ class AnnotationService extends MService
                 "field" => 'wf' . $i,
                 "width" => $width,
                 "resizable" => "false",
-                "title" => $char['char'],
+                "title" => $char['hasLU'] ? "<b>{$char['char']}</b>" : $char['char'],
                 "formatter" => "annotation.cellFormatter",
                 "styler" => "annotation.cellStyler"
             );
@@ -561,8 +619,10 @@ class AnnotationService extends MService
         if (($idAnnotationSet == '') || ($idAnnotationSet == '0')) {
             $idLU = $idCxn = NULL;
         } else {
-            $idLU = $as->getSubCorpus()->getIdLU();
-            $idCxn = $as->getSubCorpus()->getIdCxn();
+//            $idLU = $as->getSubCorpus()->getIdLU();
+//            $idCxn = $as->getSubCorpus()->getIdCxn();
+            $idLU = $as->getLU()->getIdLU();
+            $idCxn = $as->getCxn()->getIdConstruction();
         }
         $isCxn = ($idLU == NULL) && ($idCxn != NULL);
 
@@ -880,14 +940,15 @@ class AnnotationService extends MService
 
     public function listCxn($cxn = '', $idLanguage = '')
     {
-        $construction = new fnbr\models\Construction();
+        $construction = new fnbr\models\ViewConstruction();
         $filter = (object)['cxn' => $cxn, 'idLanguage' => $idLanguage];
-        $constructions = $construction->listByFilter($filter)->asQuery()->chunkResult('idConstruction', 'name');
+        //$constructions = $construction->listByFilter($filter)->asQuery()->chunkResult('idConstruction', 'name');
+        $constructions = $construction->listToAnnotation($idLanguage)->asQuery()->getResult();
         $result = array();
-        foreach ($constructions as $idCxn => $name) {
+        foreach ($constructions as $cxn) {
             $node = array();
-            $node['id'] = 'c' . $idCxn;
-            $node['text'] = $name;
+            $node['id'] = 'c' . $cxn['idCxn'];
+            $node['text'] = $cxn['name'] . ' [' . $cxn['quant'] . ']';
             $node['state'] = 'closed';
             $result[] = $node;
         }
@@ -915,14 +976,26 @@ class AnnotationService extends MService
         return json_encode($lus);
     }
 
-    public function addManualSubcorpus($data)
+//    public function addManualSubcorpus($data)
+//    {
+//        $sc = new fnbr\models\SubCorpus();
+//        if ($data->idLU != '') {
+//            $sc->addManualSubcorpusLU($data);
+//        } else {
+//            $sc->addManualSubcorpusCxn($data);
+//        }
+//    }
+
+    public function addLU($data)
     {
-        $sc = new fnbr\models\SubCorpus();
-        if ($data->idLU != '') {
-            $sc->addManualSubcorpusLU($data);
-        } else {
-            $sc->addManualSubcorpusCxn($data);
-        }
+        $as = new \fnbr\models\AnnotationSet();
+        $as->addLU($data);
+    }
+
+    public function addCxn($data)
+    {
+        $as = new \fnbr\models\AnnotationSet();
+        $as->addCxn($data);
     }
 
     public function cxnGridData()
@@ -938,8 +1011,22 @@ class AnnotationService extends MService
         $corpus = new fnbr\models\Corpus();
         $filter = (object)['corpus' => $corpusName, 'idLanguage' => $idLanguage];
         $corpora = $corpus->listByFilter($filter)->asQuery()->chunkResult('idCorpus', 'name');
+
+        $userAnnotation = new \fnbr\models\UserAnnotation();
+        $corpusForAnnotation = $userAnnotation->listCorpusByUser(Base::getCurrentUser()->getId());
+        $hasCorpusForAnnotation = (count($corpusForAnnotation) > 0);
+
+        if (in_array(Base::getCurrentUser()->getId(), [428,427,369,414,425,422,373,426,371,430,416,296])) {
+            $corpusForAnnotation[]= 82;
+        }
+
         $result = array();
         foreach ($corpora as $idCorpus => $name) {
+            if ($hasCorpusForAnnotation) {
+                if (!in_array($idCorpus, $corpusForAnnotation)) {
+                    continue;
+                }
+            }
             $node = array();
             $node['id'] = 'c' . $idCorpus;
             $node['text'] = $name;
@@ -952,9 +1039,32 @@ class AnnotationService extends MService
     public function listCorpusDocument($idCorpus)
     {
         $doc = new fnbr\models\Document();
-        $docs = $doc->listByCorpus($idCorpus);
+        $docs = $doc->listByCorpus($idCorpus)->asQuery()->getResult();
+
+        $userAnnotation = new \fnbr\models\UserAnnotation();
+        $docForAnnotation = $userAnnotation->listDocumentByUser(Base::getCurrentUser()->getId());
+        $hasDocForAnnotation = (count($docForAnnotation) > 0);
+
+        if (in_array(Base::getCurrentUser()->getId(), [428,427,369,414,425,422,373,426,371,430,416,296])) {
+            $docForAnnotation[]= 502;
+            $docForAnnotation[]= 507;
+            $docForAnnotation[]= 508;
+            $docForAnnotation[]= 509;
+            $docForAnnotation[]= 510;
+            $docForAnnotation[]= 511;
+            $docForAnnotation[]= 512;
+            $docForAnnotation[]= 513;
+            $docForAnnotation[]= 515;
+            $docForAnnotation[]= 516;
+        }
+
         foreach ($docs as $doc) {
             if ($doc['idDocument']) {
+                if ($hasDocForAnnotation) {
+                    if (!in_array($doc['idDocument'], $docForAnnotation)) {
+                        continue;
+                    }
+                }
                 $node = array();
                 $node['id'] = 'd' . $doc['idDocument'];
                 $node['text'] = $doc['name'] . ' [' . $doc['quant'] . ']';

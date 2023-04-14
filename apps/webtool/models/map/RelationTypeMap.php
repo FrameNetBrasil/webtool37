@@ -29,8 +29,10 @@ class RelationTypeMap extends \MBusinessModel {
                 'nameEntity2' => array('column' => 'nameEntity2','type' => 'string'),
                 'idRelationGroup' => array('column' => 'idRelationGroup','type' => 'integer'),
                 'idDomain' => array('column' => 'idDomain','type' => 'integer'),
+                'idEntity' => array('column' => 'idEntity','type' => 'integer'),
             ),
             'associations' => array(
+                'entity' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity:idEntity'),
                 'domain' => array('toClass' => 'fnbr\models\Domain', 'cardinality' => 'oneToOne' , 'keys' => 'idDomain:idDomain'), 
                 'relationgroup' => array('toClass' => 'fnbr\models\RelationGroup', 'cardinality' => 'oneToOne' , 'keys' => 'idRelationGroup:idRelationGroup'), 
                 'entityrelations' => array('toClass' => 'fnbr\models\EntityRelation', 'cardinality' => 'oneToMany' , 'keys' => 'idRelationType:idRelationType'), 
@@ -226,7 +228,24 @@ class RelationTypeMap extends \MBusinessModel {
         $this->retrieveAssociation("entries");
     }
 
-    
+    protected $idEntity;
+    protected $entity;
+
+    public function getIdEntity() {
+        return $this->idEntity;
+    }
+
+    public function setIdEntity($value) {
+        $this->idEntity = $value;
+    }
+
+    public function setEntity($value) {
+        $this->entity = $value;
+    }
+
+    public function getAssociationEntity() {
+        $this->retrieveAssociation("entity");
+    }
 
 }
 // end - wizard

@@ -69,21 +69,30 @@
             });
         }
 
-        annotation.onHeaderContextMenu = function(e, field){
+        // annotation.onHeaderContextMenu = function(e, field){
             //console.log('onHeaderContextMenu ' + field);
-            e.preventDefault();
-            annotation.createHeaderContextMenu(field);
-            $('#dlgSubCorpus').dialog('doLayout');
-            $('#dlgSubCorpus').dialog('open');
+            // e.preventDefault();
+            // annotation.createHeaderContextMenu(field);
+            // $('#dlgSubCorpus').dialog('doLayout');
+            // $('#dlgSubCorpus').dialog('open');
             /*
             annotation.headerContextMenu.menu('show', {
                 left:e.pageX,
                 top:e.pageY
             });
             */
+        // }
+
+        annotation.onHeaderContextMenu = function(e, field){
+            console.log('onHeaderContextMenu ' + field);
+            e.preventDefault();
+            annotation.createHeaderContextMenu(field);
+            console.log($('#dlgLU'));
+            $('#dlgLU').dialog('doLayout');
+            $('#dlgLU').dialog('open');
         }
 
-        annotation.headerContextMenu = null;
+        //annotation.headerContextMenu = null;
         annotation.createHeaderContextMenu = function (field) {
             if (!annotation.checkSavedData()) {
                 return;
@@ -98,7 +107,14 @@
                     //console.log('success');
                     if (data.length == 0) {
                         //$('#dlgSubCorpusList').html('** No matching lemma **');
-                        $('#dlgSubCorpusList').datalist({
+                        // $('#dlgSubCorpusList').datalist({
+                        //     data: [{idLU: 0, fullName: '** No matching lemma **'}],
+                        //     valueField: 'idLU',
+                        //     textField: 'fullName',
+                        //     lines: true
+                        // });
+                        $('#dlgLUList').html('** No matching lemma **');
+                        $('#dlgLUList').datalist({
                             data: [{idLU: 0, fullName: '** No matching lemma **'}],
                             valueField: 'idLU',
                             textField: 'fullName',
@@ -106,13 +122,21 @@
                         });
                     } else {
                         console.log(data);
-                        $('#dlgSubCorpusField').attr('value',field);
-                        $('#dlgSubCorpusList').datalist({
+                        // $('#dlgSubCorpusField').attr('value',field);
+                        // $('#dlgSubCorpusList').datalist({
+                        //     data: data,
+                        //     valueField: 'idLU',
+                        //     textField: 'fullName',
+                        //     lines: true
+                        // });
+                        $('#dlgLUField').attr('value',field);
+                        $('#dlgLUList').datalist({
                             data: data,
                             valueField: 'idLU',
                             textField: 'fullName',
                             lines: true
                         });
+                        console.log('---');
                     }
                 }
             });

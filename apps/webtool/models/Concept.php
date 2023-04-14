@@ -59,7 +59,7 @@ class Concept extends map\ConceptMap
 
     public function listByFilter($filter)
     {
-        $criteria = $this->getCriteria()->select('idConcept, entry, idEntity, idDomain, entries.name as name')->orderBy('entries.name');
+        $criteria = $this->getCriteria()->select('idConcept, entry, idEntity, entries.name as name')->orderBy('entries.name');
         Base::entryLanguage($criteria);
         if ($filter->idConcept) {
             $criteria->where("idConcept = {$filter->idConcept}");
@@ -73,15 +73,32 @@ class Concept extends map\ConceptMap
         return $criteria;
     }
 
+    public function listByName($name, $idLanguage)
+    {
+        $criteria = $this->getCriteria()->select('idConcept, entry, idEntity, idTypeInstance, entries.name as name')->orderBy('entries.name');
+        Base::entryLanguage($criteria);
+        $criteria->where("lower(entries.name) LIKE lower('{$name}%')");
+        return $criteria;
+    }
+
+    public function listRootType($idLanguage)
+    {
+        $criteria = $this->getCriteria()->select('typeinstance.idTypeInstance, typeinstance.entries.name as name')->orderBy('2');
+        $criteria->where("typeinstance.entries.idLanguage = {$idLanguage}");
+        $criteria->setDistinct(true);
+        return $criteria;
+    }
+
     public function listRoot($filter)
     {
-        $criteria = $this->getCriteria()->select('idConcept, entry, idEntity, entries.name as name')->orderBy('entries.name');
+        //$filter = (object) ['idTypeInstance' => $idTypeInstance, 'idLanguage' => $idLanguage];
+        $criteria = $this->getCriteria()->select('idConcept, entry, idEntity, idTypeInstance, entries.name as name')->orderBy('entries.name');
         Base::entryLanguage($criteria);
         if ($filter->idConcept) {
             $criteria->where("idConcept = {$filter->idConcept}");
         }
-        if ($filter->type) {
-            $criteria->where("upper(entries.name) LIKE upper('{$filter->type}%')");
+        if ($filter->idTypeInstance) {
+            $criteria->where("idTypeInstance = {$filter->idTypeInstance}");
         }
         $entityRelation = new EntityRelation();
         $criteriaER = $entityRelation->getCriteria()
@@ -93,7 +110,7 @@ class Concept extends map\ConceptMap
 
     public function listChildren($idSuperType, $filter = null)
     {
-        $criteria = $this->getCriteria()->select('idConcept, entry, idEntity, entries.name as name')->orderBy('entries.name');
+        $criteria = $this->getCriteria()->select('idConcept, entry, idEntity, idTypeInstance,entries.name as name')->orderBy('entries.name');
         Base::entryLanguage($criteria);
         if ($filter->idConcept) {
             $criteria->where("idConcept = {$filter->idConcept}");
@@ -107,6 +124,46 @@ class Concept extends map\ConceptMap
             ->select('idEntity1')
             ->where("relationtype.entry = 'rel_subtypeof'")
             ->where("idEntity2 = {$superType->getIdEntity()}");
+        $criteria->where("idEntity", "IN", $criteriaER);
+        return $criteria;
+    }
+
+    public function listParent($idSubType, $filter = null)
+    {
+        $criteria = $this->getCriteria()->select('idConcept, entry, idEntity, entries.name as name')->orderBy('entries.name');
+        Base::entryLanguage($criteria);
+        if ($filter->idConcept) {
+            $criteria->where("idConcept = {$filter->idConcept}");
+        }
+        if ($filter->type) {
+            $criteria->where("upper(entries.name) LIKE upper('{$filter->type}%')");
+        }
+        $subType = new Concept($idSubType);
+        $entityRelation = new EntityRelation();
+        $criteriaER = $entityRelation->getCriteria()
+            ->select('idEntity2')
+            ->where("relationtype.entry = 'rel_subtypeof'")
+            ->where("idEntity1 = {$subType->getIdEntity()}");
+        $criteria->where("idEntity", "IN", $criteriaER);
+        return $criteria;
+    }
+
+    public function listAssociatedTo($idSubType, $filter = null)
+    {
+        $criteria = $this->getCriteria()->select('idConcept, entry, idEntity, entries.name as name')->orderBy('entries.name');
+        Base::entryLanguage($criteria);
+        if ($filter->idConcept) {
+            $criteria->where("idConcept = {$filter->idConcept}");
+        }
+        if ($filter->type) {
+            $criteria->where("upper(entries.name) LIKE upper('{$filter->type}%')");
+        }
+        $subType = new Concept($idSubType);
+        $entityRelation = new EntityRelation();
+        $criteriaER = $entityRelation->getCriteria()
+            ->select('idEntity2')
+            ->where("relationtype.entry = 'rel_standsfor'")
+            ->where("idEntity1 = {$subType->getIdEntity()}");
         $criteria->where("idEntity", "IN", $criteriaER);
         return $criteria;
     }
@@ -214,6 +271,22 @@ HERE;
         return $criteria;
     }
 
+    public function subTypeOf($idParentConcept) {
+        $transaction = $this->beginTransaction();
+        try {
+            if ($idParentConcept) {
+                $parent = new Concept($idParentConcept);
+                Base::createEntityRelation($this->getIdEntity(), 'rel_subtypeof', $parent->getIdEntity());
+            }
+            parent::save();
+            Timeline::addTimeline("concept",$this->getId(),"S");
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollback();
+            throw new \Exception($e->getMessage());
+        }
+    }
+
     public function save($data)
     {
         $data->entry = 'cpt_' . mb_strtolower($data->name);
@@ -225,18 +298,21 @@ HERE;
                 $entity->setAlias($this->getEntry());
                 $entity->setType('CP');
                 $entity->save();
+                $this->setIdEntity($entity->getIdEntity());
                 $entry = new Entry();
+                $data->idEntity = $entity->getIdEntity();
                 $entry->newEntryByData($data);
-                $this->setIdEntity($entity->getId());
                 if ($data->idSuperType) {
                     $superType = new Concept($data->idSuperType);
                     Base::createEntityRelation($entity->getId(), 'rel_subtypeof', $superType->getIdEntity());
                 }
             }
-            Base::entityTimelineSave($this->getIdEntity());
+//            Base::entityTimelineSave($this->getIdEntity());
             parent::save();
+            Timeline::addTimeline("concept",$this->getId(),"S");
             $transaction->commit();
         } catch (\Exception $e) {
+            mdump($e->getMessage());
             $transaction->rollback();
             throw new \Exception($e->getMessage());
         }
@@ -251,12 +327,13 @@ HERE;
                 throw new \Exception("Concept has subconcepts; it can't be removed.");
             } else {
                 Base::deleteAllEntityRelation($this->getIdEntity());
+                Timeline::addTimeline("concept",$this->getId(),"D");
                 parent::delete();
                 $entity = new Entity($this->getIdEntity());
                 $entity->delete();
                 $entry = new Entry();
                 $entry->deleteEntry($this->getEntry());
-                Base::entityTimelineDelete($this->getIdEntity());
+//                Base::entityTimelineDelete($this->getIdEntity());
                 $transaction->commit();
             }
         } catch (\Exception $e) {
@@ -278,6 +355,7 @@ HERE;
             $entry->updateEntryByData($this->getEntry(), $data);
             $this->setData($data);
             parent::save();
+            Timeline::addTimeline("concept",$this->getId(),"S");
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();
@@ -296,6 +374,7 @@ HERE;
             $entry->updateEntry($this->getEntry(), $newEntry);
             $this->setEntry($newEntry);
             parent::save();
+            Timeline::addTimeline("concept",$this->getId(),"S");
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();
@@ -330,8 +409,9 @@ HERE;
                 $element = new Concept($data->idConceptElement);
                 Base::createEntityRelation($element->getIdEntity(), 'rel_elementof', $this->getIdEntity());
             }
-            Base::entityTimelineSave($this->getIdEntity());
+//            Base::entityTimelineSave($this->getIdEntity());
             parent::save();
+            Timeline::addTimeline("concept",$this->getId(),"S");
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();
@@ -347,7 +427,8 @@ HERE;
             $concept = new Concept($idConcept);
             $element = new Concept($idConceptElement);
             Base::deleteEntityRelation($element->getIdEntity(), 'rel_elementof', $concept->getIdEntity());
-            Base::entityTimelineSave($concept->getIdEntity());
+//            Base::entityTimelineSave($concept->getIdEntity());
+            Timeline::addTimeline("concept",$this->getId(),"S");
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();

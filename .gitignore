@@ -58,7 +58,7 @@ core/var/sessions/*
 
 # Config Files #
 ################
-.env
+#.env
 
 # Log Files #
 ################
@@ -67,7 +67,5 @@ docker/logs/apache2/other_vhosts_access.log
 
 # Customizable index.html #
 ###########################
-index.html
-
 devops/mlfn/logs/apache2/error.log
 devops/mlfn/logs/apache2/other_vhosts_access.log

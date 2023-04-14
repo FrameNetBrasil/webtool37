@@ -21,7 +21,7 @@
             $('#dlgMWE').dialog('destroy');
             $('#dlgASComments').dialog('destroy');
             $('#dlgASInfo').dialog('destroy');
-            $('#dlgSubCorpus').dialog('destroy');
+            // $('#dlgSubCorpus').dialog('destroy');
             $('#dlgAS').dialog('destroy');
             $('#dlgASRemove').dialog('destroy');
             $('#dlgCxn').dialog('destroy');

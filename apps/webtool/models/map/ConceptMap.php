@@ -26,11 +26,15 @@ class ConceptMap extends \MBusinessModel
             'attributes' => array(
                 'idConcept' => array('column' => 'idConcept', 'key' => 'primary', 'idgenerator' => 'identity', 'type' => 'integer'),
                 'entry' => array('column' => 'entry', 'type' => 'string'),
+                'keyword' => array('column' => 'keyword', 'type' => 'string'),
+                'aka' => array('column' => 'aka', 'type' => 'string'),
                 'idEntity' => array('column' => 'idEntity', 'type' => 'integer'),
+                'idTypeInstance' => array('column' => 'idTypeInstance', 'type' => 'integer'),
             ),
             'associations' => array(
                 'entity' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne', 'keys' => 'idEntity:idEntity'),
                 'entries' => array('toClass' => 'fnbr\models\Entry', 'cardinality' => 'oneToMany', 'keys' => 'entry:entry'),
+                'typeinstance' => array('toClass' => 'fnbr\models\TypeInstance', 'cardinality' => 'oneToOne' , 'keys' => 'idTypeInstance:idTypeInstance'),
             )
         );
     }
@@ -48,15 +52,34 @@ class ConceptMap extends \MBusinessModel
     protected $entry;
 
     /**
+     *
+     * @var string
+     */
+    protected $keyword;
+
+    /**
+     *
+     * @var string
+     */
+    protected $aka;
+
+    /**
      * 
      * @var integer 
      */
     protected $idEntity;
 
     /**
+     *
+     * @var integer
+     */
+    protected $idTypeInstance;
+
+    /**
      * Associations
      */
     protected $entity;
+    protected $typeinstance;
     protected $entries;
 
     /**
@@ -82,6 +105,26 @@ class ConceptMap extends \MBusinessModel
         $this->entry = $value;
     }
 
+    public function getKeyword()
+    {
+        return $this->keyword;
+    }
+
+    public function setKeyword($value)
+    {
+        $this->keyword = $value;
+    }
+
+    public function getAka()
+    {
+        return $this->aka;
+    }
+
+    public function setAka($value)
+    {
+        $this->aka = $value;
+    }
+
     public function getIdEntity()
     {
         return $this->idEntity;
@@ -90,6 +133,16 @@ class ConceptMap extends \MBusinessModel
     public function setIdEntity($value)
     {
         $this->idEntity = $value;
+    }
+
+    public function getIdTypeInstance()
+    {
+        return $this->idTypeInstance;
+    }
+
+    public function setIdTypeInstance($value)
+    {
+        $this->idTypeInstance = $value;
     }
 
     /**
@@ -150,6 +203,36 @@ class ConceptMap extends \MBusinessModel
     public function getAssociationEntries()
     {
         $this->retrieveAssociation("entries");
+    }
+
+    /**
+     *
+     * @return Association
+     */
+    public function getTypeInstance()
+    {
+        if (is_null($this->typeinstance)) {
+            $this->retrieveAssociation("typeinstance");
+        }
+        return $this->typeinstance;
+    }
+
+    /**
+     *
+     * @param Association $value
+     */
+    public function setTypeInstance($value)
+    {
+        $this->typeinstance = $value;
+    }
+
+    /**
+     *
+     * @return Association
+     */
+    public function getAssociationTypeInstance()
+    {
+        $this->retrieveAssociation("typeinstance");
     }
 
 }

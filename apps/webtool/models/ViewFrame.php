@@ -37,6 +37,7 @@ class ViewFrame extends map\ViewFrameMap
         if ($filter->lu) {
             $criteria->distinct(true);
             $criteria->where("lus.name LIKE '{$filter->lu}%'");
+            $criteria->where("lus.idLanguage = {$filter->idLanguage}");
         }
         if ($filter->idLU) {
             if (is_array($filter->idLU)) {

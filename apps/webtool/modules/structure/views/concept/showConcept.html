@@ -1,0 +1,47 @@
+<div class="reportConcept">
+    <h2>{{$data->concept->entry->name|noescape}}</h2>
+    <div class="text">
+        {{$data->concept->entry->description|noescape}}
+    </div>
+    <h4>SubType Of</h4>
+    <table class="tableRelations">
+        <tbody>
+        {{foreach $data->relations as $name => $concepts}}
+        <tr>
+            <td>
+                <a id="btnRelation{{$idConcept|noescape}}" href="#" class="easyui-linkbutton"
+                   data-options="iconCls:'fa fa12px fa-external-link'"
+                   onclick="javascript:structure.showConcept({{$concepts['idConcept']|noescape}})">{{$concepts['name']}}</a>
+            </td>
+        </tr>
+        {{/foreach}}
+        </tbody>
+    </table>
+    <h4>Associated To</h4>
+    <table class="tableRelations">
+        <tbody>
+        {{foreach $data->associatedTo as $name => $concepts}}
+        <tr>
+            <td>
+                <a id="btnRelation{{$idConcept|noescape}}" href="#" class="easyui-linkbutton"
+                   data-options="iconCls:'fa fa12px fa-external-link'"
+                   onclick="javascript:structure.showConcept({{$concepts['idConcept']|noescape}})">{{$concepts['name']}}</a>
+            </td>
+        </tr>
+        {{/foreach}}
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $.parser.parse();
+</script>
+<style type="text/css">
+    .reportConcept .text {
+        padding: 16px;
+
+    }
+    .reportConcept .tableRelations {
+        margin: 16px;
+    }
+</style>

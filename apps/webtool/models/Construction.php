@@ -137,7 +137,7 @@ class Construction extends map\ConstructionMap
     public function listCE()
     {
         $ce = new ConstructionElement();
-        $criteria = $ce->getCriteria()->select('idConstructionElement, entry, entries.name as name, color.rgbFg, color.rgbBg, color.idColor, idEntity');
+        $criteria = $ce->getCriteria()->select('idConstructionElement, entry, entries.name as name, color.rgbFg, color.rgbBg, color.idColor, idEntity, head');
         Base::entryLanguage($criteria);
         Base::relation($criteria, 'ConstructionElement', 'construction', 'rel_elementof');
         $criteria->where("construction.idConstruction = {$this->getId()}");
@@ -298,9 +298,9 @@ HERE;
         $cmd = <<<HERE
 
         
-SELECT entry, name, nick, idEntity, idFrame, frameEntry, type
+SELECT entry, name, nick, idEntity, idFrame, frameEntry, type,idEntityRelation
 FROM (        
-        SELECT RelationType.entry, entry_relatedFrame.name, entry_relatedFrame.nick, relatedFrame.idEntity, relatedFrame.idFrame, relatedFrame.entry as frameEntry, entity2.type
+        SELECT RelationType.entry, entry_relatedFrame.name, entry_relatedFrame.nick, relatedFrame.idEntity, relatedFrame.idFrame, relatedFrame.entry as frameEntry, entity2.type, EntityRelation.idEntityRelation
         FROM Construction
             INNER JOIN Entity entity1
                 ON (Construction.idEntity = entity1.idEntity)
@@ -319,7 +319,7 @@ FROM (
                 'rel_evokes'))
            AND (entry_relatedFrame.idLanguage = {$idLanguage} )
         UNION
-        SELECT RelationType.entry, entry_relatedConcept.name, entry_relatedConcept.nick, relatedConcept.idEntity, relatedConcept.idConcept idFrame, relatedConcept.entry as frameEntry, entity2.type
+        SELECT RelationType.entry, entry_relatedConcept.name, entry_relatedConcept.nick, relatedConcept.idEntity, relatedConcept.idConcept idFrame, relatedConcept.entry as frameEntry, entity2.type, EntityRelation.idEntityRelation
         FROM Construction
             INNER JOIN Entity entity1
                 ON (Construction.idEntity = entity1.idEntity)
@@ -335,13 +335,13 @@ FROM (
                 ON (relatedConcept.entry = entry_relatedConcept.entry)
         WHERE (Construction.idConstruction = {$this->getId()})
             AND (RelationType.entry in (
-                'rel_evokes'))
+                'rel_hasconcept'))
            AND (entry_relatedConcept.idLanguage = {$idLanguage} )
 ) evokes           
 ORDER BY entry, name
             
 HERE;
-        $result = $this->getDb()->getQueryCommand($cmd)->treeResult('entry', 'name,idEntity,idFrame,frameEntry');
+        $result = $this->getDb()->getQueryCommand($cmd)->treeResult('entry', 'name,idEntity,idFrame,frameEntry,idEntityRelation');
         return $result;
 
     }
@@ -431,11 +431,16 @@ HERE;
             return $cxnObject;
         }
         $vc = new ViewConstraint();
-        mdump('=============' . $this->getEntry());
+        mdump('=======1 ======' . $this->getEntry());
         $idConstrainedSet = [];
         foreach ($ces as $ce) {
             $idConstrainedSet[] = $ce['idEntity'];
         }
+
+        mdump('=== idConstrainedSet ==== ');
+        mdump($idConstrainedSet);
+        mdump('===========2 ============= ');
+
         $constraints = $vc->getByIdConstrainedSet($idConstrainedSet);
         foreach ($ces as $ce) {
             $ceEntry = $ce['entry'];
@@ -450,8 +455,25 @@ HERE;
                 'multiple' => $ce['multiple'] ? true : false,
             ];
             $cxnObject->attributes->$ceEntry = $ceObject;
+            mdump($constraints);
             foreach ($constraints as $constraint) {
                 if ($constraint['idConstrained'] == $ceIdEntity) {
+                    if ($ceObject->constraints == '') {
+                        $ceObject->constraints = (object)[];
+                    }
+                    $c = $constraint['relationType'];
+                    if (!isset($ceObject->constraints->$c)) {
+                        $ceObject->constraints->$c = [];
+                    }
+
+                    if ($constraint['relationType'] == 'rel_constraint_cxn') {
+                        $recCxn = new Construction();
+                        $recCxn->getByIdEntity($constraint['idConstrainedBy']);
+                        $ceObject->constraints->$c[] = $recCxn->getStructure();
+                    } else {
+                        $ceObject->constraints->$c[] = $constraint['entry'];
+                    }
+                    /*
                     if (($constraint['relationType'] == 'rel_constraint_before')
                         || ($constraint['relationType'] == 'rel_constraint_meets')) {
                         if ($ceObject->constraints == '') {
@@ -462,16 +484,22 @@ HERE;
                             $ceObject->constraints->$c = [];
                         }
                         $ceObject->constraints->$c[] = $constraint['entry'];
-                    }
-                    if ($constraint['relationType'] == 'rel_constraint_cxn') {
+                    } else if ($constraint['relationType'] == 'rel_constraint_cxn') {
+                        if ($ceObject->value == '') {
+                            $ceObject->value = [];
+                        }
+                        $ceObject->value[] = $constraint['entry'];
+                    } else {
                         if ($ceObject->value == '') {
                             $ceObject->value = [];
                         }
                         $ceObject->value[] = $constraint['entry'];
                     }
+                    */
                 }
             }
         }
+        mdump('===========3 ============= ');
 
         $chain = [];
         $vc->getChainByIdConstrained($idEntity, $idEntity, $chain);
@@ -483,15 +511,16 @@ HERE;
             $constraint = $vc->getConstraintData($idConstraint);
             mdump($constraint);
             $type = $constraint->entry;
-            if ($cxnObject->constraints->$type == '') {
+            if (!isset($cxnObject->constraints->$type)) {
                 $cxnObject->constraints->$type = [];
             }
-            $cxnObject->constraints->$type = [
+            $cxnObject->constraints->$type[] = [
                 $constraint->entry,
                 $constraint->idConstrained,
                 $constraint->idConstrainedBy
             ];
         }
+        mdump('===========4 ============= ');
 
         $er = new EntityRelation();
         $vfe = new ViewFrameElement();
@@ -503,12 +532,16 @@ HERE;
                 }
                 $frameEntry = $frame['frameEntry'];
                 $frameObject = $cxnObject->evokes->$frameEntry = (object)[];
-                $cefeRelation = $er->listCEFERelations($idEntity, $frame['idEntity'], 'rel_evokes')->asQuery()->getResult();
+                mdump('=========== 4.1 ============= ');
+                //$cefeRelation = $er->listCEFERelations($idEntity, $frame['idEntity'], 'rel_evokes')->asQuery()->getResult();
+                $cefeRelation = $er->listCEFERelations($idEntity, $frame['idEntity'], 'rel_evokes');
+                mdump($cefeRelation);
                 foreach ($cefeRelation as $relation) {
                     $ceEntry = $ceEntryByIdEntity[$relation['idEntity1']];
                     if ($frameObject->$ceEntry == '') {
                         $frameObject->$ceEntry = [];
                     }
+                    mdump('=========== 4.2 ============= ');
                     $fe = $vfe->getByIdEntity($relation['idEntity2']);
                     $feEntry = $fe->entry;
                     $frameObject->$ceEntry[] = $feEntry;
@@ -516,8 +549,8 @@ HERE;
             }
         }
 
+        mdump('===========5 ============= extends');
         $extends = $this->listInverseRelations();
-        mdump('======================== extends');
         mdump($extends);
         if (is_array($extends['rel_inheritance_cxn'])) {
             foreach ($extends['rel_inheritance_cxn'] as $extend) {
@@ -527,7 +560,8 @@ HERE;
                 }
                 $parent = new Construction($extend['idConstruction']);
                 $cxnObject->extends[] = $parent->getEntry();
-                $ceceRelations = $er->listCERelations($extend['idEntity'], $idEntity, 'rel_inheritance_cxn')->asQuery()->getResult();
+                //$ceceRelations = $er->listCERelations($extend['idEntity'], $idEntity, 'rel_inheritance_cxn')->asQuery()->getResult();
+                $ceceRelations = $er->listCERelations($extend['idEntity'], $idEntity, 'rel_inheritance_cxn');
                 mdump($ceceRelations);
                 foreach ($ces as $ce) {
                     $ceEntry = $ce['entry'];
@@ -545,8 +579,8 @@ HERE;
             }
         }
 
+        mdump('===========6 ============= inhibits');
         $inhibits = $this->listDirectRelations();
-        mdump('======================== inhibits');
         mdump($inhibits);
         if (is_array($inhibits['rel_inhibits'])) {
             foreach ($inhibits['rel_inhibits'] as $inhibit) {
@@ -568,17 +602,17 @@ HERE;
         $language = $languages[$data->idLanguage];
         $data->entry = 'cxn_' . $language . '_' . mb_strtolower(str_replace('cxn_', '', $data->name));
         $data->abstract = $data->abstract ?: false;
-        mdump($data);
         $transaction = $this->beginTransaction();
         try {
             $entry = new Entry();
             if ($this->isPersistent()) {
                 if ($this->getEntry() != $data->entry) {
                     $entity = new Entity($this->getIdEntity());
-                    Base::updateTimeLine($this->getEntry(), $data->entry);
+//                    Base::updateTimeLine($this->getEntry(), $data->entry);
                     $entity->setAlias($data->entry);
                     $entity->save();
                     $entry->updateEntry($this->getEntry(), $data->entry, $data->name);
+                    $entry->setIdEntity($entity->getId());
                 }
             } else {
                 $entity = new Entity();
@@ -586,13 +620,14 @@ HERE;
                 $entity->setType('CX');
                 $entity->save();
                 $entry = new Entry();
-                $entry->newEntry($data->entry, $data->name);
+                $entry->newEntry($data->entry, $entity->getId(), $data->name);
                 $this->setIdEntity($entity->getId());
             }
             $this->setData($data);
             $this->setActive(true);
-            Base::entityTimelineSave($this->getIdEntity());
+//            Base::entityTimelineSave($this->getIdEntity());
             parent::save();
+            Timeline::addTimeline("construction",$this->getId(),"S");
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();
@@ -604,7 +639,8 @@ HERE;
     {
         $transaction = $this->beginTransaction();
         try {
-            Base::updateTimeLine($this->getEntry(), $newEntry);
+//            Base::updateTimeLine($this->getEntry(), $newEntry);
+            Timeline::addTimeline("construction",$this->getId(),"S");
             $entity = new Entity($this->getIdEntity());
             $entity->setAlias($newEntry);
             $entity->save();
@@ -629,8 +665,9 @@ HERE;
             $entry->deleteEntry($this->getEntry());
             // remove frame-relations
             Base::deleteAllEntityRelation($idEntity);
-            Base::entityTimelineDelete($this->getIdEntity());
+//            Base::entityTimelineDelete($this->getIdEntity());
             // remove this frame
+            Timeline::addTimeline("construction",$this->getId(),"D");
             parent::delete();
             // remove entity
             $entity = new Entity($idEntity);
@@ -650,6 +687,7 @@ HERE;
         $this->setIdEntity($data->idEntity);
         $this->setIdLanguage(Base::getIdLanguage($data->language));
         parent::save();
+        Timeline::addTimeline("construction",$this->getId(),"S");
     }
 
     public function createRelationsFromData($data)

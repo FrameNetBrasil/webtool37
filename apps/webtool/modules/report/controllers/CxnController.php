@@ -12,10 +12,10 @@ class CxnController extends MController
     public function init()
     {
         Manager::checkLogin(false);
-        //$this->idLanguage = Manager::getConf('options.language');
         $this->idLanguage = Manager::getSession()->idLanguage;
+        $languages = \fnbr\models\Base::languages();
         $msgDir = Manager::getAppPath('conf/report');
-        Manager::$msg->file = 'messages.' . $this->idLanguage . '.php';
+        Manager::$msg->file = 'messages.' . $languages[$this->idLanguage] . '.php';
         Manager::$msg->addMessages($msgDir);
     }
 
@@ -52,6 +52,10 @@ class CxnController extends MController
         $this->data->ce = $report->getCEData($idConstruction);
         $this->data->cxn->entry->description = $report->decorate($this->data->cxn->entry->description, $this->data->ce['styles']);
         $this->data->relations = $report->getRelations($cxn);
+        $this->data->constraints = $report->listConstraintsEvokesCX($cxn, $this->idLanguage);
+        $this->data->constraintsCE = $report->listConstraintsEvokesCE($this->data->ce, $this->idLanguage);
+        mdump('=================================');
+        mdump($this->data->constraintsCE);
         $this->render();
     }
     

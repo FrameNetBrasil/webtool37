@@ -283,11 +283,12 @@ HERE;
             $entity->setType('FR');
             $entity->save();
             $entry = new Entry();
-            $entry->newEntry($this->getEntry());
+            $entry->newEntry($this->getEntry(),$entity->getId());
             $this->setIdEntity($entity->getId());
             $this->setActive(true);
-            Base::entityTimelineSave($this->getIdEntity());
+            //Base::entityTimelineSave($this->getIdEntity());
             parent::save();
+            Timeline::addTimeline("frame",$this->getId(),"S");
             if ($data->idTemplate) {
                 $this->registerTemplate($data->idTemplate);
             }
@@ -307,8 +308,9 @@ HERE;
             $entry->deleteEntry($this->getEntry());
             // remove frame-relations
             Base::deleteAllEntityRelation($idEntity);
-            Base::entityTimelineDelete($this->getIdEntity());
+           // Base::entityTimelineDelete($this->getIdEntity());
             // remove this frame
+            Timeline::addTimeline("frame",$this->getId(),"D");
             parent::delete();
             // remove entity
             $entity = new Entity($idEntity);
@@ -355,6 +357,7 @@ HERE;
         $transaction = $this->beginTransaction();
         try {
             $this->save($data);
+            Timeline::addTimeline("frame",$this->getId(),"S");
             if ($data->idTemplate) {
                 if ($inheritsFromBase) {
                     $template = new Template($data->idTemplate);
@@ -382,6 +385,7 @@ HERE;
         $this->setActive($frame->active);
         $this->setIdEntity($frame->idEntity);
         parent::save();
+        Timeline::addTimeline("frame",$this->getId(),"S");
     }
 
 }

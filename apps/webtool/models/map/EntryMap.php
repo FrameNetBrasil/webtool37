@@ -29,8 +29,10 @@ class EntryMap extends \MBusinessModel {
                 'description' => array('column' => 'description','type' => 'string'),
                 'nick' => array('column' => 'nick','type' => 'string'),
                 'idLanguage' => array('column' => 'idLanguage','type' => 'integer'),
+                'idEntity' => array('column' => 'idEntity','type' => 'integer'),
             ),
             'associations' => array(
+                'entity' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity:idEntity'),
                 'language' => array('toClass' => 'fnbr\models\Language', 'cardinality' => 'oneToOne' , 'keys' => 'idLanguage:idLanguage'), 
             )
         );
@@ -148,9 +150,25 @@ class EntryMap extends \MBusinessModel {
         $this->retrieveAssociation("language");
     }
 
-    
+    protected $idEntity;
+    protected $entity;
+
+    public function getIdEntity() {
+        return $this->idEntity;
+    }
+
+    public function setIdEntity($value) {
+        $this->idEntity = $value;
+    }
+
+    public function setEntity($value) {
+        $this->entity = $value;
+    }
+
+    public function getAssociationEntity() {
+        $this->retrieveAssociation("entity");
+    }
+
 
 }
 // end - wizard
-
-?>

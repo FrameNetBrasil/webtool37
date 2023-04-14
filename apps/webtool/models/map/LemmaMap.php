@@ -26,7 +26,6 @@ class LemmaMap extends \MBusinessModel
             'attributes' => array(
                 'idLemma' => array('column' => 'idLemma', 'key' => 'primary', 'idgenerator' => 'identity', 'type' => 'integer'),
                 'name' => array('column' => 'name', 'type' => 'string'),
-                'timeline' => array('column' => 'timeline', 'type' => 'string'),
                 'idPOS' => array('column' => 'idPOS', 'type' => 'integer'),
                 'idLanguage' => array('column' => 'idLanguage', 'type' => 'integer'),
                 'idEntity' => array('column' => 'idEntity','type' => 'integer'),
@@ -36,7 +35,6 @@ class LemmaMap extends \MBusinessModel
                 'lus' => array('toClass' => 'fnbr\models\LU', 'cardinality' => 'oneToMany', 'keys' => 'idLemma:idLemma'),
                 'lexemeentries' => array('toClass' => 'fnbr\models\LexemeEntry', 'cardinality' => 'oneToMany', 'keys' => 'idLemma:idLemma'),
                 'language' => array('toClass' => 'fnbr\models\Language', 'cardinality' => 'oneToOne' , 'keys' => 'idLanguage:idLanguage'), 
-                'timelines' => array('toClass' => 'fnbr\models\Timeline', 'cardinality' => 'oneToMany', 'keys' => 'timeline:timeline'),
                 'entity' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity:idEntity'),
             )
         );
@@ -53,12 +51,6 @@ class LemmaMap extends \MBusinessModel
      * @var string 
      */
     protected $name;
-
-    /**
-     * 
-     * @var string 
-     */
-    protected $timeline;
 
     /**
      * 
@@ -84,7 +76,6 @@ class LemmaMap extends \MBusinessModel
     protected $pos;
     protected $lus;
     protected $lexemeentries;
-    protected $timelines;
 
     /**
      * Getters/Setters
@@ -107,16 +98,6 @@ class LemmaMap extends \MBusinessModel
     public function setName($value)
     {
         $this->name = $value;
-    }
-
-    public function getTimeline()
-    {
-        return $this->timeline;
-    }
-
-    public function setTimeline($value)
-    {
-        $this->timeline = $value;
     }
 
     public function getIdPOS()
@@ -284,36 +265,6 @@ class LemmaMap extends \MBusinessModel
         $this->retrieveAssociation("language");
     }
     
-    /**
-     *
-     * @return Association
-     */
-    public function getTimelines()
-    {
-        if (is_null($this->timelines)) {
-            $this->retrieveAssociation("timelines");
-        }
-        return $this->timelines;
-    }
-
-    /**
-     *
-     * @param Association $value
-     */
-    public function setTimelines($value)
-    {
-        $this->timelines = $value;
-    }
-
-    /**
-     *
-     * @return Association
-     */
-    public function getAssociationTimelines()
-    {
-        $this->retrieveAssociation("timelines");
-    }
-
 }
 
 // end - wizard

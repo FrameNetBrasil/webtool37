@@ -2,6 +2,11 @@
     // layers/keys.js
     $(function () {
 
+        $(document).bind('keydown', 'ctrl+s', function() {
+            event.preventDefault();
+            annotation.save();
+        });
+
         $( "body" ).keypress(function( event ) {
             event = event||window.event // IE support
             var c = event.which;
@@ -55,6 +60,7 @@
                     break;
                 }
                 case 39: {// right
+                    console.log('-----', event.shift ? 'shift' : 'no shift')
                     if (annotation.currentSelection.rowIndex >= 0) {
                         var next = annotation.currentSelection.end + 1;
                         var field = 'wf' + next;
@@ -133,7 +139,8 @@
             }
         });
 
-        annotation.initCursor = function() {
+
+    annotation.initCursor = function() {
             annotation.cursor.rowIndex = 1;
             annotation.cursor.field = 0;
             var rows = $('#layers').datagrid("getRows");

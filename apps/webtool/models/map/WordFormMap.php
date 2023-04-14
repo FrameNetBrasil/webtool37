@@ -25,13 +25,12 @@ class WordFormMap extends \MBusinessModel {
             'attributes' => array(
                 'idWordForm' => array('column' => 'idWordForm','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
                 'form' => array('column' => 'form','type' => 'string'),
-                'timeline' => array('column' => 'timeline','type' => 'string'),
+                'md5' => array('column' => 'md5','type' => 'string'),
                 'idLexeme' => array('column' => 'idLexeme','type' => 'integer'),
                 'idEntity' => array('column' => 'idEntity','type' => 'integer'),
             ),
             'associations' => array(
                 'lexeme' => array('toClass' => 'fnbr\models\Lexeme', 'cardinality' => 'oneToOne' , 'keys' => 'idLexeme:idLexeme'), 
-                'timelines' => array('toClass' => 'fnbr\models\Timeline', 'cardinality' => 'oneToMany' , 'keys' => 'timeline:timeline'),
                 'entity' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity:idEntity'),
             )
         );
@@ -48,10 +47,10 @@ class WordFormMap extends \MBusinessModel {
      */
     protected $form;
     /**
-     * 
-     * @var string 
+     *
+     * @var string
      */
-    protected $timeline;
+    protected $md5;
     /**
      * 
      * @var integer 
@@ -74,8 +73,7 @@ class WordFormMap extends \MBusinessModel {
     protected $entity;
     protected $lexeme;
     protected $language;
-    protected $timelines;
-    
+
 
     /**
      * Getters/Setters
@@ -94,6 +92,15 @@ class WordFormMap extends \MBusinessModel {
 
     public function setForm($value) {
         $this->form = $value;
+        $this->md5 = md5($value);
+    }
+
+    public function getMD5() {
+        return $this->md5;
+    }
+
+    public function setMD5($value) {
+        $this->md5 = $value;
     }
 
     public function getTimeline() {
@@ -160,33 +167,6 @@ class WordFormMap extends \MBusinessModel {
     public function getAssociationLexeme() {
         $this->retrieveAssociation("lexeme");
     }
-    /**
-     *
-     * @return Association
-     */
-    public function getTimelines() {
-        if (is_null($this->timelines)){
-            $this->retrieveAssociation("timelines");
-        }
-        return  $this->timelines;
-    }
-    /**
-     *
-     * @param Association $value
-     */
-    public function setTimelines($value) {
-        $this->timelines = $value;
-    }
-    /**
-     *
-     * @return Association
-     */
-    public function getAssociationTimelines() {
-        $this->retrieveAssociation("timelines");
-    }
-
-    
-
 }
 // end - wizard
 

@@ -204,9 +204,10 @@ class LU extends map\LUMap
                 $st->getById($data->idSemanticType);
                 Base::createEntityRelation($this->getIdEntity(), 'rel_hastype', $st->getIdEntity());
             }
-            Base::entityTimelineSave($this->getIdEntity());
+            //Base::entityTimelineSave($this->getIdEntity());
             $this->setActive(true);
             parent::save();
+            Timeline::addTimeline("lu",$this->getId(),"S");
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();
@@ -218,14 +219,15 @@ class LU extends map\LUMap
     {
         $transaction = $this->beginTransaction();
         try {
-            $sc = new ViewSubCorpusLU();
-            $count = count($sc->listByLU($this->getId())->asQuery()->getResult());
-            if ($count > 0) {
-                throw new \Exception("This LU has SubCorpus! Removal canceled.");
-            }
+//            $sc = new ViewSubCorpusLU();
+//            $count = count($sc->listByLU($this->getId())->asQuery()->getResult());
+//            if ($count > 0) {
+//                throw new \Exception("This LU has SubCorpus! Removal canceled.");
+//            }
             $idEntity = $this->getIdEntity();
-            Base::entityTimelineDelete($idEntity);
+//            Base::entityTimelineDelete($idEntity);
             Base::deleteAllEntityRelation($idEntity);
+            Timeline::addTimeline("lu",$this->getId(),"D");
             parent::delete();
             $entity = new Entity($idEntity);
             $entity->delete();

@@ -44,19 +44,37 @@ class MainController extends MController
 
     public function sentences()
     {
+        // alterado em 17/08/2022 - dividido em sentencesLexical e sentenceCorpus
+        $this->render();
+    }
+
+    public function sentencesLexical()
+    {
         // alterado em 17/08/2022 - id = idLU / ignorando SubCorpus
         $annotation = Manager::getAppService('annotation');
-        $type = $this->data->id[0];
-        if ($type == 'd') { // document for corpus annotation
-            $idDocument = substr($this->data->id, 1);
-            $this->data->title = $annotation->getDocumentTitle($idDocument, $this->idLanguage);
-            //$document = new fnbr\models\Document($idDocument);
-            //$this->data->idSubCorpus = $document->getRelatedSubCorpus();
-            $this->data->idDocument = $idDocument;
-        } else {
-            $this->data->idLU = $this->data->id;
-            $this->data->title = $annotation->getLUTitle($this->data->idLU, $this->idLanguage, $this->data->cxn);
-        }
+        $this->data->idLU = $this->data->id;
+        $this->data->title = $annotation->getLUTitle($this->data->idLU, $this->idLanguage);
+        $this->data->userLanguage = fnbr\models\Base::languages()[fnbr\models\Base::getCurrentUser()->getConfigData('fnbrIdLanguage')];
+        $this->render();
+    }
+
+    public function sentencesConstructional()
+    {
+        // alterado em 17/08/2022 - id = idCxn / ignorando SubCorpus
+        $annotation = Manager::getAppService('annotation');
+        $this->data->idCxn = substr($this->data->id, 1);
+        $this->data->title = $annotation->getCxnTitle($this->data->idCxn, $this->idLanguage);
+        $this->data->userLanguage = fnbr\models\Base::languages()[fnbr\models\Base::getCurrentUser()->getConfigData('fnbrIdLanguage')];
+        $this->render();
+    }
+
+    public function sentencesCorpus()
+    {
+        // alterado em 17/08/2022 - id = idDocument
+        $annotation = Manager::getAppService('annotation');
+        $idDocument = substr($this->data->id, 1);
+        $this->data->title = $annotation->getDocumentTitle($idDocument, $this->idLanguage);
+        $this->data->idDocument = $idDocument;
         $this->data->userLanguage = fnbr\models\Base::languages()[fnbr\models\Base::getCurrentUser()->getConfigData('fnbrIdLanguage')];
         $this->render();
     }
@@ -64,6 +82,7 @@ class MainController extends MController
     public function annotationSet()
     {
         // alterado em 17/08/2022 - id = idLU / ignorando SubCorpus
+        // alterado em 03/02/2022 - eliminando tabela SubCorpus
         $annotation = Manager::getAppService('annotation');
         if ($this->data->sort) {
             $sortable = (object)[
@@ -72,6 +91,19 @@ class MainController extends MController
             ];
         }
         $json = $annotation->listAnnotationSet($this->data->id, $sortable);
+        $this->renderJson($json);
+    }
+
+    public function annotationSetCxn()
+    {
+        $annotation = Manager::getAppService('annotation');
+        if ($this->data->sort) {
+            $sortable = (object)[
+                'field' => $this->data->sort,
+                'order' => $this->data->order
+            ];
+        }
+        $json = $annotation->listAnnotationSetCxn($this->data->id, $sortable);
         $this->renderJson($json);
     }
 
@@ -111,7 +143,7 @@ class MainController extends MController
         $sentence = new fnbr\models\Sentence($this->data->idSentence);
         $idLanguage = $sentence->getIdLanguage();
         $userIdLanguage = fnbr\models\Base::getCurrentUser()->getConfigData('fnbrIdLanguage');
-        $canSave = ($idLanguage == $userIdLanguage);
+        $canSave = true;//($idLanguage == $userIdLanguage);
         $this->data->canSave = $canSave && Manager::checkAccess('BEGINNER', A_EXECUTE);
         $this->data->idAnnotationSet = Manager::getContext()->get(1);
         $this->data->type = Manager::getContext()->get(2);
@@ -210,9 +242,9 @@ class MainController extends MController
         $annotation = Manager::getAppService('annotation');
         if ($this->data->id == '') {
             $json = $annotation->listCxn($this->data->cxn, $this->idLanguage);
-        } elseif ($this->data->id{0} == 'c') {
-            $json = $annotation->listSubCorpusCxn(substr($this->data->id, 1));
-        }
+        } // elseif ($this->data->id{0} == 'c') {
+          //  $json = $annotation->listSubCorpusCxn(substr($this->data->id, 1));
+        //}
         $this->renderJson($json);
     }
 
@@ -223,11 +255,33 @@ class MainController extends MController
         $this->renderJson($json);
     }
 
-    public function addManualSubcorpus()
+//    public function addManualSubcorpus()
+//    {
+//        try {
+//            $annotation = Manager::getAppService('annotation');
+//            $annotation->addManualSubcorpus($this->data);
+//            $this->renderPrompt('info', 'OK');
+//        } catch (\Exception $e) {
+//            $this->renderPrompt('error', $e->getMessage());
+//        }
+//    }
+
+    public function addLU()
     {
         try {
             $annotation = Manager::getAppService('annotation');
-            $annotation->addManualSubcorpus($this->data);
+            $annotation->addLU($this->data);
+            $this->renderPrompt('info', 'OK');
+        } catch (\Exception $e) {
+            $this->renderPrompt('error', $e->getMessage());
+        }
+    }
+
+    public function addCxn()
+    {
+        try {
+            $annotation = Manager::getAppService('annotation');
+            $annotation->addCxn($this->data);
             $this->renderPrompt('info', 'OK');
         } catch (\Exception $e) {
             $this->renderPrompt('error', $e->getMessage());
@@ -259,7 +313,7 @@ class MainController extends MController
         $annotation = Manager::getAppService('annotation');
         if ($this->data->id == '') {
             $json = $annotation->listCorpus($this->data->corpus, $this->idLanguage);
-        } elseif ($this->data->id{0} == 'c') {
+        } elseif ($this->data->id[0] == 'c') {
             $json = $annotation->listCorpusDocument(substr($this->data->id, 1));
         }
         $this->renderJson($json);

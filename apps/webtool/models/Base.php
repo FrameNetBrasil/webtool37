@@ -246,25 +246,4 @@ class Base {
         return $userLevel;
     }
     
-    static public function newTimeline($tl, $operation = 'S') {
-        $timeline = new Timeline();
-        return $timeline->newTimeLine($tl, $operation);
-    }
-
-    static public function updateTimeline($oldTl, $newTl) {
-        $timeline = new Timeline();
-        return $timeline->updateTimeline($oldTl, $newTl);
-    }
-
-    static public function entityTimelineSave($idEntity) {
-        $entity = new Entity($idEntity);
-        $entity->setTimeline(self::newTimeline($entity->getAlias(), 'S'));
-        $entity->save();
-    }
-
-    static public function entityTimelineDelete($idEntity) {
-        $entity = new Entity($idEntity);
-        self::newTimeline($entity->getAlias(), 'D');
-    }
-
 }

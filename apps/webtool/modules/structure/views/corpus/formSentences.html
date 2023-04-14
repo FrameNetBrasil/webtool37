@@ -10,7 +10,7 @@
 <script type="text/javascript">
     $(function () {
 
-        structure.isMM = false;
+        structure.isMM = {{$data->idDocumentMM != 0 ? 'true' : 'false'|noescape}};
 
         structure.toolbarAS = [
         ];
@@ -30,7 +30,7 @@
                 id = structure.node.id.substr(1);
             }
             console.log(id);
-            manager.doGet({{$manager->getURL('structure/corpus/formUpdateSentence')}} + '/' + id,'structureCenterPane');
+            manager.doAction('^' + 'webtool/structure/corpus/formUpdateSentence' + '/' + id,'structureCenterPane');
         }
 
         $('#sentences').datagrid({
@@ -40,7 +40,7 @@
             fit: true,
             nowrap: false,
             idField: 'idSentence',
-            toolbar: (structure.isMaster && structure.isMM) ? structure.toolbarASMaster : structure.toolbarAS,
+            //toolbar: (structure.isMaster && structure.isMM) ? structure.toolbarASMaster : structure.toolbarAS,
             url: {{$manager->getURL('structure/corpus/sentences')}} + '/' + {{$data->idDocument}},
             method: 'get',
             onDblClickRow: function(index,row) {

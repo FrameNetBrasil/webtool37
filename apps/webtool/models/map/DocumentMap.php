@@ -26,16 +26,19 @@ class DocumentMap extends \MBusinessModel {
                 'idDocument' => array('column' => 'idDocument','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
                 'entry' => array('column' => 'entry','type' => 'string'),
                 'author' => array('column' => 'author','type' => 'string'),
-                'timeline' => array('column' => 'timeline','type' => 'string'),
+                'active' => array('column' => 'active','type' => 'integer'),
                 'idGenre' => array('column' => 'idGenre','type' => 'integer'),
                 'idCorpus' => array('column' => 'idCorpus','type' => 'integer'),
+                'idEntity' => array('column' => 'idEntity','type' => 'integer'),
             ),
             'associations' => array(
+                'entity' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity:idEntity'),
                 'genre' => array('toClass' => 'fnbr\models\Genre', 'cardinality' => 'oneToOne' , 'keys' => 'idGenre:idGenre'), 
                 'corpus' => array('toClass' => 'fnbr\models\Corpus', 'cardinality' => 'oneToOne' , 'keys' => 'idCorpus:idCorpus'), 
                 'paragraphs' => array('toClass' => 'fnbr\models\Paragraph', 'cardinality' => 'oneToMany' , 'keys' => 'idDocument:idDocument'), 
-                'timelines' => array('toClass' => 'fnbr\models\Timeline', 'cardinality' => 'oneToMany' , 'keys' => 'timeline:timeline'), 
                 'entries' => array('toClass' => 'fnbr\models\Entry', 'cardinality' => 'oneToMany' , 'keys' => 'entry:entry'),
+                'documentmm' => array('toClass' => 'fnbr\models\DocumentMM', 'cardinality' => 'oneToMany' , 'keys' => 'idDocument:idDocument'),
+                'sentences' => array('toClass' => 'fnbr\models\Sentence', 'cardinality' => 'manyToMany', 'associative' => 'document_sentence'),
             )
         );
     }
@@ -57,11 +60,6 @@ class DocumentMap extends \MBusinessModel {
     protected $author;
     /**
      * 
-     * @var string 
-     */
-    protected $timeline;
-    /**
-     * 
      * @var integer 
      */
     protected $idGenre;
@@ -70,6 +68,11 @@ class DocumentMap extends \MBusinessModel {
      * @var integer 
      */
     protected $idCorpus;
+    /**
+     *
+     * @var integer
+     */
+    protected $active;
 
     /**
      * Associations
@@ -77,8 +80,9 @@ class DocumentMap extends \MBusinessModel {
     protected $genre;
     protected $corpus;
     protected $paragraphs;
-    protected $timelines;
     protected $entries;
+    protected $documentmm;
+    protected $sentences;
 
 
     /**
@@ -108,14 +112,6 @@ class DocumentMap extends \MBusinessModel {
         $this->author = $value;
     }
 
-    public function getTimeline() {
-        return $this->timeline;
-    }
-
-    public function setTimeline($value) {
-        $this->timeline = $value;
-    }
-
     public function getIdGenre() {
         return $this->idGenre;
     }
@@ -130,6 +126,13 @@ class DocumentMap extends \MBusinessModel {
 
     public function setIdCorpus($value) {
         $this->idCorpus = $value;
+    }
+    public function getActive() {
+        return $this->active;
+    }
+
+    public function setActive($value) {
+        $this->active = $value;
     }
     /**
      *
@@ -207,30 +210,6 @@ class DocumentMap extends \MBusinessModel {
      *
      * @return Association
      */
-    public function getTimelines() {
-        if (is_null($this->timelines)){
-            $this->retrieveAssociation("timelines");
-        }
-        return  $this->timelines;
-    }
-    /**
-     *
-     * @param Association $value
-     */
-    public function setTimelines($value) {
-        $this->timelines = $value;
-    }
-    /**
-     *
-     * @return Association
-     */
-    public function getAssociationTimelines() {
-        $this->retrieveAssociation("timelines");
-    }
-    /**
-     *
-     * @return Association
-     */
     public function getEntries() {
         if (is_null($this->entries)){
             $this->retrieveAssociation("entries");
@@ -250,6 +229,63 @@ class DocumentMap extends \MBusinessModel {
      */
     public function getAssociationEntries() {
         $this->retrieveAssociation("entries");
+    }
+
+    /**
+     *
+     * @return Association
+     */
+    public function getDocumentMM() {
+        if (is_null($this->documentmm)){
+            $this->retrieveAssociation("documentmm");
+        }
+        return  $this->documentmm;
+    }
+    /**
+     *
+     * @param Association $value
+     */
+    public function setDocumentMM($value) {
+        $this->documentmm = $value;
+    }
+    /**
+     *
+     * @return Association
+     */
+    public function getAssociationDocumentMM() {
+        $this->retrieveAssociation("documentmm");
+    }
+
+    protected $idEntity;
+    protected $entity;
+
+    public function getIdEntity() {
+        return $this->idEntity;
+    }
+
+    public function setIdEntity($value) {
+        $this->idEntity = $value;
+    }
+
+    public function setEntity($value) {
+        $this->entity = $value;
+    }
+
+    public function getAssociationEntity() {
+        $this->retrieveAssociation("entity");
+    }
+
+    public function getSentences() {
+        if (is_null($this->sentences)){
+            $this->retrieveAssociation("sentences");
+        }
+        return  $this->sentences;
+    }
+    public function setSentences($value) {
+        $this->sentences = $value;
+    }
+    public function getAssociationSentences() {
+        $this->retrieveAssociation("sentences");
     }
 
 }

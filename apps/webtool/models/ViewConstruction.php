@@ -98,4 +98,15 @@ class ViewConstruction extends map\ViewConstructionMap
         return $criteria;
     }
 
+    public function listToAnnotation($idLanguage = '')
+    {
+        $criteria = $this->getCriteria()
+//            ->select('idConstruction as idCxn, entries.name as name, count(subcorpus.annotationsets.idAnnotationSet) as quant')
+            ->select('idConstruction as idCxn, entries.name as name, count(annotationsets.idAnnotationSet) as quant')
+            ->where("entries.idLanguage = {$idLanguage}")
+            ->groupBy('view_construction.idConstruction,name')
+            ->orderBy('name');
+        return $criteria;
+    }
+
 }

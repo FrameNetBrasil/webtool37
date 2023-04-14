@@ -20,8 +20,8 @@ class ConceptController extends MController
     public function conceptTree()
     {
         $structure = Manager::getAppService('structureconcept');
-        if ($this->data->id == '') {
-            $children = $structure->listConceptsRoot($this->data, $this->idLanguage);
+        if ($this->data->search == 1) {
+            $children = $structure->listConceptsByName($this->data->concept, $this->idLanguage);
             $data = (object)[
                 'id' => 'root',
                 'state' => 'open',
@@ -29,14 +29,38 @@ class ConceptController extends MController
                 'children' => $children
             ];
             $json = json_encode([$data]);
-        } elseif ($this->data->id{0} == 'c') {
-            $children = $structure->listConceptsChildren(substr($this->data->id, 1), $this->idLanguage);
-            $json = json_encode($children);
-        } elseif ($this->data->id{0} == 'e') {
-            $children = $structure->listConceptElements(substr($this->data->id, 1), $this->idLanguage);
-            $json = json_encode($children);
+        } else {
+            if ($this->data->id == '') {
+                $children = $structure->listConceptsRoot($this->data, $this->idLanguage);
+                $data = (object)[
+                    'id' => 'root',
+                    'state' => 'open',
+                    'text' => 'Concepts',
+                    'children' => $children
+                ];
+                $json = json_encode([$data]);
+//            } elseif ($this->data->id{0} == 't') {
+//                $children = $structure->listConceptsTypeRoot(substr($this->data->id, 1), $this->idLanguage);
+//                $json = json_encode($children);
+            } elseif ($this->data->id{0} == 'c') {
+                $children = $structure->listConceptsChildren(substr($this->data->id, 1), $this->idLanguage);
+                $json = json_encode($children);
+            } elseif ($this->data->id{0} == 'e') {
+                $children = $structure->listConceptElements(substr($this->data->id, 1), $this->idLanguage);
+                $json = json_encode($children);
+            }
         }
         $this->renderJson($json);
+    }
+
+    public function showConcept() {
+        $idConcept = $this->data->id;
+        $concept = new fnbr\models\Concept($idConcept);
+        $this->data->concept->entry = $concept->getEntryObject();
+        $structure = Manager::getAppService('structureconcept');
+        $this->data->relations = $structure->listConceptsParent($idConcept, $this->idLanguage);
+        $this->data->associatedTo = $structure->listConceptsAssociatedTo($idConcept, $this->idLanguage);
+        $this->render();
     }
 
     public function formNewConcept()
@@ -61,6 +85,18 @@ class ConceptController extends MController
         $this->render();
     }
 
+    public function formSubTypeOf()
+    {
+        $model = new fnbr\models\Concept($this->data->id);
+        $this->data->object = $model->getData();
+        $entry = $model->getEntryObject();
+        $this->data->object->name = $entry->name;
+        $this->data->save = "@structure/concept/subTypeOf|formSubTypeOf";
+        $this->data->close = "!$('#formSubTypeOf_dialog').dialog('close');";
+        $this->data->title = 'Concept: ' . '  [' . $entry->name . ']';
+        $this->render();
+    }
+
     public function newConcept()
     {
         try {
@@ -79,6 +115,19 @@ class ConceptController extends MController
         try {
             $model = new fnbr\models\Concept($this->data->concept->idConcept);
             $model->update($this->data->concept);
+            //$model->updateEntry($this->data->concept->entry);
+            //$this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->semantictype->entry}');");
+            $this->renderPrompt('information', 'OK');
+        } catch (\Exception $e) {
+            $this->renderPrompt('error', $e->getMessage());
+        }
+    }
+
+    public function subTypeOf()
+    {
+        try {
+            $model = new fnbr\models\Concept($this->data->concept->idConcept);
+            $model->subTypeOf($this->data->concept->subTypeOf);
             //$model->updateEntry($this->data->concept->entry);
             //$this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->semantictype->entry}');");
             $this->renderPrompt('information', 'OK');

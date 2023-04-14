@@ -57,10 +57,16 @@ class Genre extends map\GenreMap {
         $transaction = $this->beginTransaction();
         try {
             if (!$this->isPersistent()) {
+                $entity = new Entity();
+                $entity->setAlias($this->getEntry());
+                $entity->setType('GR');
+                $entity->save();
+                $this->setIdEntity($entity->getId());
                 $entry = new Entry();
-                $entry->newEntry($this->getEntry());
+                $entry->newEntry($this->getEntry(),$entity->getId());
             }
             parent::save();
+            Timeline::addTimeline("genre",$this->getId(),"S");
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();

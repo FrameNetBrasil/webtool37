@@ -79,10 +79,12 @@ HERE;
     public function save()
     {
         parent::save();
+        Timeline::addTimeline("label", $this->getId(), "S");
     }
 
     public function delete()
     {
+        Timeline::addTimeline("label", $this->getId(), "D");
         parent::delete();
     }
 

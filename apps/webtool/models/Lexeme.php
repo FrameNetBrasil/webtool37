@@ -20,7 +20,6 @@ class Lexeme extends map\LexemeMap {
             'log' => array(  ),
             'validators' => array(
                 'name' => array('notnull'),
-                'timeline' => array('notnull'),
                 'idPOS' => array('notnull'),
             ),
             'converters' => array()
@@ -92,19 +91,14 @@ class Lexeme extends map\LexemeMap {
         return $criteria;
     }
 
-    public function setTimeline() {
-        $timeline = 'lex_' . md5($this->getName() . $this->getIdPOS() . $this->getIdLanguage());
-        parent::setTimeLine(Base::newTimeLine($timeline, 'S'));
-    }
-
     public function save($data = NULL) {
         try {
             $transaction = $this->beginTransaction();
             if ($data != NULL) {
                 $this->setData($data);
             }
-            $this->setTimeline();
             parent::save();
+            Timeline::addTimeline("lexeme",$this->getId(),"S");
             $wordform = new WordForm();
             $wordform->setIdLexeme($this->getId());
             if ($data != NULL) {
@@ -127,6 +121,7 @@ class Lexeme extends map\LexemeMap {
     public function createLexemeWordform($row, $wf, $POS, $idLanguage) {
         $collate = \Manager::getDatabase(\Manager::getConf('fnbr.db'))->getConfig('collate');
         $fields = explode(' ', $row);
+        mdump($fields);
         $idPOS = $POS[$fields[1]];
         //print_r('idPOS = ' . $idPOS . "\n");
         if ($idPOS != '') {
@@ -137,8 +132,8 @@ class Lexeme extends map\LexemeMap {
             if ($idLexeme == '') {
                 $this->setPersistent(false);
                 $this->setData((object)['name' => $fields[2], 'idLanguage' => $idLanguage, 'idPOS' => $idPOS]);
-                $this->setTimeline();
                 parent::save();
+                Timeline::addTimeline("lexeme",$this->getId(),"S");
                 $idLexeme = $this->getId();
             }
             $w = str_replace("'","\'", $fields[0]);
@@ -147,8 +142,14 @@ class Lexeme extends map\LexemeMap {
             $idWordform = $wordform[0]['idWordform'];
             if ($idWordform == '') {
                 $wf->setPersistent(false);
-                $wf->setData((object)['form' => $fields[0], 'idLexeme' => $idLexeme]);
+                $wf->setData((object)['form' => $fields[0], 'md5' => md5($fields[0]), 'idLexeme' => $idLexeme]);
                 $wf->save();
+            } else {
+                $wordform = new WordForm();
+                $wordform->getById($idWordform);
+                $wordform->setIdLexeme($idLexeme);
+                $wordform->setMD5(md5($fields[0]));
+                $wordform->save();
             }
         }
         return $idLexeme;

@@ -33,6 +33,8 @@ class ViewConstructionMap extends \MBusinessModel {
                 'entries' => array('toClass' => 'fnbr\models\ViewEntryLanguage', 'cardinality' => 'oneToOne' , 'keys' => 'entry:entry'),
                 'language' => array('toClass' => 'fnbr\models\Language', 'cardinality' => 'oneToOne' , 'keys' => 'idLanguage:idLanguage'),
                 'ces' => array('toClass' => 'fnbr\models\ViewConstructionElement', 'cardinality' => 'oneToMany' , 'keys' => 'idConstruction:idConstruction'),
+//                'subcorpus' => array('toClass' => 'fnbr\models\ViewSubCorpusCxn', 'cardinality' => 'oneToMany' , 'keys' => 'idConstruction:idConstruction'),
+                'annotationsets' => array('toClass' => 'fnbr\models\ViewAnnotationSet', 'cardinality' => 'oneToMany' , 'keys' => 'idConstruction:idConstruction'),
             )
         );
     }

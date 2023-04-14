@@ -24,17 +24,18 @@ class AnnotationSetMap extends \MBusinessModel {
             'table' => 'annotationset',
             'attributes' => array(
                 'idAnnotationSet' => array('column' => 'idAnnotationSet','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
-                'timeline' => array('column' => 'timeline','type' => 'string'),
-                'idSubCorpus' => array('column' => 'idSubCorpus','type' => 'integer'),
                 'idSentence' => array('column' => 'idSentence','type' => 'integer'),
                 'idAnnotationStatus' => array('column' => 'idAnnotationStatus','type' => 'integer'),
+                'idEntityLU' => array('column' => 'idEntityRelated','type' => 'integer'),
+                'idEntityCxn' => array('column' => 'idEntityRelated','type' => 'integer'),
+                'idEntityRelated' => array('column' => 'idEntityRelated','type' => 'integer'),
             ),
             'associations' => array(
-                'subcorpus' => array('toClass' => 'fnbr\models\SubCorpus', 'cardinality' => 'oneToOne' , 'keys' => 'idSubCorpus:idSubCorpus'), 
-                'sentence' => array('toClass' => 'fnbr\models\Sentence', 'cardinality' => 'oneToOne' , 'keys' => 'idSentence:idSentence'), 
+                'lu' => array('toClass' => 'fnbr\models\LU', 'cardinality' => 'oneToOne' , 'keys' => 'idEntityLU:idEntity'),
+                'cxn' => array('toClass' => 'fnbr\models\Construction', 'cardinality' => 'oneToOne' , 'keys' => 'idEntityCxn:idEntity'),
+                'sentence' => array('toClass' => 'fnbr\models\Sentence', 'cardinality' => 'oneToOne' , 'keys' => 'idSentence:idSentence'),
                 'annotationStatus' => array('toClass' => 'fnbr\models\TypeInstance', 'cardinality' => 'oneToOne' , 'keys' => 'idAnnotationStatus:idTypeInstance'), 
                 'layers' => array('toClass' => 'fnbr\models\Layer', 'cardinality' => 'oneToMany' , 'keys' => 'idAnnotationSet:idAnnotationSet'), 
-                'timelines' => array('toClass' => 'fnbr\models\Timeline', 'cardinality' => 'oneToMany' , 'keys' => 'timeline:timeline'), 
             )
         );
     }
@@ -46,14 +47,9 @@ class AnnotationSetMap extends \MBusinessModel {
     protected $idAnnotationSet;
     /**
      * 
-     * @var string 
-     */
-    protected $timeline;
-    /**
-     * 
      * @var integer 
      */
-    protected $idSubCorpus;
+//    protected $idSubCorpus;
     /**
      * 
      * @var integer 
@@ -65,15 +61,20 @@ class AnnotationSetMap extends \MBusinessModel {
      */
     protected $idAnnotationStatus;
 
+    protected $idEntityLU;
+    protected $idEntityCxn;
+    protected $idEntityRelated;
+
     /**
      * Associations
      */
-    protected $subcorpus;
+    protected $lu;
+    protected $cxn;
+//    protected $subcorpus;
     protected $sentence;
     protected $annotationStatus;
     protected $layers;
-    protected $timelines;
-    
+
 
     /**
      * Getters/Setters
@@ -84,22 +85,6 @@ class AnnotationSetMap extends \MBusinessModel {
 
     public function setIdAnnotationSet($value) {
         $this->idAnnotationSet = $value;
-    }
-
-    public function getTimeline() {
-        return $this->timeline;
-    }
-
-    public function setTimeline($value) {
-        $this->timeline = $value;
-    }
-
-    public function getIdSubCorpus() {
-        return $this->idSubCorpus;
-    }
-
-    public function setIdSubCorpus($value) {
-        $this->idSubCorpus = $value;
     }
 
     public function getIdSentence() {
@@ -117,29 +102,26 @@ class AnnotationSetMap extends \MBusinessModel {
     public function setIdAnnotationStatus($value) {
         $this->idAnnotationStatus = $value;
     }
-    /**
-     *
-     * @return Association
-     */
-    public function getSubcorpus() {
-        if (is_null($this->subcorpus)){
-            $this->retrieveAssociation("subcorpus");
-        }
-        return  $this->subcorpus;
+    public function getIdEntityLU() {
+        return $this->idEntityRelated;
     }
-    /**
-     *
-     * @param Association $value
-     */
-    public function setSubcorpus($value) {
-        $this->subcorpus = $value;
+
+    public function setIdEntityLU($value) {
+        $this->idEntityRelated = $value;
     }
-    /**
-     *
-     * @return Association
-     */
-    public function getAssociationSubcorpus() {
-        $this->retrieveAssociation("subcorpus");
+    public function getIdEntityCxn() {
+        return $this->idEntityRelated;
+    }
+
+    public function setIdEntityCxn($value) {
+        $this->idEntityRelated = $value;
+    }
+    public function getIdEntityRelated() {
+        return $this->idEntityRelated;
+    }
+
+    public function setIdEntityRelated($value) {
+        $this->idEntityRelated = $value;
     }
     /**
      *
@@ -213,34 +195,32 @@ class AnnotationSetMap extends \MBusinessModel {
     public function getAssociationLayers() {
         $this->retrieveAssociation("layers");
     }
-    /**
-     *
-     * @return Association
-     */
-    public function getTimelines() {
-        if (is_null($this->timelines)){
-            $this->retrieveAssociation("timelines");
+
+    public function getLU() {
+        if (is_null($this->lu)){
+            $this->retrieveAssociation("lu");
         }
-        return  $this->timelines;
+        return  $this->lu;
     }
-    /**
-     *
-     * @param Association $value
-     */
-    public function setTimelines($value) {
-        $this->timelines = $value;
+    public function setLU($value) {
+        $this->lu = $value;
     }
-    /**
-     *
-     * @return Association
-     */
-    public function getAssociationTimelines() {
-        $this->retrieveAssociation("timelines");
+    public function getAssociationLU() {
+        $this->retrieveAssociation("lu");
     }
 
-    
+    public function getCxn() {
+        if (is_null($this->cxn)){
+            $this->retrieveAssociation("cxn");
+        }
+        return  $this->cxn;
+    }
+    public function setCxn($value) {
+        $this->cxn = $value;
+    }
+    public function getAssociationCxn() {
+        $this->retrieveAssociation("cxn");
+    }
+
 
 }
-// end - wizard
-
-?>

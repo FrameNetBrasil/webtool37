@@ -28,28 +28,46 @@ Create a local installation for Webtool:
 $ git clone https://github.com/FrameNetBrasil/webtool.git
 $ cd webtool
 ```
-* If necessary, modify the docker-compose configuration file (.env)
-
-* Start the container
+* Restore/create the MySQL/MariaDb database at a local server, using the dump located at folder 
 
 ```sh
-$ docker-compose up
+webtool/apps/webtool/docs/database/webtool_dump.zip
 ```
 
-⋅⋅* Restore/create the MySQL database from the dump located at webtool/apps/webtool/docs/database/webtool_dump.zip
+* Application configuration files are located at 
 
-* Application configuration files will be created from dist
+```sh
+  webtool/core/conf/conf.php
+  webtool/apps/webtool/conf/conf.php
+```
 
-  * webtool/core/conf/conf.php
-  * webtool/apps/webtool/conf/conf.php
-  
-* Access the app at http://localhost:8001 (with user = webtool password = test)
+* Edit "webtool/apps/webtool/conf/conf.php" to config your database access:
+
+```sh
+  'db' => [
+    'webtool' => [
+      ...
+      'host' => '<db_host>',
+      'dbname' => 'webtool_db',
+      'user' => '<user name>',
+      'password' => '<password>',
+      ....
+```
+
+* If necessary, modify the docker-compose configuration file (.env), e.g, to change ports
+
+* Build and start the container at folder "webtool"
+
+```sh
+$ docker-compose build
+$ docker-compose up -d
+```
+
+* Access the app at http://localhost:8001 - or port you have configured at .env - with user = webtool password = test
 
 ## Built With
 
 * PHP 7.4
-* MariaDb 10.4
-* PhpMyAdmin 5.0.1
 * Framework Maestro 3.0
 * Vue 2.7
 

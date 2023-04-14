@@ -25,8 +25,10 @@ class TypeMap extends \MBusinessModel {
             'attributes' => array(
                 'idType' => array('column' => 'idType','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
                 'entry' => array('column' => 'entry','type' => 'string'),
+                'idEntity' => array('column' => 'idEntity','type' => 'integer'),
             ),
             'associations' => array(
+                'entity' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity:idEntity'),
                 'typeinstances' => array('toClass' => 'fnbr\models\TypeInstance', 'cardinality' => 'oneToMany' , 'keys' => 'idType:idType'), 
                 'entries' => array('toClass' => 'fnbr\models\Entry', 'cardinality' => 'oneToMany' , 'keys' => 'entry:entry'), 
             )
@@ -118,7 +120,25 @@ class TypeMap extends \MBusinessModel {
         $this->retrieveAssociation("entries");
     }
 
-    
+    protected $idEntity;
+    protected $entity;
+
+    public function getIdEntity() {
+        return $this->idEntity;
+    }
+
+    public function setIdEntity($value) {
+        $this->idEntity = $value;
+    }
+
+    public function setEntity($value) {
+        $this->entity = $value;
+    }
+
+    public function getAssociationEntity() {
+        $this->retrieveAssociation("entity");
+    }
+
 
 }
 // end - wizard

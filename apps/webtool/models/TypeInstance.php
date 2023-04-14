@@ -36,6 +36,12 @@ class TypeInstance extends map\TypeInstanceMap
     {
         return $this->getIdTypeInstance();
     }
+    public function getByEntry($entry)
+    {
+        $criteria = $this->getCriteria()->select('*');
+        $criteria->where("entry = '{$entry}'");
+        $this->retrieveFromCriteria($criteria);
+    }
 
     public function listByFilter($filter)
     {
@@ -90,7 +96,7 @@ class TypeInstance extends map\TypeInstanceMap
     {
         $criteria = $this->getCriteria()->select('idTypeInstance as idConceptType, entry, entries.name as name')->orderBy('entries.name');
         Base::entryLanguage($criteria);
-        $criteria->where("entry like 'typ_cpt_%'");
+        $criteria->where("entry like 'typ_c5_%'");
         return $criteria;
     }
 
@@ -147,13 +153,15 @@ HERE;
 
     public function save()
     {
-        Base::entityTimelineSave($this->getIdEntity());
+        //Base::entityTimelineSave($this->getIdEntity());
         parent::save();
+        Timeline::addTimeline("typeinstance",$this->getId(),"S");
     }
 
     public function delete()
     {
-        Base::entityTimelineDelete($this->getIdEntity());
+//        Base::entityTimelineDelete($this->getIdEntity());
+        Timeline::addTimeline("typeinstance",$this->getId(),"D");
         parent::delete();
     }
 

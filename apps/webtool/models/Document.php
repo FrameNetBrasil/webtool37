@@ -24,7 +24,6 @@ class Document extends map\DocumentMap
             'validators' => array(
                 'entry' => array('notnull'),
                 'author' => array('notnull'),
-                'timeline' => array('notnull'),
                 'idGenre' => array('notnull'),
                 'idCorpus' => array('notnull'),
             ),
@@ -76,22 +75,14 @@ class Document extends map\DocumentMap
 
     public function listByCorpus($idCorpus)
     {
-//        $criteria = $this->getCriteria()->select('idDocument, entry, entries.name as name, count(paragraphs.sentences.idSentence) as quant')->orderBy('entries.name');
-//        $criteria->setAssociationType('paragraphs.sentences', 'left');
-//        $criteria->setAssociationType('paragraphs', 'left');
-//        Base::entryLanguage($criteria);
-//        $criteria->where("idCorpus = {$idCorpus}");
-//        $criteria->groupBy("idDocument, entry, entries.name");
-        $criteria = $this->getCriteria()->select('idDocument, entry, entries.name as name')->orderBy('entries.name');
-        $criteria->where("idCorpus = {$idCorpus}");
+        $criteria = $this->getCriteria()->select('idDocument, entry, entries.name as name, count(paragraphs.sentences.idSentence) as quant')->orderBy('entries.name');
+        $criteria->setAssociationType('paragraphs.sentences', 'left');
+        $criteria->setAssociationType('paragraphs', 'left');
         Base::entryLanguage($criteria);
-        $result = $criteria->asQuery()->getResult();
-        $sentence = new Sentence();
-        foreach($result as $i => $row) {
-            $n = $sentence->countByDocument($row['idDocument']);
-            $result[$i]['quant'] = $n ?? 0;
-        }
-        return $result;
+        $criteria->where("active = 1");
+        $criteria->where("idCorpus = {$idCorpus}");
+        $criteria->groupBy("idDocument, entry, entries.name");
+        return $criteria;
     }
 
     public function getByEntry($entry)
@@ -124,12 +115,17 @@ class Document extends map\DocumentMap
         $transaction = $this->beginTransaction();
         try {
             if (!$this->isPersistent()) {
+                $entity = new Entity();
+                $entity->setAlias($this->getEntry());
+                $entity->setType('DC');
+                $entity->save();
+                $this->setIdEntity($entity->getId());
                 $entry = new Entry();
-                $entry->newEntry($this->getEntry());
+                $entry->newEntry($this->getEntry(),$entity->getId());
             }
             //$this->setIdGenre(1); // not informed
-            $this->setTimeLine(Base::newTimeLine($this->getEntry(), 'S'));
             parent::save();
+            Timeline::addTimeline("document",$this->getId(),"S");
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();
@@ -142,7 +138,7 @@ class Document extends map\DocumentMap
         $transaction = $this->beginTransaction();
         try {
             $entry = new Entry();
-            Base::updateTimeLine($this->getEntry(), $newEntry);
+            Timeline::addTimeline("document",$this->getId(),"S");
             $entry->updateEntry($this->getEntry(), $newEntry);
             $this->setEntry($newEntry);
             parent::save();
@@ -171,6 +167,7 @@ class Document extends map\DocumentMap
         $sentence->setText($text);
         $sentence->setParagraphOrder($order);
         $sentence->setIdParagraph($paragraph->getId());
+        $sentence->setIdDocument($paragraph->getIdDocument());
         $sentence->setIdLanguage($idLanguage);
         $sentence->save();
         return $sentence;
@@ -188,7 +185,7 @@ class Document extends map\DocumentMap
         $idLanguage = $data->idLanguage;
         $transaction = $this->beginTransaction();
         try {
-            $this->createSubCorpusFullText($data);
+//            $this->createSubCorpusFullText($data);
             $breakParagraph = $breakSentence = false;
             $p = $paragraphNum = $sentenceNum = 0;
             $text = '';
@@ -214,7 +211,7 @@ class Document extends map\DocumentMap
                         continue;
                     }
                     $word = str_replace('"', "'", str_replace('<', '', str_replace('>', '', str_replace('=', ' ', str_replace('$', '', $word)))));
-                    mdump($word);
+//                    mdump($word);
                     $text .= $word;
                     if (preg_match("/\.|\?|!/", $word)) { // quebra de sentença
                     } else {
@@ -242,7 +239,7 @@ class Document extends map\DocumentMap
                     mdump($paragraphNum . ' - ' . $sentenceNum . ' - ' . $text);
                     $sentence = $this->createSentence($paragraph, $sentenceNum, $text, $idLanguage);
                     $data->idSentence = $sentence->getId();
-                    $this->createAnnotationFullText($data);
+                    //$this->createAnnotationFullText($data);
                 }
             }
             $transaction->commit();
@@ -254,17 +251,17 @@ class Document extends map\DocumentMap
         return $result;
     }
 
-    public function createSubCorpusFullText($data)
-    {
-        $subCorpus = new SubCorpus();
-        $subCorpus->addManualSubCorpusDocument($data);
-        $data->idSubCorpus = $subCorpus->getId();
-    }
+//    public function createSubCorpusFullText($data)
+//    {
+//        $subCorpus = new SubCorpus();
+//        $subCorpus->addManualSubCorpusDocument($data);
+//        $data->idSubCorpus = $subCorpus->getId();
+//    }
 
     public function createAnnotationFullText($data)
     {
         $annotationSet = new AnnotationSet();
-        $annotationSet->setIdSubCorpus($data->idSubCorpus);
+        //$annotationSet->setIdSubCorpus($data->idSubCorpus);
         $annotationSet->setIdSentence($data->idSentence);
         $annotationSet->setIdAnnotationStatus('ast_manual');
         $annotationSet->save();
@@ -489,6 +486,38 @@ HERE;
 
     public function listAnnotationSetForXML($idSentence, $idLanguage = 1)
     {
+        /*
+        $cmd = <<<HERE
+
+select a.idAnnotationSet, lb.layerTypeEntry, lb.startChar, lb.endChar, f.idFrame, e1.name frameName, fe.idFrameElement, e3.name feName, gl.idGenericLabel, gl.name glName, lu.idLU, lu.name luName, pos.POS, lx.name lexeme
+FROM annotationset a
+  INNER JOIN view_labelfecetarget lb on (a.idAnnotationSet = lb.idAnnotationSet)
+  INNER JOIN view_subcorpuslu sc ON (a.idSubCorpus = sc.idSubCorpus)
+  INNER JOIN view_lu lu ON (sc.idLU = lu.idLU)
+  INNER JOIN lemma lm on (lu.idLemma = lm.idLemma)
+  INNER JOIN lexemeentry le ON (lm.idLemma = le.idLemma)
+  INNER JOIN lexeme lx on (le.idLexeme = lx.idLexeme)
+  INNER JOIN pos ON (lu.idPOS = pos.idPOS)
+  INNER JOIN frame f on (lu.idFrame = f.idFrame)
+  INNER JOIN entry e1 ON (f.entry = e1.entry)
+  INNER JOIN entry e2 ON (lu.frameEntry = e2.entry)
+  INNER JOIN language l on (lu.idLanguage = l.idLanguage)
+  LEFT JOIN view_frameElement fe on (lb.idFrameElement = fe.idFrameElement)
+  LEFT JOIN entry e3 ON (fe.entry = e3.entry)
+  LEFT JOIN genericlabel gl on (lb.idGenericLabel = gl.idGenericLabel)
+where (l.idlanguage = {$idLanguage})
+and (lb.idLanguage = {$idLanguage})
+and (e1.idLanguage = {$idLanguage})
+and (e2.idLanguage = {$idLanguage})
+and ((e3.idLanguage = {$idLanguage}) or (e3.idLanguage is null))
+and (lb.startChar <> -1)
+and a.idSentence = {$idSentence}
+order by a.idAnnotationset
+
+HERE;
+
+        */
+
         $cmd = <<<HERE
 
         select l1.idAnnotationSet, l1.layerTypeEntry, l1.startChar, l1.endChar, l1.instantiationType, l1.idLU, l1.luName, l1.POS, l1.lexeme, l1.idFrame, l1.frameName, l1.idFrameElement, l2.name feName, l1.idGenericLabel, ge.name glName
@@ -589,6 +618,128 @@ order by a.idAnnotationset
 HERE;
         $query = $this->getDb()->getQueryCommand($cmd);
         return $query;
+    }
+
+    /**
+     * Upload MultimodalText - plain text (without processing) - UTF8
+     * Format: start_timestamp|end_timestamp|text
+     * @param object $data {idDocument, idLanguage}
+     * @param string $file
+     * @return string
+     * @throws EModelException
+     */
+    public function uploadMultimodalText($data, $file): string
+    {
+        // each sentence from multimodal text must be associated two subcorpus/two annotationSet:
+        // 1. for fulltext annotation alone (without video)
+        // 2. for parallel annotation (text + video)
+        mdump($data);
+        $idLanguage = $data->idLanguage;
+        $transaction = $this->beginTransaction();
+        $this->deleteSentences();
+        try {
+            $this->createSubCorpusMultimodalText($data);
+            $breakParagraph = $breakSentence = false;
+            $p = $paragraphNum = $sentenceNum = 0;
+            $text = '';
+            $filename = (is_object($file) ? $file->getTmpName() : $file);
+            $rows = file($filename);
+            foreach ($rows as $row) {
+                $row = str_replace("\t", " ", $row);
+                $row = str_replace("\n", " ", $row);
+                $row = trim($row);
+                if ($row == '') {
+                    continue;
+                }
+                $parts = explode('|', $row);
+                $data->startTimestamp = $parts[0];
+                $data->endTimestamp = $parts[1];
+                $textSentence = $parts[2];
+
+                $paragraph = $this->createParagraph(++$paragraphNum); // cada linha do arquivo é um paragrafo
+                $words = preg_split('/ /', $textSentence);
+                $wordsSize = count($words);
+                if ($wordsSize == 0) {
+                    continue;
+                }
+                $text = ''; // texto de cada sentença
+                // $break = false;
+                foreach ($words as $word) {
+                    $word = str_replace('"', "'", str_replace('<', '', str_replace('>', '', str_replace('=', ' ', str_replace('$', '', $word)))));
+                    mdump($word);
+                    $text .= $word;
+                    if (preg_match("/\.|\?|!/", $word)) { // quebra de sentença
+                    } else {
+                        $text .= ' ';
+                    }
+                }
+                if (trim($text) != '') {
+                    $sentenceNum++;
+                    mdump($paragraphNum . ' - ' . $sentenceNum . ' - ' . $text);
+                    $sentence = $this->createSentence($paragraph, $sentenceNum, $text, $idLanguage);
+                    $data->idSentence = $sentence->getId();
+                    $sentenceMM = $this->createSentenceMM($data);
+                    $data->idSentenceMM = $sentenceMM->getId();
+                    $this->createAnnotationMultimodalText($data);
+                }
+            }
+            $transaction->commit();
+            return '';
+        } catch (\EModelException $e) {
+            // rollback da transação em caso de algum erro
+            $transaction->rollback();
+            throw new EModelException($e->getMessage());
+        }
+    }
+
+    public function uploadMultimodalVideo($data, $file)
+    {
+        $documentMM = new DocumentMM();
+        $documentMM->getByIdDocument($data->idDocument);
+        $fileName = $file->getName();
+        $path = \Manager::getAppPath('/files/multimodal/videos/' . $fileName);
+        $file->copyTo($path);
+        $documentMM->setVisualPath($fileName);
+        $documentMM->saveMM();
+        mdump($documentMM->getVisualPath());
+    }
+
+    public function createSubCorpusMultimodalText($data)
+    {
+        $subCorpus = new SubCorpus();
+        $subCorpus->addManualSubCorpusDocument($data);
+        $data->idSubCorpus = $subCorpus->getId();
+        $subCorpus = new SubCorpus();
+        $subCorpus->addManualSubCorpusMultimodal($data);
+        $data->idSubCorpusMultimodal = $subCorpus->getId();
+    }
+
+    public function createSentenceMM($data)
+    {
+        $sentenceMM = new SentenceMM();
+        $sentenceMM->setData($data);
+        $sentenceMM->save();
+        return $sentenceMM;
+    }
+
+    public function createAnnotationMultimodalText($data)
+    {
+        // each sentence from multimodal text must be associated two annotationSet:
+        // 1. for fulltext annotation alone (without video)
+        // 2. for parallel annotation (text + video)
+        $annotationSet = new AnnotationSet();
+        $annotationSet->setIdSubCorpus($data->idSubCorpus);
+        $annotationSet->setIdSentence($data->idSentence);
+        $annotationSet->setIdAnnotationStatus('ast_manual');
+        $annotationSet->save();
+        $annotationSet = new AnnotationSet();
+        $annotationSet->setIdSubCorpus($data->idSubCorpusMultimodal);
+        $annotationSet->setIdSentence($data->idSentence);
+        $annotationSet->setIdAnnotationStatus('ast_manual');
+        $annotationSet->save();
+        $annotationSetMM = new AnnotationSetMM();
+        $data->idAnnotationSet = $annotationSet->getId();
+        $annotationSetMM->save($data);
     }
 
     public function deleteSentences() {

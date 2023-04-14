@@ -277,7 +277,7 @@ class FrameElement extends map\FrameElementMap
                 $entity->setType('FE');
                 $entity->save();
                 $entry = new Entry();
-                $entry->newEntry($this->getEntry());
+                $entry->newEntry($this->getEntry(),$entity->getId());
                 Base::createEntityRelation($entity->getId(), 'rel_elementof', $schema->getIdEntity());
                 $coreType = new TypeInstance($data->idCoreType);
                 Base::createEntityRelation($entity->getId(), 'rel_hastype', $coreType->getIdEntity());
@@ -285,8 +285,9 @@ class FrameElement extends map\FrameElementMap
                 $this->setIdEntity($entity->getId());
                 $this->setActive(true);
             }
-            Base::entityTimelineSave($this->getIdEntity());
+            //Base::entityTimelineSave($this->getIdEntity());
             parent::save();
+            Timeline::addTimeline("frameelement",$this->getId(),"S");
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();
@@ -307,6 +308,7 @@ class FrameElement extends map\FrameElementMap
             if ($fe->hasAnnotations($this->getId())) {
                 throw new \Exception("This FrameElement has Annotations! Removal canceled.");
             } else {
+                Timeline::addTimeline("frameelement",$this->getId(),"D");
                 $this->delete();
             }
         }
@@ -326,6 +328,7 @@ class FrameElement extends map\FrameElementMap
             $label->deleteByIdLabelType($idEntity);
             Base::entityTimelineDelete($this->getIdEntity());
             // remove this fe
+            Timeline::addTimeline("frameelement",$this->getId(),"D");
             parent::delete();
             // remove entity
             $entity = new Entity($idEntity);
@@ -341,7 +344,8 @@ class FrameElement extends map\FrameElementMap
     {
         $transaction = $this->beginTransaction();
         try {
-            Base::updateTimeLine($this->getEntry(), $newEntry);
+//            Base::updateTimeLine($this->getEntry(), $newEntry);
+            Timeline::addTimeline("frameelement",$this->getId(),"S");
             $entity = new Entity($this->getIdEntity());
             $entity->setAlias($newEntry);
             $entity->save();
@@ -368,7 +372,8 @@ class FrameElement extends map\FrameElementMap
         $coreType->getById($idCoreType);
         Base::createEntityRelation($fe->idEntity, 'rel_hastype', $coreType->getIdEntity());
         parent::save();
-    }    
+        Timeline::addTimeline("frameelement",$this->getId(),"S");
+    }
     
     public function createRelationsFromData($fe)
     {

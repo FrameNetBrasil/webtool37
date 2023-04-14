@@ -36,11 +36,11 @@ class QualiaController extends MController
         } else if ($this->data->id == 'root') {
             $children = $structure->listFrames($this->data, $this->idLanguage);
             $json = json_encode($children);
-        } elseif ($this->data->id{0} == 'f') {
+        } elseif ($this->data->id[0] == 'f') {
             $json = $structure->listFEsLUsQualias(substr($this->data->id, 1), $this->idLanguage);
-        } elseif ($this->data->id{0} == 'q') {
+        } elseif ($this->data->id[0] == 'q') {
             $json = $structure->listQualiaFEs(substr($this->data->id, 1), $this->idLanguage);
-        } elseif ($this->data->id{0} == 'l') {
+        } elseif ($this->data->id[0] == 'l') {
             $model = new fnbr\models\Qualia();
             $constraints = $model->listLUQualia(substr($this->data->id, 1));
             foreach ($constraints as $constraint) {
@@ -59,11 +59,13 @@ class QualiaController extends MController
 
     public function formQualiaFormal()
     {
-        $this->data->title = 'Formal Qualia';
+        $this->data->title = 'New Formal Qualia Structure';
         $this->data->qualiaType = 'qla_formal';
+        $this->data->qualiaName = 'Formal';
         $this->data->idFrame = $this->data->id;
         $frame = new fnbr\models\Frame($this->data->idFrame);
-        $this->data->frame = $frame->getEntry() . '  [' . $frame->getName() . ']';
+        //$this->data->frame = $frame->getEntry() . '  [' . $frame->getName() . ']';
+        $this->data->frame = $frame->getName() ;
         $this->data->close = "!$('#formQualia_dialog').dialog('close');";
         $this->data->save = "@structure/qualia/newQualia|formQualia";
         $this->render('formQualia');
@@ -71,11 +73,13 @@ class QualiaController extends MController
 
     public function formQualiaAgentive()
     {
-        $this->data->title = 'Agentive Qualia';
+        $this->data->title = 'New Agentive Qualia Structure';
         $this->data->qualiaType = 'qla_agentive';
+        $this->data->qualiaName = 'Agentive';
         $this->data->idFrame = $this->data->id;
         $frame = new fnbr\models\Frame($this->data->idFrame);
-        $this->data->frame = $frame->getEntry() . '  [' . $frame->getName() . ']';
+        //$this->data->frame = $frame->getEntry() . '  [' . $frame->getName() . ']';
+        $this->data->frame = $frame->getName() ;
         $this->data->close = "!$('#formQualia_dialog').dialog('close');";
         $this->data->save = "@structure/qualia/newQualia|formQualia";
         $this->render('formQualia');
@@ -83,11 +87,13 @@ class QualiaController extends MController
 
     public function formQualiaTelic()
     {
-        $this->data->title = 'Telic Qualia';
+        $this->data->title = 'New Telic Qualia Structure';
         $this->data->qualiaType = 'qla_telic';
+        $this->data->qualiaName = 'Telic';
         $this->data->idFrame = $this->data->id;
         $frame = new fnbr\models\Frame($this->data->idFrame);
-        $this->data->frame = $frame->getEntry() . '  [' . $frame->getName() . ']';
+        //$this->data->frame = $frame->getEntry() . '  [' . $frame->getName() . ']';
+        $this->data->frame = $frame->getName() ;
         $this->data->close = "!$('#formQualia_dialog').dialog('close');";
         $this->data->save = "@structure/qualia/newQualia|formQualia";
         $this->render('formQualia');
@@ -95,11 +101,13 @@ class QualiaController extends MController
 
     public function formQualiaConstitutive()
     {
-        $this->data->title = 'Constitutive Qualia';
+        $this->data->title = 'New Constitutive Qualia Structure';
         $this->data->qualiaType = 'qla_constitutive';
+        $this->data->qualiaName = 'Constitutive';
         $this->data->idFrame = $this->data->id;
         $frame = new fnbr\models\Frame($this->data->idFrame);
-        $this->data->frame = $frame->getEntry() . '  [' . $frame->getName() . ']';
+        //$this->data->frame = $frame->getEntry() . '  [' . $frame->getName() . ']';
+        $this->data->frame = $frame->getName() ;
         $this->data->close = "!$('#formQualia_dialog').dialog('close');";
         $this->data->save = "@structure/qualia/newQualia|formQualia";
         $this->render('formQualia');

@@ -79,9 +79,15 @@ class GenreType extends map\GenreTypeMap
         $this->setData($data);
         $transaction = $this->beginTransaction();
         try {
+            $entity = new Entity();
+            $entity->setAlias($this->getEntry());
+            $entity->setType('GT');
+            $entity->save();
+            $this->setIdEntity($entity->getId());
             $entry = new Entry();
-            $entry->newEntry($this->getEntry());
+            $entry->newEntry($this->getEntry(),$entity->getId());
             parent::save();
+            Timeline::addTimeline("genretype",$this->getId(),"S");
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();
@@ -93,7 +99,8 @@ class GenreType extends map\GenreTypeMap
     {
         $transaction = $this->beginTransaction();
         try {
-            Base::updateTimeLine($this->getEntry(), $newEntry);
+//            Base::updateTimeLine($this->getEntry(), $newEntry);
+            Timeline::addTimeline("genretype",$this->getId(),"S");
             $entry = new Entry();
             $entry->updateEntry($this->getEntry(), $newEntry);
             $this->setEntry($newEntry);

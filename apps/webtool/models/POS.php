@@ -23,7 +23,7 @@ class POS extends map\POSMap
             'validators' => array(
                 'POS' => array('notnull'),
                 'entry' => array('notnull'),
-                'timeline' => array('notnull'),
+//                'timeline' => array('notnull'),
             ),
             'converters' => array()
         );
@@ -70,13 +70,15 @@ class POS extends map\POSMap
 
     public function save()
     {
-        Base::entityTimelineSave($this->getIdEntity());
+        //Base::entityTimelineSave($this->getIdEntity());
         parent::save();
+        Timeline::addTimeline("pos",$this->getId(),"S");
     }
 
     public function delete()
     {
-        Base::entityTimelineDelete($this->getIdEntity());
+        Timeline::addTimeline("pos",$this->getId(),"D");
+//        Base::entityTimelineDelete($this->getIdEntity());
         parent::delete();
     }
 

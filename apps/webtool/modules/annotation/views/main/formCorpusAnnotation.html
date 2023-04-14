@@ -28,13 +28,13 @@
 
     annotation.showDocument = function (document) {
         $('#layersPane').html('');
-        manager.doGet({{$manager->getURL('annotation/main/sentences')}} + '/' + document,'sentencesPane');
+        manager.doGet({{$manager->getURL('annotation/main/sentencesCorpus')}} + '/' + document,'sentencesPane');
     }
 
-    annotation.showSubCorpus = function (subCorpus) {
-        $('#layersPane').html('');
-        manager.doGet({{$manager->getURL('annotation/main/sentences')}} + '/' + subCorpus,'sentencesPane');
-    }
+    // annotation.showSubCorpus = function (subCorpus) {
+    //     $('#layersPane').html('');
+    //     manager.doGet({{$manager->getURL('annotation/main/sentences')}} + '/' + subCorpus,'sentencesPane');
+    // }
 
     $(function () {
 

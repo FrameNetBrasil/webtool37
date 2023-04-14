@@ -44,7 +44,7 @@
             iconCls:'icon-save',
             plain:true,
             size:null,
-            onClick: annotation.dlgMWESave
+            onClick: annotation.dlgMWELUSave
         });
 
         $('#dlgMWEClose').linkbutton({
@@ -60,30 +60,53 @@
             scrollbarSize:18
         });
 
-        $('#dlgSubCorpus').dialog({
-            modal:true,
-            closed:true,
-            toolbar:'#dlgSubCorpus_tools',
-            border:true,
-            doSize:true
-        });
+        // $('#dlgSubCorpus').dialog({
+        //     modal:true,
+        //     closed:true,
+        //     toolbar:'#dlgSubCorpus_tools',
+        //     border:true,
+        //     doSize:true
+        // });
 
-        $('#dlgSubCorpusSave').linkbutton({
-            iconCls:'icon-save',
-            plain:true,
-            size:null,
-            onClick: annotation.dlgSubCorpusSave
-        });
-        $('#dlgSubCorpusClose').linkbutton({
-            iconCls:'icon-cancel',
-            plain:true,
-            size:null,
-            onClick: function() {
-                $('#dlgSubCorpus').dialog('close');
-            }
-        });
+        // $('#dlgSubCorpusSave').linkbutton({
+        //     iconCls:'icon-save',
+        //     plain:true,
+        //     size:null,
+        //     onClick: annotation.dlgSubCorpusSave
+        // });
+        // $('#dlgSubCorpusClose').linkbutton({
+        //     iconCls:'icon-cancel',
+        //     plain:true,
+        //     size:null,
+        //     onClick: function() {
+        //         $('#dlgSubCorpus').dialog('close');
+        //     }
+        // });
 
-        $('#dlgAS').dialog({
+    $('#dlgLU').dialog({
+        modal:true,
+        closed:true,
+        toolbar:'#dlgLU_tools',
+        border:true,
+        doSize:true
+    });
+
+    $('#dlgLUSave').linkbutton({
+        iconCls:'icon-save',
+        plain:true,
+        size:null,
+        onClick: annotation.dlgLUSave
+    });
+    $('#dlgLUClose').linkbutton({
+        iconCls:'icon-cancel',
+        plain:true,
+        size:null,
+        onClick: function() {
+            $('#dlgLU').dialog('close');
+        }
+    });
+
+    $('#dlgAS').dialog({
             modal:true,
             closed:true,
             toolbar:'#dlgAS_tools',

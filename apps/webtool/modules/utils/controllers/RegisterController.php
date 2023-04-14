@@ -30,4 +30,23 @@ class RegisterController extends MController
         }
     }
 
+    public function formRegisterLemma()
+    {
+        $language = new fnbr\models\Language();
+        $this->data->languages = $language->listAll()->asQuery()->chunkResult('idLanguage', 'language');
+        $this->data->action = '@utils/register/registerLemma';
+        $this->render();
+    }
+
+    public function registerLemma()
+    {
+        try {
+            $rows = explode("\n",$this->data->pairs);
+            $model = new fnbr\models\Lemma();
+            $model->registerLemma($this->data, $rows);
+            $this->renderPrompt('information','Lemma(s) registered successfully.');
+        } catch (EMException $e) {
+            $this->renderPrompt('error', $e->getMessage());
+        }
+    }
 }

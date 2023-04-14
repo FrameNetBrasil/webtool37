@@ -25,8 +25,10 @@ class RelationGroupMap extends \MBusinessModel {
             'attributes' => array(
                 'idRelationGroup' => array('column' => 'idRelationGroup','key' => 'primary','idgenerator' => 'identity','type' => 'string'),
                 'entry' => array('column' => 'entry','type' => 'string'),
+                'idEntity' => array('column' => 'idEntity','type' => 'integer'),
             ),
             'associations' => array(
+                'entity' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity:idEntity'),
                 'entries' => array('toClass' => 'fnbr\models\Entry', 'cardinality' => 'oneToMany' , 'keys' => 'entry:entry'), 
             )
         );
@@ -92,7 +94,24 @@ class RelationGroupMap extends \MBusinessModel {
         $this->retrieveAssociation("entries");
     }
 
-    
+    protected $idEntity;
+    protected $entity;
+
+    public function getIdEntity() {
+        return $this->idEntity;
+    }
+
+    public function setIdEntity($value) {
+        $this->idEntity = $value;
+    }
+
+    public function setEntity($value) {
+        $this->entity = $value;
+    }
+
+    public function getAssociationEntity() {
+        $this->retrieveAssociation("entity");
+    }
 
 }
 // end - wizard

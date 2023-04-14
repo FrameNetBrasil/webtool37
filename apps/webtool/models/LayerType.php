@@ -131,10 +131,11 @@ class LayerType extends map\LayerTypeMap
                 $entity->save();
                 $this->setIdEntity($entity->getId());
                 $entry = new Entry();
-                $entry->newEntry($data->entry);
+                $entry->newEntry($data->entry,$entity->getId());
             }
-            Base::entityTimelineSave($this->getIdEntity());
+            //Base::entityTimelineSave($this->getIdEntity());
             parent::save();
+            Timeline::addTimeline("layertype",$this->getId(),"S");
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();
@@ -144,7 +145,8 @@ class LayerType extends map\LayerTypeMap
 
     public function delete()
     {
-        Base::entityTimelineDelete($this->getIdEntity());
+//        Base::entityTimelineDelete($this->getIdEntity());
+        Timeline::addTimeline("layertype",$this->getId(),"D");
         parent::delete();
     }
 

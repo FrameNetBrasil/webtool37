@@ -214,7 +214,7 @@ HERE;
                 $entity->setType('ST');
                 $entity->save();
                 $entry = new Entry();
-                $entry->newEntry($this->getEntry());
+                $entry->newEntry($this->getEntry(),$entity->getId());
                 $this->setIdEntity($entity->getId());
                 if ($data->idSuperType) {
                     $superType = new SemanticType($data->idSuperType);

@@ -169,6 +169,7 @@ class Template extends map\TemplateMap {
                 $entity->setAlias($feEntry);
                 $entity->setType('FE');
                 $entity->save();
+                $entry->setIdEntity($entity->getId());
                 Base::createEntityRelation($entity->getId(), 'rel_elementof', $this->getIdEntity());
                 $coreType = new TypeInstance($feData->idCoreType);
                 Base::createEntityRelation($entity->getId(), 'rel_hastype', $coreType->getIdEntity());
@@ -193,8 +194,7 @@ class Template extends map\TemplateMap {
             $entity->setType('TP');
             $entity->save();
             $entry = new Entry();
-            $entry->newEntry($this->getEntry());
-            $this->setIdEntity($entity->getId());
+            $entry->newEntry($this->getEntry(),$entity->getId());
             $this->setActive(true);
             Base::entityTimelineSave($this->getIdEntity());
             parent::save();

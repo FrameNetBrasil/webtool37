@@ -86,6 +86,7 @@
             }
             var data = [];
             var i = 0;
+            console.log('as',annotation.annotationSets);
             for (as in annotation.annotationSets) {
                 data[i++] = annotation.annotationSets[as];
             }
@@ -125,24 +126,41 @@
             $('#dlgASComments').dialog('close');
         }
 
-        annotation.dlgSubCorpusSave = function() {
-            var lu = $('#dlgSubCorpusList').datalist('getSelected');
-            if (lu.idLU > 0) {
-                console.log(lu);
-                var field = $('#dlgSubCorpusField').attr('value');
-                var wf = annotation.words[annotation.chars[field]['word']];
-                console.log(wf);
-                $('#dlgSubCorpus').dialog('close');
-                $('#dlgSubCorpus').dialog('destroy', true);
-                if (lu.mwe != '0') {
-                    annotation.addMWEManualSubcorpus(wf, lu.idLU, annotation.idSentence);
-                } else {
-                    annotation.addManualSubcorpus(lu.idLU, annotation.idSentence, wf.startChar, wf.endChar);
-                }
+        // annotation.dlgSubCorpusSave = function() {
+        //     var lu = $('#dlgSubCorpusList').datalist('getSelected');
+        //     if (lu.idLU > 0) {
+        //         console.log(lu);
+        //         var field = $('#dlgSubCorpusField').attr('value');
+        //         var wf = annotation.words[annotation.chars[field]['word']];
+        //         console.log(wf);
+        //         $('#dlgSubCorpus').dialog('close');
+        //         $('#dlgSubCorpus').dialog('destroy', true);
+        //         if (lu.mwe != '0') {
+        //             annotation.addMWEManualSubcorpus(wf, lu.idLU, annotation.idSentence);
+        //         } else {
+        //             annotation.addManualSubcorpus(lu.idLU, annotation.idSentence, wf.startChar, wf.endChar);
+        //         }
+        //     }
+        // }
+
+    annotation.dlgLUSave = function() {
+        var lu = $('#dlgLUList').datalist('getSelected');
+        if (lu.idLU > 0) {
+            console.log(lu);
+            var field = $('#dlgLUField').attr('value');
+            var wf = annotation.words[annotation.chars[field]['word']];
+            console.log(wf);
+            $('#dlgLU').dialog('close');
+            $('#dlgLU').dialog('destroy', true);
+            if (lu.mwe != '0') {
+                annotation.addMWELU(wf, lu.idLU, annotation.idSentence);
+            } else {
+                annotation.addLU(lu.idLU, annotation.idSentence, wf.startChar, wf.endChar);
             }
         }
+    }
 
-        annotation.dlgCxnOpen = function() {
+    annotation.dlgCxnOpen = function() {
             $('#cxnGrid').datagrid({singleSelect:true, url: {{$manager->getURL('annotation/main/cxnGridData')}}});
             $('#dlgCxn').dialog('doLayout');
             $('#dlgCxn').dialog('open');
@@ -156,7 +174,7 @@
             //console.log(selected);
             $.ajax({
                 type: "POST",
-                url: {{$manager->getURL('annotation/main/addManualSubcorpus')}},
+                url: {{$manager->getURL('annotation/main/addCxn')}},
                 data: {idConstruction: selected.idConstruction, idSentence: annotation.idSentence},
                 dataType: "json",
                 async: false,

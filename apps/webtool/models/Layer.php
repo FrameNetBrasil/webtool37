@@ -22,7 +22,6 @@ class Layer extends map\LayerMap
             'log' => array(),
             'validators' => array(
                 'rank' => array('notnull'),
-                'timeline' => array('notnull'),
                 'idAnnotationSet' => array('notnull'),
                 'idLayerType' => array('notnull'),
             ),
@@ -51,16 +50,10 @@ class Layer extends map\LayerMap
         return $criteria;
     }
 
-    public function setTimeline()
-    {
-        $timeline = 'lyr_' . md5($this->getIdAnnotationSet() . $this->getIdLayerType());
-        parent::setTimeLine(Base::newTimeLine($timeline, 'S'));
-    }
-
     public function save()
     {
-        $this->setTimeline();
         parent::save();
+        Timeline::addTimeline("layer", $this->getId(), "S");
     }
 
     public function deleteByAnnotationSet($idAnnotationSet)
@@ -91,6 +84,7 @@ class Layer extends map\LayerMap
             $label = new Label();
             $deleteLabel = $label->getDeleteCriteria()->where("idLayer = {$this->getIdLayer()}");
             $deleteLabel->delete();
+            Timeline::addTimeline("layer", $this->getId(), "D");
             parent::delete();
             $transaction->commit();
         } catch (\Exception $e) {

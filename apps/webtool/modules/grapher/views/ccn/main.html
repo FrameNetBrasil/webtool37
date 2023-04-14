@@ -12,7 +12,8 @@
                     <form id="formGrapher" name="formGrapher">
                         <input type="hidden" id="rt" name="rt"/>
                         <span>Relation Type:  </span>
-                        <input id="relationEntry" style="width:150px"/>  
+                        <input id="relationEntry" style="width:150px"/>
+                        <input id="level" style="width:100px"/>
                         <a id="btnReload" href="#">Reload last</a>
                     </form>
                 </div>
@@ -47,7 +48,7 @@
 
 {{include $manager->getThemePath('css/graph.css')}}
 
-{{include 'grapher_d3_v5.js'}}
+{{include 'grapher_d3_v7.js'}}
 
 <script type="text/javascript">
 
@@ -68,6 +69,7 @@
             grapher.currentEntity = idEntity;
             var chosen = {};
             var rt = $('#relationEntry').combogrid('getValues');
+            var level = $('#level').combobox('getValue');
             $.each(rt, function(index, r) {
                 chosen[r] = r;
             });
@@ -85,7 +87,7 @@
                     }
                 });
                 grapher.instance.update();
-            }, {idEntity: idEntity, chosen: chosen, level: 3});
+            }, {idEntity: idEntity, chosen: chosen, level: level});
         }
 
         $('#cxn').textbox({
@@ -127,6 +129,17 @@
                 g.datagrid('checkRow', rowIndex);
             }
         });
+
+        $('#level').combobox({
+            data: [
+                {id:'1', text:'One level'},
+                {id:'2', text:'Two levels'},
+                {id:'3', text:'Three levels'}
+            ],
+            valueField:'id',
+            textField:'text'
+        });
+        $('#level').combobox('setValue', 1);
         
         $('#btnReload').linkbutton({
             iconCls: 'icon-reload',
@@ -142,7 +155,7 @@
             url: {{$manager->getURL('grapher/ccn/cxnTree')}},
                 onSelect: function (node) {
                 if (node.id.charAt(0) == 'c') {
-                    grapher.show(node.id.substr(1));
+                    grapher.show(node.id.substr(1), true);
                 }
             }
         });

@@ -18,12 +18,13 @@
                     </form>
                 </div>
             </div>
-            <div id="grapherArea" style="width:100%; height:95%"></div>
+            <iframe src=""  id="grapher_area"
+                    style="position:relative; width:100%; height:95%; border:0">
+            </iframe>
         </div>
     </div>
 </div>
 {{include $manager->getThemePath('css/graph.css')}}
-{{include 'grapher_d3_v5.js'}}
 
 <script type="text/javascript">
 
@@ -33,10 +34,21 @@
             fit:true
         });
 
-        grapher.instance = new grapher.graph("grapherArea");
+        var grapher = {
+            isMaster: {{$data->isMaster|noescape}},
+            currentyEntity: null,
+            relationEntry: {{$data->relationEntry|noescape}},
+            relationData: [],
+            relations: [],
+            clickLink: function(link) {
+                this.showLink(link);
+            }
+        };
+
+        //grapher.instance = new grapher.graph("grapherArea");
 
         grapher.reload = function () {
-            $('#grapherArea').html('');
+            // $('#grapherArea').html('');
             $('#frameTree').tree('reload');
         }
 
@@ -51,31 +63,6 @@
             i++;
         }
         console.log(relation);
-
-        /*
-        grapher = new D3Graph({
-            isMaster: {{$data->isMaster|noescape}},
-            element: "grapherArea"
-        });
-
-        grapher.onClick =  function(node) {
-            if (d3.event.shiftKey) {
-                console.log("Mouse+Shift pressed");
-                console.log(node);
-                grapher.showLU(node.id);
-            }
-        }
-
-        grapher.onDblClick = function(node) {
-            console.log(node);
-            grapher.updateGraph(node.id);
-        }
-
-        grapher.onClickLink = function(link) {
-            grapher.showLink(link);
-        }
-
-         */
 
         grapher.onClick =  function(node) {
             if (d3.event.shiftKey) {
@@ -107,17 +94,17 @@
             var idDomain = $('#idDomain').combobox('getValue');
             grapher.isShowing = false;
             manager.doAjax({{$manager->getURL('api/grapher/getDomainRelations')}}, function(data) {
-                //console.log(data);
-                var links = JSON.parse(data);
-                grapher.instance.clear();
-                $.each(links, function(index, link) {
-                    console.log(link);
-                    if (chosen[link.type] || (link.type == 'rel_none')) {
-                        grapher.addLinkObj(link);
-                    }
-                });
-                //grapher.start();
-                grapher.instance.update();
+                console.log(data);
+                // var links = JSON.parse(data);
+                // grapher.instance.clear();
+                // $.each(links, function(index, link) {
+                //     console.log(link);
+                //     if (chosen[link.type] || (link.type == 'rel_none')) {
+                //         grapher.addLinkObj(link);
+                //     }
+                // });
+                // //grapher.start();
+                // grapher.instance.update();
             }, {frames: 'json:' + JSON.stringify(treeNodes), chosen: chosen, idDomain: idDomain});
         }
 
@@ -130,14 +117,14 @@
             });
             var idDomain = $('#idDomain').combobox('getValue');
             manager.doAjax({{$manager->getURL('api/grapher/getDomainRelations')}}, function(data) {
-                //console.log(data);
-                var links = JSON.parse(data);
-                $.each(links, function(index, link) {
-                    console.log(link);
-                    if (chosen[link.type] || (link.type == 'rel_none')) {
-                        grapher.addLinkObj(link);
-                    }
-                });
+                console.log(data);
+                // var links = JSON.parse(data);
+                // $.each(links, function(index, link) {
+                //     console.log(link);
+                //     if (chosen[link.type] || (link.type == 'rel_none')) {
+                //         grapher.addLinkObj(link);
+                //     }
+                // });
                 grapher.instance.update();
             }, {frames: 'json:' + JSON.stringify(['f'+idEntity]), chosen: chosen, idDomain: idDomain});
         }
@@ -204,10 +191,10 @@
             }, {frames: 'json:' + JSON.stringify(['f'+idEntity]), chosen: chosen, idDomain: idDomain});
         }
 
-        $('#grapherPanel').panel({
-            height:'100%',
-            width:'100%',
-        });
+        // $('#grapherPanel').panel({
+        //     height:'100%',
+        //     width:'100%',
+        // });
 
         $('#relationEntry').combogrid({
             data: relation.data,

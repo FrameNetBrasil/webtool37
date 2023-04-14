@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formSubTypeOf">
+        <property title="$this->data->title"/>
+        <fields>
+            <mhiddenfield id="concept_idConcept"/>
+            <mhiddenfield id="concept_idEntity"/>
+            <mhcontainer style="padding:5px">
+                 <include component="MLookupConcept.php" id="concept_subtypeof" label=""/>
+            </mhcontainer>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseTemplate" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveTemplate" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+        <data load="$this->data->object"/>
+    </mformdialog>
+</view>

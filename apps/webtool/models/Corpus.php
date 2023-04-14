@@ -23,7 +23,6 @@ class Corpus extends map\CorpusMap
             'log' => array(),
             'validators' => array(
                 'entry' => array('notnull'),
-                'timeline' => array('notnull'),
             ),
             'converters' => array()
         );
@@ -69,6 +68,7 @@ class Corpus extends map\CorpusMap
         $criteria = $this->getCriteria();
         $criteria->setAssociationAlias('entries', 'centry');
         $criteria->select('distinct idCorpus, entry, centry.name as name')->orderBy('centry.name');
+        $criteria->where("active = 1");
         Base::entryLanguage($criteria);
         if ($filter->idCorpus) {
             $criteria->where("idCorpus = '{$filter->idCorpus}'");
@@ -90,10 +90,15 @@ class Corpus extends map\CorpusMap
     {
         $transaction = $this->beginTransaction();
         try {
+            $entity = new Entity();
+            $entity->setAlias($this->getEntry());
+            $entity->setType('CR');
+            $entity->save();
+            $this->setIdEntity($entity->getId());
             $entry = new Entry();
-            $entry->newEntry($this->getEntry());
-            $this->setTimeLine(Base::newTimeLine($this->getEntry(), 'S'));
+            $entry->newEntry($this->getEntry(),$entity->getId());
             parent::save();
+            Timeline::addTimeline("corpus",$this->getId(),"S");
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();
@@ -105,11 +110,11 @@ class Corpus extends map\CorpusMap
     {
         $transaction = $this->beginTransaction();
         try {
-            Base::updateTimeLine($this->getEntry(), $newEntry);
             $entry = new Entry();
             $entry->updateEntry($this->getEntry(), $newEntry);
             $this->setEntry($newEntry);
             parent::save();
+            Timeline::addTimeline("corpus",$this->getId(),"S");
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();
@@ -815,5 +820,26 @@ HERE;
         return $query;
 
     }
+
+    public function listMultimodalByFilter($filter)
+    {
+        $criteria = $this->getCriteria();
+        $criteria->setAssociationAlias('entries', 'centry');
+        $criteria->select('distinct idCorpus, entry, centry.name as name')->orderBy('centry.name');
+        Base::entryLanguage($criteria);
+        $criteria->where("documents.documentmm.idDocumentMM IS NOT NULL");
+
+        if ($filter->idCorpus) {
+            $criteria->where("idCorpus = '{$filter->idCorpus}'");
+        }
+        if ($filter->corpus) {
+            $criteria->where("upper(centry.name) LIKE upper('%{$filter->corpus}%')");
+        }
+        if ($filter->entry) {
+            $criteria->where("upper(entry) LIKE upper('%{$filter->entry}%')");
+        }
+        return $criteria;
+    }
+
 
 }

@@ -21,14 +21,14 @@
         instantiationTypeObj: {{$data->instantiationTypeObj|noescape}}
     };
 
-    annotation.showSubCorpus = function (subCorpus) {
-        $('#layersPane').html('');
-        manager.doGet({{$manager->getURL('annotation/main/sentences')}} + '/' + subCorpus,'sentencesPane');
-    }
+    // annotation.showSubCorpus = function (subCorpus) {
+    //     $('#layersPane').html('');
+    //     manager.doGet({{$manager->getURL('annotation/main/sentences')}} + '/' + subCorpus,'sentencesPane');
+    // }
 
     annotation.showSentences = function (idLU) {
         $('#layersPane').html('');
-        manager.doGet({{$manager->getURL('annotation/main/sentences')}} + '/' + idLU,'sentencesPane');
+        manager.doGet({{$manager->getURL('annotation/main/sentencesLexical')}} + '/' + idLU,'sentencesPane');
     }
 
     $(function () {

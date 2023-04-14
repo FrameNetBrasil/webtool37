@@ -20,10 +20,27 @@ class ViewAnnotationSet extends map\ViewAnnotationSetMap {
         return [];
     }
 
-    public function listBySubCorpus($idSubCorpus, $sortable = NULL) {
-        $criteria = $this->getCriteria()->
-        select('idAnnotationSet, idSentence, sentence.text, entries.name as annotationStatus, idAnnotationStatus, annotationstatustype.color.rgbBg')->
-        where("idSubCorpus = {$idSubCorpus}");
+//    public function listBySubCorpus($idSubCorpus, $sortable = NULL) {
+//        $criteria = $this->getCriteria()->
+//        select('idAnnotationSet, idSentence, sentence.text, entries.name as annotationStatus, idAnnotationStatus, annotationstatustype.color.rgbBg')->
+//        where("idSubCorpus = {$idSubCorpus}");
+//        if ($sortable) {
+//            if ($sortable->field == 'status') {
+//                $criteria->orderBy('entries.name ' . $sortable->order);
+//            }
+//            if ($sortable->field == 'idSentence') {
+//                $criteria->orderBy('idSentence ' . $sortable->order);
+//            }
+//        }
+//        Base::entryLanguage($criteria);
+//        return $criteria;
+//    }
+
+    public function listByLU($idLU, $sortable = NULL) {
+        $criteria = $this->getCriteria()
+            ->select('idAnnotationSet, idSentence, sentence.text, entries.name as annotationStatus, idAnnotationStatus, annotationstatustype.color.rgbBg')
+//            ->where("subcorpuslu.idLU = {$idLU}");
+            ->where("idLU = {$idLU}");
         if ($sortable) {
             if ($sortable->field == 'status') {
                 $criteria->orderBy('entries.name ' . $sortable->order);
@@ -36,10 +53,11 @@ class ViewAnnotationSet extends map\ViewAnnotationSetMap {
         return $criteria;
     }
 
-    public function listByLU($idLU, $sortable = NULL) {
+    public function listByCxn($idCxn, $sortable = NULL) {
         $criteria = $this->getCriteria()
             ->select('idAnnotationSet, idSentence, sentence.text, entries.name as annotationStatus, idAnnotationStatus, annotationstatustype.color.rgbBg')
-            ->where("subcorpuslu.idLU = {$idLU}");
+//            ->where("subcorpuscxn.idConstruction = {$idCxn}");
+            ->where("idConstruction = {$idCxn}");
         if ($sortable) {
             if ($sortable->field == 'status') {
                 $criteria->orderBy('entries.name ' . $sortable->order);
@@ -65,9 +83,9 @@ class ViewAnnotationSet extends map\ViewAnnotationSetMap {
         $cmd = <<<HERE
 SELECT sentence.idSentence,sentence.text, if(count(annotationset.idAnnotationSet) = 0, 5, 6) as idAnnotationStatus 
 FROM sentence
-JOIN paragraph on (sentence.idParagraph = paragraph.idParagraph)
+JOIN document_sentence on (sentence.idSentence = document_sentence.idSentence)
 LEFT JOIN annotationset ON (sentence.idSentence=annotationset.idSentence)
-WHERE (paragraph.idDocument = {$idDocument})
+WHERE (document_sentence.idDocument = {$idDocument})
 GROUP BY sentence.idSentence,sentence.text
 
 HERE;
@@ -88,31 +106,41 @@ HERE;
         return $criteria;
     }
 
-    public function listFECEBySubCorpus($idSubCorpus) {
-        $idLanguage = \Manager::getSession()->idLanguage;
-        $cmd = <<<HERE
-        SELECT *
-        FROM view_labelfecetarget
-        WHERE (idSubCorpus = {$idSubCorpus})
-            AND (idLanguage = {$idLanguage} )
-        ORDER BY idSentence,startChar
-
-HERE;
-        $result = $this->getDb()->getQueryCommand($cmd)->treeResult('idSentence', 'startChar,endChar,rgbFg,rgbBg,instantiationType');
-        return $result;
-    }
+//    public function listFECEBySubCorpus($idSubCorpus) {
+//        $idLanguage = \Manager::getSession()->idLanguage;
+//        $cmd = <<<HERE
+//        SELECT *
+//        FROM view_labelfecetarget
+//        WHERE (idSubCorpus = {$idSubCorpus})
+//            AND (idLanguage = {$idLanguage} )
+//        ORDER BY idSentence,startChar
+//
+//HERE;
+//        $result = $this->getDb()->getQueryCommand($cmd)->treeResult('idSentence', 'startChar,endChar,rgbFg,rgbBg,instantiationType');
+//        return $result;
+//    }
 
     public function listFECEByLU($idLU) {
         $idLanguage = \Manager::getSession()->idLanguage;
+//        $cmd = <<<HERE
+//SELECT *
+//FROM view_labelfecetarget vl
+//JOIN subcorpus on (subcorpus.idSubCorpus = vl.idSubCorpus)
+//JOIN entityRelation er on (er.idEntity2 = subCorpus.idEntity)
+//JOIN lu on (lu.idEntity = er.idEntity1)
+//WHERE (lu.idLU ={$idLU})
+//AND (idLanguage = {$idLanguage} )
+//ORDER BY idSentence,startChar
+//
+//HERE;
         $cmd = <<<HERE
 SELECT *
 FROM view_labelfecetarget vl
-JOIN subcorpus on (subcorpus.idSubCorpus = vl.idSubCorpus)
-JOIN entityRelation er on (er.idEntity2 = subCorpus.idEntity)
-JOIN lu on (lu.idEntity = er.idEntity1)
+JOIN view_annotationset a on (vl.idAnnotationSet = a.idAnnotationSet)    
+JOIN lu on (lu.idEntity = a.idEntityLU)
 WHERE (lu.idLU ={$idLU})
 AND (idLanguage = {$idLanguage} )
-ORDER BY idSentence,startChar
+ORDER BY vl.idSentence,vl.startChar
 
 HERE;
         $result = $this->getDb()->getQueryCommand($cmd)->treeResult('idSentence', 'startChar,endChar,rgbFg,rgbBg,instantiationType');
@@ -174,11 +202,20 @@ HERE;
 
     public function listLUCountByLanguage()
     {
+//        $cmd = <<<HERE
+//select lu.idlanguage, l.language, count(distinct lu.name) as n
+//from view_annotationset a
+//join view_subcorpuslu slu on (a.idSubcorpus = slu.idSubCorpus)
+//join view_lu lu on (slu.idLu = lu.idLU)
+//join language l on (lu.idLanguage = l.idLanguage)
+//group by lu.idlanguage, l.language
+//order by 2
+//
+//HERE;
         $cmd = <<<HERE
 select lu.idlanguage, l.language, count(distinct lu.name) as n
 from view_annotationset a
-join view_subcorpuslu slu on (a.idSubcorpus = slu.idSubCorpus)
-join view_lu lu on (slu.idLu = lu.idLU)
+join view_lu lu on (a.idLu = lu.idLU)
 join language l on (lu.idLanguage = l.idLanguage)
 group by lu.idlanguage, l.language
 order by 2
@@ -190,11 +227,20 @@ HERE;
 
     public function listASCountByLanguage()
     {
+//        $cmd = <<<HERE
+//select lu.idlanguage, l.language, count(distinct a.idAnnotationSet) as n
+//from view_annotationset a
+//join view_subcorpuslu slu on (a.idSubcorpus = slu.idSubCorpus)
+//join view_lu lu on (slu.idLu = lu.idLU)
+//join language l on (lu.idLanguage = l.idLanguage)
+//group by lu.idlanguage, l.language
+//order by 2
+//
+//HERE;
         $cmd = <<<HERE
 select lu.idlanguage, l.language, count(distinct a.idAnnotationSet) as n
 from view_annotationset a
-join view_subcorpuslu slu on (a.idSubcorpus = slu.idSubCorpus)
-join view_lu lu on (slu.idLu = lu.idLU)
+join view_lu lu on (a.idLu = lu.idLU)
 join language l on (lu.idLanguage = l.idLanguage)
 group by lu.idlanguage, l.language
 order by 2
@@ -247,11 +293,18 @@ HERE;
                 $wordCount += count($words);
             }
             $asCount = 0;
+//            $cmd = <<<HERE
+//select count(distinct a.idAnnotationSet) as n
+//from view_annotationset a
+//join view_subcorpuslu slu on (a.idSubcorpus = slu.idSubCorpus)
+//join view_lu lu on (slu.idLu = lu.idLU)
+//where lu.idLanguage = {$idLanguage}
+//
+//HERE;
             $cmd = <<<HERE
 select count(distinct a.idAnnotationSet) as n
 from view_annotationset a
-join view_subcorpuslu slu on (a.idSubcorpus = slu.idSubCorpus)
-join view_lu lu on (slu.idLu = lu.idLU)
+join view_lu lu on (a.idLu = lu.idLU)
 where lu.idLanguage = {$idLanguage}
 
 HERE;
