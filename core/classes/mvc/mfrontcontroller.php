@@ -99,7 +99,6 @@ class MFrontController
             // trata dados
             $this->removeInputSlashes();
             $this->setData($data ?: $_REQUEST);
-            mdump($_REQUEST);
             mtrace('DTO Data:');
             mtrace($this->getData());
             $this->loadExtensions();
@@ -145,9 +144,10 @@ class MFrontController
         // se for o $_REQUEST, converte para objeto
         $valid = (is_object($value)) || (is_array($value) && count($value));
         if ($valid) {
-            mdump($value);
             foreach ($value as $name => $value) {
-
+                if (strpos($name, 'auth0') !== false) {
+                    continue;
+                }
                 if (($name{0} == '_') || ($name == '_')) {
                     continue;
                 }

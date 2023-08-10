@@ -39,7 +39,7 @@ class MLog
         $this->home = $this->getOption('path');
         $this->level = $this->getOption('level');
         $this->handler = $this->getOption('handler');
-        $this->port = $this->getOption('port');
+        $this->port = $_ENV["TRACE_PORT"];//$this->getOption('port');
 
         if (empty($this->host)) {
             $this->host = $_SERVER['REMOTE_ADDR'];

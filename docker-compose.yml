@@ -3,24 +3,16 @@ services:
     webserver:
         build:
             context: ./docker/bin/webserver
-        container_name: 'fnbr-webserver-$PROJECT_NAME'
+        container_name: '$PROJECT_NAME'
         restart: unless-stopped
         ports:
             - ${WWW_PORT}:80
+            - ${WS_PORT}:9998
+        extra_hosts:
+            - host.docker.internal:host-gateway
         volumes:
             - ${DOCUMENT_ROOT}:/var/www/html
             - ${PHP_INI-./docker/config/php/php.ini}:/usr/local/etc/php/php.ini
             - ${APACHE_VHOSTS_DIR-./docker/config/vhosts}:/etc/apache2/sites-enabled
             - ${APACHE_LOG_DIR-./docker/logs/apache2}:/var/log/apache2
         command: bash /var/www/html/install.sh
-    gravis:
-        build:
-            context: ./docker/gravis
-        container_name: 'fnbr-gravis-$PROJECT_NAME'
-        restart: unless-stopped
-        ports:
-            - ${GRAVIS_PORT}:80
-        volumes:
-            -  ${GRAVIS_ROOT}:/workspace
-
-

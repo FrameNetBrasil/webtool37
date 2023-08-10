@@ -45,6 +45,7 @@ class MRedirect extends MResult
             $this->content = $this->ajax->returnData();
             $response->setOut($this->content);
         } else {
+            $response->setHeader('Access-Control-Allow-Origin','*');
             $response->setHeader('Location', 'Location:' . $this->content);
         }
     }

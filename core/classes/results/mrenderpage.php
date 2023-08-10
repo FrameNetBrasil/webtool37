@@ -37,6 +37,7 @@ class MRenderPage extends MResult
     public function apply($request, $response)
     {
         $response->setOut($this->content);
+        $response->setHeader('Access-Control-Allow-Origin','*');
         $response->setHeader('Content-type', 'Content-type: text/html; charset=UTF-8');
     }
 

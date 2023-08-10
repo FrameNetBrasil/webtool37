@@ -37,7 +37,7 @@ class MInternalError extends MResult
         $response->setStatus(MStatusCode::INTERNAL_ERROR);
         $format = $request->getFormat();
         try {
-            mtrace('InternalError: ' . $this->exception->getMessage());
+            mtrace('-------------------InternalError: ' . $this->exception->getMessage());
             $template = new MTemplate();
             $template->context('result', $this->exception);
             $errorHtml = MTemplateLocator::fetch($template, 'errors', '500.html');

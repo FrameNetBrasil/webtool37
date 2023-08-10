@@ -423,10 +423,10 @@ class MRequest
     public function getHostInfo($schema = '')
     {
         if ($this->_hostInfo === null) {
-            if ($secure = $this->getIsSecureConnection())
-                $http = 'https';
-            else
-                $http = 'http';
+            //if ($secure = $this->getIsSecureConnection())
+                $http = Manager::getOptions('http');
+            //else
+            //    $http = 'http';
             if (isset($_SERVER['HTTP_HOST']))
                 $this->_hostInfo = $http . '://' . $_SERVER['HTTP_HOST'];
             else {

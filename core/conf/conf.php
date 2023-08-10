@@ -11,6 +11,7 @@ return [
         'template' => 'index'
     ],
     'options' => [
+		'http' => 'http',
         'startup' => 'webtool',
         'dbsession' => false,
         'debug' => true,
@@ -45,7 +46,7 @@ return [
     ],
     'session' => [
         'handler' => "file",
-        'timeout' => "30",
+        'timeout' => "60",
         'exception' => false,
         'check' => true
     ],
@@ -53,8 +54,8 @@ return [
         'path' => sys_get_temp_dir() . '/log',
         'level' => 2,
         'handler' => "socket",
-        'peer' => 'host.docker.internal',
-        'strict' => 'host.docker.internal',
+        'peer' => 'localhost',
+        //'strict' => 'host.docker.internal',
         'port' => 0,
         'errorCodes' => [
             E_ERROR,
@@ -86,17 +87,5 @@ return [
     ],
     'extensions' => [
     ],
-    'db' => [
-        'manager' => [
-            'driver' => 'pdo_pgsql',
-            'host' => 'localhost',
-            'dbname' => 'exemplos',
-            'user' => 'postgres',
-            'password' => 'pgadmin',
-            'formatDate' => 'DD/MM/YYYY',
-            'formatDateWhere' => 'YYYY/MM/DD',
-            'formatTime' => 'HH24:MI:SS',
-            'configurationClass' => 'Doctrine\DBAL\Configuration',
-        ],
-    ],
+
 ];

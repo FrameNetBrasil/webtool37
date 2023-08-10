@@ -90,13 +90,17 @@ class MAjax
             case 'JSON':
             case 'OBJECT':
                 $data = MAjaxTransformer::toJSON($this);
-                $header = 'Content-type: application/json; ';
+                $response = Manager::getFrontController()->getResponse();
+                //$header = 'Content-type: application/json; ';
+                $response->setHeader("Content-Type", "Content-type: application/json;charset=" . $charset);
                 if (Manager::getContext()->isFileUpload()) {
                     $newdata = "{\"base64\":\"" . base64_encode($data) . "\"}";
                     $data = "<html><body><textarea>$newdata</textarea></body></html>";
-                    $header = 'Content-type: text/html; ';
+                    //$header = 'Content-type: text/html; ';
+                    $response->setHeader("Content-Type", "Content-type: text/html;charset=" . $charset);
                 }
-                header($header . 'charset=' . $charset);
+                //header($header . 'charset=' . $charset);
+        mdump($data);
                 return $data;
                 break;
 

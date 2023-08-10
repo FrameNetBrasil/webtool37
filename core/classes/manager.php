@@ -337,6 +337,15 @@ class Manager
         return $path;
     }
 
+    public static function getBasePath($relative = NULL)
+    {
+        $path = self::$instance->getHome();
+        if ($relative) {
+            $path .= '/' . $relative;
+        }
+        return $path;
+    }
+
     /**
      * Retorna o path da classe $class.
      * @return string
@@ -976,17 +985,6 @@ class Manager
         }
     }
 
-    /**
-     * Brief Description.
-     * Complete Description.
-     *
-     * @param $cond (tipo) desc
-     * @param $msg ' (tipo) desc
-     * @param $goto ='' (tipo) desc
-     *
-     * @returns (tipo) desc
-     *
-     */
     public static function assert($cond, $msg = '', $goto = '')
     {
         if ($cond == false) {
@@ -1358,12 +1356,6 @@ class Manager
                     }
                 }
 
-                // If we still didn't have the value
-                // let's try in the global scope
-                if ((!isset($value)) && ((strpos($vars, '[')) === false)) {
-                    $value = $_GLOBALS["$vars"];
-                }
-
                 // If we still didn't has the value
                 // let's try in the session scope
 
@@ -1469,6 +1461,7 @@ class Manager
      * @returns (tipo) desc
      *
      */
+
     public static function isHostAllowed()
     {
         $REMOTE_ADDR = $_SERVER['REMOTE_ADDR'];
@@ -1725,8 +1718,6 @@ class Manager
             }
             mtrace('namespace for container = ' . $namespace);
             $s = self::$instance->controller->container->get($namespace);
-        } else {
-            //    $s = new $class();
         }
         $s->setApplication($app);
         $s->setModule($module);
@@ -1751,98 +1742,28 @@ class Manager
         return self::$instance->view;
     }
 
-    //
 
-    //
 
-    /**
-     * Dialogs and Error Handling
-     * Dialogs and Error Handling
-     *     Error
-     *     Information
-     *     Confirmation
-     *     Question
-     *     Prompt
-     *
-     * @param $msg ' (tipo) desc
-     * @param $goto ='' (tipo) desc
-     * @param $caption ='' (tipo) desc
-     * @param $event ='' (tipo) desc
-     * @param $halt = (tipo) desc
-     *
-     * @returns (tipo) desc
-     *
-     */
-    public static function error($msg = '', $goto = '', $caption = '', $event = '', $halt = true)
-    {
-        self::$instance->prompt(MPrompt::error($msg, $goto, $caption, $event), $halt);
-    }
+//    public static function error($msg = '', $goto = '', $caption = '', $event = '', $halt = true)
+//    {
+//        self::$instance->prompt(MPrompt::error($msg, $goto, $caption, $event), $halt);
+//    }
 
-    /**
-     * Brief Description.
-     * Complete Description.
-     *
-     * @param $msg (tipo) desc
-     * @param $goto ' (tipo) desc
-     * @param $event ='' (tipo) desc
-     * @param $halt = (tipo) desc
-     *
-     * @returns (tipo) desc
-     *
-     */
     public static function information($msg, $goto = '', $event = '', $halt = true)
     {
         self::$instance->prompt(MPrompt::information($msg, $goto, $event), $halt);
     }
 
-    /**
-     * Brief Description.
-     * Complete Description.
-     *
-     * @param $msg (tipo) desc
-     * @param $gotoOK ' (tipo) desc
-     * @param $gotoCancel ='' (tipo) desc
-     * @param $eventOk ='' (tipo) desc
-     * @param $eventCancel ='' (tipo) desc
-     * @param $halt = (tipo) desc
-     *
-     * @returns (tipo) desc
-     *
-     */
-    public static function confirmation($msg, $gotoOK = '', $gotoCancel = '', $eventOk = '', $eventCancel = '', $halt = true)
-    {
-        self::$instance->prompt(MPrompt::confirmation($msg, $gotoOK, $gotoCancel, $eventOk, $eventCancel), $halt);
-    }
+//    public static function confirmation($msg, string $gotoOK = '')
+//    {
+//        self::$instance->prompt(MPrompt::confirmation($msg, $gotoOK, $gotoCancel, $eventOk, $eventCancel), $halt);
+//    }
 
-    /**
-     * Brief Description.
-     * Complete Description.
-     *
-     * @param $msg (tipo) desc
-     * @param $gotoYes ' (tipo) desc
-     * @param $gotoNo ='' (tipo) desc
-     * @param $eventYes ='' (tipo) desc
-     * @param $eventNo ='' (tipo) desc
-     * @param $halt = (tipo) desc
-     *
-     * @returns (tipo) desc
-     *
-     */
     public static function question($msg, $gotoYes = '', $gotoNo = '', $eventYes = '', $eventNo = '', $halt = true)
     {
         self::$instance->prompt(MPrompt::question($msg, $gotoYes, $gotoNo, $eventYes, $eventNo), $halt);
     }
 
-    /**
-     * Brief Description.
-     * Complete Description.
-     *
-     * @param $prompt (tipo) desc
-     * @param $halt (tipo) desc
-     *
-     * @returns (tipo) desc
-     *
-     */
     public static function prompt($prompt, $halt = true)
     {
         self::$instance->getPage()->prompt($prompt);
@@ -2121,10 +2042,8 @@ class Manager
      * Complete Description.
      *
      * @param $dir (tipo) desc
-     * @param $typed ' (tipo) desc
-     *
-     * @returns (tipo) desc
-     *
+     * @param string $type
+     * @return string
      */
     public static function listFiles($dir, $type = 'd')
     {
@@ -2240,16 +2159,12 @@ class Manager
     {
         $vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
         var_dump($vendorDir);
-        $baseDir = dirname($vendorDir);
-        $baseDirSrc = $baseDir . DIRECTORY_SEPARATOR . 'src';
+        $baseDir = dirname($vendorDir) . DIRECTORY_SEPARATOR . $_ENV["APP_FOLDER"];
+        var_dump($baseDir);
         $sysTime = self::getSysTime();
-        $newMap = "<?php\n// autoload_manager.php @generated by Manager::createFileMap running as a Composer script @{$sysTime}.\n\n";
-        if (file_exists($baseDirSrc)) {
-            $baseDir = $baseDirSrc;
-            $newMap .= "\$baseDir = dirname(dirname(__FILE__)) . '" . DIRECTORY_SEPARATOR . 'src' . "';\n\n";
-        } else {
-            $newMap .= "\$baseDir = dirname(dirname(__FILE__));\n\n";
-        }
+        $newMap = "<?php\n// filemap.php @generated by Manager::createFileMap running as a Composer script @{$sysTime}.\n\n";
+        //$newMap .= "\$baseDir = dirname(dirname(__FILE__));\n\n";
+        $newMap .= "\$baseDir = \"{$baseDir}\";\n\n";
         $newMap .= "return array(\n";
         $newMap .= self::getHandlerFiles($baseDir);
         $base = $baseDir . DIRECTORY_SEPARATOR . 'modules';

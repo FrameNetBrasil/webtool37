@@ -33,6 +33,7 @@ class MRenderJSON extends MResult
     public function apply($request, $response)
     {
         $this->nocache($response);
+        $response->setHeader('Access-Control-Allow-Origin','*');
         $response->setHeader('Content-type', 'Content-type: application/json; charset=UTF-8');
         $response->setOut($this->content);
     }

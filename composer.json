@@ -29,14 +29,23 @@
     "ext-curl": "*",
     "graphp/graphviz": "^0.2.2",
     "jenssegers/blade": "^1.4",
-    "clue/graph": "^0.9.2"
+    "clue/graph": "^0.9.2",
+    "cboden/ratchet": "^0.4",
+    "vlucas/phpdotenv": "^5.4",
+    "textalk/websocket": "^1.5",
+    "easyrdf/easyrdf": "*",
+    "ml/json-ld" : "~1.0",
+    "auth0/auth0-php": "8.0",
+    "guzzlehttp/guzzle": "^7.0"
   },
   "autoload": {
     "files": [
       "core/classes/functions.php"
     ],
     "psr-4": {
-      "database\\": "core/classes/database"
+      "database\\": "core/classes/database",
+      "fnbr\\": "apps/webtool",
+      "fnbr\\auth\\": "apps/webtool/modules/auth/"
     },
     "classmap": [
       "core/classes/manager.php",
@@ -54,7 +63,14 @@
   },
   "scripts": {
     "post-autoload-dump": [
-      "Manager::postAutoloadDump"
+      "@putenv APP_FOLDER=apps/webtool",
+      "Manager::postAutoloadDump",
+      "Manager::createFileMap"
     ]
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
   }
 }

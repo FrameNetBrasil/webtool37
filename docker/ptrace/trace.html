@@ -1,0 +1,120 @@
+<html>
+<head>
+    <title>Trace Orkester</title>
+</head>
+<body>
+<div class="top-menu">
+    <div style="display: flex;">
+        <div>
+            <div>
+                <label for="host">Host</label>
+                <input id="host" name="host" value="localhost">
+            </div>
+            <div>
+                <label for="port">Port</label>
+                <input id="port" name="port" value="9998">
+            </div>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+            <button id="button-connect" type="button">Connect</button>
+            <button id="button-clear" type="button">Clear</button>
+        </div>
+    </div>
+    <input id="reset" type="checkbox" name="reset" value="reset">
+    <label For="reset">Clear on [RESET_LOG_MESSAGES]</label>
+</div>
+<div id="content">
+
+</div>
+</body>
+<style>
+    body {
+        margin-top: 0;
+        margin-left: 0;
+        height: fit-content;
+    }
+
+    #host {
+        width: 10rem;
+    }
+
+    #port {
+        margin-left: 3px;
+        width: 3rem;
+    }
+
+    .top-menu {
+        position: fixed;
+        top: 0;
+        z-index: 1;
+        background-color: gray;
+        height: 80px;
+        width: 100vw;
+    }
+
+    #content {
+        margin-top: 80px;
+        position: relative;
+    }
+
+    .log-message {
+        border: 1px ridge;
+        white-space: break-spaces;
+        overflow-wrap: break-word
+    }
+
+    .DEBUG {
+        color: blue;
+    }
+
+    .WARN {
+        color: yellow;
+    }
+
+    .FATAL {
+        color: red;
+        font-weight: bold;
+    }
+</style>
+<script src="trace.js"></script>
+<script>
+    const hostInput = document.getElementById("host");
+    const portInput = document.getElementById("port");
+    const connectButton = document.getElementById("button-connect");
+    let socket = undefined;
+    let isConnected = false;
+    connectButton.onclick = function () {
+        if (isConnected) {
+            socket.close();
+            isConnected = false;
+        }
+        try {
+            socket = connect(
+                hostInput.value,
+                portInput.value,
+                {
+                    DEBUG: "color: blue"
+                },
+                [],
+                undefined
+            )
+            socket.addEventListener("open", event => {
+                isConnected = true;
+                connectButton.innerHTML = "Disconnect";
+            });
+            socket.addEventListener("error", event => {
+                console.error(event)
+                isConnected = false;
+                connectButton.innerHTML = "Error!"
+            })
+            socket.addEventListener("close", event => {
+                isConnected = false;
+                connectButton.innerHTML = "Connect"
+            })
+            isConnected = true
+        } catch (e) {
+            console.error(e)
+        }
+    };
+</script>
+</html>

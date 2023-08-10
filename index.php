@@ -8,5 +8,7 @@ ini_set("session.save_path",  sys_get_temp_dir());
 $conf = dirname(__FILE__).'/core/conf/conf.php';
 require_once($dir . '/vendor/autoload.php');
 set_error_handler('Manager::errorHandler');
+$dotenv = Dotenv\Dotenv::createMutable($dir);
+$dotenv->load();
 Manager::init($conf, $dir);
 Manager::processRequest();
