@@ -1,13 +1,17 @@
 # FNBr Webtool [Docker Container]
-Webtool is an annotation and database management application developed by [FrameNet Brasil Project](http://www.ufjf.br/framenetbr-eng/), which can be accessed using any web browser,
+
+[![Version](https://img.shields.io/github/v/tag/FrameNetBrasil/webtool)]
+
+FrameNet Brasil (FNBr) Webtool is an annotation and database management application developed by
+[FrameNet Brasil Project](http://www.ufjf.br/framenetbr-eng/), which can be accessed using any web browser,
 without the need to install any additional software. Webtool handles multilingual framenets and constructicons.
 
-Webtool app is implemented using [Framework Maestro](https://github.com/frameworkmaestro/maestro3/), a PHP7 framework developed at Federal University of Juiz de Fora (Brazil).
+Webtool app is implemented using [Framework Maestro](https://github.com/frameworkmaestro/maestro3/), a PHP7 framework
+developed at Federal University of Juiz de Fora - UFJF (Brazil).
 
 This repository contains a customized Maestro copy. Webtool app is localized at folder apps/webtool.
 
 ### Prerequisities
-
 
 In order to run this container you'll need docker installed.
 
@@ -19,13 +23,13 @@ In order to run this container you'll need docker installed.
 
 Create a local installation for Webtool:
 
+
 * Clone this repository at an accesible folder
 
 ```sh
 $ git clone https://github.com/FrameNetBrasil/webtool.git
 $ cd webtool
 ```
-* If necessary, modify the docker-compose configuration file (.env)
 
 * Start the container
 
@@ -33,12 +37,25 @@ $ cd webtool
 $ docker-compose up
 ```
 
-* Application configuration files will be created from dist
+* Create the MySQL/MariaDb database from the dump file
 
-  * webtool/core/conf/conf.php
-  * webtool/apps/webtool/conf/conf.php
+```sh
+webtool/apps/webtool/dump/webtool_db.tar.gz
+```
+
+* Update the database credentials at .env file
+
+```sh
+webtool/.env
+```
+
+* Configuration file for Webtool is located at
+
+```sh
+webtool/apps/webtool/conf/conf.php
+```
   
-* Access the app at http://localhost:8001 (with user = webtool password = test)
+* Access the app at http://localhost:8001 (with user = admin password = admin)
 
 ## Built With
 
