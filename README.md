@@ -1,6 +1,7 @@
 # FNBr Webtool [Docker Container]
 
-[![Version](https://img.shields.io/github/v/tag/FrameNetBrasil/webtool)]
+[Version](https://img.shields.io/github/v/tag/FrameNetBrasil/webtool)
+[Licence](https://img.shields.io/github/license/FrameNetBrasil/webtool)
 
 FrameNet Brasil (FNBr) Webtool is an annotation and database management application developed by
 [FrameNet Brasil Project](http://www.ufjf.br/framenetbr-eng/), which can be accessed using any web browser,
