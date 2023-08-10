@@ -1,89 +1,210 @@
-<div id="reportLayout" style="width:100%;height:100%;">
-    <div id="reportNorthPane" data-options="region:'north', title:'{{_'Frames'}}'" style="height:70px">
+<div id="structureLayout" style="width:100%;height:100%;">
+    <div id="structureNorthPane" data-options="collapsible:false, region:'north', title:'{{_'Frames'}}'" style="height:70px">
+        <div style="float:left;padding:5px">
+           <input id="idDomain" name="domain" placeholder="{{_'Domain'}}">
+        </div>
         <div style="float:left;padding:5px">
             <input id="frame" name="frame" type="text" style="width:200px; padding:5px" placeholder="{{_'Search Frame'}}">
         </div>
-        <!--
         <div style="float:left;padding:5px">
             <input id="fe" name="fe" type="text" style="width:200px; padding:5px" placeholder="{{_'Search FE'}}">
         </div>
-        <div style="float:left;padding:5px" class=""clearfix">
+        <div style="float:left;padding:5px">
             <input id="lu" name="lu" type="text" style="width:200px; padding:5px" placeholder="{{_'Search LU'}}">
         </div>
-        -->
-        <div style="float:left;padding:5px" class=""clearfix">
-        <input id="lu" name="lu" type="text" style="width:200px; padding:5px" placeholder="{{_'Search LU'}}">
+        <div style="float:left;padding:5px">
+            <a id="btnSearch" href="#">Search</a>
+        </div>
+        <div style="float:left;padding:5px" class="clearfix">
+            <input id="listBy" name="listBy" placeholder="list By">
+        </div>
+
     </div>
-    </div>
-    <div id="reportLeftPane" region="west" split="true" style="height: 100%">
+    <div id="structureLeftPane" region="west" split="true" style="height: 100%">
         <ul id="framesTree"></ul>
     </div>
-    <div id="reportCenterPane" region="center" style="height: 100%">
-        
+    <div id="structureCenterPane" region="center" style="height: 100%">
+
     </div>
 </div>
+<div id="menuRootFrames" style="display:none, width:120px;">
+    <div onclick="structure.reloadFrame()" data-options="iconCls:'icon-reload'">{{_'Reload Frames'}}</div>
+</div>
+
+{{include $manager->getThemePath('css/graph.css')}}
 
 <script type="text/javascript">
-    var idCenterPane = "reportCenterPane";
-    var report = {
-        isMaster: {{$data->isMaster|noescape}},
+    var idCenterPane = "structureCenterPane";
+    var structure = {
+        app: {{$manager->getApp()}},
         node: null
     };
     $(function () {
-
-        $('#reportLayout').layout({
-            fit: true
+        $('#structureLayout').layout({
+            fit:true
         });
-        
-        report.reloadFrame = function () {
+
+        structure.showLU = function (idLU) {
             $('#reportCenterPane').html('');
-            //manager.doGet({{$manager->getURL('report/frame/main')}});
-            $('#framesTree').tree('reload');
-        }
-        
-        report.showFrame = function (idFrame) {
-            $('#reportCenterPane').html('');
-            manager.doGet({{$manager->getURL('report/frame/showFrame')}} + '/' + idFrame, 'reportCenterPane');
+            manager.doGet({{$manager->getURL('report/lu/showLU')}} + '/' + idLU, 'structureCenterPane');
         }
 
-        report.showLU = function (idLU) {
-            $('#reportCenterPane').html('');
-            manager.doGet({{$manager->getURL('report/lu/showLU')}} + '/' + idLU, 'reportCenterPane');
+        structure.showFrame = function (idFrame) {
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('report/frame/showFrame')}} + '/' + idFrame, 'structureCenterPane');
         }
-/*
-        $('#fe').textbox({
-            buttonIcon: 'icon-search',
-            iconAlign:'right',
-            prompt: {{_'Search FE'}},
-            onClickButton: function() {
-                $('#framesTree').tree({queryParams: {fe: $('#fe').textbox('getValue')}});
+
+        structure.reloadFrame = function () {
+            $('#structureCenterPane').html('');
+            var node = $('#framesTree').tree('getSelected');
+            if (node) {
+                $('#framesTree').tree('reload', node.target);
             }
-        });
-*/
-        $('#frame').textbox({
-            buttonIcon: 'icon-search',
-            iconAlign:'right',
-            prompt: {{_'Search Frame'}},
-            onClickButton: function() {
-                $('#framesTree').tree({queryParams: {frame: $('#frame').textbox('getValue')}});
+        }
+
+        structure.reloadFrameParent = function () {
+            $('#structureCenterPane').html('');
+            var node = $('#framesTree').tree('getSelected');
+            var parent = $('#framesTree').tree('getParent', node.target);
+            console.log(node);
+            console.log(parent);
+            if (node) {
+                $('#framesTree').tree('reload', parent.target);
             }
-        });
+        }
+
+        structure.contextMenuFrame = function(e, node) {
+            e.preventDefault();
+            console.log(node);
+            structure.node = node;
+            var $menu = '';
+            if (structure.isMaster) {
+                $(this).tree('select', node.target);
+                if (node.id == 'root') {
+                    $menu = $('#menuRootFrames');
+                }
+                if ($menu != '') {
+                    $menu.menu('show', {
+                        left: e.pageX,
+                        top: e.pageY
+                    });
+                }
+            }
+        }
+
+        $('#menuRootFrames').menu({});
 
         $('#lu').textbox({
-            buttonIcon: 'icon-search',
+            //buttonText:{{_'Search'}},
+            // buttonIcon: 'icon-search',
             iconAlign:'right',
             prompt: {{_'Search LU'}},
-            onClickButton: function() {
-                $('#framesTree').tree({queryParams: {lu: $('#lu').textbox('getValue')}});
+            // onClickButton: function() {
+            //     $('#framesTree').tree({queryParams: {lu: $('#lu').textbox('getValue')}});
+            // }
+        });
+        $('#fe').textbox({
+            //buttonText:{{_'Search'}},
+            // buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search FE'}},
+            // onClickButton: function() {
+            //     $('#framesTree').tree({queryParams: {fe: $('#fe').textbox('getValue')}});
+            // }
+        });
+        $('#frame').textbox({
+            //buttonText:{{_'Search'}},
+            // buttonIcon: 'icon-search',
+            iconAlign:'right',
+            prompt: {{_'Search Frame'}},
+            // onClickButton: function() {
+            //     $('#framesTree').tree({queryParams: {frame: $('#frame').textbox('getValue')}});
+            // }
+        });
+
+        $('#btnSearch').linkbutton({
+            iconCls: 'icon-search',
+            onClick: function() {
+                value = $('#frame').textbox('getValue');
+                if (value !== '') {
+                    $('#framesTree').tree({queryParams: {frame: value}});
+                } else {
+                    value = $('#fe').textbox('getValue');
+                    if (value !== '') {
+                        $('#framesTree').tree({queryParams: {fe: value}});
+                    } else {
+                        value = $('#lu').textbox('getValue');
+                        if (value !== '') {
+                            $('#framesTree').tree({queryParams: {lu: value}});
+                        }
+                    }
+                }
             }
         });
 
-        $( "#reportNorthPane" ).keypress(function(event) {
+        $( "#structureNorthPane" ).keypress(function( event ) {
             if ( event.which == 13 ) {
+                var value;
                 event.preventDefault();
+                value = $('#frame').textbox('getValue');
+                if (value !== '') {
+                    $('#framesTree').tree({queryParams: {frame: value}});
+                } else {
+                    value = $('#fe').textbox('getValue');
+                    if (value !== '') {
+                        $('#framesTree').tree({queryParams: {fe: value}});
+                    } else {
+                        value = $('#lu').textbox('getValue');
+                        if (value !== '') {
+                            $('#framesTree').tree({queryParams: {lu: value}});
+                        }
+                    }
+                }
+            }
+        });
+
+
+        $('#idDomain').combobox({
+            data: JSON.parse({{$data->domain}}),
+            prompt: {{_'Select Domain'}},
+            valueField:'idDomain',
+            textField:'name',
+            onSelect: function() {
+                $('#framesTree').tree({queryParams: {idDomain: $('#idDomain').combobox('getValue')}});
+            },
+            onChange: function() {
+                $('#framesTree').tree({queryParams: {idDomain: $('#idDomain').combobox('getValue')}});
+            }
+        });
+
+        $('#listBy').combobox({
+            data: [
+                {listBy: 'plain list', value:''},
+                {listBy: 'by Cluster', value:'cluster'},
+                {listBy: 'by Domain', value:'domain'},
+                {listBy: 'by Type', value:'type'},
+            ],
+            prompt: 'list by',
+            valueField:'value',
+            textField:'listBy',
+            // onSelect: function() {
+            //     $('#framesTree').tree({
+            //         queryParams: {
+            //             idDomain: $('#idDomain').combobox('getValue'),
+            //             listBy: $('#listBy').combobox('getValue'),
+            //             frame: $('#frame').textbox('getValue'),
+            //             fe: $('#fe').textbox('getValue'),
+            //             lu: $('#lu').textbox('getValue')
+            //         }
+            //     });
+            // },
+            onChange: function() {
                 $('#framesTree').tree({
                     queryParams: {
+                        idDomain: $('#idDomain').combobox('getValue'),
+                        listBy: $('#listBy').combobox('getValue'),
                         frame: $('#frame').textbox('getValue'),
+                        fe: $('#fe').textbox('getValue'),
                         lu: $('#lu').textbox('getValue')
                     }
                 });
@@ -91,16 +212,17 @@
         });
 
         $('#framesTree').tree({
-            url: {{$manager->getURL('report/frame/frameTree')}},
-            onSelect: function (node) {
+            url: {{$manager->getURL('structure/frame/frameTree')}},
+            onClick: function (node) {
                 console.log(node);
                 if (node.id.charAt(0) == 'f') {
-                    report.showFrame(node.id.substr(1));
+                    structure.showFrame(node.id.substr(1));
                 }
                 if (node.id.charAt(0) == 'l') {
-                    report.showLU(node.id.substr(1));
+                    structure.showLU(node.id.substr(1));
                 }
-            }
+            },
+            onContextMenu: structure.contextMenuFrame
         });
     });
 </script>

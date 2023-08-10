@@ -50,8 +50,8 @@ text {
 }
 
 .entity_st {
-    color: white;
-    fill: black;
+    color: gray;
+    fill: gray;
 }
 
 .entity_fe {
@@ -71,6 +71,37 @@ text {
     fill: gray;
     stroke: black;
 }
+
+.entity_concept {
+    color: #003547;
+    fill: #003547;;
+    stroke: black;
+}
+
+.entity_conceptcxn {
+    color: #003547;
+    fill: #003547;;
+    stroke: black;
+}
+
+.entity_conceptstr {
+    color: #2B8DFC;
+    fill: #2B8DFC;
+    stroke: black;
+}
+
+.entity_conceptsem {
+    stroke: black;
+    color: #E1523D;
+    fill: #E1523D;
+}
+
+.entity_conceptinf {
+    color: #C2BB00;
+    fill: #C2BB00;
+    stroke: black;
+}
+
 
 .datagrid-row-selected {
     background: white;

@@ -12,9 +12,13 @@
         <div style="float:left;padding:5px">
             <input id="lu" name="lu" type="text" style="width:200px; padding:5px" placeholder="{{_'Search LU'}}">
         </div>
-        <div style="float:left;padding:5px" class="clearfix">
+        <div style="float:left;padding:5px">
             <a id="btnSearch" href="#">Search</a>
         </div>
+        <div style="float:left;padding:5px" class="clearfix">
+            <input id="listBy" name="listBy" placeholder="list By">
+        </div>
+
     </div>
     <div id="structureLeftPane" region="west" split="true" style="height: 100%">
         <ul id="framesTree"></ul>
@@ -28,13 +32,17 @@
     <div onclick="structure.newFrame()" data-options="iconCls:'icon-add'">{{_'New Frame'}}</div>
 </div>
 <div id="menuFrame" style="display:none, width:120px;">
+    <!--
     <div onclick="structure.editFrame()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
-    <div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Frame'}}</div>
+    -->
+    <div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Translations'}}</div>
     <div onclick="structure.deleteFrame()" data-options="iconCls:'icon-remove'">{{_'Delete Frame'}}</div>
     <div onclick="structure.newFrameElement()" data-options="iconCls:'icon-add'">{{_'New FrameElement'}}</div>
     <div onclick="structure.newLU()" data-options="iconCls:'icon-add'">{{_'New LU'}}</div>
+    <!--
     <div onclick="structure.createTemplate()" data-options="iconCls:'icon-add'">{{_'Create Template from Frame'}}</div>
-    <div onclick="structure.frameDomain()" data-options="iconCls:'icon-edit'">{{_'Domains'}}</div>
+    -->
+    <div onclick="structure.frameClassification()" data-options="iconCls:'icon-edit'">{{_'Classification'}}</div>
     <div onclick="structure.frameStatus()" data-options="iconCls:'icon-edit'">{{_'Status'}}</div>
     <div onclick="structure.frameSemanticType()" data-options="iconCls:'icon-edit'">{{_'Semantic Types'}}</div>
 </div>
@@ -43,7 +51,7 @@
 </div>
 <div id="menuFrameElement" style="display:none, width:120px;">
     <div onclick="structure.editFrameElement()" data-options="iconCls:'icon-edit'">{{_'Edit FrameElement'}}</div>
-    <div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
+    <div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Translations'}}</div>
     <div onclick="structure.deleteFrameElement()" data-options="iconCls:'icon-remove'">{{_'Delete FrameElement'}}</div>
     <div onclick="structure.feAddConstraint()" data-options="iconCls:'icon-add'">{{_'Add Constraint'}}</div>
 </div>
@@ -54,7 +62,9 @@
     <div onclick="structure.editLU()" data-options="iconCls:'icon-edit'">{{_'Edit LU'}}</div>
     <div onclick="structure.deleteLU()" data-options="iconCls:'icon-remove'">{{_'Delete LU'}}</div>
     <div onclick="structure.luAddConstraint()" data-options="iconCls:'icon-add'">{{_'Add Constraint'}}</div>
+    <!--
     <div onclick="structure.importWS()" data-options="iconCls:'icon-edit'">{{_'Import WS'}}</div>
+    -->
 </div>
 <div id="menuLUAnno" style="display:none, width:120px;">
     <div onclick="structure.editLU()" data-options="iconCls:'icon-edit'">{{_'Edit LU'}}</div>
@@ -126,6 +136,14 @@
             }
             $('#structureCenterPane').html('');
             manager.doGet({{$manager->getURL('structure/frame/formFrameDomain')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.frameClassification = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/frame/formFrameClassification')}} + '/' + id,'structureCenterPane');
         }
 
         structure.frameStatus = function (id) {
@@ -415,6 +433,40 @@
             },
             onChange: function() {
                 $('#framesTree').tree({queryParams: {idDomain: $('#idDomain').combobox('getValue')}});
+            }
+        });
+
+        $('#listBy').combobox({
+            data: [
+                {listBy: 'plain list', value:''},
+                {listBy: 'by Cluster', value:'cluster'},
+                {listBy: 'by Domain', value:'domain'},
+                {listBy: 'by Type', value:'type'},
+            ],
+            prompt: 'list by',
+            valueField:'value',
+            textField:'listBy',
+            // onSelect: function() {
+            //     $('#framesTree').tree({
+            //         queryParams: {
+            //             idDomain: $('#idDomain').combobox('getValue'),
+            //             listBy: $('#listBy').combobox('getValue'),
+            //             frame: $('#frame').textbox('getValue'),
+            //             fe: $('#fe').textbox('getValue'),
+            //             lu: $('#lu').textbox('getValue')
+            //         }
+            //     });
+            // },
+            onChange: function() {
+                $('#framesTree').tree({
+                    queryParams: {
+                        idDomain: $('#idDomain').combobox('getValue'),
+                        listBy: $('#listBy').combobox('getValue'),
+                        frame: $('#frame').textbox('getValue'),
+                        fe: $('#fe').textbox('getValue'),
+                        lu: $('#lu').textbox('getValue')
+                    }
+                });
             }
         });
 

@@ -25,7 +25,7 @@ manager.parser = {
     //    console.log('pq!!!!');
     //},
     onComplete: function (context) {
-        console.log('Executando external parser. context = ' + context);
+        //console.log('Executando external parser. context = ' + context);
         //manager.externalParse(context);
     },
     plugins: ['melement', 'maction', 'mgrid', 'mprompt', 'mnavbar'
@@ -53,6 +53,7 @@ manager.parser = {
                 for (var i = 0; i < aa.length; i++) {
                     var name = aa[i].name;
                     var jq = aa[i].jq;
+                    console.log(name,jq);
                     jq[name]();
                 }
                 manager.parser.onComplete.call(manager.parser, context);

@@ -2,7 +2,8 @@
 
 use fnbr\models\Base,
     fnbr\models\LU,
-    fnbr\auth\models\User;
+    fnbr\auth\models\User,
+    fnbr\auth\models\UserAnnotation;
 
 class UserController extends MController
 {
@@ -93,6 +94,7 @@ class UserController extends MController
         }
         $this->data->userLevel = $userLevel;
         $this->data->userActive = $user->getActive();
+        mdump($this->data->id);
         $this->render();
     }
 
@@ -100,6 +102,25 @@ class UserController extends MController
     {
         $yes = ">auth/user/resetPassword/" . $this->data->id;
         $this->renderPrompt('question', _M("Confirm password reset?"), $yes, "");
+    }
+
+    public function formUserAnnotation()
+    {
+        $user = new fnbr\auth\models\UserAnnotation($this->data->id);
+        $this->data->idUser = $user->getIdUser();
+        $this->data->userAnnotations = $user->getAnnotationsByUser($this->data->idUser);
+
+        if(empty($this->data->userAnnotations))
+        {
+            $this->data->userAnnotations = "No Annotation Found";
+            $this->render();
+            return;
+        }
+
+        $this->data->idSentenceStart = $user->getIdSentencesStart($this->data->userAnnotations);
+        $this->data->idSentenceEnd = $user->getIdSentencesEnd($this->data->userAnnotations);
+        $this->data->idDocument = $user->getIdDocumentByAnnotation($this->data->userAnnotations);
+        $this->render();
     }
 
     public function get()

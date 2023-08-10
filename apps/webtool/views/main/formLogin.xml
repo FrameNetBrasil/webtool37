@@ -10,6 +10,12 @@
                         $("#response").attr('value', $.md5(str));
                         return true;
                     }
+                    $( "#formLogin" ).keypress(function( event ) {
+                        if ( event.which == 13 ) {
+                            event.preventDefault();
+                            manager.doAction('@webtool\/auth\/login\/authenticate|formLogin','btnLogin');
+                        }
+                    });
                 </javascript>
                 <mhiddenfield id="tries"/>
                 <mhiddenfield id="url"/>

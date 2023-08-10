@@ -35,7 +35,7 @@ class Lexeme extends map\LexemeMap {
         $idEntity = parent::getIdEntity();
         if ($idEntity == '') {
             $entity = new Entity();
-            $alias = 'lexeme_' . $this->name . '_' . $this->idLexeme. '_' . $this->idLanguage;
+            $alias = 'lexeme_' . $this->name . '_' . md5($this->name) . '_'. $this->idLexeme. '_' . $this->idLanguage;
             $entity->getByAlias($alias);
             if ($entity->getIdEntity()) {
                 throw new \Exception("This Lexeme already exists!.");

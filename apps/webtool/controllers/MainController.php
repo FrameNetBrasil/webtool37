@@ -30,25 +30,10 @@ class MainController extends \MController
             $this->render('formMain');
         } else {
             if (Manager::getConf('login.handler') == 'auth0') {
-
-                $this->data->domain = Manager::getConf('login.AUTH0_DOMAIN');
-                $this->data->client_id = Manager::getConf('login.AUTH0_CLIENT_ID');
-                $this->data->client_secret = Manager::getConf('login.AUTH0_CLIENT_SECRET');
-                $this->data->redirect_uri = Manager::getConf('login.AUTH0_CALLBACK_URL');
-
-                $auth0 = new Auth0([
-                    'domain' => $this->data->domain,
-                    'client_id' => $this->data->client_id,
-                    'client_secret' => $this->data->client_secret,
-                    'redirect_uri' => $this->data->redirect_uri,
-                    'audience' => 'urn:test:api',
-                    'persist_id_token' => true,
-                    'persist_refresh_token' => true,
-                ]);
-
-                $this->data->userInfo = $auth0->getUser();
                 $this->render('auth0Login');
             } else {
+                $this->data->challenge = uniqid(rand());
+                Manager::getSession()->setValue('challenge', $this->data->challenge);
                 $this->data->datasources = Manager::getConf('fnbr.datasource');
                 $this->data->action = "@auth/login/authenticate|formLogin";
                 $this->render('formLogin');
@@ -61,47 +46,66 @@ class MainController extends \MController
         $this->render();
     }
 
-    public function login()
-    {
-        $this->data->datasources = Manager::getConf('fnbr.datasource');
-        $this->data->action = "@auth/login/authenticate|formLogin";
-        $this->render('formLogin');
+//    public function authenticate()
+//    {
+//        try {
+//            $userService = new UsuarioService();
+//            $userService->authenticate();
+//            return $this->renderSuccess();
+//        } catch (ERuntimeException $e) {
+//            mdump($e->getMessage());
+//            return $this->renderError($e->getMessage());
+//        }
+//    }
+
+    private function getAuth0() {
+        $this->data->domain = Manager::getConf('login.AUTH0_DOMAIN');
+        $this->data->client_id = Manager::getConf('login.AUTH0_CLIENT_ID');
+        $this->data->client_secret = Manager::getConf('login.AUTH0_CLIENT_SECRET');
+        $this->data->cookie_secret = Manager::getConf('login.AUTH0_COOKIE_SECRET');
+        $this->data->redirect_uri = Manager::getConf('login.AUTH0_CALLBACK_URL');
+        $this->data->base_url = Manager::getConf('login.AUTH0_BASE_URL');
+
+        $auth0 = new Auth0([
+            'domain' => $this->data->domain,
+            'clientId' => $this->data->client_id,
+            'clientSecret' => $this->data->client_secret,
+            'cookieSecret' => $this->data->client_secret,
+            'redirect_uri' => $this->data->redirect_uri,
+            'tokenAlgorithm' => 'HS256'
+        ]);
+        return $auth0;
     }
 
     public function logout()
     {
         Manager::getAuth()->logout();
-        $main = Manager::getURL('main');
-        if (Manager::getConf('login.handler') == 'auth0') {
-            $main = Manager::getConf('login.logout') . urlencode(Manager::getBaseURL(true));
-        }
-        $this->redirect($main);
+        $auth0 = $this->getAuth0();
+        $auth0->logout('/');
+        $this->redirect(Manager::getURL('main'));
+    }
+
+    public function login() {
+        $auth0 = $this->getAuth0();
+        $auth0->clear();
+        header("Location: " . $auth0->login($this->data->redirect_uri));
+        exit;
     }
 
     public function auth0Callback()
     {
-        $goMain = "=main";//Manager::getURL('main');
+        $goMain = "=main";
         try {
-            $this->data->domain = Manager::getConf('login.AUTH0_DOMAIN');
-            $this->data->client_id = Manager::getConf('login.AUTH0_CLIENT_ID');
-            $this->data->client_secret = Manager::getConf('login.AUTH0_CLIENT_SECRET');
-            $this->data->redirect_uri = Manager::getConf('login.AUTH0_CALLBACK_URL');
-
-            $auth0 = new Auth0([
-                'domain' => $this->data->domain,
-                'client_id' => $this->data->client_id,
-                'client_secret' => $this->data->client_secret,
-                'redirect_uri' => $this->data->redirect_uri,
-                'audience' => 'urn:test:api',
-                'persist_id_token' => true,
-                'persist_refresh_token' => true,
-            ]);
+            $auth0 = $this->getAuth0();
+            $auth0->exchange($this->data->redirect_uri);
 
             $userInfo = $auth0->getUser();
             $user = Manager::getAppService('authuser');
             $status = $user->auth0Login($userInfo);
+
             if ($status == 'new') {
-                $this->renderPrompt('info', _M('User registered. Now it is necessary Administrator approval.'), $goMain);
+                //$this->renderPrompt('info', _M('User registered. Now it is necessary Administrator approval.'), $goMain);
+                $this->renderPrompt('info', _M('User registered. Please, login again.'), $goMain);
             } elseif ($status == 'pending') {
                 $this->renderPrompt('info', _M('User already registered, but waiting for Administrator approval.'), $goMain);
             } elseif ($status == 'logged') {
@@ -109,8 +113,8 @@ class MainController extends \MController
             } else {
                 $this->renderPrompt('error', _M('Login failed; contact administrator.', $goMain));
             }
-        } catch (Exception $e) {
-			mdump($e->getMessage());
+        } catch (\Exception $e) {
+            mdump($e->getMessage());
             $this->renderPrompt('error', "Auth0: Invalid authorization code.", $goMain);
         }
     }

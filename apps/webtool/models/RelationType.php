@@ -65,7 +65,7 @@ class RelationType extends map\RelationTypeMap {
         $this->retrieveFromCriteria($criteria);
     }
     
-    public function save($data)
+    public function save()
     {
         $transaction = $this->beginTransaction();
         try {

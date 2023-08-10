@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formNewLayerGroup">
+        <property title="$this->data->title"  onClose="structure.reload();"/>
+        <fields>
+            <mtextfield id="layergroup_name" label="Name:" width="250px"/> 
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseLayerGroup" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveLayerGroup" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+    </mformdialog>
+</view>

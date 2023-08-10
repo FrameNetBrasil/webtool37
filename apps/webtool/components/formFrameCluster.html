@@ -1,0 +1,54 @@
+{{var $toolbar = 'toolbarFrameClustar' . $data->idFrame}}
+{{var $lbSave = 'lbSaveCluster' . $data->idFrame}}
+{{var $grid = 'gridFrameCluster' . $data->idFrame}}
+
+<input type="hidden" id='idFrame' name='idFrame' value={{$data->idFrame}} />
+<input type="hidden" id='idGrid' name='idGrid' value={{$grid}} />
+<input type="hidden" id='toSaveCluster' name='toSaveCluster' value='' />
+<table id={{$grid}}></table>
+<div id={{$toolbar}}>
+    <a id={{$lbSave}} href="#"></a>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#' + {{$grid}}).datagrid({
+            url: {{manager::getAppURL('', 'data/semantictype/listFrameCluster/' . $data->idFrame)}},
+            idField:'idSemanticType',
+            height: 250,
+            title: 'Clusters',
+            showHeader:false,
+            //checkOnSelect: false,
+            toolbar: '#' + {{$toolbar}},
+            columns:[[
+                {field: 'ck', checkbox: true},
+                {field: 'idSemanticType', hidden:true},
+                {field: 'idEntity', hidden:true},
+                {field: 'name', title:'Type',width:'100%'}
+            ]],
+            onLoadSuccess: function(data) {
+                console.log('onload');
+                console.log(data);
+                for (row in data.rows) {
+                    if (data.rows[row].checked) {
+                        console.log('selecting ' + row);
+                        $('#' + {{$grid}}).datagrid('selectRow', row);
+                    }
+                }
+            }
+        });
+
+        $('#' + {{$lbSave}}).linkbutton({
+            onClick: function(){
+                var rows = $('#' + {{$grid}}).datagrid('getChecked');
+                $('#toSaveCluster').attr('value','json:' + JSON.stringify(rows));
+                manager.doAction("@structure/semantictype/updateFrameCluster|{{$data->form|noescape}}");
+            },
+            iconCls: "icon-edit",
+            title: 'Save Domains',
+            text: "Save",
+            width: 60,
+            plain: true
+        });
+
+    });
+</script>

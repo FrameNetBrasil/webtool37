@@ -1,35 +1,27 @@
 <?xml version="1.0"?>
 <view>
-    <mformdialog id="formAddConstraintLU">
-        <property title="$this->data->title" onClose="structure.reloadFrame();"/>
+    <mform id="formAddConstraintLU" border="1px">
+        <property title="$this->data->title"/>
         <fields>
             <div>
                 <mhiddenfield id="idLU" value="$this->data->idLU"/>
-                <mlabel text="$this->data->lu"/>
             </div>
-            <maccordion id="aa" style="width:400px;height:250px;">
-                <div title="LU &lt; Qualia &gt; LU" style="overflow:auto;padding:10px;">
-                    <div><mlabel text="Qualia Relation"/></div>
-                    <include component="MLookupQualiaRelation.php" id="relation"/>
-                    <div><mlabel text="LU"/></div>
-                    <include component="MLookupLU.php" id="idLUQualia"/>
+            <mpanel title="LU &lt; Metonymy &gt; LU" style="overflow:auto;padding:10px;">
+                <div>
+                    <label>Frame.LU (minimum 3 letters of LU name to search)</label>
                 </div>
-                <div title="LU &lt; Metonymy &gt; LU" style="overflow:auto;padding:10px;">
-                    <div><label>Frame.LU (minimum 3 letters of LU name to search)</label></div>
-                    <include component="MLookupLU.php" id="idLUMetonymy"/>
-                </div>
-                <div title="LU > Semantic Type" style="overflow:auto;padding:10px;">
-                    <include component="MLookupSemanticType.php" id="idSemanticType"/>
-                </div>
-                <div title="LU &lt; Equivalent &gt; LU" style="overflow:auto;padding:10px;">
-                    <label>Equivalent Frame.LU (minimum 3 letters of LU name to search)</label>
-                    <include component="MLookupLUEquivalent.php" id="idLUEquivalent"/>
-                </div>
-            </maccordion>
+                <include component="MLookupLU.php" id="idLUMetonymy"/>
+            </mpanel>
+            <mpanel title="LU > Semantic Type" style="overflow:auto;padding:10px;">
+                <include component="MLookupSemanticType.php" id="idSemanticType"/>
+            </mpanel>
+            <mpanel title="LU &lt; Equivalent &gt; LU" style="overflow:auto;padding:10px;">
+                <label>Equivalent Frame.LU (minimum 3 letters of LU name to search)</label>
+                <include component="MLookupLUEquivalent.php" id="idLUEquivalent"/>
+            </mpanel>
         </fields>
-        <tools>
-            <mlinkbutton id="lbCloseCxn" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
-            <mlinkbutton id="lbSaveCxn" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
-        </tools>
-    </mformdialog>
+        <buttons>
+            <mbutton id="lbSaveCxn" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </buttons>
+    </mform>
 </view>

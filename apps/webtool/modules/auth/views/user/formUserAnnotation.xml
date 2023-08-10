@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formUserAnnotation">
+        <property title="User Annotations" />
+        <options modal="true"/>
+        <include file="fields.xml" />
+        <fields>
+            <mhiddenfield id="user_" />
+            <mtextfield id="user_idUser" value="$this->data->idUser" label="Id User:"/>
+            <mtextfield id="user_idUserAnnotations" value="$this->data->userAnnotations" label="User Annotations:" />
+            <mtextfield id="user_idSentenceStart" value="$this->data->idSentenceStart" label="Sentence Start: "/>
+            <mtextfield id="user_idSentenceEnd" value="$this->data->idSentenceEnd" label="Sentence End:" />
+            <mtextfield id="user_idDocument" value="$this->data->idDocument" label="Document ID:"/>
+        </fields>
+    </mformdialog>
+</view>

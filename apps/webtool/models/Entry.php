@@ -182,6 +182,20 @@ class Entry extends map\EntryMap {
         $this->save();
         Timeline::addTimeline("entry",$this->getId(),"S");
     }
+
+    public function updateByIdEntity($idEntity, $idLanguage, $name) {
+        $criteria = $this->getCriteria()
+            ->select("*")
+            ->where('idEntity','=', $idEntity)
+            ->where('idLanguage','=', $idLanguage);
+        $this->retrieveFromCriteria($criteria);
+        $this->setPersistent(true);
+        $this->setName($name);
+        $this->setDescription($name);
+        $this->setNick($name);
+        $this->save();
+        Timeline::addTimeline("entry",$this->getId(),"S");
+    }
     
     
 }

@@ -6,7 +6,7 @@
         {{$data->lu->name|noescape}}
     </div>
     <div class="frameName">
-        Frame: {{$data->lu->frameName|noescape}}
+        <a href="#" class="easyui-linkbutton" onclick="javascript:showFrame()">{{$data->lu->frameName|noescape}}</a>
     </div>
     <div class="divPanel">
         <div id="panelDefinition" class="easyui-panel" title="{{_'repDefinition'}}" collapsible="false" data-options="fit:true"  style="width:100%;">
@@ -143,6 +143,11 @@
     var patternFEAS = {{$data->patternFEAS|noescape}};
     var patternAS = {{$data->patternAS|noescape}};
 
+    function showFrame(idFrame) {
+        $('#reportLUCenterPane').html('');
+        manager.doGet({{$manager->getURL('report/frame/showFrame')}} + '/' + {{$data->lu->idFrame}}, 'reportLUCenterPane');
+    }
+
     function clearSentences() {
         $("#divSentencesColorOn").html('');
         $("#divSentencesColorOff").html('');
@@ -167,7 +172,7 @@
                 if ($('#' + id).length) {
                     //$(sentence.text).replaceAll('#' + id);
                 } else {
-                    addSentence(id, sentence.text);
+                    addSentence(id, sentence.text, sentence.idSentence);
                 }
             });
 
@@ -178,7 +183,7 @@
         manager.doAjax({{$manager->getURL('api/reportlu/getSentences')}}, function (data) {
             var sentences = JSON.parse(data);
             $.each(sentences, function(index, sentence ) {
-                console.log(sentence);
+                //console.log(sentence);
                 var id = "sentence" + sentence.idSentence;
                 if ($('#' + id).length) {
                     //$(sentence.text).replaceAll('#' + id);

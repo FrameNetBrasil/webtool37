@@ -7,7 +7,7 @@
 </div>
 {{include $manager->getThemePath('css/graph.css')}}
 
-{{include 'grapher.js'}}
+{{include 'grapher_d3_v7.js'}}
 
 <script type="text/javascript">
 
@@ -24,11 +24,13 @@
         manager.doAjax({{$manager->getURL('api/grapher/getCxnStructure')}}, function(data) {
             console.log(data);
             var links = JSON.parse(data);
-            grapher.instance.clearLink();
-            grapher.instance.clearNode();
+            grapher.instance.clear();
+            //grapher.instance.clearLink();
+            //grapher.instance.clearNode();
             $.each(links, function(index, link) {
                 grapher.instance.addLink(link);
             });
+            grapher.instance.update();
         }, {idCxn: {{$data->id}},  chosen: {},  level: 2 });
     });
 </script>

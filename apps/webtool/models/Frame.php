@@ -289,9 +289,9 @@ HERE;
             //Base::entityTimelineSave($this->getIdEntity());
             parent::save();
             Timeline::addTimeline("frame",$this->getId(),"S");
-            if ($data->idTemplate) {
-                $this->registerTemplate($data->idTemplate);
-            }
+//            if ($data->idTemplate) {
+//                $this->registerTemplate($data->idTemplate);
+//            }
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();
@@ -358,18 +358,18 @@ HERE;
         try {
             $this->save($data);
             Timeline::addTimeline("frame",$this->getId(),"S");
-            if ($data->idTemplate) {
-                if ($inheritsFromBase) {
-                    $template = new Template($data->idTemplate);
-                    $base = $template->getBaseFrame()->asQuery()->getResult();
-                    if (count($base)) {
-                        $idFrameBase = $base[0]['idFrame'];
-                        $frameBase = new Frame($idFrameBase);
-                        $relations = $frameBase->getRelations();
-                        Base::createEntityRelation($frameBase->getIdEntity(), 'rel_inheritance', $this->getIdEntity());
-                    }
-                }
-            }
+//            if ($data->idTemplate) {
+//                if ($inheritsFromBase) {
+//                    $template = new Template($data->idTemplate);
+//                    $base = $template->getBaseFrame()->asQuery()->getResult();
+//                    if (count($base)) {
+//                        $idFrameBase = $base[0]['idFrame'];
+//                        $frameBase = new Frame($idFrameBase);
+//                        $relations = $frameBase->getRelations();
+//                        Base::createEntityRelation($frameBase->getIdEntity(), 'rel_inheritance', $this->getIdEntity());
+//                    }
+//                }
+//            }
             $transaction->commit();
             return $relations;
         } catch (\Exception $e) {
@@ -387,5 +387,37 @@ HERE;
         parent::save();
         Timeline::addTimeline("frame",$this->getId(),"S");
     }
+
+    public function getClassification() {
+        $idLanguage = \Manager::getSession()->idLanguage;
+        $cmd = <<<HERE
+
+        SELECT RelationType.entry, entry_semanticType.name
+        FROM Frame
+            INNER JOIN Entity entity1
+                ON (Frame.idEntity = entity1.idEntity)
+            INNER JOIN EntityRelation
+                ON (entity1.idEntity = EntityRelation.idEntity1)
+            INNER JOIN RelationType 
+                ON (EntityRelation.idRelationType = RelationType.idRelationType)
+            INNER JOIN Entity entity2
+                ON (EntityRelation.idEntity2 = entity2.idEntity)
+            INNER JOIN SemanticType 
+                ON (entity2.idEntity = semanticType.idEntity)
+            INNER JOIN Entry entry_semanticType
+                ON (semanticType.idEntity = entry_semanticType.idEntity)
+        WHERE (Frame.idFrame = {$this->getId()})
+            AND (RelationType.entry in (
+                'rel_framal_type',
+                'rel_framal_domain',
+                'rel_framal_cluster'))
+           AND (entry_semanticType.idLanguage = {$idLanguage} )
+        ORDER BY RelationType.entry, entry_semanticType.name
+            
+HERE;
+        $result = $this->getDb()->getQueryCommand($cmd)->treeResult('entry', 'name');
+        return $result;
+    }
+
 
 }

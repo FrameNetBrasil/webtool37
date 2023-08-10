@@ -7,11 +7,12 @@ class MLookupQualiaRelation extends MControl
     {
         mdump($this->data);
         $qualiaType = $this->data->qualiaType;
-        $url = Manager::getAppURL('', 'data/qualia/lookupQualiaRelation/' . $qualiaType);
+        //$url = Manager::getAppURL('', 'data/qualia/lookupQualiaRelation/' . $qualiaType);
+        $url = Manager::getAppURL('', 'data/qualia/lookupData');
         $onLoad = <<<EOT
         
         $('#{$this->property->id}').combogrid({
-            panelWidth:180,
+            panelWidth:350,
             url: '{$url}',
             idField:'idQualia',
             textField:'name',
@@ -24,7 +25,7 @@ class MLookupQualiaRelation extends MControl
 
 EOT;
         $this->getPage()->onLoad($onLoad);
-        $this->style->width = '250px';
+        $this->style->width = '350px';
         return $this->getPainter()->mtextField($this);
     }
 

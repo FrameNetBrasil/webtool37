@@ -24,6 +24,7 @@
     <div onclick="authUser.preferences()" data-options="iconCls:'icon-edit'">{{_'Preferences'}}</div>
     <div onclick="authUser.authorize()" data-options="iconCls:'icon-edit'">{{_'Authorize'}}</div>
     <div onclick="authUser.deleteUser()" data-options="iconCls:'icon-remove'">{{_'Delete User'}}</div>
+    <div onclick="authUser.userAnnotation()" data-options="iconCls:'icon-save'">{{_'User Annotation'}}</div>
 </div>
 <div id="dialogUser" title="User" style="padding:15px">
     <form class="form-horizontal" id="formUser" name="formUser" action="{{$manager->getURL('auth/user/save')}}">
@@ -129,6 +130,14 @@
             }
             $('#authUserCenterPane').html('');
             manager.doGet({{$manager->getURL('auth/user/formPreferences')}} + '/' + id,'authUserCenterPane');
+        }
+
+        authUser.userAnnotation = function (id){
+            if ($.type(id) === "undefined") {
+                id = authUser.node.id.substr(1);
+            }
+            $('#authUserCenterPane').html('');
+            manager.doGet({{$manager->getURL('auth/user/formUserAnnotation')}} + '/' + id,'authUserCenterPane');
         }
 
         authUser.contextMenu = function(e, node) {

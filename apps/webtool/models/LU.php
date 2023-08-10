@@ -79,6 +79,10 @@ class LU extends map\LUMap
         $this->idFrame = $data->idFrame;
     }
 
+    public function getFrame() {
+        return Frame::create($this->getIdFrame());
+    }
+
     public function getDescription()
     {
         return $this->getIdLU();
@@ -117,10 +121,13 @@ class LU extends map\LUMap
     public function listForLookup($filter = null)
     {
         $idLanguage = \Manager::getSession()->idLanguage;
-        $criteria = $this->getCriteria()->select("idLU, concat(frame.entries.name,'.',name) as fullname")->orderBy('frame.entries.name,name');
-        Base::relation($criteria, 'LU', 'Frame frame', 'rel_evokes');
-        Base::entryLanguage($criteria, 'frame');
+        $criteria = $this->getCriteria()
+            ->select("idLU, concat(frame.entries.name,'.',name) as fullname")
+            ->orderBy('frame.entries.name,name');
+        //Base::relation($criteria, 'LU', 'Frame frame', 'rel_evokes');
+        //Base::entryLanguage($criteria, 'frame');
         $criteria->where("lemma.idLanguage = {$idLanguage}");
+        $criteria->where("frame.entries.idLanguage = {$idLanguage}");
         $fullname = $filter ? $filter->fullname : '';
         $fullname = (strlen($fullname) > 2) ? $fullname : '-none-';
         $criteria->where("upper(name) LIKE upper('{$fullname}%')");

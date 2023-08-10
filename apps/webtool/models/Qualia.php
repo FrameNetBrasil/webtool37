@@ -144,10 +144,24 @@ HERE;
         return $criteria->asQuery();
     }
 
-    public function listForLookup($type, $idLanguage = '1')
+    public function listForLookup($type = '', $idLanguage = '1')
     {
-        $whereType = ($type == '*') ? '' : "(t.entry = '{$type}')";
-        $name= ($type == '*') ? "concat(substr(t.entry,5,10),': ', eq.name, ' [',e.name,']') name" : "concat(eq.name, ' [',e.name,']') name";
+        $whereType = ($type == '') ? '' : "AND (t.entry = '{$type}')";
+        $name= ($type == '') ? "concat(substr(t.entry,5,15),': ', eq.name, ' [',e.name,']') name" : "concat(eq.name, ' [',e.name,']') name";
+//        $cmd = <<<HERE
+//        SELECT q.idQualia, {$name}
+//        FROM Qualia q
+//        JOIN Entry eq on (q.entry = eq.entry)
+//        JOIN TypeInstance t on (q.idTypeInstance = t.idTypeInstance)
+//        JOIN Frame f on (q.idFrame = f.idFrame)
+//        JOIN Entry e on (f.entry = e.entry)
+//        WHERE {$whereType}
+//          AND (e.idLanguage = {$idLanguage})
+//          AND (eq.idLanguage = {$idLanguage})
+//        ORDER BY t.entry, q.info
+//
+//HERE;
+
         $cmd = <<<HERE
         SELECT q.idQualia, {$name}
         FROM Qualia q
@@ -155,13 +169,12 @@ HERE;
         JOIN TypeInstance t on (q.idTypeInstance = t.idTypeInstance)
         JOIN Frame f on (q.idFrame = f.idFrame)
         JOIN Entry e on (f.entry = e.entry)
-        WHERE {$whereType}
-          AND (e.idLanguage = {$idLanguage})
+        WHERE (e.idLanguage = {$idLanguage})
           AND (eq.idLanguage = {$idLanguage})
+          {$whereType}
         ORDER BY t.entry, q.info
 
 HERE;
-
         $query = $this->getDb()->getQueryCommand($cmd);
         return $query;
     }

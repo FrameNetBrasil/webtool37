@@ -137,7 +137,7 @@ var manager = {
             manager._handleResponse.parse(element);
         },
         parse: function (element) {
-            manager.parse(element);
+            manager.parse(element || 'body');
             var $scripts = $(element).find(".mScripts");
             if ($scripts.notempty()) {
                 var pageId = $scripts.attr('id');
@@ -171,7 +171,7 @@ var manager = {
     },
     doPostBack: function (idForm) {
         //Callback handler for form submit event
-        //console.log(idForm);
+        console.log(idForm);
         var $form = $('#' + idForm);
         $form.submit(function (e) {
             //console.log(e);
@@ -613,7 +613,6 @@ var manager = {
                             manager.loader.load('maction', function () {
                                 manager.loader.load('jquery.manager.parser.js', function () {
                                     manager.parser.parse();
-                                    console.log(manager.action);
                                     manager.ready();
                                 });
                             });

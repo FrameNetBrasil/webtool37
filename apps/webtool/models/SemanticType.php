@@ -135,6 +135,36 @@ class SemanticType extends map\SemanticTypeMap {
         return $criteria;
     }
 
+    public function listFrameDomain()
+    {
+        $criteria = $this->getCriteria()
+            ->select("idSemanticType,entries.name")
+            ->orderBy('entries.name');
+        $criteria->where("entry LIKE 'sty\_fd%'");
+        Base::entryLanguage($criteria);
+        return $criteria;
+    }
+
+    public function listFrameType()
+    {
+        $criteria = $this->getCriteria()
+            ->select("idSemanticType,entries.name")
+            ->orderBy('entries.name');
+        $criteria->where("entry LIKE 'sty\_ft%'");
+        Base::entryLanguage($criteria);
+        return $criteria;
+    }
+
+    public function listFrameCluster()
+    {
+        $criteria = $this->getCriteria()
+            ->select("idSemanticType,entries.name, entries.description")
+            ->orderBy('entries.name');
+        $criteria->where("entry LIKE 'sty\_fc%'");
+        Base::entryLanguage($criteria);
+        return $criteria;
+    }
+
     public function listSTLUforConstraint()
     {
         $criteria = $this->getCriteria()->select("idEntity, entries.name");
@@ -161,7 +191,7 @@ from (
   left join entry e3 on (s3.entry = e3.entry)
   where r1.relationType='rel_subtypeof'
   and ((r2.relationType='rel_subtypeof') or (r2.relationType is null))
-  and s1.entry = 'st_lexical_type'
+  and s1.entry = 'sty_lexical_type_1'
   and e2.idLanguage = 1
   and ((e3.idLanguage = 1) or (e3.idLanguage is null))
 UNION
@@ -171,7 +201,7 @@ UNION
   join semantictype s2 on (r1.identity1 = s2.idEntity)
   join entry e2 on (s2.entry = e2.entry)
   where r1.relationType='rel_subtypeof'
-  and s1.entry = 'st_lexical_type'
+  and s1.entry = 'sty_lexical_type_1'
   and e2.idLanguage = 1
 ) semtype
 order by type, subtype
@@ -222,7 +252,7 @@ HERE;
                     Base::createEntityRelation($entity->getId(), 'rel_subtypeof', $superType->getIdEntity());
                 }
             }
-            Base::entityTimelineSave($this->getIdEntity());
+            Timeline::addTimeline("semantictype",$this->getId(),"S");
             parent::save();
             $transaction->commit();
         } catch (\Exception $e) {
@@ -235,17 +265,19 @@ HERE;
     {
         $transaction = $this->beginTransaction();
         try {
-            $hasChildren = (count($this->listChildren($this->getId())->asQuery()->getResult()) > 0);
+            $hasChildren = (count($this->listChildren($this->getId(), (object)[])->asQuery()->getResult()) > 0);
             if ($hasChildren) {
                 throw new \Exception("Type has subtypes; it can't be removed.");
             } else {
+                $entry = new Entry();
+                $entry->deleteEntry($this->getEntry());
+                Timeline::addTimeline("semantictype",$this->getId(),"D");
                 Base::deleteAllEntityRelation($this->getIdEntity());
                 parent::delete();
                 $entity = new Entity($this->getIdEntity());
                 $entity->delete();
                 $entry = new Entry();
                 $entry->deleteEntry($this->getEntry());
-                Base::entityTimelineDelete($this->getIdEntity());
                 $transaction->commit();
             }
         } catch (\Exception $e) {

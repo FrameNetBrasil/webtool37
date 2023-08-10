@@ -9,7 +9,7 @@ class MLookupLU extends MControl
         $onLoad = <<<EOT
         
         $('#{$this->property->id}').combogrid({
-            panelWidth:250,
+            panelWidth:350,
             url: '{$url}',
             idField:'idLU',
             textField:'fullname',
@@ -23,7 +23,7 @@ class MLookupLU extends MControl
 
 EOT;
         $this->getPage()->onLoad($onLoad);
-        $this->style->width = '270px';
+        $this->style->width = '350px';
         return $this->getPainter()->mtextField($this);
     }
 

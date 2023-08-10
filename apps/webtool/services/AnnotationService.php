@@ -1012,21 +1012,21 @@ class AnnotationService extends MService
         $filter = (object)['corpus' => $corpusName, 'idLanguage' => $idLanguage];
         $corpora = $corpus->listByFilter($filter)->asQuery()->chunkResult('idCorpus', 'name');
 
-        $userAnnotation = new \fnbr\models\UserAnnotation();
-        $corpusForAnnotation = $userAnnotation->listCorpusByUser(Base::getCurrentUser()->getId());
-        $hasCorpusForAnnotation = (count($corpusForAnnotation) > 0);
-
-        if (in_array(Base::getCurrentUser()->getId(), [428,427,369,414,425,422,373,426,371,430,416,296])) {
-            $corpusForAnnotation[]= 82;
-        }
+//        $userAnnotation = new \fnbr\models\UserAnnotation();
+//        $corpusForAnnotation = $userAnnotation->listCorpusByUser(Base::getCurrentUser()->getId());
+//        $hasCorpusForAnnotation = (count($corpusForAnnotation) > 0);
+//
+//        if (in_array(Base::getCurrentUser()->getId(), [428,427,369,414,425,422,373,426,371,430,416,296])) {
+//            $corpusForAnnotation[]= 82;
+//        }
 
         $result = array();
         foreach ($corpora as $idCorpus => $name) {
-            if ($hasCorpusForAnnotation) {
-                if (!in_array($idCorpus, $corpusForAnnotation)) {
-                    continue;
-                }
-            }
+//            if ($hasCorpusForAnnotation) {
+//                if (!in_array($idCorpus, $corpusForAnnotation)) {
+//                    continue;
+//                }
+//            }
             $node = array();
             $node['id'] = 'c' . $idCorpus;
             $node['text'] = $name;
@@ -1041,30 +1041,30 @@ class AnnotationService extends MService
         $doc = new fnbr\models\Document();
         $docs = $doc->listByCorpus($idCorpus)->asQuery()->getResult();
 
-        $userAnnotation = new \fnbr\models\UserAnnotation();
-        $docForAnnotation = $userAnnotation->listDocumentByUser(Base::getCurrentUser()->getId());
-        $hasDocForAnnotation = (count($docForAnnotation) > 0);
-
-        if (in_array(Base::getCurrentUser()->getId(), [428,427,369,414,425,422,373,426,371,430,416,296])) {
-            $docForAnnotation[]= 502;
-            $docForAnnotation[]= 507;
-            $docForAnnotation[]= 508;
-            $docForAnnotation[]= 509;
-            $docForAnnotation[]= 510;
-            $docForAnnotation[]= 511;
-            $docForAnnotation[]= 512;
-            $docForAnnotation[]= 513;
-            $docForAnnotation[]= 515;
-            $docForAnnotation[]= 516;
-        }
+//        $userAnnotation = new \fnbr\models\UserAnnotation();
+//        $docForAnnotation = $userAnnotation->listDocumentByUser(Base::getCurrentUser()->getId());
+//        $hasDocForAnnotation = (count($docForAnnotation) > 0);
+//
+//        if (in_array(Base::getCurrentUser()->getId(), [428,427,369,414,425,422,373,426,371,430,416,296])) {
+//            $docForAnnotation[]= 502;
+//            $docForAnnotation[]= 507;
+//            $docForAnnotation[]= 508;
+//            $docForAnnotation[]= 509;
+//            $docForAnnotation[]= 510;
+//            $docForAnnotation[]= 511;
+//            $docForAnnotation[]= 512;
+//            $docForAnnotation[]= 513;
+//            $docForAnnotation[]= 515;
+//            $docForAnnotation[]= 516;
+//        }
 
         foreach ($docs as $doc) {
             if ($doc['idDocument']) {
-                if ($hasDocForAnnotation) {
-                    if (!in_array($doc['idDocument'], $docForAnnotation)) {
-                        continue;
-                    }
-                }
+//                if ($hasDocForAnnotation) {
+//                    if (!in_array($doc['idDocument'], $docForAnnotation)) {
+//                        continue;
+//                    }
+//                }
                 $node = array();
                 $node['id'] = 'd' . $doc['idDocument'];
                 $node['text'] = $doc['name'] . ' [' . $doc['quant'] . ']';

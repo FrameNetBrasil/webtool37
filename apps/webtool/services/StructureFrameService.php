@@ -8,15 +8,132 @@ class StructureFrameService extends MService
     public function listFrames($data, $idLanguage = '')
     {
         $frame = new fnbr\models\ViewFrame();
-        $filter = (object)['idDomain' => $data->idDomain, 'lu' => $data->lu, 'fe' => $data->fe, 'frame' => $data->frame, 'idLanguage' => $idLanguage];
-        $frames = $frame->listByFilter($filter)->asQuery()->getResult(\FETCH_ASSOC);
+        $filter = (object)[
+            'idDomain' => $data->idDomain,
+            'lu' => $data->lu,
+            'fe' => $data->fe,
+            'frame' => $data->frame,
+            'idLanguage' => $idLanguage,
+            'listBy' => $data->listBy
+        ];
         $result = array();
-        foreach ($frames as $row) {
+        if ($data->listBy == 'cluster') {
+            $clusters = $frame->listByFilter($filter)->asQuery()->treeResult("cluster","idFrame,name,entry");
+            ksort($clusters);
+            foreach($clusters as $cluster => $rows) {
+                $node = array();
+                $node['id'] = 'x' . $cluster;
+                $node['text'] = $cluster  . ' [' . count($rows) . ']';;
+                $node['state'] = 'closed';
+                $node['iconCls'] = 'icon-blank fa fa-folder fa16px entity_st';
+                $node['entry'] = $cluster;
+                $node['children'] = [];
+                foreach ($rows as $row) {
+                    $child = array();
+                    $child['id'] = 'f' . $row['idFrame'];
+                    $child['text'] = $row['name'];
+                    $child['state'] = 'closed';
+                    $child['iconCls'] = 'icon-blank fa fa-square fa16px entity_frame';
+                    $child['entry'] = $row['entry'];
+                    $node['children'][] = $child;
+                }
+                $result[] = $node;
+            }
+        } else if ($data->listBy == 'type') {
+            $types = $frame->listByFilter($filter)->asQuery()->treeResult("type","idFrame,name,entry");
+            ksort($types);
+            foreach($types as $type => $rows) {
+                $node = array();
+                $node['id'] = 'x' . $type;
+                $node['text'] = $type . ' [' . count($rows) . ']';
+                $node['state'] = 'closed';
+                $node['iconCls'] = 'icon-blank fa fa-folder fa16px entity_st';
+                $node['entry'] = $type;
+                $node['children'] = [];
+                foreach ($rows as $row) {
+                    $child = array();
+                    $child['id'] = 'f' . $row['idFrame'];
+                    $child['text'] = $row['name'];
+                    $child['state'] = 'closed';
+                    $child['iconCls'] = 'icon-blank fa fa-square fa16px entity_frame';
+                    $child['entry'] = $row['entry'];
+                    $node['children'][] = $child;
+                }
+                $result[] = $node;
+            }
+        } else if ($data->listBy == 'domain') {
+            $domains = $frame->listByFilter($filter)->asQuery()->treeResult("domain","idFrame,name,entry");
+            ksort($domains);
+            foreach($domains as $domain => $rows) {
+                $node = array();
+                $node['id'] = 'x' . $domain;
+                $node['text'] = $domain  . ' [' . count($rows) . ']';;
+                $node['state'] = 'closed';
+                $node['iconCls'] = 'icon-blank fa fa-folder fa16px entity_st';
+                $node['entry'] = $domain;
+                $node['children'] = [];
+                foreach ($rows as $row) {
+                    $child = array();
+                    $child['id'] = 'f' . $row['idFrame'];
+                    $child['text'] = $row['name'];
+                    $child['state'] = 'closed';
+                    $child['iconCls'] = 'icon-blank fa fa-square fa16px entity_frame';
+                    $child['entry'] = $row['entry'];
+                    $node['children'][] = $child;
+                }
+                $result[] = $node;
+            }
+        } else {
+            $frames = $frame->listByFilter($filter)->asQuery()->getResult(\FETCH_ASSOC);
+            foreach ($frames as $row) {
+                $node = array();
+                $node['id'] = 'f' . $row['idFrame'];
+                $node['text'] = $row['name'];
+                $node['state'] = 'closed';
+                $node['iconCls'] = 'icon-blank fa fa-square fa16px entity_frame';
+                $node['entry'] = $row['entry'];
+                $result[] = $node;
+            }
+        }
+        return $result;
+    }
+
+    public function listFramesLU($data, $idLanguage = '')
+    {
+        $lu = new fnbr\models\ViewLU();
+        $filter = (object)['lu' => $data->lu, 'idLanguage' => $idLanguage];
+        $lus = $lu->listByFilter($filter)->asQuery()->getResult(\FETCH_ASSOC);
+        $result = array();
+        foreach ($lus as $row) {
             $node = array();
-            $node['id'] = 'f' . $row['idFrame'];
-            $node['text'] = $row['name'];
+            $node['id'] = 'l' . $row['idLU'];
+            $node['text'] = $row['name'] . ' [' . $row['frameName'] . ']';
             $node['state'] = 'closed';
-            $node['iconCls'] = 'icon-blank fa fa-square fa16px entity_frame';
+            $node['iconCls'] = 'icon-blank fa fa-hashtag fa12px entity_lu';
+            $node['entry'] = $row['entry'];
+            $result[] = $node;
+        }
+        return $result;
+    }
+
+    public function listFramesFE($data, $idLanguage = '')
+    {
+        $icon = [
+            "cty_core" => "fa fa-circle",
+            "cty_peripheral" => "fa fa-dot-circle-o",
+            "cty_extra-thematic" => "fa fa-circle-o",
+            "cty_core-unexpressed" => "fa fa-circle-o"
+        ];
+        $fe = new fnbr\models\ViewFrameElement();
+        $filter = (object)['fe' => $data->fe, 'idLanguage' => $idLanguage];
+        $fes = $fe->listByFilter($filter)->asQuery()->getResult(\FETCH_ASSOC);
+        $result = array();
+        foreach ($fes as $row) {
+            $node = array();
+            $node['id'] = 'e' . $row['idFrameElement'];
+            $node['text'] = $row['name'] . ' [' . $row['frameName'] . ']';
+            $node['state'] = 'closed';
+            $node['iconCls'] = 'icon-blank fa-icon ' . $icon[$row['typeEntry']];
             $node['entry'] = $row['entry'];
             $result[] = $node;
         }
@@ -613,13 +730,13 @@ class StructureFrameService extends MService
                 $constraint = Base::createEntity('CN', 'con');
                 $cf = new fnbr\models\FrameElement($data->idFrameElement);
                 $frame = new fnbr\models\Frame($data->idFrame);
-                Base::createConstraintInstance($constraint->getIdEntity(), 'con_frame', $cf->getIdEntity(), $frame->getIdEntity());
+                Base::createConstraintInstance($constraint->getIdEntity(), 'rel_constraint_frame', $cf->getIdEntity(), $frame->getIdEntity());
             }
             if ($data->idSemanticType != '') {
                 $constraint = Base::createEntity('CN', 'con');
                 $cf = new fnbr\models\FrameElement($data->idFrameElement);
                 $st = new fnbr\models\SemanticType($data->idSemanticType);
-                Base::createConstraintInstance($constraint->getIdEntity(), 'con_semtype', $cf->getIdEntity(), $st->getIdEntity());
+                Base::createConstraintInstance($constraint->getIdEntity(), 'rel_constraint_semtype', $cf->getIdEntity(), $st->getIdEntity());
             }
             if ($data->idFEQualia != '') {
                 $fe = new fnbr\models\FrameElement($data->idFrameElement);

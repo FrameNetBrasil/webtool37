@@ -14,4 +14,63 @@ class SemanticTypeController extends MController {
         $query = $model->listForLookupLU();
         $this->renderJSON($model->gridDataAsJSON($query, $rowsOnly));
     }
+
+    public function listFrameDomain($id)
+    {
+        $relations = fnbr\models\Base::relationCriteria('ViewFrame', 'SemanticType', 'rel_framal_domain', 'SemanticType.idSemanticType');
+        $relations->where("idFrame = {$id}");
+        $domains = $relations->asQuery()->chunkResult('idSemanticType','idSemanticType');
+        $st = new fnbr\models\SemanticType();
+        $sts = $st->listFrameDomain()->asQuery()->getResult();
+        $result = array();
+        foreach ($sts as $row) {
+            $node = array();
+            $node['idSemanticType'] = $row['idSemanticType'];
+            $node['idEntity'] = $row['idEntity'];
+            $node['name'] = $row['name'];
+            $node['checked'] = ($domains[$row['idSemanticType']] != '');
+            $result[] = $node;
+        }
+        return $result;
+    }
+
+    public function listFrameType($id)
+    {
+        $relations = fnbr\models\Base::relationCriteria('ViewFrame', 'SemanticType', 'rel_framal_type', 'SemanticType.idSemanticType');
+        $relations->where("idFrame = {$id}");
+        $types = $relations->asQuery()->chunkResult('idSemanticType','idSemanticType');
+        $st = new fnbr\models\SemanticType();
+        $sts = $st->listFrameType()->asQuery()->getResult();
+        $result = array();
+        foreach ($sts as $row) {
+            $node = array();
+            $node['idSemanticType'] = $row['idSemanticType'];
+            $node['idEntity'] = $row['idEntity'];
+            $node['name'] = $row['name'];
+            $node['checked'] = ($types[$row['idSemanticType']] != '');
+            $result[] = $node;
+        }
+        return $result;
+    }
+
+    public function listFrameCluster($id)
+    {
+        $relations = fnbr\models\Base::relationCriteria('ViewFrame', 'SemanticType', 'rel_framal_cluster', 'SemanticType.idSemanticType');
+        $relations->where("idFrame = {$id}");
+        $clusters = $relations->asQuery()->chunkResult('idSemanticType','idSemanticType');
+        $st = new fnbr\models\SemanticType();
+        $sts = $st->listFrameCluster()->asQuery()->getResult();
+        $result = array();
+        foreach ($sts as $row) {
+            $node = array();
+            $node['idSemanticType'] = $row['idSemanticType'];
+            $node['idEntity'] = $row['idEntity'];
+            $node['name'] = "<b>" . $row['name'] . "</b>" . ' : ' . $row['description'] ;
+            $node['checked'] = ($clusters[$row['idSemanticType']] != '');
+            $result[] = $node;
+        }
+        return $result;
+    }
+
+
 }

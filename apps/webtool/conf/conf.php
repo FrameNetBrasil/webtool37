@@ -14,12 +14,26 @@ return [
     'options' => [
         'fetchStyle' => \FETCH_ASSOC,
         'language' => 'en',
-        'painter' => 'EasyUI',
         'templateEngine' => 'latte',
         'defaultPassword' => 'default',
-        'pageTitle' => 'FNBr Webtool 3.6.1 [github/webtool]',
-        'mainTitle' => 'FrameNet Brasil Webtool 3.6.1 [github/webtool]',
-        'baseURL' => 'http://localhost/webtool'
+        'pageTitle' => 'Webtool 3.6.3',
+        'mainTitle' => 'FrameNet Brasil Webtool 3.6.3 [github]',
+        'baseURL' => 'http://localhost/webtool',
+        'http' => 'http',
+        'startup' => 'webtool',
+        'dbsession' => false,
+        'debug' => true,
+        'charset' => 'UTF-8',
+        'timezone' => "America/Sao_Paulo",
+        'separatorDate' => '/',
+        'formatDate' => 'd/m/Y',
+        'formatTimestamp' => 'd/m/Y H:i:s',
+        'csv' => ';',
+        'mode' => 'DEV',
+        'painter' => 'EasyUI',
+        'dispatch' => 'index.php',
+        'varPath' => sys_get_temp_dir(),
+        'locale' => array("pt_BR.utf8", "ptb")
     ],
     'ui' => [
         'actions' => 'actions.php',
@@ -31,6 +45,19 @@ return [
         'AUTH0_CLIENT_SECRET' => '',
         'AUTH0_CALLBACK_URL' => 'http://x/auth0/callback.php',
         'logout' => 'https://framenetbr.auth0.com/v2/logout?returnTo=',
+    ],
+    'session' => [
+        'handler' => "file",
+        'timeout' => "60",
+        'exception' => false,
+        'check' => true
+    ],
+    'logs' => [
+        'path' => sys_get_temp_dir() . '/log',
+        'level' => 2,
+        'handler' => "socket",
+        'peer' => 'localhost',
+        'port' => $_ENV["TRACE_PORT"],
     ],
     'theme' => [
         'name' => 'webtool',
@@ -103,10 +130,10 @@ return [
     'db' => [
         'webtool' => [
             'driver' => 'pdo_mysql',
-            'host' => 'db_host',
-            'dbname' => 'webtool_db',
-            'user' => '',
-            'password' => '',
+            'host' => $_ENV['DB_HOST'] . ':' . $_ENV['DB_PORT'],
+            'dbname' => $_ENV['DB_NAME'],
+            'user' => $_ENV['DB_USER'],
+            'password' => $_ENV['DB_PASS'],
             'formatDate' => '%e/%m/%Y',
             'formatDateWhere' => '%Y/%m/%e',
             'formatTime' => '%T',

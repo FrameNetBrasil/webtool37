@@ -1,41 +1,45 @@
 <?xml version="1.0"?>
 <view>
-    <mformdialog id="formAddConstraintFE" style="height:250px;">
-        <property title="$this->data->title" onClose="structure.reloadFrame();"/>
+    <mform id="formAddConstraintFE" border="1px">
+        <property title="$this->data->title"/>
         <fields>
             <div>
                 <mhiddenfield id="idFrameElement" value="$this->data->idFrameElement"/>
-                <mlabel text="$this->data->fe"/>
             </div>
-            <maccordion id="aa" style="width:400px;height:210px;">
-                <div title="FE > Frame" style="overflow:auto;padding:10px;">
-                    <label>Minimum 2 letters to search</label>
-                    <include component="MLookupFrame.php" id="idFrame"/>
+            <mpanel title="FE > Frame" style="overflow:auto;padding:10px;">
+                <label>Minimum 2 letters to search</label>
+                <include component="MLookupFrame.php" id="idFrame"/>
+            </mpanel>
+            <mpanel title="FE > Semantic Type" style="overflow:auto;padding:10px;">
+                <include component="MLookupSemanticType.php" id="idSemanticType"/>
+            </mpanel>
+            <mpanel title="FE &lt; Qualia &gt; FE" style="overflow:auto;padding:10px;">
+                <div>
+                    <mlabel text="Qualia Relation"/>
                 </div>
-                <div title="FE > Semantic Type" style="overflow:auto;padding:10px;">
-                    <include component="MLookupSemanticType.php" id="idSemanticType"/>
+                <include component="MLookupQualiaRelation.php" id="relation"/>
+                <div>
+                    <mlabel text="FE"/>
                 </div>
-                <div title="FE &lt; Qualia &gt; FE" style="overflow:auto;padding:10px;">
-                    <div><mlabel text="Qualia Relation"/></div>
-                    <include component="MLookupQualiaRelation.php" id="relation"/>
-                    <div><mlabel text="FE"/></div>
-                    <include component="MLookupFEQualia.php" id="idFEQualia"/>
+                <include component="MLookupFEQualia.php" id="idFEQualia"/>
+            </mpanel>
+            <mpanel title="FE &lt; Metonymy &gt; FE" style="overflow:auto;padding:10px;">
+                <div>
+                    <mlabel text="FE"/>
                 </div>
-                <div title="FE &lt; Metonymy &gt; FE" style="overflow:auto;padding:10px;">
-                    <div><mlabel text="FE"/></div>
-                    <include component="MLookupFEMetonymy.php" id="idFEMetonymy"/>
+                <include component="MLookupFEMetonymy.php" id="idFEMetonymy"/>
+            </mpanel>
+            <mpanel title="FE &lt; Metonymy &gt; LU" style="overflow:auto;padding:10px;">
+                <div>
+                    <label>Frame.LU (minimum 3 letters of Frame name to search)</label>
                 </div>
-                <div title="FE &lt; Metonymy &gt; LU" style="overflow:auto;padding:10px;">
-                    <div><label>Frame.LU (minimum 3 letters of Frame name to search)</label></div>
-                    <include component="MLookupLU.php" id="idLUMetonymy"/>
-                </div>
-            </maccordion>
+                <include component="MLookupLU.php" id="idLUMetonymy"/>
+            </mpanel>
         </fields>
-        <tools>
-            <mlinkbutton id="lbCloseCxn" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true"
-                         action="$this->data->close"/>
-            <mlinkbutton id="lbSaveCxn" iconCls="icon-save" text="{{_M('Save')}}" plain="true"
-                         action="$this->data->save"/>
-        </tools>
-    </mformdialog>
+        <buttons>
+            <mbutton id="lbSaveCxn" iconCls="icon-save" text="{{_M('Save')}}" plain="true"
+                     action="$this->data->save"/>
+
+        </buttons>
+    </mform>
 </view>

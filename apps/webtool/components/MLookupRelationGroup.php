@@ -5,7 +5,7 @@ class MLookupRelationGroup extends MControl
 
     public function generate()
     {
-        $url = Manager::getAppURL('', 'structure/relationgroup/lookupData');
+        $url = Manager::getAppURL('', 'data/relationgroup/lookupData');
         $onLoad = <<<EOT
         
         $('#{$this->property->id}').combogrid({

@@ -1,10 +1,10 @@
-{{var $toolbar = 'toolbar' . $data->idFrame}}
+{{var $toolbar = 'toolbarFrameDomain' . $data->idFrame}}
 {{var $lbSave = 'lbSaveDomain' . $data->idFrame}}
-{{var $grid = 'grid' . $data->idFrame}}
+{{var $grid = 'gridFrameDomain' . $data->idFrame}}
 
 <input type="hidden" id='idFrame' name='idFrame' value={{$data->idFrame}} />
 <input type="hidden" id='idGrid' name='idGrid' value={{$grid}} />
-<input type="hidden" id='toSave' name='toSave' value='' />
+<input type="hidden" id='toSaveDomain' name='toSaveDomain' value='' />
 <table id={{$grid}}></table>
 <div id={{$toolbar}}>
     <a id={{$lbSave}} href="#"></a>
@@ -12,8 +12,8 @@
 <script type="text/javascript">
     $(function () {
         $('#' + {{$grid}}).datagrid({
-            url: {{manager::getAppURL('', 'structuredomain/listFrameDomain/' . $data->idFrame)}},
-            idField:'idDomain',
+            url: {{manager::getAppURL('', 'data/semantictype/listFrameDomain/' . $data->idFrame)}},
+            idField:'idSemanticType',
             width: 450,
             height: 250,
             title: 'Domains',
@@ -22,7 +22,7 @@
             toolbar: '#' + {{$toolbar}},
             columns:[[
                 {field: 'ck', checkbox: true},
-                {field: 'idDomain', hidden:true},
+                {field: 'idSemanticType', hidden:true},
                 {field: 'idEntity', hidden:true},
                 {field: 'name', title:'Type',width:'100%'}
             ]],
@@ -41,8 +41,8 @@
         $('#' + {{$lbSave}}).linkbutton({
             onClick: function(){
                 var rows = $('#' + {{$grid}}).datagrid('getChecked');
-                $('#toSave').attr('value','json:' + JSON.stringify(rows));
-                manager.doAction("@data/domain/saveFrameDomain|{{$data->form|noescape}}");
+                $('#toSaveDomain').attr('value','json:' + JSON.stringify(rows));
+                manager.doAction("@structure/semantictype/updateFrameDomain|{{$data->form|noescape}}");
             },
             iconCls: "icon-edit",
             title: 'Save Domains',

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<view>
+    <mform id="formFrameClassification" border="1px">
+        <property title="$this->data->title" onClose="structure.reloadFrame();"/>
+        <fields>
+            <div class="row q-pa-md" style="width:100%">
+                <div class="col">
+                    <include component="formFrameType.html"/>
+                </div>
+                <div class="col">
+                    <include component="formFrameDomain.html"/>
+                </div>
+            </div>
+            <div class="row q-pa-md" style="width:100%">
+                <div class="col">
+                    <include component="formFrameCluster.html"/>
+                </div>
+            </div>
+
+        </fields>
+        <data load="$this->data->object"/>
+    </mform>
+</view>

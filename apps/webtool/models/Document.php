@@ -167,9 +167,11 @@ class Document extends map\DocumentMap
         $sentence->setText($text);
         $sentence->setParagraphOrder($order);
         $sentence->setIdParagraph($paragraph->getId());
-        $sentence->setIdDocument($paragraph->getIdDocument());
         $sentence->setIdLanguage($idLanguage);
+        $sentence->setIdDocument($this->getId());
         $sentence->save();
+        $sentence->setDocuments([$this]);
+        $sentence->saveAssociation('documents');
         return $sentence;
     }
 

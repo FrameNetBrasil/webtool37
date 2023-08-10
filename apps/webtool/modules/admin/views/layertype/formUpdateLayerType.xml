@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<view>
+    <mformdialog id="formUpdateLayerType">
+        <property title="$this->data->title" onClose="structure.reload();"/>
+        <fields>
+            <mhiddenfield id="layertype_idLayerType"/>
+            <mtextfield id="layertype_entry" label="Entry:" prefix="lty_" width="250px"/> 
+            <mbooleanfield id="layertype_allowsApositional" label="allowsApositional"  value="1"/> 
+            <mbooleanfield id="layertype_isAnnotation" label="isAnnotation" value="1"/> 
+            <mtextfield id="layertype_order" label="Order:" width="50px"/> 
+            <include component="MLookupLayerGroup.php" id="layertype_idLayerGroup" label="Layer Group" value="$this->data->idLayerGroup"/>
+        </fields>
+        <tools>
+            <mlinkbutton id="lbCloseLayerType" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
+            <mlinkbutton id="lbSaveLayerType" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+        </tools>
+        <data load="$this->data->object"/>
+    </mformdialog>
+</view>

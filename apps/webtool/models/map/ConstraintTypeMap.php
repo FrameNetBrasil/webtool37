@@ -2,40 +2,42 @@
 
 namespace fnbr\models\map;
 
-class ConstraintTypeMap extends \MBusinessModel {
+class ConstraintTypeMap extends \MBusinessModel
+{
 
-    
-    public static function ORMMap() {
+
+    public static function ORMMap()
+    {
 
         return array(
             'class' => \get_called_class(),
             'database' => \Manager::getConf('fnbr.db'),
             'table' => 'relationtype',
             'attributes' => array(
-                'idConstraintType' => array('column' => 'idRelationType','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
-                'entry' => array('column' => 'entry','type' => 'string'),
-                'prefix' => array('column' => 'prefix','type' => 'string'),
-                'typeEntity1' => array('column' => 'nameEntity1','type' => 'string'),
-                'typeEntity2' => array('column' => 'nameEntity2','type' => 'string'),
-                'idTypeInstance' => array('column' => 'idTypeInstance','type' => 'integer'),
-                'idRelationGroup' => array('column' => 'idRelationGroup','type' => 'integer'),
+                'idConstraintType' => array('column' => 'idRelationType', 'key' => 'primary', 'idgenerator' => 'identity', 'type' => 'integer'),
+                'entry' => array('column' => 'entry', 'type' => 'string'),
+                'prefix' => array('column' => 'prefix', 'type' => 'string'),
+                'typeEntity1' => array('column' => 'nameEntity1', 'type' => 'string'),
+                'typeEntity2' => array('column' => 'nameEntity2', 'type' => 'string'),
+                'idTypeInstance' => array('column' => 'idTypeInstance', 'type' => 'integer'),
+                'idRelationGroup' => array('column' => 'idRelationGroup', 'type' => 'integer'),
             ),
             'associations' => array(
-                'typeinstance' => array('toClass' => 'fnbr\models\TypeInstance', 'cardinality' => 'oneToOne' , 'keys' => 'idTypeInstance:idTypeInstance'),
-                'relationgroup' => array('toClass' => 'fnbr\models\RelationGroup', 'cardinality' => 'oneToOne' , 'keys' => 'idRelationGroup:idRelationGroup'),
-                'entries' => array('toClass' => 'fnbr\models\Entry', 'cardinality' => 'oneToMany' , 'keys' => 'entry:entry'),
+                'typeinstance' => array('toClass' => 'fnbr\models\TypeInstance', 'cardinality' => 'oneToOne', 'keys' => 'idTypeInstance:idTypeInstance'),
+                'relationgroup' => array('toClass' => 'fnbr\models\RelationGroup', 'cardinality' => 'oneToOne', 'keys' => 'idRelationGroup:idRelationGroup'),
+                'entries' => array('toClass' => 'fnbr\models\Entry', 'cardinality' => 'oneToMany', 'keys' => 'entry:entry'),
             )
         );
     }
-    
+
     /**
-     * 
-     * @var integer 
+     *
+     * @var integer
      */
     protected $idConstraintType;
     /**
-     * 
-     * @var string 
+     *
+     * @var string
      */
     protected $entry;
     /**
@@ -60,6 +62,12 @@ class ConstraintTypeMap extends \MBusinessModel {
     protected $idTypeInstance;
 
     /**
+     *
+     * @var integer
+     */
+    protected $idRelationGroup;
+
+    /**
      * Associations
      */
     protected $typeinstance;
@@ -69,54 +77,70 @@ class ConstraintTypeMap extends \MBusinessModel {
     /**
      * Getters/Setters
      */
-    public function getIdConstraintType() {
+    public function getIdConstraintType()
+    {
         return $this->idConstraintType;
     }
 
-    public function setIdConstraintType($value) {
+    public function setIdConstraintType($value)
+    {
         $this->idConstraintType = $value;
     }
 
-    public function getEntry() {
+    public function getEntry()
+    {
         return $this->entry;
     }
 
-    public function setEntry($value) {
+    public function setEntry($value)
+    {
         $this->entry = $value;
     }
 
-    public function getPrefix() {
+    public function getPrefix()
+    {
         return $this->prefix;
     }
 
-    public function setPrefix($value) {
+    public function setPrefix($value)
+    {
         $this->prefix = $value;
     }
 
-    public function getTypeEntity1() {
+    public function getTypeEntity1()
+    {
         return $this->typeEntity1;
     }
 
-    public function setTypeEntity1($value) {
+    public function setTypeEntity1($value)
+    {
         $this->typeEntity1 = $value;
     }
 
-    public function getTypeEntity2() {
+    public function getTypeEntity2()
+    {
         return $this->typeEntity1;
     }
 
-    public function setTypeEntity2($value) {
+    public function setTypeEntity2($value)
+    {
         $this->typeEntity2 = $value;
     }
 
-    public function getIdTypeInstance() {
+    public function getIdTypeInstance()
+    {
         return $this->idTypeInstance;
     }
 
-    public function setIdTypeInstance($value) {
+    public function setIdTypeInstance($value)
+    {
         $this->idTypeInstance = $value;
     }
 
+    public function setIdRelationGroup($value)
+    {
+        $this->idRelationGroup = $value;
+    }
     /**
      *
      * @return Association

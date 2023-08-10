@@ -300,4 +300,5 @@ class User extends map\UserMap
         parent::save();
     }
 
+
 }

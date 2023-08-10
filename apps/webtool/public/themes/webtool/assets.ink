@@ -2,10 +2,10 @@
 
 scripts/bootstrap-3.2.0-dist/css/bootstrap.min.css
 scripts/bootstrap-switch-master/css/bootstrap3/bootstrap-switch.min.css
-;scripts/jquery-easyui-1.5.5.4/themes/material-teal/easyui.css
-;scripts/jquery-easyui-1.5.5.4/themes/icon.css
 scripts/jquery-easyui-1.5.2/themes/webtool/easyui.css
 scripts/jquery-easyui-1.5.2/themes/icon.css
+;scripts/jquery-easyui-1.10.14/themes/webtool/easyui.css
+;scripts/jquery-easyui-1.10.14/themes/icon.css
 scripts/jointJS/joint.min.css
 scripts/trumbowyg/ui/trumbowyg.css
 scripts/jsplumb/jsplumbtoolkit-defaults.css
@@ -21,9 +21,8 @@ scripts/fontawesome-free-5.0.9/svg-with-js/js/fa-v4-shims.min.js
 ;scripts/fontawesome-free-5.11.2-web/js/fontawesome-all.min.js
 ;scripts/fontawesome-free-5.11.2-web/js/v4-shims.min.js
 scripts/bootstrap-3.2.0-dist/js/bootstrap.min.js
-;scripts/jquery-easyui-1.5.5.4/jquery.easyui.min.js
 scripts/jquery-easyui-1.5.2/jquery.easyui.min.js
-;scripts/jquery-easyui-1.5.2/locale/easyui-lang-pt_BR.js
+;scripts/jquery-easyui-1.10.14/jquery.easyui.min.js
 scripts/bootstrapvalidator-dist-0.5.3/dist/js/bootstrapValidator.js
 scripts/bootstrapvalidator-dist-0.5.3/dist/js/language/pt_BR.js
 scripts/bootstrap-switch-master/js/bootstrap-switch.min.js

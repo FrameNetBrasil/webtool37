@@ -118,6 +118,36 @@ class SemanticTypeController extends MController
         } catch (\Exception $e) {
             $this->renderPrompt('error', $e->getMessage());
         }
-    }    
-    
+    }
+
+    public function updateFrameCluster() {
+        try {
+            $structure = Manager::getAppService('structuresemantictype');
+            $structure->updateFrameCluster($this->data->idFrame, $this->data->toSaveCluster);
+            $this->renderPrompt('information', "Ok");
+        } catch (\Exception $e) {
+            $this->renderPrompt('error', $e->getMessage());
+        }
+    }
+
+    public function updateFrameDomain() {
+        try {
+            $structure = Manager::getAppService('structuresemantictype');
+            $structure->updateFrameDomain($this->data->idFrame, $this->data->toSaveDomain);
+            $this->renderPrompt('information', "Ok");
+        } catch (\Exception $e) {
+            $this->renderPrompt('error', $e->getMessage());
+        }
+    }
+
+    public function updateFrameType() {
+        try {
+            $structure = Manager::getAppService('structuresemantictype');
+            $structure->updateFrameType($this->data->idFrame, $this->data->toSaveType);
+            $this->renderPrompt('information', "Ok");
+        } catch (\Exception $e) {
+            $this->renderPrompt('error', $e->getMessage());
+        }
+    }
+
 }

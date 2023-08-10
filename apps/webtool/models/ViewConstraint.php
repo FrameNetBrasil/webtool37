@@ -272,7 +272,7 @@ HERE;
     {
         $cmd = <<<HERE
         SELECT c.idConstraint
-        FROM ConstraintInstance c
+        FROM View_Constraint c
         WHERE (c.idConstraintInstance = {$idConstraintInstance})
 HERE;
         $idConstraint = $this->getDb()->getQueryCommand($cmd)->getResult()[0]['idConstraint'];

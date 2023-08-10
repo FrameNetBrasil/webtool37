@@ -23,21 +23,47 @@ class FrameController extends MController
     public function frameTree()
     {
         $structure = Manager::getAppService('structureframe');
-        if ($this->data->id == '') {
-            $children = $structure->listFrames($this->data, $this->idLanguage);
-            $data = (object)[
-                'id' => 'root',
-                'state' => 'open',
-                'iconCls' => 'icon-blank fa fa-sitemap fa16px entity_frame',
-                'text' => 'Frames',
-                'children' => $children
-            ];
-            $json = json_encode([$data]);
-        } elseif ($this->data->id{0} == 'f') {
+        if (($this->data->id == '') || ($this->data->id == 'root')) {
+            if ($this->data->lu != '') {
+                $children = $structure->listFramesLU($this->data, $this->idLanguage);
+                $data = (object)[
+                    'id' => 'root',
+                    'state' => 'open',
+                    'iconCls' => 'icon-blank fa fa-sitemap fa16px entity_frame',
+                    'text' => 'LUs',
+                    'children' => $children
+                ];
+                $json = json_encode([$data]);
+            } else if ($this->data->fe != '') {
+                $children = $structure->listFramesFE($this->data, $this->idLanguage);
+                $data = (object)[
+                    'id' => 'root',
+                    'state' => 'open',
+                    'iconCls' => 'icon-blank fa fa-sitemap fa16px entity_frame',
+                    'text' => 'FEs',
+                    'children' => $children
+                ];
+                $json = json_encode([$data]);
+            } else {
+                $children = $structure->listFrames($this->data, $this->idLanguage);
+                if ($this->data->id == '') {
+                    $data = (object)[
+                        'id' => 'root',
+                        'state' => 'open',
+                        'iconCls' => 'icon-blank fa fa-sitemap fa16px entity_frame',
+                        'text' => 'Frames',
+                        'children' => $children
+                    ];
+                    $json = json_encode([$data]);
+                } else {
+                    $json = json_encode($children);
+                }
+            }
+        } elseif ($this->data->id[0] == 'f') {
             $json = $structure->listFEsLUs(substr($this->data->id, 1), $this->idLanguage);
-        //} elseif ($this->data->id{0} == 'l') {
-        //    $json = $structure->listLUSubCorpusConstraints(substr($this->data->id, 1));
-        } elseif ($this->data->id{0} == 'e') {
+            //} elseif ($this->data->id{0} == 'l') {
+            //    $json = $structure->listLUSubCorpusConstraints(substr($this->data->id, 1));
+        } elseif ($this->data->id[0] == 'e') {
             $json = $structure->listConstraintsFE(substr($this->data->id, 1));
             mdump($json);
         }
@@ -53,11 +79,15 @@ class FrameController extends MController
     public function newFrame()
     {
         try {
-            $model = new fnbr\models\Frame();
-            $this->data->frame->entry = 'frm_' . strtolower(str_replace('frm_', '', $this->data->frame->entry));
-            $model->setData($this->data->frame);
-            $inheritsFromBase = ($this->data->inheritsFromBase == 'on');
-            $relations = $model->createNew($this->data->frame, $inheritsFromBase);
+            $frame = new fnbr\models\Frame();
+            //$this->data->frame->entry = 'frm_' . strtolower(str_replace('frm_', '', $this->data->frame->entry));
+            $this->data->frame->entry = strtolower('frm_' . $this->data->frame->nameEN);
+            $frame->setData($this->data->frame);
+            $inheritsFromBase = false;// ($this->data->inheritsFromBase == 'on');
+            $relations = $frame->createNew($this->data->frame, $inheritsFromBase);
+            $entry = new fnbr\models\Entry();
+            $entry->updateByIdEntity($frame->getIdEntity(), 1, $this->data->frame->namePT);
+            $entry->updateByIdEntity($frame->getIdEntity(), 2, $this->data->frame->nameEN);
             $this->renderResponse('ok', 'Frame created.');
         } catch (\Exception $e) {
             $this->renderResponse('error', $e->getMessage());
@@ -123,6 +153,16 @@ class FrameController extends MController
         $this->render();
     }
 
+    public function formFrameClassification()
+    {
+        $model = new fnbr\models\Frame($this->data->id);
+        $this->data->object = $model->getData();
+        $this->data->idFrame = $model->getIdFrame();
+        $this->data->form = "formFrameClassification";
+        $this->data->title = 'Frame: ' . '  [' . $model->getName() . ']';
+        $this->render();
+    }
+
     public function formFrameStatus()
     {
         $model = new fnbr\models\Frame($this->data->id);
@@ -147,7 +187,8 @@ class FrameController extends MController
     {
         $this->data->idFrame = $this->data->id;
         $model = new fnbr\models\Frame($this->data->idFrame);
-        $this->data->frame = $model->getEntry() . '  [' . $model->getName() . ']';
+        //$this->data->frame = $model->getEntry() . '  [' . $model->getName() . ']';
+        $this->data->frame = $model->getName();
         $this->data->save = "@structure/frame/newFrameElement|formNewFrameElement";
         $this->data->close = "!$('#formNewFrameElement_dialog').dialog('close');";
         $this->data->title = _M('new FrameElement');
@@ -157,11 +198,16 @@ class FrameController extends MController
     public function newFrameElement()
     {
         try {
-            $model = new fnbr\models\FrameElement();
-            $this->data->frameelement->entry = 'fe_' . $this->data->frameelement->entry;
-            $model->setData($this->data->frameelement);
-            $model->save($this->data->frameelement);
-            $this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->frameelement->entry}');");
+            $fe = new fnbr\models\FrameElement();
+            //$this->data->frameelement->entry = 'fe_' . $this->data->frameelement->entry;
+            $this->data->frameelement->entry = strtolower('fe_' . $this->data->frameelement->nameEN . '_' . $this->data->frameelement->idFrame);
+            $fe->setData($this->data->frameelement);
+            $fe->save($this->data->frameelement);
+            $entry = new fnbr\models\Entry();
+            $entry->updateByIdEntity($fe->getIdEntity(), 1, $this->data->frameelement->namePT);
+            $entry->updateByIdEntity($fe->getIdEntity(), 2, $this->data->frameelement->nameEN);
+            //$this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->frameelement->entry}');");
+            $this->renderPrompt('information', 'OK');
         } catch (\Exception $e) {
             $this->renderPrompt('error', $e->getMessage());
         }
@@ -174,7 +220,8 @@ class FrameController extends MController
         $this->data->object = $model->getData();
         $this->data->save = "@structure/frame/updateFrameElement|formUpdateFrameElement";
         $this->data->close = "!$('#formUpdateFrameElement_dialog').dialog('close');";
-        $this->data->title = 'FrameElement: ' . $model->getEntry() . '  [' . $model->getName() . ']';
+//        $this->data->title = 'FrameElement: ' . $model->getEntry() . '  [' . $model->getName() . ']';
+        $this->data->title = 'FrameElement: ' . $model->getName();
         $this->render();
     }
 
@@ -182,10 +229,11 @@ class FrameController extends MController
     {
         try {
             $model = new fnbr\models\FrameElement($this->data->frameelement->idFrameElement);
-            $model->updateEntry($this->data->frameelement->entry);
+//            $model->updateEntry($this->data->frameelement->entry);
             $model->setData($this->data->frameelement);
             $model->save($this->data->frameelement);
-            $this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->frameelement->entry}');");
+            //$this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->frameelement->entry}');");
+            $this->renderPrompt('information', 'OK');
         } catch (\Exception $e) {
             $this->renderPrompt('error', $e->getMessage());
         }
@@ -211,13 +259,12 @@ class FrameController extends MController
     public function formAddConstraintFE()
     {
         $this->data->idFrameElement = $this->data->id;
-        $model = new fnbr\models\FrameElement($this->data->idFrameElement);
-        $frame = $model->getFrame();
+        $fe = new fnbr\models\FrameElement($this->data->idFrameElement);
+        $frame = $fe->getFrame();
         $this->data->idFrame = $frame->getIdFrame();
-        $this->data->fe = 'FE: ' . $frame->getName() . '.' . $model->getName();
-        $this->data->save = "@structure/frame/addConstraintFE|formAddConstraintFE";
-        $this->data->close = "!$('#formAddConstraintFE_dialog').dialog('close');";
-        $this->data->title = _M('Add Constraint');
+        $this->data->fe = 'FE: ' . $frame->getName() . '.' . $fe->getName();
+        $this->data->save = "@structure/frame/addConstraintFE";
+        $this->data->title = $this->data->fe . ' - Add Constraints';
         $this->render();
     }
 
@@ -226,7 +273,7 @@ class FrameController extends MController
         try {
             $structure = Manager::getAppService('structureframe');
             $structure->addConstraintsFE($this->data);
-            $this->renderPrompt('information', 'Constraint added.');
+            $this->renderPrompt('information', 'Constraint added.', "!structure.reloadFrameParent();");
         } catch (\Exception $e) {
             $this->renderPrompt('error', "Add Constraint failed.");
         }
@@ -283,8 +330,8 @@ class FrameController extends MController
             $lu = new fnbr\models\LU();
             $this->data->lu->active = '1';
             $lu->save($this->data->lu);
-            $frame = fnbr\models\Frame::create($this->data->lu->idFrame);
-            fnbr\models\Base::createEntityRelation($lu->getIdEntity(), 'rel_evokes', $frame->getIdEntity());
+            //$frame = fnbr\models\Frame::create($this->data->lu->idFrame);
+            //fnbr\models\Base::createEntityRelation($lu->getIdEntity(), 'rel_evokes', $frame->getIdEntity());
             $updateLU = "!manager.doAction('@" . Manager::getApp() . "/structure/frame/formUpdateLU/{$lu->getId()}|formNewLU');";
             $this->renderPrompt('information', 'OK, LU created; go to edition.', $updateLU . "$('#formNewLU_dialog').dialog('close');");
         } catch (\Exception $e) {
@@ -372,11 +419,11 @@ class FrameController extends MController
     public function formAddConstraintLU()
     {
         $this->data->idLU = $this->data->id;
-        $model = new fnbr\models\LU($this->data->idLU);
-        $this->data->lu = 'LU: ' . $model->getName();
-        $this->data->save = "@structure/frame/addConstraintLU|formAddConstraintLU";
-        $this->data->close = "!$('#formAddConstraintLU_dialog').dialog('close');";
-        $this->data->title = _M('LU - Add Constraint');
+        $lu = new fnbr\models\LU($this->data->idLU);
+        $frame = $lu->getFrame();
+        $this->data->lu = 'LU: ' . $frame->getName() . '.' . $lu->getName();
+        $this->data->save = "@structure/frame/addConstraintLU";
+        $this->data->title = $this->data->lu . ' - Add Constraints';
         $this->render();
     }
 

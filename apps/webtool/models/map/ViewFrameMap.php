@@ -32,6 +32,7 @@ class ViewFrameMap extends \MBusinessModel {
                 'entries' => array('toClass' => 'fnbr\models\ViewEntryLanguage', 'cardinality' => 'oneToOne' , 'keys' => 'entry:entry'),
                 'lus' => array('toClass' => 'fnbr\models\ViewLU', 'cardinality' => 'oneToMany' , 'keys' => 'idFrame:idFrame'),
                 'fes' => array('toClass' => 'fnbr\models\ViewFrameElement', 'cardinality' => 'oneToMany' , 'keys' => 'idFrame:idFrame'),
+                'toRelations' => array('toClass' => 'fnbr\models\ViewRelation', 'cardinality' => 'oneToMany' , 'keys' => 'idEntity:idEntity1'),
             )
         );
     }

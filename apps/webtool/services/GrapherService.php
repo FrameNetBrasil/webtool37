@@ -69,6 +69,33 @@ class GrapherService extends MService
             $node['default'] = false;
             $result->$id = $node;
         }
+        $relations = $relation->listByFilter((object)['entry' => 'rel_hasconcept'])->asQuery()->getResult();
+        foreach ($relations as $row) {
+            $id = $row['entry'];
+            $node = array();
+            $node['id'] = $id;
+            $node['label'] = $row['name'];
+            $node['color'] = Manager::getConf("fnbr.color.{$id}");
+            $node['idType'] = 'rel_hasconcept';
+            $node['default'] = false;
+            $result->$id = $node;
+        }
+        // constraints
+        //
+        $constraintType = new \fnbr\models\ConstraintType();
+        $constraints = $constraintType->listAll()->asQuery()->getResult();
+        foreach($constraints as $constraint) {
+            if (in_array($constraint['entry'], ['con_cxn', 'con_element', 'con_udfeature','con_udrelation','con_lexeme','con_lemma','con_lu'])) {
+                $id = $constraint['entry'];
+                $node = [];
+                $node['id'] = $id;
+                $node['label'] = $constraint['name'];
+                $node['color'] = Manager::getConf("fnbr.color.{$id}");
+                $node['idType'] = 'constraint';
+                $node['default'] = false;
+                $result->$id = $node;
+            }
+        }
         return $result;
     }
 

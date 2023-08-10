@@ -1,6 +1,11 @@
 <?php
 
 
+use fnbr\models\Base;
+use fnbr\models\EntityRelation;
+use fnbr\models\Frame;
+use fnbr\models\RelationType;
+use fnbr\models\SemanticType;
 
 class StructureSemanticTypeService extends MService
 {
@@ -83,5 +88,56 @@ class StructureSemanticTypeService extends MService
         }
         $semanticType->delSemanticTypeFromEntity($idEntity, $idSemanticTypeEntity);
     }
-    
+
+    public function updateFrameCluster($idFrame, $list) {
+        $frame = Frame::create($idFrame);
+        $rt = new RelationType();
+        $c = $rt->getCriteria()->select('idRelationType')->where("entry = 'rel_framal_cluster'");
+        $er = new EntityRelation();
+        $transaction = $er->beginTransaction();
+        $criteria = $er->getDeleteCriteria();
+        $criteria->where("idEntity1 = {$frame->getIdEntity()}");
+        $criteria->where("idRelationType", "=", $c);
+        $criteria->delete();
+        foreach($list as $cluster) {
+            $st = SemanticType::create($cluster->idSemanticType);
+            Base::createEntityRelation($frame->getIdEntity(), 'rel_framal_cluster', $st->getIdEntity());
+        }
+        $transaction->commit();
+    }
+
+    public function updateFrameType($idFrame, $list) {
+        $frame = Frame::create($idFrame);
+        $rt = new RelationType();
+        $c = $rt->getCriteria()->select('idRelationType')->where("entry = 'rel_framal_type'");
+        $er = new EntityRelation();
+        $transaction = $er->beginTransaction();
+        $criteria = $er->getDeleteCriteria();
+        $criteria->where("idEntity1 = {$frame->getIdEntity()}");
+        $criteria->where("idRelationType", "=", $c);
+        $criteria->delete();
+        foreach($list as $cluster) {
+            $st = SemanticType::create($cluster->idSemanticType);
+            Base::createEntityRelation($frame->getIdEntity(), 'rel_framal_type', $st->getIdEntity());
+        }
+        $transaction->commit();
+    }
+
+    public function updateFrameDomain($idFrame, $list) {
+        $frame = Frame::create($idFrame);
+        $rt = new RelationType();
+        $c = $rt->getCriteria()->select('idRelationType')->where("entry = 'rel_framal_domain'");
+        $er = new EntityRelation();
+        $transaction = $er->beginTransaction();
+        $criteria = $er->getDeleteCriteria();
+        $criteria->where("idEntity1 = {$frame->getIdEntity()}");
+        $criteria->where("idRelationType", "=", $c);
+        $criteria->delete();
+        foreach($list as $cluster) {
+            $st = SemanticType::create($cluster->idSemanticType);
+            Base::createEntityRelation($frame->getIdEntity(), 'rel_framal_domain', $st->getIdEntity());
+        }
+        $transaction->commit();
+    }
+
 }

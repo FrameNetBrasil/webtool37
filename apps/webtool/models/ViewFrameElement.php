@@ -20,6 +20,27 @@ class ViewFrameElement extends map\ViewFrameElementMap {
         return [];
     }
 
+    public function listByFilter($filter)
+    {
+        $criteria = $this->getCriteria()->select('*, entries.name, frameEntries.name frameName')->orderBy('entries.name');
+        $criteria->setAssociationAlias("frame.entries", "frameEntries");
+        if ($filter->idFrameElement) {
+            $idFrameElement = $filter->idFrameElement;
+            if (is_array($idFrameElement)) {
+                $criteria->where("idFrameElement", "IN", $idFrameElement);
+            } else {
+                $criteria->where("idFrameElement = {$idFrameElement}");
+            }
+        }
+        if ($filter->fe) {
+            $criteria->where("entries.name like '{$filter->fe}%'");
+            $criteria->where("entries.idLanguage = {$filter->idLanguage}");
+        }
+        $criteria->where("frameEntries.idLanguage = {$filter->idLanguage}");
+        $criteria->orderBy('entries.name,frameEntries.name');
+        return $criteria;
+    }
+
     public function relations($idFrameElement = '', $relationType = '', $relationGroup = '')
     {
         $criteria = $this->getCriteria()->select('vr.*');

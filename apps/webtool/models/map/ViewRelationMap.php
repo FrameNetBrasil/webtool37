@@ -40,6 +40,7 @@ class ViewRelationMap extends \MBusinessModel {
                 'entity1' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity1:idEntity'),
                 'entity2' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity2:idEntity'),
                 'entity3' => array('toClass' => 'fnbr\models\Entity', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity3:idEntity'),
+                'toSemanticType' => array('toClass' => 'fnbr\models\SemanticType', 'cardinality' => 'oneToOne' , 'keys' => 'idEntity2:idEntity'),
             )
         );
     }

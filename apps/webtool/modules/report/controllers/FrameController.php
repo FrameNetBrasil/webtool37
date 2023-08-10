@@ -50,7 +50,9 @@ class FrameController extends MController
         $this->data->fecoreset = $report->getFECoreSet($frame);
         $this->data->frame->entry->description = $report->decorate($this->data->frame->entry->description, $this->data->fe['styles']);
         $this->data->relations = $report->getRelations($frame);
+        $this->data->classification = $report->getClassification($frame);
         $this->data->lus = $report->getLUs($frame, $this->idLanguage );
+        mdump($this->data);
         $this->render();
     }
     
