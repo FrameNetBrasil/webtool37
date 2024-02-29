@@ -1,0 +1,45 @@
+<table id="sentencesMM"  style="width:100%" >
+    <thead>
+    <tr>
+        <th data-options="field:'idAnnotationSet', hidden:true">idAnnotationSet</th>
+        <th data-options="field:'idSentenceMM',sortable:true" width="5%">idSentence</th>
+        <th data-options="field:'startTimestamp', align:'right'" width="5%">start</th>
+        <th data-options="field:'endTimestamp', align:'right'" width="5%">end</th>
+        <th data-options="field:'text'" width="75%">Sentence</th>
+    </tr>
+    </thead>
+</table>
+
+<script type="text/javascript">
+    $(function () {
+
+        //annotation.idSubCorpus = {{$data->idSubCorpus}};
+        annotation.idDocumentMM = {{$data->documentMM->idDocumentMM}};
+
+        annotation.toolbarSentences = [
+            {
+                text: 'Annotate Video',
+                iconCls: 'fa fa-video-camera fa16px',
+                handler: function () {
+                    window.open({{$manager->getURL('annotation/multimodal/annotationVideo')}} + '/' + annotation.idDocumentMM, '_blank');
+                }
+            },
+        ];
+
+
+        $('#sentencesMM').datagrid({
+            title: {{$data->documentMM->title}},
+            fit: true,
+            nowrap: false,
+            idField: 'idAnnotationSet',
+            toolbar: annotation.toolbarSentences,
+            url: {{$manager->getURL('annotation/multimodal/annotationSetMultimodal')}} + '/' + annotation.idDocumentMM,
+            method: 'get',
+            onSelect: function (rowIndex, rowData) {
+                $('#layersPane').html('');
+                console.log(rowData);
+                window.open({{$manager->getURL('annotation/multimodal/annotationSentence')}} + '/' + rowData.idSentenceMM + '/' + annotation.type, '_blank');
+            }
+        });
+    });
+</script>

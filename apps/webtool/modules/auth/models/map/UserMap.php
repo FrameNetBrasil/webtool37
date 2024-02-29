@@ -29,7 +29,7 @@ class UserMap extends \MBusinessModel
                 'auth0CreatedAt' => array('column' => 'auth0CreatedAt', 'type' => 'string'),
                 'lastLogin' => array('column' => 'lastLogin', 'type' => 'timestamp'),
 //                'idPerson' => array('column' => 'idPerson', 'type' => 'integer'),
-//                'idLanguage' => array('column' => 'idLanguage', 'type' => 'integer'),
+                'idLanguage' => array('column' => 'idLanguage', 'type' => 'integer'),
             ),
             'associations' => array(
 //                'person' => array('toClass' => 'fnbr\auth\models\Person', 'cardinality' => 'oneToOne', 'keys' => 'idPerson:idPerson'),
@@ -113,6 +113,7 @@ class UserMap extends \MBusinessModel
      * @var integer
      */
     protected $idPerson;
+    protected $idLanguage;
 
     /**
      * Associations
@@ -278,6 +279,15 @@ class UserMap extends \MBusinessModel
         $this->idPerson = $value;
     }
 
+    public function getIdLanguage()
+    {
+        return $this->idLanguage;
+    }
+
+    public function setIdLanguage($value)
+    {
+        $this->idLanguage = $value;
+    }
     /**
      *
      * @return Association
@@ -298,7 +308,6 @@ class UserMap extends \MBusinessModel
     {
         $this->person = $value;
     }
-
     /**
      *
      * @return Association

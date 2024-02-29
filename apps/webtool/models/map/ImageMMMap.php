@@ -8,7 +8,7 @@ class ImageMMMap extends \MBusinessModel {
 
         return array(
             'class' => \get_called_class(),
-            'database' => 'charon',
+            'database' => \Manager::getConf('fnbr.db'),
             'table' => 'imagemm',
             'attributes' => array(
                 'idImageMM' => array('column' => 'idImageMM','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),

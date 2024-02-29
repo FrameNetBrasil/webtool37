@@ -7,6 +7,11 @@ class FrameController extends MController {
         $criteria = $model->listForLookupName($this->data->q);
         $this->renderJSON($model->gridDataAsJSON($criteria));
     }
+    public function combobox(){
+        $model = new fnbr\models\Frame();
+        $result = $model->listForCombobox()->asQuery()->getResult();
+        $this->renderJSON(json_encode($result));
+    }
 
 /*
     public function main() {

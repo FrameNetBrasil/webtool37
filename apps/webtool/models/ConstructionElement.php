@@ -343,7 +343,47 @@ HERE;
             throw new \Exception($e->getMessage());
         }
     }
-    
+
+    public function saveData($data)
+    {
+        $schema = new Construction($data->idConstruction);
+        $data->entry = 'ce_' . mb_strtolower(str_replace('cxn_', '', $schema->getEntry())) . '_' . mb_strtolower(str_replace('ce_', '', $data->name));
+        $data->optional = $data->optional ?: false;
+        $data->head = $data->head ?: false;
+        $data->multiple = $data->multiple ?: false;
+        $transaction = $this->beginTransaction();
+        try {
+            $this->setData($data);
+            $entry = new Entry();
+            if ($this->isPersistent()) {
+                if ($this->getEntry() != $data->entry) {
+                    $entity = new Entity($this->getIdEntity());
+                    $entity->setAlias($data->entry);
+                    $entity->save();
+                    $entry->updateEntry($this->getEntry(), $data->entry, $data->name);
+                    $entry->setIdEntity($entity->getId());
+                }
+            } else {
+                $entity = new Entity();
+                $entity->setAlias($data->entry);
+                $entity->setType('CE');
+                $entity->save();
+                $entry = new Entry();
+                $entry->newEntry($data->entry, $entity->getIdEntity(), $data->name);
+                //Base::createEntityRelation($entity->getId(), 'rel_elementof', $schema->getIdEntity());
+                $this->setIdEntity($entity->getId());
+                $this->setIdConstruction($data->idConstruction);
+            }
+            $this->setActive(true);
+            parent::save();
+            Timeline::addTimeline("constructionelement",$this->getId(),"S");
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollback();
+            throw new \Exception($e->getMessage());
+        }
+    }
+
     public function saveModel(){
         parent::save();
         Timeline::addTimeline("constructionelement",$this->getId(),"S");

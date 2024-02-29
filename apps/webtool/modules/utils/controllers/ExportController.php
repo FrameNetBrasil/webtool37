@@ -110,10 +110,13 @@ class ExportController extends MController
             $idDocument = $this->data->id;
             $document = new fnbr\models\Document($idDocument);
             $service = Manager::getAppService('data');
-            $conll = $service->exportDocumentToCONLL($document);
-            $fileName = $document->getName() . '.conll.txt';
-            $mfile = MFile::file($conll, false, $fileName);
-            $this->renderFile($mfile);
+//            $conll = $service->exportDocumentToCONLL($document);
+//            $fileName = $document->getName() . '.conll.txt';
+//            $mfile = MFile::file($conll, false, $fileName);
+//            $this->renderFile($mfile);
+            $fileName = $service->exportDocumentToCONLL($document);
+            mdump($fileName);
+            $this->renderDownload($fileName);
         } catch (EMException $e) {
             $this->renderPrompt('error',$e->getMessage());
         }

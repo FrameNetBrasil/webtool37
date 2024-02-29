@@ -1,21 +1,9 @@
 <?php
-/**
- * @category   Maestro
- * @package    UFJF
- *  @subpackage fnbr
- * @copyright  Copyright (c) 2003-2013 UFJF (http://www.ufjf.br)
- * @license    http://siga.ufjf.br/license
- * @version
- * @since
- */
-
-// wizard - code section created by Wizard Module
-
 namespace fnbr\models\map;
 
 class SentenceMMMap extends \MBusinessModel {
 
-    
+
     public static function ORMMap() {
 
         return array(
@@ -26,41 +14,77 @@ class SentenceMMMap extends \MBusinessModel {
                 'idSentenceMM' => array('column' => 'idSentenceMM','key' => 'primary','idgenerator' => 'identity','type' => 'integer'),
                 'startTimestamp' => array('column' => 'startTimestamp','type' => 'string'),
                 'endTimestamp' => array('column' => 'endTimestamp','type' => 'string'),
+                'startTime' => array('column' => 'startTime','type' => 'float'),
+                'endTime' => array('column' => 'endTime','type' => 'float'),
+                'origin' => array('column' => 'origin','type' => 'integer'),
+                'idFlickr30k' => array('column' => 'idFlickr30k','type' => 'integer'),
                 'idSentence' => array('column' => 'idSentence','type' => 'integer'),
+                'idImageMM' => array('column' => 'idImageMM','type' => 'integer'),
+                'idDocumentMM' => array('column' => 'idDocumentMM','type' => 'integer'),
+                'idOriginMM' => array('column' => 'idOriginMM','type' => 'integer'),
             ),
             'associations' => array(
                 'sentence' => array('toClass' => 'fnbr\models\Sentence', 'cardinality' => 'oneToOne' , 'keys' => 'idSentence:idSentence'),
-                'annotationmm' => array('toClass' => 'fnbr\models\AnnotationMM', 'cardinality' => 'oneToMany' , 'keys' => 'idSentenceMM:idSentenceMM'),
+                'imagemm' => array('toClass' => 'fnbr\models\ImageMM', 'cardinality' => 'oneToOne' , 'keys' => 'idImagemMM:idImagemMM'),
+                'documentmm' => array('toClass' => 'fnbr\models\DocumentMM', 'cardinality' => 'oneToOne' , 'keys' => 'idDocumentMM:idDocumentMM'),
+                'originmm' => array('toClass' => 'fnbr\models\OriginMM', 'cardinality' => 'oneToOne' , 'keys' => 'idOriginMM:idOriginMM'),
+                'objectsentencemm' => array('toClass' => 'fnbr\models\ObjectSentenceMM', 'cardinality' => 'oneToMany' , 'keys' => 'idSentenceMM:idSentenceMM'),
             )
         );
     }
-    
+
     /**
-     * 
-     * @var integer 
+     *
+     * @var integer
      */
     protected $idSentenceMM;
     /**
-     * 
-     * @var string 
+     *
+     * @var string
      */
     protected $startTimestamp;
     /**
-     * 
-     * @var integer 
+     *
+     * @var integer
      */
     protected $endTimestamp;
     /**
-     * 
-     * @var string 
+     *
+     * @var float
+     */
+    protected $startTime;
+    /**
+     *
+     * @var float
+     */
+    protected $endTime;
+    /**
+     *
+     * @var integer
+     */
+    protected $origin;
+    /**
+     *
+     * @var integer
      */
     protected $idSentence;
-    protected $annotationMM;
+    /**
+     *
+     * @var integer
+     */
+    protected $idImageMM;
+    /**
+     *
+     * @var integer
+     */
+    protected $idDocumentMM;
+    protected $idFlick30k;
 
     /**
      * Associations
      */
     protected $sentence;
+    protected $documentmm;
 
 
     /**
@@ -90,6 +114,30 @@ class SentenceMMMap extends \MBusinessModel {
         $this->endTimestamp = $value;
     }
 
+    public function getStartTime() {
+        return $this->startTime;
+    }
+
+    public function setStartTime($value) {
+        $this->startTime = $value;
+    }
+
+    public function getEndTime() {
+        return $this->endTime;
+    }
+
+    public function setEndTime($value) {
+        $this->endTime = $value;
+    }
+
+    public function getOrigin() {
+        return $this->origin;
+    }
+
+    public function setOrigin($value) {
+        $this->origin = $value;
+    }
+
     public function getIdSentence() {
         return $this->idSentence;
     }
@@ -98,6 +146,34 @@ class SentenceMMMap extends \MBusinessModel {
         $this->idSentence = $value;
     }
 
+    public function getIdImageMM() {
+        return $this->idImageMM;
+    }
+
+    public function setIdImageMM($value) {
+        $this->idImageMM = $value;
+    }
+    public function getIdDocumentMM() {
+        return $this->idDocumentMM;
+    }
+
+    public function setIdDocumenTMM($value) {
+        $this->idDocumentMM = $value;
+    }
+    public function getIdOriginMM() {
+        return $this->idOriginMM;
+    }
+
+    public function setIdOriginMM($value) {
+        $this->idOriginMM = $value;
+    }
+    public function getIdFlickr30k() {
+        return $this->idFlick30k;
+    }
+
+    public function setIdFlickr30k($value) {
+        $this->idFlick30k = $value;
+    }
     /**
      *
      * @return Association
@@ -122,30 +198,32 @@ class SentenceMMMap extends \MBusinessModel {
     public function getAssociationSentence() {
         $this->retrieveAssociation("sentence");
     }
+
     /**
      *
      * @return Association
      */
-    public function getAnnotationMM() {
-        if (is_null($this->sentence)){
-            $this->retrieveAssociation("annotationmm");
+    public function getDocumentMM() {
+        if (is_null($this->documentmm)){
+            $this->retrieveAssociation("documentmm");
         }
-        return  $this->sentence;
+        return  $this->documentmm;
     }
     /**
      *
      * @param Association $value
      */
-    public function setAnnotation($value) {
-        $this->annotationmm = $value;
+    public function setDocumentmm($value) {
+        $this->documentmm = $value;
     }
     /**
      *
      * @return Association
      */
-    public function getAssociationAnnotationMM() {
-        $this->retrieveAssociation("annotationmm");
+    public function getAssociationDocumentMM() {
+        $this->retrieveAssociation("documentmm");
     }
+
 }
-// end - wizard
+
 

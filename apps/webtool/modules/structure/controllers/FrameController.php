@@ -72,7 +72,9 @@ class FrameController extends MController
 
     public function formNewFrame()
     {
-        $this->data->title = _M('new Frame');
+        $this->data->title = _M('New Frame');
+        $this->data->save = "@structure/frame/newFrame|formNewFrame";
+        $this->data->close = "!$('#formNewFrame_dialog').dialog('close');";
         $this->render();
     }
 
@@ -82,15 +84,13 @@ class FrameController extends MController
             $frame = new fnbr\models\Frame();
             //$this->data->frame->entry = 'frm_' . strtolower(str_replace('frm_', '', $this->data->frame->entry));
             $this->data->frame->entry = strtolower('frm_' . $this->data->frame->nameEN);
-            $frame->setData($this->data->frame);
-            $inheritsFromBase = false;// ($this->data->inheritsFromBase == 'on');
-            $relations = $frame->createNew($this->data->frame, $inheritsFromBase);
-            $entry = new fnbr\models\Entry();
-            $entry->updateByIdEntity($frame->getIdEntity(), 1, $this->data->frame->namePT);
-            $entry->updateByIdEntity($frame->getIdEntity(), 2, $this->data->frame->nameEN);
-            $this->renderResponse('ok', 'Frame created.');
+            $frame->createNew($this->data->frame);
+//            $entry = new fnbr\models\Entry();
+//            $entry->updateByIdEntity($frame->getIdEntity(), 1, $this->data->frame->namePT);
+//            $entry->updateByIdEntity($frame->getIdEntity(), 2, $this->data->frame->nameEN);
+            $this->renderPrompt('information', 'Frame created.', "!structure.reloadFrameParent();");
         } catch (\Exception $e) {
-            $this->renderResponse('error', $e->getMessage());
+            $this->renderPrompt('error', $e->getMessage());
         }
     }
 
@@ -201,13 +201,12 @@ class FrameController extends MController
             $fe = new fnbr\models\FrameElement();
             //$this->data->frameelement->entry = 'fe_' . $this->data->frameelement->entry;
             $this->data->frameelement->entry = strtolower('fe_' . $this->data->frameelement->nameEN . '_' . $this->data->frameelement->idFrame);
-            $fe->setData($this->data->frameelement);
-            $fe->save($this->data->frameelement);
-            $entry = new fnbr\models\Entry();
-            $entry->updateByIdEntity($fe->getIdEntity(), 1, $this->data->frameelement->namePT);
-            $entry->updateByIdEntity($fe->getIdEntity(), 2, $this->data->frameelement->nameEN);
+            $fe->createNew($this->data->frameelement);
+//            $entry = new fnbr\models\Entry();
+//            $entry->updateByIdEntity($fe->getIdEntity(), 1, $this->data->frameelement->namePT);
+//            $entry->updateByIdEntity($fe->getIdEntity(), 2, $this->data->frameelement->nameEN);
             //$this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->frameelement->entry}');");
-            $this->renderPrompt('information', 'OK');
+            $this->renderPrompt('information', 'Frame Element created.');
         } catch (\Exception $e) {
             $this->renderPrompt('error', $e->getMessage());
         }

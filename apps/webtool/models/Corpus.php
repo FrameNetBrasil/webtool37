@@ -97,6 +97,7 @@ class Corpus extends map\CorpusMap
             $this->setIdEntity($entity->getId());
             $entry = new Entry();
             $entry->newEntry($this->getEntry(),$entity->getId());
+            $this->setActive(1);
             parent::save();
             Timeline::addTimeline("corpus",$this->getId(),"S");
             $transaction->commit();
@@ -827,7 +828,8 @@ HERE;
         $criteria->setAssociationAlias('entries', 'centry');
         $criteria->select('distinct idCorpus, entry, centry.name as name')->orderBy('centry.name');
         Base::entryLanguage($criteria);
-        $criteria->where("documents.documentmm.idDocumentMM IS NOT NULL");
+        //$criteria->where("documents.documentmm.idDocumentMM IS NOT NULL");
+        $criteria->where("documents.documentmm.flickr30k IS NULL");
 
         if ($filter->idCorpus) {
             $criteria->where("idCorpus = '{$filter->idCorpus}'");

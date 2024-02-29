@@ -45,10 +45,10 @@ class CorpusController extends MController
         $annotation = Manager::getAppService('annotation');
         $this->data->title = $annotation->getDocumentTitle($this->data->idDocument, $this->idLanguage);
         $document = new fnbr\models\Document($this->data->idDocument);
-        $this->data->idSubCorpus = $document->getRelatedSubCorpus();
-        if ($this->data->idSubCorpus == '') {
-            $this->renderPrompt('warning', 'No SubCorpus for this Document.');
-        } else {
+//        $this->data->idSubCorpus = $document->getRelatedSubCorpus();
+//        if ($this->data->idSubCorpus == '') {
+//            $this->renderPrompt('warning', 'No SubCorpus for this Document.');
+//        } else {
             $this->data->title = $document->getCorpus()->getName() . ' : ' . $document->getName();
             if ((MUtil::getBooleanValue(Manager::$conf['login']['check']))) {
                 $this->data->userLanguage = fnbr\models\Base::languages()[fnbr\models\Base::getCurrentUser()->getConfigData('fnbrIdLanguage')];
@@ -56,7 +56,7 @@ class CorpusController extends MController
                 $this->data->userLanguage = fnbr\models\Base::languages()[Manager::getSession()->idLanguage];
             }
             $this->render();
-        }
+//        }
     }
 
     public function reportAnnotationDirect()

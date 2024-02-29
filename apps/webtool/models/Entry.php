@@ -35,7 +35,7 @@ class Entry extends map\EntryMap {
             $criteria->where("idEntry = {$filter->idEntry}");
         }
         if ($filter->entry){
-            $criteria->where("entry LIKE '{$filter->entry}%'");
+            $criteria->where("entry LIKE '{$filter->entry}'");
         }
         if ($filter->entries){
             $criteria->where("entry","IN", $filter->entries);

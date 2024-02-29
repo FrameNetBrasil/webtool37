@@ -139,7 +139,7 @@ class Construction extends map\ConstructionMap
         $ce = new ConstructionElement();
         $criteria = $ce->getCriteria()->select('idConstructionElement, entry, entries.name as name, color.rgbFg, color.rgbBg, color.idColor, idEntity, head');
         Base::entryLanguage($criteria);
-        Base::relation($criteria, 'ConstructionElement', 'construction', 'rel_elementof');
+        //Base::relation($criteria, 'ConstructionElement', 'construction', 'rel_elementof');
         $criteria->where("construction.idConstruction = {$this->getId()}");
         $criteria->orderBy('entries.name');
         return $criteria;

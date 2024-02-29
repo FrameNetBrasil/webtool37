@@ -75,9 +75,12 @@ class Document extends map\DocumentMap
 
     public function listByCorpus($idCorpus)
     {
-        $criteria = $this->getCriteria()->select('idDocument, entry, entries.name as name, count(paragraphs.sentences.idSentence) as quant')->orderBy('entries.name');
-        $criteria->setAssociationType('paragraphs.sentences', 'left');
-        $criteria->setAssociationType('paragraphs', 'left');
+//        $criteria = $this->getCriteria()->select('idDocument, entry, entries.name as name, count(paragraphs.sentences.idSentence) as quant')->orderBy('entries.name');
+//        $criteria->setAssociationType('paragraphs.sentences', 'left');
+//        $criteria->setAssociationType('paragraphs', 'left');
+        $criteria = $this->getCriteria();
+        $criteria->setAssociationType('sentences', 'left');
+        $criteria->select('idDocument, entry, entries.name as name, count(sentences.idSentence) as quant')->orderBy('entries.name');
         Base::entryLanguage($criteria);
         $criteria->where("active = 1");
         $criteria->where("idCorpus = {$idCorpus}");
@@ -110,7 +113,15 @@ class Document extends map\DocumentMap
         return $idSubCorpus;
     }
 
-    public function save($data)
+    public function setData($data, $role = 'default')
+    {
+        parent::setData($data);
+        if ($data->idGenre == '') {
+            $this->setIdGenre(1); // not informed
+        }
+        $this->setActive(1);
+    }
+    public function save($force = false): void
     {
         $transaction = $this->beginTransaction();
         try {
@@ -123,7 +134,6 @@ class Document extends map\DocumentMap
                 $entry = new Entry();
                 $entry->newEntry($this->getEntry(),$entity->getId());
             }
-            //$this->setIdGenre(1); // not informed
             parent::save();
             Timeline::addTimeline("document",$this->getId(),"S");
             $transaction->commit();
@@ -555,6 +565,7 @@ HERE;
 
     public function listSentence()
     {
+        /*
         $cmd = <<<HERE
 
 select distinct s.idSentence, s.text
@@ -562,6 +573,17 @@ FROM document d
   INNER JOIN paragraph p ON (d.idDocument = p.idDocument)
   INNER JOIN sentence s ON (p.idParagraph = s.idParagraph)
 where (d.idDocument = {$this->getIdDocument()})
+order by s.idSentence
+
+HERE;
+        */
+
+        $cmd = <<<HERE
+
+select distinct s.idSentence, s.text
+FROM document_sentence ds
+  INNER JOIN sentence s ON (s.idSentence = ds.idSentence)
+where (ds.idDocument = {$this->getIdDocument()})
 order by s.idSentence
 
 HERE;
@@ -587,9 +609,9 @@ HERE;
         return $query;
     }
 
-    public function listAnnotationSetForCONLL($idSentence)
+    public function listAnnotationSetForCONLL($idSentence, $idLanguage = null)
     {
-        $idLanguage = \Manager::getSession()->idLanguage;
+        $idLanguage = \Manager::getSession()->idLanguage ?? $idLanguage;
 
         $cmd = <<<HERE
 

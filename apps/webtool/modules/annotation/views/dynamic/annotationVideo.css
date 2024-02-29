@@ -1,0 +1,245 @@
+#annotationVideoPaneTitle {
+    width: 100%;
+    height: 72px;
+    background-color:#263238;
+    text-align:center;
+    color: white;
+    padding:8px;
+}
+
+#annotationVideoPaneWest {
+    padding:0px;
+}
+
+#annotationVideoPaneCenter {
+    padding:0px;
+}
+
+#timePane {
+    background-color: #f4f3ef;
+}
+
+.slider-h {
+    margin-top: 6px;
+}
+
+#timePaneLeft {
+    line-height:32px;
+    font-size: 12px;
+}
+
+#timePaneRight {
+    font-size: 12px;
+    text-align:right;
+    line-height:32px;
+    padding-right: 8px;
+}
+
+#toolsPane {
+    background-color: #f4f3ef;
+    height:32px;
+}
+
+#toolsPaneLeft{
+    /*width:300px;*/
+    line-height:32px;
+}
+
+#toolsPaneCenter{
+
+}
+
+#toolsPaneRight{
+    text-align:right;
+    line-height:32px;
+
+}
+
+#toolsPaneRight > a {
+    float:right;
+}
+
+#toolsPaneRight > span {
+    float:right;
+    line-height:32px;
+}
+
+
+.faTool {
+    font-size: 18px;
+    color:black;
+}
+
+.faTool:hover {
+    font-size: 18px;
+    color:#263238;
+}
+
+#toolsPaneLeft l-btn {
+    color:black;
+}
+#toolsPaneLeft >  .l-btn-plain-selected, #toolsPaneLeft > .l-btn-plain-selected:hover {
+    background-color:#f4f3ef;
+}
+#toolsPaneLeft > .l-btn-selected, #toolsPaneLeft > .l-btn-selected:hover {
+    background-color:#f4f3ef;
+}
+
+#objectPane{
+
+}
+
+.gridPaneFrame {
+    font-size: 12px;
+    cursor:pointer;
+}
+
+.gridPaneFrameFE {
+    font-size: 12px;
+    cursor:pointer;
+}
+
+#doodle {
+    position: relative;
+}
+
+#boxesContainer {
+    height:0px;
+    width: 0px;
+}
+
+
+.bbox {
+    border: 1px solid #D3D3D3;
+    position: absolute;
+    z-index: 3;
+}
+
+.bboxhighlight {
+    opacity: 1 !important;
+}
+
+.handle, .ui-resizable-handle {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 1px solid #D3D3D3;
+    background-color: rgba(255, 255, 0, .05);
+    position: absolute;
+}
+
+.center-drag {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    cursor: move;
+}
+
+.objectId {
+    width: 20px;
+    height: 14px;
+    line-height: 14px;
+    font-size: 12px;
+    background-color: white;
+    right: 0;
+    top: 0;
+    position: absolute;
+    color: black;
+    cursor: pointer;
+    padding-left: 2px;
+}
+
+.ui-button {
+    margin-right: 5px;
+}
+
+.ui-resizable-n {
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: n-resize;
+}
+
+.ui-resizable-s {
+    left: 50%;
+    bottom: 0%;
+    transform: translate(-50%, 50%);
+    cursor: s-resize;
+}
+
+.ui-resizable-w {
+    top: 50%;
+    transform: translate(-50%, -50%);
+    cursor: w-resize;
+}
+
+.ui-resizable-e {
+    right: 0%;
+    top: 50%;
+    transform: translate(50%, -50%);
+    cursor: e-resize;
+}
+
+.notify__title {
+    font-size: 2rem;
+}
+
+.notify__text {
+    font-size: 1.75rem;
+}
+
+/* icons */
+
+.wt-icon {
+    width: 14px;
+    height: 14px;
+}
+
+.wt-icon-search::before {
+    content: " \e8b6";
+}
+
+
+.wt-icon-create::before {
+    content: " \e148";
+}
+
+.wt-icon-end::before {
+    content: " \ef71";
+}
+
+.wt-icon-startTracking::before {
+    content: " \e039";
+}
+.wt-icon-pauseTracking::before {
+    content: " \e036";
+}
+
+.wt-icon-playarrow::before {
+    content: " \e037";
+}
+
+.wt-icon-edit::before {
+    content: " \f88d";
+}
+.wt-icon-stop::before {
+    content: " \e888";
+}
+.wt-icon-delete::before {
+    color: red;
+    content: " \e92e";
+}
+.wt-icon-status::before {
+    content: " \e86c";
+}
+
+.wt-icon-show::before {
+    content: " \e8f4";
+}
+
+.wt-icon-hide::before {
+    content: " \e8f5";
+}
+
+.wt-icon-clone::before {
+    content: " \e14d";
+}

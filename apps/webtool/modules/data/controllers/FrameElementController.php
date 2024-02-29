@@ -31,6 +31,16 @@ class FrameElementController extends MController {
         $this->renderJSON($model->gridDataAsJSON($criteria));
     }
 
+    public function listAllDecorated()
+    {
+        $model = new fnbr\models\FrameElement();
+        $criteria = $model->listAllDecorated();
+        $result = $criteria->asQuery()->treeResult('idFrame','idFrameElement,name,rgbFg,rgbBg');
+
+//        mdump($model->gridDataAsJSON($criteria));
+//        $result = $model->gridDataAsJSON($criteria);
+        $this->renderJSON(json_encode($result));
+    }
     public function lookupDataExtraThematic(){
         $data = [
             ['name' => ''],

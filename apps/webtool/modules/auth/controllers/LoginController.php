@@ -40,7 +40,8 @@ class LoginController extends \MController
                     $this->data->ifLanguage = 'en';
                 }
 
-                Manager::getSession()->idLanguage = $this->data->idLanguage;
+                //Manager::getSession()->idLanguage = $this->data->idLanguage;
+                Manager::getSession()->idLanguage = $user->getIdLanguage();
                 Manager::getSession()->lang = $this->data->ifLanguage;
                 Manager::getSession()->fnbrLevel = $user->getUserLevel();
                 $this->redirect(Manager::getURL('main'));

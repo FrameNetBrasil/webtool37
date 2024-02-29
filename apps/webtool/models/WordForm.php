@@ -85,9 +85,9 @@ class WordForm extends map\WordFormMap
         return $criteria;
     }
 
-    public function listLexemes($words)
+    public function listLexemes($words, $idLanguage = null)
     {
-        $idLanguage = \Manager::getSession()->idLanguage;
+        $idLanguage = \Manager::getSession()->idLanguage ?? $idLanguage;
         $criteria = $this->getCriteria()->select('form, lexeme.name as lexeme, lexeme.pos.POS as POSLexeme');
         $criteria->where("form", "in", $words);
         $criteria->where("lexeme.idLanguage", "=", $idLanguage);

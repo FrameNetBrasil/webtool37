@@ -78,7 +78,7 @@ class DocumentMM extends map\DocumentMMMap
     public function listCorpusImageByFilter($filter)
     {
         $subcriteria = $this->getCriteria()->select('idDocument');
-        $subcriteria->addCriteria('flickr30k','=','1');
+        $subcriteria->addCriteria('flickr30k','>','0');
         $idDocument = array_column($subcriteria->asQuery()->getResult(), 'idDocument');
         $document = new Document();
         $criteria = $document->getCriteria()->select('corpus.idCorpus, corpus.entries.name as name')->orderBy('corpus.entries.name');
@@ -137,6 +137,32 @@ HERE;
         return $result;
     }
 
+//    public function listDynamicSentenceMM()
+//    {
+//        $document = new Document();
+//        $document->getById($this->getIdDocument());
+//        $sentences = $document->listSentence()->chunkResult('idSentence', 'text');
+//        $idSentences = array_keys($sentences);
+//        if (!empty($idSentences)) {
+//            $listIdSentence = implode(',', $idSentences);
+//            mdump($listIdSentence);
+//        } else {
+//            $listIdSentence = '0';
+//        }
+//        $cmd = <<<HERE
+//
+//select distinct smm.idSentenceMM, smm.startTimestamp, smm.endTimestamp, smm.idSentence, smm.startTime, smm.idImageMM, smm.idOriginMM
+//FROM sentencemm smm
+//where (smm.idSentence IN ({$listIdSentence}))
+//order by smm.startTime
+//
+//HERE;
+//        $result = $this->getDb()->getQueryCommand($cmd)->getResult();
+//        foreach ($result as $i => $row) {
+//            $result[$i]['text'] = $sentences[$row['idSentence']];
+//        }
+//        return $result;
+//    }
     public function listObjectFrames() {
         $criteria = $this->getCriteria();
         $criteria->select("objectmm.objectframes.frameNumber, 
@@ -623,9 +649,13 @@ HERE;
 select smm.idSentenceMM, imm.name as image, smm.idSentence, count(*) as n, count(osmm.idFrameElement) as i
 FROM sentencemm smm
 join imagemm imm on (smm.idImagemm = imm.idImagemm)
-join objectsentencemm osmm on (smm.idSentencemm = osmm.idSentencemm)
-join objectmm omm on (osmm.idObjectMM = omm.idObjectMM)
+left join objectsentencemm osmm on (smm.idSentencemm = osmm.idSentencemm)
+left join objectmm omm on (osmm.idObjectMM = omm.idObjectMM)
+left join objectframemm ofmm on (omm.idObjectMM = ofmm.idObjectMM)
 where (smm.idSentence IN ({$listIdSentence}))
+and (smm.idDocumentMM = {$this->getIdDocumentmm()})
+and ((osmm.name is null) or (osmm.name <> 'notvisual'))
+and (( omm.idObjectMM is null ) or ((omm.idObjectMM is not null) && (ofmm.idobjectMM is not null)))
 group by smm.idSentenceMM, imm.name, smm.idSentence
 order by 1
 

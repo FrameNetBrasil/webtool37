@@ -38,7 +38,8 @@ class ViewAnnotationSet extends map\ViewAnnotationSetMap {
 
     public function listByLU($idLU, $sortable = NULL) {
         $criteria = $this->getCriteria()
-            ->select('idAnnotationSet, idSentence, sentence.text, entries.name as annotationStatus, idAnnotationStatus, annotationstatustype.color.rgbBg')
+            //->select('idAnnotationSet, idSentence, sentence.text, entries.name as annotationStatus, idAnnotationStatus, annotationstatustype.color.rgbBg')
+            ->select("idAnnotationSet, idSentence, sentence.text, IF(idAnnotationStatus=2,'MANUAL','UNANN') as annotationStatus")
 //            ->where("subcorpuslu.idLU = {$idLU}");
             ->where("idLU = {$idLU}");
         if ($sortable) {
@@ -184,6 +185,27 @@ HERE;
         return $result;
     }
 
+    public function listFECEByIdDocumentMM($idDocumentMM) {
+        $idLanguage = \Manager::getSession()->idLanguage;
+        $cmd = <<<HERE
+SELECT *, e.name as frameName
+        FROM view_labelfecetarget l
+join view_annotationset a on (l.idAnnotationset = a.idAnnotationSet)
+join view_sentence s on (a.idSentence = s.idSentence)
+join documentmm dm on  (dm.idDocument = s.idDocument)
+join lu on (a.idLU = lu.idLU)
+join frame f on (lu.idFrame = f.idFrame)
+join entry e on (f.idEntity = e.idEntity)
+        WHERE (dm.idDocumentMM = {$idDocumentMM})
+          AND(l.layerTypeEntry = 'lty_target')
+            AND (l.idLanguage = {$idLanguage} )
+        AND (e.idLanguage = {$idLanguage})
+        ORDER BY l.idSentence,l.startChar
+
+HERE;
+        $result = $this->getDb()->getQueryCommand($cmd)->treeResult('idSentence', 'startChar,endChar,rgbFg,rgbBg,instantiationType,frameName');
+        return $result;
+    }
     public function listTargetBySentence($idSentence) {
         $idLanguage = \Manager::getSession()->idLanguage;
         $cmd = <<<HERE
@@ -338,7 +360,18 @@ HERE;
         return $as;
     }
 
+    public function listSentencesForDocumentMM($idDocumentMM, $sortable = NULL) {
 
+        $cmd = <<<HERE
+select a.idSentence, a.idAnnotationSet
+from documentmm dm
+join view_sentence s on (dm.idDocument = s.idDocument)
+join annotationset a on (a.idsentence = s.idsentence)
+where (idDocumentMM = {$idDocumentMM})
+HERE;
+        $as = $this->getDb()->getQueryCommand($cmd)->chunkResult('idSentence','idAnnotationSet');
+        return $as;
+    }
 
 }
 
