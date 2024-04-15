@@ -54,9 +54,9 @@ return [
         'path' => sys_get_temp_dir() . '/log',
         'level' => 2,
         'handler' => "socket",
-        'peer' => 'localhost',
-        //'strict' => 'host.docker.internal',
-        'port' => 0,
+        'peer' => $_ENV['TRACE_HOST'],
+        //'strict' => '200.131.61.133',
+        'port' => $_ENV['TRACE_PORT'],
         'errorCodes' => [
             E_ERROR,
             E_WARNING,

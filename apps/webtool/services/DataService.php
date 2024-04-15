@@ -1,5 +1,6 @@
 <?php
 
+use fnbr\models\WordForm;
 use Maestro\Types\MFile;
 
 
@@ -448,15 +449,15 @@ HERE;
         file_put_contents($this->data->filename, $sxe->asXML());
     }
 
-    public function exportDocumentToCONLL($document)
+    public function exportDocumentToCONLL($document, $idLanguage = 2)
     {
-        $document = new \fnbr\models\Document();
-        $document->getByEntry($this->data->documentEntry);
-        $idLanguage = 2;//$this->data->idLanguage; //\Manager::getSession()->idLanguage;
+//        $document = new \fnbr\models\Document();
+//        $document->getByEntry($this->data->documentEntry);
+//        $idLanguage = 2;//$this->data->idLanguage; //\Manager::getSession()->idLanguage;
         $count = 0;
         $lines = '';
         $lexemeCache = [];
-        $wf = new fnbr\models\Wordform();//new fnbr\models\ViewWfLexemeLemma();
+        $wf = new Wordform();//new fnbr\models\ViewWfLexemeLemma();
         $querySentence = $document->listSentenceForCONLL();
         $sentences = $querySentence->getResult();
         foreach ($sentences as $sentence) {
@@ -465,40 +466,39 @@ HERE;
             $pos = 0;
             $text = utf8_decode($sentence['text']) . ' ';
             $n = strlen($text);
-            mdump($text);
             for ($i = 0; $i < $n; $i++) {
-                if (($text{$i} == ' ')
-                    || ($text{$i} == '.')
-                    || ($text{$i} == ',')
-                    || ($text{$i} == ':')
-                    || ($text{$i} == ';')
-                    || ($text{$i} == '-')
-                    || ($text{$i} == '=')
-                    || ($text{$i} == '?')
-                    || ($text{$i} == '!')
-                    || ($text{$i} == '/')
-                    || ($text{$i} == '\'')
-                    || ($text{$i} == '"')
-                    || ($text{$i} == '<')
-                    || ($text{$i} == '>')) {
+                if (($text[$i] == ' ')
+                    || ($text[$i] == '.')
+                    || ($text[$i] == ',')
+                    || ($text[$i] == ':')
+                    || ($text[$i] == ';')
+                    || ($text[$i] == '-')
+                    || ($text[$i] == '=')
+                    || ($text[$i] == '?')
+                    || ($text[$i] == '!')
+                    || ($text[$i] == '/')
+                    || ($text[$i] == '\'')
+                    || ($text[$i] == '"')
+                    || ($text[$i] == '<')
+                    || ($text[$i] == '>')) {
                     $pos = $i;
-                    if ($text{$i} != ' ') {
-                        if ($text{$i} == '\'') {
+                    if ($text[$i] != ' ') {
+                        if ($text[$i] == '\'') {
                             $words[$pos] = '\\\'';
                         } else {
-                            $words[$pos] = $text{$i};
+                            $words[$pos] = $text[$i];
                         }
                     }
                     $pos++;
                 } else {
-                    $words[$pos] .= $text{$i};
+                    $words[$pos] .= $text[$i];
                 }
 
             }
             foreach ($words as $i => $word) {
                 $words[$i] = utf8_encode($word);
             }
-            $queryLx = $wf->listLexemes($words)->treeResult("'form'", 'lexeme,POSLexeme');
+            $queryLx = $wf->listLexemes($words, $idLanguage)->treeResult("form", 'lexeme,POSLexeme');
 
             foreach ($words as $i => $word) {
                 if (isset($lexemeCache[$word])) {
@@ -512,7 +512,7 @@ HERE;
                 }
             }
             //mdump($lexemes);
-            $queryAS = $document->listAnnotationSetForCONLL($sentence['idSentence']);
+            $queryAS = $document->listAnnotationSetForCONLL($sentence['idSentence'], $idLanguage);
             // a.idAnnotationSet, lb.layerTypeEntry, lb.startChar, lb.endChar, e1.name frame, e3.name fe, lu.name lu, pos.POS, lx.name lexeme
             $annotationSets = [];
             $idAS = 0;
@@ -571,12 +571,14 @@ HERE;
                 $lines .= "\n";
             }
             if ((++$count % 5) == 0) {
-                print_r($count . ' sentence(s)' . "\n");
+                mdump($count . ' sentence(s)' . "\n");
             }
 
         }
-        //return $lines;
-        file_put_contents($this->data->filename, $lines);
+        return $lines;
+//        $fileName = "/tmp/" . $document->getName() . '.conll.txt';
+//        file_put_contents($fileName, $lines);
+//        return $fileName;
 
     }
 

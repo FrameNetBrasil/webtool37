@@ -1131,5 +1131,117 @@ class AnnotationService extends MService
         $asc->setData($data);
         $asc->save();
     }
+    public function listCorpusMultimodal($corpusName = '', $idLanguage = '')
+    {
+        $corpus = new fnbr\models\Corpus();
+        $filter = (object)['corpus' => $corpusName, 'idLanguage' => $idLanguage];
+        $corpora = $corpus->listMultimodalByFilter($filter)->asQuery()->chunkResult('idCorpus', 'name');
+
+        $userAnnotation = new \fnbr\models\UserAnnotation();
+        $corpusForAnnotation = $userAnnotation->listCorpusByUser(Base::getCurrentUser()->getId());
+        $hasCorpusForAnnotation = (count($corpusForAnnotation) > 0);
+
+        if (in_array(Base::getCurrentUser()->getId(), [392,296, 369,371,373,393,401,416,420,426,427,428,430,414,425])) {
+            $corpusForAnnotation[]= 82;
+        }
+
+        $result = array();
+        foreach ($corpora as $idCorpus => $name) {
+            if ($hasCorpusForAnnotation) {
+                if (!in_array($idCorpus, $corpusForAnnotation)) {
+                    continue;
+                }
+            }
+            $node = array();
+            $node['id'] = 'c' . $idCorpus;
+            $node['text'] = $name;
+            $node['state'] = 'closed';
+            $result[] = $node;
+        }
+        return json_encode($result);
+    }
+
+    public function listCorpusMultimodalImage($corpusName = '', $idLanguage = '')
+    {
+        $documentmm = new fnbr\models\DocumentMM();
+        $filter = (object)['corpus' => $corpusName, 'idLanguage' => $idLanguage];
+        $corpora = $documentmm->listCorpusImageByFilter($filter)->asQuery()->chunkResult('idCorpus', 'name');
+
+//        $userAnnotation = new \fnbr\models\UserAnnotation();
+//        $corpusForAnnotation = $userAnnotation->listCorpusByUser(Base::getCurrentUser()->getId());
+//        $hasCorpusForAnnotation = (count($corpusForAnnotation) > 0);
+
+        $result = array();
+        foreach ($corpora as $idCorpus => $name) {
+//            if ($hasCorpusForAnnotation) {
+//                if (!in_array($idCorpus, $corpusForAnnotation)) {
+//                    continue;
+//                }
+//            }
+            $node = array();
+            $node['id'] = 'c' . $idCorpus;
+            $node['text'] = $name;
+            $node['state'] = 'closed';
+            $result[] = $node;
+        }
+        return json_encode($result);
+    }
+
+    public function listCorpusDocumentMultimodal($idCorpus)
+    {
+        $doc = new fnbr\models\DocumentMM();
+        $docs = $doc->listByCorpus($idCorpus);//->asQuery()->getResult();
+
+//        $userAnnotation = new \fnbr\models\UserAnnotation();
+//        $docForAnnotation = $userAnnotation->listDocumentByUser(Base::getCurrentUser()->getId());
+//        $hasDocForAnnotation = (count($docForAnnotation) > 0);
+//
+//        if (in_array(Base::getCurrentUser()->getId(), [392,296,369,371,373,393,401,416,420,426,427,428,430,414,425])) {
+//            $docForAnnotation[]= 502;
+//            $docForAnnotation[]= 507;
+//            $docForAnnotation[]= 508;
+//            $docForAnnotation[]= 509;
+//            $docForAnnotation[]= 510;
+//            $docForAnnotation[]= 511;
+//            $docForAnnotation[]= 512;
+//            $docForAnnotation[]= 513;
+//            $docForAnnotation[]= 515;
+//            $docForAnnotation[]= 516;
+//        }
+
+        foreach ($docs as $doc) {
+            if ($doc['idDocumentMM']) {
+
+//                if ($hasDocForAnnotation) {
+//                    if (!in_array($doc['idDocument'], $docForAnnotation)) {
+//                        continue;
+//                    }
+//                }
+
+                $node = array();
+                $node['id'] = 'd' . $doc['idDocument'];
+                $node['text'] = $doc['name'] . ' [' . $doc['quant'] . ']';
+                $node['state'] = 'open';
+                if ((str_contains(strtolower($doc['name']),'flickr30k'))
+                    || (str_contains(strtolower($doc['name']),'visualonly'))
+                    || ($doc['flickr30k'] == '1')) {
+                    $node['flickr30k'] = 1;
+                } else {
+                    $node['flickr30k'] = 2;
+                }
+                $result[] = $node;
+            }
+        }
+        return json_encode($result);
+    }
+
+    public function listImageSentence($idDocument)
+    {
+//        $documentMM = new fnbr\models\DocumentMM($idDocumentMM);
+//        $sentences = $documentMM->listImageSentenceMM();
+        $sentenceMM = new fnbr\models\StaticSentenceMM();
+        $sentences = $sentenceMM->listByDocument($idDocument);
+        return json_encode($sentences);
+    }
 
 }

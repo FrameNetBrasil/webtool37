@@ -5,6 +5,7 @@
         <fields>
             <mhiddenfield id="frameelement_idFrame" value="$this->data->idFrame"/>
             <mlabel text="$this->data->frame" label="Frame:"/>
+            <mtextfield id="frameelement_namePT" width="250px" label="Name [pt]"/>
             <mtextfield id="frameelement_nameEN" width="250px" label="Name [en]"/>
             <include component="MLookupCoreType.php" id="frameelement_idCoreType" label="Core Type"/>
             <include component="MLookupColor.php" id="frameelement_idColor" label="Color"/>

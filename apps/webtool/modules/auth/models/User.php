@@ -12,7 +12,7 @@ class User extends map\UserMap
         return array(
             'log' => array(),
             'validators' => array(
-//                'login' => array('notnull'),
+                'login' => array('notnull'),
 //                'pwd' => array('notnull'),
 //                'passMD5' => array('notnull'),
 //                'theme' => array('notnull'),

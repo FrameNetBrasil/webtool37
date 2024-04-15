@@ -167,7 +167,7 @@ class FrameElement extends map\FrameElementMap
     {
         $criteria = $this->getCriteria()->select('idFrameElement,entry,entries.name as name, entries.description as description, entries.nick as nick, coreType')->orderBy('entries.name');
         Base::entryLanguage($criteria);
-        //Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
+        Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
         if ($idFrame) {
             //Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
             $criteria->where("frame.idFrame = {$idFrame}");
@@ -188,10 +188,9 @@ class FrameElement extends map\FrameElementMap
     {
         $criteria = $this->getCriteria()->select('idEntity,entries.name as name')->orderBy('entries.name');
         Base::entryLanguage($criteria);
-        //Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
+        Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
         //Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
-        //$criteria->where("typeinstance.entry = 'cty_core'");
-        $criteria->where("coreType = 'cty_core'");
+        $criteria->where("typeinstance.entry = 'cty_core'");
         $criteria->where("frame.idEntity = {$idEntityFrame}");
         return $criteria;
     }
@@ -309,71 +308,6 @@ class FrameElement extends map\FrameElementMap
         }
     }
 
-    public function createNew($data)
-    {
-        $transaction = $this->beginTransaction();
-        try {
-            $this->saveData($data);
-            Timeline::addTimeline("frameelement", $this->getId(), "S");
-            $transaction->commit();
-        } catch (\Exception $e) {
-            $transaction->rollback();
-            throw new \Exception($e->getMessage());
-        }
-    }
-    public function saveData($data)
-    {
-        $transaction = $this->beginTransaction();
-        try {
-            $this->setData($data);
-            if ($this->isPersistent()) {
-                $coreType = new TypeInstance($this->getIdCoreType());
-                $this->setCoreType($coreType->getEntry());
-                Base::updateEntityRelation($this->getIdEntity(), 'rel_hastype', $coreType->getIdEntity());
-                $this->setActive(true);
-                $criteria = $this->getCriteria()->select('fe1.idFrameElement');
-                Base::relation($criteria, 'FrameElement fe1', 'FrameElement fe2', 'rel_hastemplate');
-                $criteria->where("fe2.idEntity = {$this->getIdEntity()}");
-                $fes = $criteria->asQuery()->getResult();
-                foreach ($fes as $fe) {
-                    $feTemplated = new FrameElement($fe['idFrameElement']);
-                    $feTemplated->setIdColor($this->getIdColor());
-                    $feTemplated->save();
-                }
-            } else {
-                if ($data->idFrame) {
-                    $schema = new Frame($data->idFrame);
-                    $this->setIdFrame($data->idFrame);
-                } else if ($data->idTemplate) {
-                    $schema = new Template($data->idTemplate);
-                }
-                $entity = new Entity();
-                $entity->setAlias($this->getEntry());
-                $entity->setType('FE');
-                $entity->save();
-                $entry = new Entry();
-                $entries = $entry->listByFilter((object)['entry' => $this->getEntry()])->asQuery()->getResult();
-                if (count($entries)) {
-                    throw new \Exception("Entry already exists!");
-                }
-                //
-                $entry->newEntry($this->getEntry(), $entity->getId(), $data->nameEN);
-                Base::createEntityRelation($entity->getId(), 'rel_elementof', $schema->getIdEntity());
-                $coreType = new TypeInstance($data->idCoreType);
-                Base::createEntityRelation($entity->getId(), 'rel_hastype', $coreType->getIdEntity());
-                $this->setCoreType($coreType->getEntry());
-                $this->setIdEntity($entity->getId());
-                $this->setActive(true);
-            }
-            //Base::entityTimelineSave($this->getIdEntity());
-            parent::save();
-            Timeline::addTimeline("frameelement", $this->getId(), "S");
-            $transaction->commit();
-        } catch (\Exception $e) {
-            $transaction->rollback();
-            throw new \Exception($e->getMessage());
-        }
-    }
     public function saveModel()
     {
         parent::save();

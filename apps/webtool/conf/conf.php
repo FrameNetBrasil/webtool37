@@ -14,26 +14,12 @@ return [
     'options' => [
         'fetchStyle' => \FETCH_ASSOC,
         'language' => 'en',
+        'painter' => 'EasyUI',
         'templateEngine' => 'latte',
         'defaultPassword' => 'default',
-        'pageTitle' => 'Webtool 3.7',
-        'mainTitle' => 'FrameNet Brasil Webtool 3.7 [github]',
-        'baseURL' => 'http://localhost/webtool',
-        'http' => 'http',
-        'startup' => 'webtool',
-        'dbsession' => false,
-        'debug' => true,
-        'charset' => 'UTF-8',
-        'timezone' => "America/Sao_Paulo",
-        'separatorDate' => '/',
-        'formatDate' => 'd/m/Y',
-        'formatTimestamp' => 'd/m/Y H:i:s',
-        'csv' => ';',
-        'mode' => 'DEV',
-        'painter' => 'EasyUI',
-        'dispatch' => 'index.php',
-        'varPath' => sys_get_temp_dir(),
-        'locale' => array("pt_BR.utf8", "ptb")
+        'pageTitle' => 'Webtool 3.7 [FNBr]',
+        'mainTitle' => 'Webtool 3.7 [FNBr/github]',
+        'baseURL' => 'http://localhost/webtool'
     ],
     'ui' => [
         'actions' => 'actions.php',
@@ -41,23 +27,12 @@ return [
     'login' => [
         'handler' => 'maestro',
         'AUTH0_CLIENT_ID' => '',
-        'AUTH0_DOMAIN' => 'framenetbr.auth0.com',
+        'AUTH0_DOMAIN' => '',
         'AUTH0_CLIENT_SECRET' => '',
-        'AUTH0_CALLBACK_URL' => 'http://x/auth0/callback.php',
-        'logout' => 'https://framenetbr.auth0.com/v2/logout?returnTo=',
-    ],
-    'session' => [
-        'handler' => "file",
-        'timeout' => "60",
-        'exception' => false,
-        'check' => true
-    ],
-    'logs' => [
-        'path' => sys_get_temp_dir() . '/log',
-        'level' => 2,
-        'handler' => "socket",
-        'peer' => 'localhost',
-        'port' => $_ENV["TRACE_PORT"],
+        'AUTH0_CALLBACK_URL' => '',
+        'AUTH0_COOKIE_SECRET' => '',
+        'AUTH0_BASE_URL'=>'',
+        'logout' => '',
     ],
     'theme' => [
         'name' => 'webtool',
@@ -101,7 +76,9 @@ return [
             'rel_excludes' => '#FF0000',
             'rel_requires' => '#008000',
             'rel_evokes' => '#0000FF',
+            'rel_hasconcept' => '#8A2BE2',
             'rel_inheritance_cxn' => '#FF0000',
+            'rel_subtypeof' => '#FF0000',
             'rel_elementof' => '#000000',
             'rel_hassemtype' => '#000000',
             'rel_formal_qualia' => '#092834',
@@ -120,20 +97,29 @@ return [
             'con_lu' => '#000000',
             'con_lexeme' => '#000000',
             'con_lemma' => '#000000',
-            'con_udrelation' => '#000000',
+            'con_udrelation' => '#FFD700',
             'con_udfeature' => '#000000',
         ],
         'beginnerLayers' => [
             '1'
         ]
     ],
+    'charon' => [
+//        'rootFolder' => '/home/framenetbr/devel/fnbr/charon_docker_maestro/apps/webtool/files/multimodal',
+        'rootFolder' => '/home/framenetbr/devel/fnbr/charon_docker_maestro',
+//        'currentURL' => 'http://server4.framenetbr.ufjf.br:8301',
+//        'apiURL' => 'http://yolo.frame.net.br'
+        'currentURL' => 'http://charon.frame.net.br',
+        'apiURL' => 'http://server4.framenetbr.ufjf.br:8806'
+    ],
     'db' => [
         'webtool' => [
             'driver' => 'pdo_mysql',
-            'host' => $_ENV['DB_HOST'] . ':' . $_ENV['DB_PORT'],
-            'dbname' => $_ENV['DB_NAME'],
-            'user' => $_ENV['DB_USER'],
-            'password' => $_ENV['DB_PASS'],
+//            'host' => '200.131.61.131:3306',
+            'host' => '200.131.55.78',
+            'dbname' => 'fnbr_db',
+            'user' => 'fnbrasil',
+            'password' => 'OssracF1982',
             'formatDate' => '%e/%m/%Y',
             'formatDateWhere' => '%Y/%m/%e',
             'formatTime' => '%T',

@@ -1,13 +1,31 @@
 <?xml version="1.0"?>
 <view>
-    <mformdialog id="formNewFrame">
-        <property title="New Frame"  onClose="structure.reloadFrame();"/>
-        <fields>
-            <mtextfield id="frame_nameEN" width="250px" label="Name [en]"/>
-        </fields>
+    <mdialog id="formNewFrameDialog" state="open" onClose="structure.reloadFrame();">
+        <property title="$this->data->title"/>
         <tools>
-            <mlinkbutton id="lbCloseLU" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
-            <mlinkbutton id="lbSaveLU" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+            <mlinkbutton id="lbSaveFrame" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="!formNewFrameSave()"/>
         </tools>
-    </mformdialog>
+        <mform id="formNewFrame">
+            <fields>
+                <mtextfield id="frame_namePT" width="250px" label="Name [pt]"/>
+                <mtextfield id="frame_nameEN" width="250px" label="Name [en]"/>
+            </fields>
+            <data load="$this->data->object"/>
+        </mform>
+    </mdialog>
+    <script>
+        function formNewFrameSave(){
+            manager.doAjax('/index.php/webtool/structure/frame/newFrame', function(response){
+                if (response.status == 'error') {
+                    theme.message('error','Error',response.message);
+                } else {
+<!--                    theme.dialog.refresh('formNewFrameDialog', {-->
+<!--                        toolbar: null,-->
+<!--                        width: 510,-->
+<!--                        url: '/index.php/webtool/structure/entry/gridUpdate/frm_' + $('#frame_entry').textbox('getValue')-->
+<!--                    });-->
+                }
+            }, 'formNewFrame');
+        }
+    </script>
 </view>

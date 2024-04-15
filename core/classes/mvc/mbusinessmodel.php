@@ -320,7 +320,7 @@ class MBusinessModel extends PersistentObject
 
     /**
      * Inicaliza atributos com base no OID.
-     * @param type $id
+     * @param type $int
      * @return \MBusinessModel
      */
     public function getById($id)

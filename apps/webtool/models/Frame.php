@@ -1,15 +1,15 @@
 <?php
 
 /**
- *
+ * 
  *
  * @category   Maestro
  * @package    UFJF
- * @subpackage fnbr
+ *  @subpackage fnbr
  * @copyright  Copyright (c) 2003-2012 UFJF (http://www.ufjf.br)
  * @license    http://siga.ufjf.br/license
- * @version
- * @since
+ * @version    
+ * @since      
  */
 
 namespace fnbr\models;
@@ -113,7 +113,7 @@ class Frame extends map\FrameMap
     {
         $criteria = $this->getCriteria()->select('idFrame,entries.name as name')->orderBy('entries.name');
         Base::entryLanguage($criteria);
-        $name = (strlen($name) > 1) ? $name : 'none';
+        $name = (strlen($name) > 1) ? $name: 'none';
         $criteria->where("upper(entries.name) LIKE upper('{$name}%')");
         return $criteria;
     }
@@ -125,12 +125,11 @@ class Frame extends map\FrameMap
         //$criteria->where("upper(entries.name) LIKE upper('{$name}%')");
         return $criteria;
     }
-
     public function listFE()
     {
         $fe = new FrameElement();
         $criteria = $fe->getCriteria()->select('idFrameElement, entry, entries.name as name, coreType, color.rgbFg, color.rgbBg, ' .
-            'typeinstance.idTypeInstance as idCoreType, color.idColor');
+                'typeinstance.idTypeInstance as idCoreType, color.idColor');
         Base::entryLanguage($criteria);
         //Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
         Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
@@ -162,9 +161,8 @@ class Frame extends map\FrameMap
             AND (e2.idLanguage   = {$idLanguage})            
 HERE;
         $result = $this->getDb()->getQueryCommand($cmd)->getResult();
-        $index = [];
-        $i = 0;
-        foreach ($result as $row) {
+        $index = []; $i = 0;
+        foreach($result as $row) {
             if (($index[$row['fe1']] == '') && ($index[$row['fe2']] == '')) {
                 $i++;
                 $index[$row['fe1']] = $i;
@@ -176,7 +174,7 @@ HERE;
             }
         }
         $feCoreSet = [];
-        foreach ($index as $fe => $i) {
+        foreach($index as $fe => $i) {
             $feCoreSet[$i][] = $fe;
         }
         return $feCoreSet;
@@ -283,7 +281,7 @@ HERE;
         }
     }
 
-    public function save($force = false)
+    public function save($data)
     {
         $transaction = $this->beginTransaction();
         try {
@@ -292,43 +290,23 @@ HERE;
             $entity->setType('FR');
             $entity->save();
             $entry = new Entry();
-            $entry->newEntry($this->getEntry(), $entity->getId());
+            $entry->newEntry($this->getEntry(),$entity->getId());
             $this->setIdEntity($entity->getId());
             $this->setActive(true);
+            //Base::entityTimelineSave($this->getIdEntity());
             parent::save();
-            Timeline::addTimeline("frame", $this->getId(), "S");
+            Timeline::addTimeline("frame",$this->getId(),"S");
+//            if ($data->idTemplate) {
+//                $this->registerTemplate($data->idTemplate);
+//            }
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();
             throw new \Exception($e->getMessage());
         }
     }
-
-    public function saveData($data)
-    {
-        $transaction = $this->beginTransaction();
-        try {
-            $this->setData($data);
-            $entity = new Entity();
-            $entity->setAlias($this->getEntry());
-            $entity->setType('FR');
-            $entity->save();
-            $entry = new Entry();
-            $entry->newEntry($this->getEntry(), $entity->getId(), $data->nameEN);
-            $this->setIdEntity($entity->getId());
-            $this->setActive(true);
-            parent::save();
-            Timeline::addTimeline("frame", $this->getId(), "S");
-            $transaction->commit();
-        } catch (\Exception $e) {
-            $transaction->rollback();
-            throw new \Exception($e->getMessage());
-        }
-    }
-
-
-    public function delete()
-    {
+    
+    public function delete() {
         $transaction = $this->beginTransaction();
         try {
             $idEntity = $this->getIdEntity();
@@ -337,9 +315,9 @@ HERE;
             $entry->deleteEntry($this->getEntry());
             // remove frame-relations
             Base::deleteAllEntityRelation($idEntity);
-            // Base::entityTimelineDelete($this->getIdEntity());
+           // Base::entityTimelineDelete($this->getIdEntity());
             // remove this frame
-            Timeline::addTimeline("frame", $this->getId(), "D");
+            Timeline::addTimeline("frame",$this->getId(),"D");
             parent::delete();
             // remove entity
             $entity = new Entity($idEntity);
@@ -349,7 +327,7 @@ HERE;
             $transaction->rollback();
             throw new \Exception($e->getMessage());
         }
-    }
+    }    
 
     public function updateEntry($newEntry)
     {
@@ -380,15 +358,27 @@ HERE;
         return $relations;
     }
 
-    public function createNew($data)
+    public function createNew($data, $inheritsFromBase)
     {
-//        $relations = $this->getRelations(true);
+        $relations = $this->getRelations(true);
         $transaction = $this->beginTransaction();
         try {
-            $this->saveData($data);
-            Timeline::addTimeline("frame", $this->getId(), "S");
+            $this->save($data);
+            Timeline::addTimeline("frame",$this->getId(),"S");
+//            if ($data->idTemplate) {
+//                if ($inheritsFromBase) {
+//                    $template = new Template($data->idTemplate);
+//                    $base = $template->getBaseFrame()->asQuery()->getResult();
+//                    if (count($base)) {
+//                        $idFrameBase = $base[0]['idFrame'];
+//                        $frameBase = new Frame($idFrameBase);
+//                        $relations = $frameBase->getRelations();
+//                        Base::createEntityRelation($frameBase->getIdEntity(), 'rel_inheritance', $this->getIdEntity());
+//                    }
+//                }
+//            }
             $transaction->commit();
-//            return $relations;
+            return $relations;
         } catch (\Exception $e) {
             $transaction->rollback();
             throw new \Exception($e->getMessage());
@@ -402,11 +392,10 @@ HERE;
         $this->setActive($frame->active);
         $this->setIdEntity($frame->idEntity);
         parent::save();
-        Timeline::addTimeline("frame", $this->getId(), "S");
+        Timeline::addTimeline("frame",$this->getId(),"S");
     }
 
-    public function getClassification()
-    {
+    public function getClassification() {
         $idLanguage = \Manager::getSession()->idLanguage;
         $cmd = <<<HERE
 

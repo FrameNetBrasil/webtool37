@@ -38,8 +38,7 @@ class ViewAnnotationSet extends map\ViewAnnotationSetMap {
 
     public function listByLU($idLU, $sortable = NULL) {
         $criteria = $this->getCriteria()
-            //->select('idAnnotationSet, idSentence, sentence.text, entries.name as annotationStatus, idAnnotationStatus, annotationstatustype.color.rgbBg')
-            ->select("idAnnotationSet, idSentence, sentence.text, IF(idAnnotationStatus=2,'MANUAL','UNANN') as annotationStatus")
+            ->select('idAnnotationSet, idSentence, sentence.text, entries.name as annotationStatus, idAnnotationStatus, annotationstatustype.color.rgbBg')
 //            ->where("subcorpuslu.idLU = {$idLU}");
             ->where("idLU = {$idLU}");
         if ($sortable) {

@@ -147,7 +147,7 @@ class CxnController extends MController
     {
         try {
             $model = new fnbr\models\ConstructionElement();
-            $model->saveData($this->data->cxnelement);
+            $model->save($this->data->cxnelement);
             $this->renderPrompt('information', 'OK');
         } catch (\Exception $e) {
             $this->renderPrompt('error', $e->getMessage());

@@ -73,7 +73,6 @@ class MDatabase implements \IDataBase
             if ($ormLogger) {
                 $this->ormLogger = new $ormLogger();
             }
-
             if ($this->config['enableUserInformation']) {
                 $this->setUserInformation();
             }

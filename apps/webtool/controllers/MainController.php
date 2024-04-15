@@ -34,8 +34,6 @@ class MainController extends \MController
             } else {
                 $this->data->challenge = uniqid(rand());
                 Manager::getSession()->setValue('challenge', $this->data->challenge);
-                $this->data->datasources = Manager::getConf('fnbr.datasource');
-                $this->data->action = "@auth/login/authenticate|formLogin";
                 $this->render('formLogin');
             }
         }

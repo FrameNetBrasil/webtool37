@@ -788,12 +788,14 @@ class Manager
         return (self::$instance->getOptions('homolog') === true);
     }
 
-    public static function AUDIT() {
+    public static function AUDIT()
+    {
         $audit = self::getConf('audit');
         return isset($audit) && $audit['enabled'] === true;
     }
 
-    public static function getAuditors() {
+    public static function getAuditors()
+    {
         return self::AUDIT() ? self::getConf('audit')['auditors'] : [];
     }
 
@@ -805,9 +807,9 @@ class Manager
             return;
         }
 
-        if (in_array($errno, $codes)) {
+        //if (in_array($errno, $codes)) {
             self::logMessage("[ERROR] [Code] $errno [Error] $errstr [File] $errfile [Line] $errline");
-        }
+        //}
     }
 
     /*
@@ -1295,6 +1297,15 @@ class Manager
     }
 
     /**
+     * @param (mixed) $vars String ou array: variÃ¡veis das quais se deseja obter o valor
+     * @param (string) $from De onde obter os dados. Pode ser 'GET', 'POST',
+     *                       'SESSION', 'REQUEST' alÃ©m do padrÃ£o 'ALL' que
+     *                       retorna todos os dados.
+     * @param (string) $order Onde pesquisar primeiro POST ou GET. Por padrÃ£o a
+     *                        pesquisa Ã© feita de acordo com a configuraÃ§Ã£o do php.ini .
+     *                        Para forÃ§ar a ordem, informe "PG" ou "GP" (P=post, G=get)
+     *
+     * @return (array) Os valores das variÃ¡veis solicitadas
      * @todo TRANSLATION
      * Retorna
      * O metodo _REQUEST provÃª uma forma simples e rÃ¡pida para se ter acesso Ã s
@@ -1306,15 +1317,6 @@ class Manager
      * uma dessas opcoes, por exemplo GET, passe essa palavra como segundo
      * parÃ¢metro.
      *
-     * @param (mixed) $vars String ou array: variÃ¡veis das quais se deseja obter o valor
-     * @param (string) $from De onde obter os dados. Pode ser 'GET', 'POST',
-     *                       'SESSION', 'REQUEST' alÃ©m do padrÃ£o 'ALL' que
-     *                       retorna todos os dados.
-     * @param (string) $order Onde pesquisar primeiro POST ou GET. Por padrÃ£o a
-     *                        pesquisa Ã© feita de acordo com a configuraÃ§Ã£o do php.ini .
-     *                        Para forÃ§ar a ordem, informe "PG" ou "GP" (P=post, G=get)
-     *
-     * @return (array) Os valores das variÃ¡veis solicitadas
      */
     public static function _REQUEST($vars, $from = 'ALL', $order = '')
     {
@@ -2025,13 +2027,16 @@ class Manager
 
         $tracerStatus = self::getConf('logs.level');
         switch ($tracerStatus) {
-            case '0': {
+            case '0':
+            {
                 return 'Inativo';
             }
-            case '1': {
+            case '1':
+            {
                 return 'Status 1';
             }
-            case '2': {
+            case '2':
+            {
                 return 'Ativo em ' . self::getConf('logs.peer') . ":" . self::getConf('logs.port');
             }
         }
@@ -2211,7 +2216,7 @@ class Manager
             foreach ($scandir as $filePath) {
                 if (fnmatch("*.php", $filePath)) {
                     $ns = strtolower(($module ? $module . '\\\\' : '') . "components\\\\" . basename($filePath, '.php'));
-                    $fullPath = "/" . ($module ?  'modules/' . $module . '/' : '') . "components/" . $filePath;
+                    $fullPath = "/" . ($module ? 'modules/' . $module . '/' : '') . "components/" . $filePath;
                     $map .= "    '{$ns}' =>  \$baseDir . '{$fullPath}',\n";
                 }
             }

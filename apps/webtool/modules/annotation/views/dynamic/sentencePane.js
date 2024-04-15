@@ -47,6 +47,14 @@ let sentencePane = {
                 },
             },
             {
+                field: 'play1',
+                width: 56,
+                title: '',
+                formatter: function (value, row, index) {
+                    return '<i class="fas fa-play"></i> +- 1';
+                },
+            },
+            {
                 field: 'play3',
                 width: 56,
                 title: '',
@@ -104,7 +112,7 @@ let sentencePane = {
                     let rows = $('#gridSentences').datagrid('getRows');
                     let row = rows[index];
                     if (field === 'startTimestamp') {
-                        let startFrame = that.frameFromTime(value);
+                        let startFrame = row.startFrame;//that.frameFromTime(value);
                         that.$store.commit('currentFrame', startFrame);
                         // let objectSelected = that.$store.state.currentObject;
                         // if (objecidObjectSelected !== -1) {
@@ -112,29 +120,32 @@ let sentencePane = {
                         // }
                     }
                     if (field === 'startFrame') {
-                        that.$store.commit('currentFrame', value);
+                        let startFrame = row.startFrame;//that.frameFromTime(value);
+                        that.$store.commit('currentFrame', startFrame);
+//                        that.$store.commit('currentFrame', value);
                         // let idObjectSelected = that.$store.state.idObjectSelected;
                         // if (idObjectSelected !== -1) {
                         //     that.$store.dispatch('selectObject', idObjectSelected);
                         // }
                     }
                     if (field === 'endTimestamp') {
-                        let startFrame = that.frameFromTime(value);
-                        that.$store.commit('currentFrame', startFrame);
+                        let stopFrame = row.stopFrame;//that.frameFromTime(value);
+                        that.$store.commit('currentFrame', stopFrame);
                         // let idObjectSelected = that.$store.state.idObjectSelected;
                         // if (idObjectSelected !== -1) {
                         //     that.$store.dispatch('selectObject', idObjectSelected);
                         // }
                     }
                     if (field === 'endFrame') {
-                        that.$store.commit('currentFrame', value);
+                        let stopFrame = row.stopFrame;//that.frameFromTime(value);
+                        that.$store.commit('currentFrame', stopFrame);
                         // let idObjectSelected = that.$store.state.idObjectSelected;
                         // if (idObjectSelected !== -1) {
                         //     that.$store.dispatch('selectObject', idObjectSelected);
                         // }
                     }
                     if (field === 'text') {
-                        let startFrame = that.frameFromTime(row.startTimestamp);
+                        let startFrame = row.startFrame;//that.frameFromTime(value);
                         that.$store.commit('currentFrame', startFrame);
                         // let idObjectSelected = that.$store.state.idObjectSelected;
                         // if (idObjectSelected !== -1) {
@@ -142,19 +153,29 @@ let sentencePane = {
                         // }
                     }
                     if (field === 'play') {
-                        let startFrame = that.frameFromTime(row.startTimestamp);
+                        console.log(row);
+                        let startFrame = row.startFrame;//that.frameFromTime(value);
                         that.$store.commit('currentFrame', startFrame);
                         // let idObjectSelected = that.$store.state.idObjectSelected;
                         // if (idObjectSelected !== -1) {
                         //     that.$store.dispatch('selectObject', idObjectSelected);
                         // }
-                        let stopFrame = that.frameFromTime(row.endTimestamp);
+                        let stopFrame = row.stopFrame;//that.frameFromTime(value);
                         that.$store.commit('currentStopFrame', stopFrame);
                         that.$store.commit('currentState', 'videoPlaying');
                     }
+                    if (field === 'play1') {
+                        let startFrame = row.startFrame;
+                        let endFrame = row.endFrame;
+                        let start = startFrame - (annotationVideoModel.fps * 1)
+                        let stop = endFrame + (annotationVideoModel.fps * 1);
+                        that.$store.commit('currentFrame', start);
+                        that.$store.commit('currentStopFrame', stop);
+                        that.$store.commit('currentState', 'videoPlaying');
+                    }
                     if (field === 'play3') {
-                        let startFrame = that.frameFromTime(row.startTimestamp);
-                        let endFrame = that.frameFromTime(row.endTimestamp);
+                        let startFrame = row.startFrame;//that.frameFromTime(row.startTimestamp);
+                        let endFrame = row.endFrame;//that.frameFromTime(row.endTimestamp);
                         let start = startFrame - (annotationVideoModel.fps * 3)
                         let stop = endFrame + (annotationVideoModel.fps * 3);
                         that.$store.commit('currentFrame', start);
@@ -166,8 +187,8 @@ let sentencePane = {
                         that.$store.commit('currentState', 'videoPlaying');
                     }
                     if (field === 'play5') {
-                        let startFrame = that.frameFromTime(row.startTimestamp);
-                        let endFrame = that.frameFromTime(row.endTimestamp);
+                        let startFrame = row.startFrame;//that.frameFromTime(row.startTimestamp);
+                        let endFrame = row.endFrame;//that.frameFromTime(row.endTimestamp);
                         let start = startFrame - (annotationVideoModel.fps * 5)
                         let stop = endFrame + (annotationVideoModel.fps * 5);
                         that.$store.commit('currentFrame', start);

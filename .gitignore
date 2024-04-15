@@ -64,3 +64,5 @@ core/var/sessions/*
 ################
 docker/logs/apache2/error.log
 docker/logs/apache2/other_vhosts_access.log
+
+apps/webtool/files/multimodal/
