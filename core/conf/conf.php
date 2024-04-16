@@ -51,9 +51,10 @@ return [
         'check' => true
     ],
     'logs' => [
-        'path' => sys_get_temp_dir() . '/log',
+        //'path' => sys_get_temp_dir() . '/log',
+        'path' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '../var/log',
         'level' => 2,
-        'handler' => "socket",
+        'handler' => "file",
         'peer' => $_ENV['TRACE_HOST'],
         //'strict' => '200.131.61.133',
         'port' => $_ENV['TRACE_PORT'],

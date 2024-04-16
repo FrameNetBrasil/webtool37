@@ -52,7 +52,8 @@ class MLog
         return array_key_exists($option, $conf) ? $conf[$option] : null;
     }
 
-    public function setLevel($level) {
+    public function setLevel($level)
+    {
         $this->level = $level;
     }
 
@@ -97,6 +98,7 @@ class MLog
         }
 
         $this->logMessage('[SQL]' . $line);
+        $this->logMessageJL('[SQL]' . $sql);
     }
 
     public function logError($error, $conf = 'maestro')
@@ -117,7 +119,7 @@ class MLog
         $logfile = $this->getLogFileName($conf . '-error');
         error_log($line . "\n", 3, $logfile);
 
-        $this->logMessage('[ERROR]' . $line);
+        $this->logMessageError('[ERROR]' . $line);
     }
 
     public function isLogging()
@@ -125,11 +127,19 @@ class MLog
         return ($this->level > 0);
     }
 
+    public function logMessageError($msg)
+    {
+        if ($this->isLogging()) {
+            $handler = "Handler" . $this->handler;
+            $this->{$handler}($msg);
+        }
+    }
     public function logMessage($msg)
     {
         if ($this->isLogging()) {
             $handler = "Handler" . $this->handler;
             $this->{$handler}($msg);
+            $this->logMessageJL($msg);
         }
     }
 
@@ -174,6 +184,31 @@ class MLog
         $filename = basename($filename) . '.' . date('Y') . '-' . date('m') . '-' . date('d') . '-' . date('H') . '.log';
         $file = $dir . '/' . $filename;
         return $file;
+    }
+
+    public function logMessageJL($message)
+    {
+        $msg = (object)[
+            'message' => $message,
+            'context' => [
+                'dump' => [],
+                'source' => ''
+            ],
+            'level' => $this->level,
+            'level_name' => $this->level,
+            'channel' => 'log',
+            'datetime' => date('U'),
+            'extra' => [
+                'uid' => 0,
+                'file' => '',
+                'line' => 0,
+                'class' => '',
+                'callType' => null,
+                'function' => ''
+            ]
+        ];
+        $logfile = $this->home . '/jl_' . trim($this->host) . '.log';
+        file_put_contents($logfile, json_encode($msg) . "\n", FILE_APPEND);
     }
 
 }

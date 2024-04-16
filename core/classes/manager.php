@@ -808,7 +808,7 @@ class Manager
         }
 
         //if (in_array($errno, $codes)) {
-            self::logMessage("[ERROR] [Code] $errno [Error] $errstr [File] $errfile [Line] $errline");
+            self::logErrorMsg("[ERROR] [Code] $errno [Error] $errstr [File] $errfile [Line] $errline");
         //}
     }
 
@@ -1958,6 +1958,10 @@ class Manager
         return self::$instance->getObject('log')->logMessage($msg);
     }
 
+    public static function logErrorMsg($msg)
+    {
+        return self::$instance->getObject('log')->logMessageError($msg);
+    }
     /**
      * Brief Description.
      * Complete Description.
