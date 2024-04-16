@@ -11,7 +11,7 @@ return [
         'template' => 'index'
     ],
     'options' => [
-		'http' => 'http',
+		'http' => 'https',
         'startup' => 'webtool',
         'dbsession' => false,
         'debug' => true,
