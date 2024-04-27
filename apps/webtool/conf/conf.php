@@ -115,11 +115,10 @@ return [
     'db' => [
         'webtool' => [
             'driver' => 'pdo_mysql',
-//            'host' => '200.131.61.131:3306',
-            'host' => '200.131.55.78',
-            'dbname' => 'fnbr_db',
-            'user' => 'fnbrasil',
-            'password' => 'OssracF1982',
+            'host' => '',
+            'dbname' => '',
+            'user' => '',
+            'password' => '',
             'formatDate' => '%e/%m/%Y',
             'formatDateWhere' => '%Y/%m/%e',
             'formatTime' => '%T',
