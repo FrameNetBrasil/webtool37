@@ -116,10 +116,10 @@ return [
     'db' => [
         'webtool' => [
             'driver' => 'pdo_mysql',
-            'host' => '',
-            'dbname' => '',
-            'user' => '',
-            'password' => '',
+            'host' => $_ENV['DB_HOST'],
+            'dbname' => $_ENV['DB_NAME'],
+            'user' => $_ENV['DB_USER'],
+            'password' => $_ENV['DB_PASS'],
             'formatDate' => '%e/%m/%Y',
             'formatDateWhere' => '%Y/%m/%e',
             'formatTime' => '%T',
