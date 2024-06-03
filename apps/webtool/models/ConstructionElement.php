@@ -332,6 +332,8 @@ HERE;
                 $entry = new Entry();
                 $entry->newEntry($data->entry, $entity->getId(), $data->name);
                 Base::createEntityRelation($entity->getId(), 'rel_elementof', $schema->getIdEntity());
+		$this->setIdEntity($entity->getId());
+                $this->setIdConstruction($schema->getIdConstruction());
             }
             $this->setData($data);
             $this->setActive(true);
