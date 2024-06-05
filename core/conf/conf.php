@@ -53,10 +53,10 @@ return [
     'logs' => [
         //'path' => sys_get_temp_dir() . '/log',
         'path' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '../var/log',
-        'level' => 0,
+        'level' => 2,
         'handler' => "file",
         'peer' => $_ENV['TRACE_HOST'],
-        //'strict' => '200.131.61.133',
+        'strict' => '200.131.61.133',
         'port' => $_ENV['TRACE_PORT'],
         'errorCodes' => [
             E_ERROR,
