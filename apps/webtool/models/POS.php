@@ -59,6 +59,12 @@ class POS extends map\POSMap
         return $criteria;
     }
 
+    public function listForLookup()
+    {
+        $criteria = $this->getCriteria()->select('idPOS, POS')->orderBy('POS');
+        return $criteria;
+    }
+
     public function getByPOS($POS)
     {
         $filter = (object)[

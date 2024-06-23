@@ -1,8 +1,10 @@
 <?php
 
-class LexemeController extends MController {
+class LexemeController extends MController
+{
 
-    public function gridLemmaData(){
+    public function gridLemmaData()
+    {
         $model = new fnbr\models\Lexeme();
         $filter = (object)['lexeme' => $this->data->id, 'language' => Manager::getContext()->get(1)];
         mdump($filter);
@@ -10,7 +12,8 @@ class LexemeController extends MController {
         $this->renderJSON($model->gridDataAsJSON($criteria));
     }
 
-    public function lookupData(){
+    public function lookupData()
+    {
         if (strlen($this->data->q) < 3) {
             $json = json_encode([]);
         } else {
@@ -19,6 +22,13 @@ class LexemeController extends MController {
             $json = $model->gridDataAsJSON($criteria);
         }
         $this->renderJSON($json);
+    }
+
+    public function lookupPOSData()
+    {
+        $model = new fnbr\models\POS();
+        $criteria = $model->listForLookup();
+        $this->renderJSON($model->gridDataAsJSON($criteria, true));
     }
 
 

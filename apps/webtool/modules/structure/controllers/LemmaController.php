@@ -1,5 +1,8 @@
 <?php
 
+use fnbr\models\Language;
+use fnbr\models\Lexeme;
+
 class LemmaController extends MController
 {
 
@@ -94,7 +97,12 @@ class LemmaController extends MController
         $this->data->save = "@structure/lemma/newLexeme|formNewLexeme";
         $this->data->close = "!$('#formNewLexeme_dialog').dialog('close');";
         $this->data->title = _M('new Lexeme');
-        $this->render();
+        $language = new Language($this->idLanguage);
+        if ($language->getLanguage() == 'jp') {
+            $this->render("formNewLexemeJp");
+        } else {
+            $this->render();
+        }
     }
 
     public function newLexeme()
@@ -102,6 +110,14 @@ class LemmaController extends MController
         try {
             if (trim($this->data->lexeme->lexemeOrder) == '') {
                 throw new \Exception("Order is required.");
+            }
+            if (trim($this->data->lexeme->name) != '') {
+                $lexeme = new Lexeme();
+                $result = $lexeme->getByName($this->data->lexeme->name, $this->idLanguage, $this->data->lexeme->idPOS)->asQuery()->getResult();
+                if (count($result) == 0) {
+                    throw new \Exception("Lexeme not found!");
+                }
+                $this->data->lexeme->idLexeme = $result[0]['idLexeme'];
             }
             $structure = Manager::getAppService('structurelemma');
             $structure->addLexemeEntry($this->data);

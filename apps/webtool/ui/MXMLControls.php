@@ -135,8 +135,9 @@ class MXMLControls extends MBase
                 $control->inner = $template->fetch($fileName);;
                 $controls->addControl($control);
             } elseif ($extension == 'php') {
+                mdump('==========='.$file);
                 include_once($file);
-                $fileName = end(explode('/', $fileName)) ? : $fileName;
+                //$fileName = end(explode('/', $fileName)) ? : $fileName;
                 $className = str_replace('.' . $extension, '', $fileName);
                 $c = new $className;
                 $this->getPropertiesFromNode($c, $node);
