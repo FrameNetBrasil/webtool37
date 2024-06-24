@@ -217,6 +217,7 @@ class CxnController extends MController
         $this->data->cxn = 'Cxn: ' . $cxn->getName();
         //$this->data->ces = $cxn->listCEConstraints();
         //mdump($this->data->ces);
+        $this->data->ces = $cxn->listCE()->asQuery()->chunkResult('idEntity','name');
         $this->data->relations = ['rel_evokes' => 'rel_evokes'];
         mdump($this->data->relations);
         $this->data->save = "@structure/cxn/addConstraintCX|formAddConstraintCX";

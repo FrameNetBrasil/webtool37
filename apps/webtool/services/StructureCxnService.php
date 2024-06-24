@@ -785,14 +785,14 @@ class StructureCxnService extends MService
                 Base::createConstraintInstance($constraint->getIdEntity(), $data->relation, $data->idEntityA1, $data->idEntityA2);
                 $constraint2 = Base::createEntity('CN', 'con');
                 $cxn = new fnbr\models\Construction($data->idConstruction);
-                Base::createConstraintInstance($constraint2->getIdEntity(), 'con_constraint', $cxn->getIdEntity(), $constraint->getIdEntity());
+                Base::createConstraintInstance($constraint2->getIdEntity(), 'rel_constraint_constraint', $cxn->getIdEntity(), $constraint->getIdEntity());
             }
             if (($data->idEntityC1 != '') && ($data->idEntityC2 != '') && ($data->constraint != '')) {
                 $constraint = Base::createEntity('CN', 'con');
                 Base::createConstraintInstance($constraint->getIdEntity(), $data->constraint, $data->idEntityC1, $data->idEntityC2);
                 $constraint2 = Base::createEntity('CN', 'con');
                 $cxn = new fnbr\models\Construction($data->idConstruction);
-                Base::createConstraintInstance($constraint2->getIdEntity(), 'con_constraint', $cxn->getIdEntity(), $constraint->getIdEntity());
+                Base::createConstraintInstance($constraint2->getIdEntity(), 'rel_constraint_constraint', $cxn->getIdEntity(), $constraint->getIdEntity());
             }
             if ($data->idEntityCE != '') {
                 $constraint = Base::createEntity('CN', 'con');
@@ -800,7 +800,7 @@ class StructureCxnService extends MService
                 Base::createConstraintInstance($constraint->getIdEntity(), $data->relationCEFrame, $data->idEntityCE, $frame->getIdEntity());
                 $constraint2 = Base::createEntity('CN', 'con');
                 $cxn = new fnbr\models\Construction($data->idConstruction);
-                Base::createConstraintInstance($constraint2->getIdEntity(), 'con_constraint', $cxn->getIdEntity(), $constraint->getIdEntity());
+                Base::createConstraintInstance($constraint2->getIdEntity(), 'rel_constraint_constraint', $cxn->getIdEntity(), $constraint->getIdEntity());
             }
             if ($data->idParentCxn != '') {
                 $parentCxn = new fnbr\models\Construction($data->idParentCxn);
@@ -829,7 +829,7 @@ class StructureCxnService extends MService
                 $cxn = new fnbr\models\Construction($data->idConstruction);
                 // constraint 'cxn' CE-CXN
                 $constraintCxn = Base::createEntity('CN', 'con');
-                Base::createConstraintInstance($constraintCxn->getIdEntity(), 'con_cxn', $ce->getIdEntity(), $cxn->getIdEntity());
+                Base::createConstraintInstance($constraintCxn->getIdEntity(), 'rel_constraint_cxn', $ce->getIdEntity(), $cxn->getIdEntity());
                 // constraints 'ele' Constraint-CE
                 //$ces = $cxn->listCE()->asQuery()->getResult();
                 //foreach ($ces as $ce) {
