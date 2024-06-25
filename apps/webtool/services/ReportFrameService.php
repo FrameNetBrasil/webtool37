@@ -6,7 +6,7 @@ class ReportFrameService extends MService
     public function listFrames($data, $idLanguage = '')
     {
         $frame = new fnbr\models\ViewFrame();
-        $filter = (object) ['lu' => $data->lu, 'fe' => $data->fe, 'frame' => $data->frame, 'idDomain' => $data->idDomain, 'idLanguage' => $idLanguage];
+        $filter = (object)['lu' => $data->lu, 'fe' => $data->fe, 'frame' => $data->frame, 'idDomain' => $data->idDomain, 'idLanguage' => $idLanguage];
         $frames = $frame->listByFilter($filter)->asQuery()->getResult(\FETCH_ASSOC);
         $result = array();
         foreach ($frames as $row) {
@@ -42,7 +42,7 @@ class ReportFrameService extends MService
         $decorated = "";
         $sentence = utf8_decode($description);
         $decorated = preg_replace_callback(
-            "/\#([^\s\.\,\;\?\!]*)/i", 
+            "/\#([^\s\.\,\;\?\!]*)/i",
             function ($matches) use ($styles) {
                 $m = substr($matches[0], 1);
                 $l = strtolower($m);
@@ -57,10 +57,32 @@ class ReportFrameService extends MService
                     }
                 }
                 return $m;
-            }, 
+            },
             $sentence
         );
-        return utf8_encode($decorated);
+
+        $partial = utf8_encode($decorated);
+        $final = preg_replace_callback(
+            "/\[([^\]]*)\]/i",
+            function ($matches) use ($styles) {
+                $m = substr($matches[0], 1, -1);
+                $l = strtolower($m);
+                foreach ($styles as $fe => $s) {
+                    if (str_contains(utf8_encode($l), '|target')) {
+                        $m = substr($m, 0, strpos($m, '|'));
+                        return "<span class='fe_target'>{$m}</span>";
+                    } else {
+                        if (str_contains(utf8_encode($l), '|' . $fe)) {
+                            $m = substr($m, 0, strpos($m, '|'));
+                            return "<span class='fe_{$s['fe']}'>{$m}</span>";
+                        }
+                    }
+                }
+                return $m;
+            },
+            $partial
+        );
+        return nl2br(utf8_encode($final));
     }
 
     public function getFEData($idFrame)
@@ -79,8 +101,8 @@ class ReportFrameService extends MService
             $frameElement->getById($fe['idFrameElement']);
             $relations = $this->getRelationsFE($frameElement);
             $fe['relations'] = [];
-            foreach($relations as $rel => $aRelation) {
-                foreach($aRelation as $relation) {
+            foreach ($relations as $rel => $aRelation) {
+                foreach ($aRelation as $relation) {
                     $fe['relations'][] = [$rel, $feByEntry[$relation]['name'] ?: $relation];
                 }
             }
@@ -106,7 +128,7 @@ class ReportFrameService extends MService
     {
         $feCoreSet = $frame->listFECoreSet();
         $s = [];
-        foreach($feCoreSet as $i => $cs) {
+        foreach ($feCoreSet as $i => $cs) {
             $s[$i] = "{" . implode(',', $cs) . "}";
         }
         $result = implode(', ', $s);
@@ -117,19 +139,19 @@ class ReportFrameService extends MService
     {
         $relations = [];
         $directRelations = $frame->listDirectRelations();
-        foreach($directRelations as $entry => $row) {
+        foreach ($directRelations as $entry => $row) {
             $relations[$entry] = [];
             $i = 0;
-            foreach($row as $r) {
+            foreach ($row as $r) {
                 $relations[$entry][$r['idFrame']] = $r['name'];
             }
         }
-        $inverseRelations = $frame->listInverseRelations(); 
-        foreach($inverseRelations as $entry => $row) {
+        $inverseRelations = $frame->listInverseRelations();
+        foreach ($inverseRelations as $entry => $row) {
             $entry = $entry . '_inv';
             $relations[$entry] = [];
             $i = 0;
-            foreach($row as $r) {
+            foreach ($row as $r) {
                 $relations[$entry][$r['idFrame']] = $r['name'];
             }
         }
@@ -144,13 +166,13 @@ class ReportFrameService extends MService
         $excludes = $frameElement->listExcludes()->asQuery()->getResult();
         $requires = $frameElement->listRequires()->asQuery()->getResult();
         $st = $frameElement->listFE2SemanticType()->asQuery()->getResult();
-        foreach($requires as $row) {
+        foreach ($requires as $row) {
             $relations['requires'][] = $row['entry'];
         }
-        foreach($excludes as $row) {
+        foreach ($excludes as $row) {
             $relations['excludes'][] = $row['entry'];
         }
-        foreach($st as $row) {
+        foreach ($st as $row) {
             $relations['semantic_type'][] = $row['name'];
         }
 
@@ -168,8 +190,8 @@ class ReportFrameService extends MService
     {
         $classification = [];
         $result = $frame->getClassification();
-        foreach($result as $framal => $values) {
-            foreach($values as $row) {
+        foreach ($result as $framal => $values) {
+            foreach ($values as $row) {
                 $classification[$framal][] = $row['name'];
             }
         }
