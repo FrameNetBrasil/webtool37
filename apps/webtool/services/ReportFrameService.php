@@ -61,7 +61,8 @@ class ReportFrameService extends MService
             $sentence
         );
 
-        $partial = utf8_encode($decorated);
+        //$partial = utf8_encode($decorated);
+        $partial = $decorated;
         $final = preg_replace_callback(
             "/\[([^\]]*)\]/i",
             function ($matches) use ($styles) {
@@ -82,7 +83,7 @@ class ReportFrameService extends MService
             },
             $partial
         );
-        return nl2br(utf8_encode($final));
+        return utf8_encode(nl2br($final));
     }
 
     public function getFEData($idFrame)
