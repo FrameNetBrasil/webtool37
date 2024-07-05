@@ -56,7 +56,7 @@ return [
         'level' => 0,
         'handler' => "file",
         'peer' => $_ENV['TRACE_HOST'],
-        'strict' => '200.131.61.133',
+        //'strict' => '',
         'port' => $_ENV['TRACE_PORT'],
         'errorCodes' => [
             E_ERROR,

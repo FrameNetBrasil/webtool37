@@ -584,7 +584,7 @@ select distinct s.idSentence, s.text
 FROM document_sentence ds
   INNER JOIN sentence s ON (s.idSentence = ds.idSentence)
 where (ds.idDocument = {$this->getIdDocument()})
-order by s.idSentence
+order by s.idSentence limit 1000;
 
 HERE;
         $query = $this->getDb()->getQueryCommand($cmd);
