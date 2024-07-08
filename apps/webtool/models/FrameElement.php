@@ -79,12 +79,12 @@ class FrameElement extends map\FrameElementMap
     public function getById($id)
     {
         parent::getById($id);
-        $coreType = new TypeInstance();
-        $criteria = $coreType->getCriteria()->select('idTypeInstance');
-        Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
-        $criteria->where("frameelement.idFrameElement = '{$id}'");
-        $result = $criteria->asQuery()->getResult();
-        $this->setIdCoreType($result[0]['idTypeInstance']);
+//        $coreType = new TypeInstance();
+//        $criteria = $coreType->getCriteria()->select('idTypeInstance');
+//        Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
+//        $criteria->where("frameelement.idFrameElement = '{$id}'");
+//        $result = $criteria->asQuery()->getResult();
+//        $this->setIdCoreType($result[0]['idTypeInstance']);
         //$criteria = $this->getCriteria()->select('frame.idFrame');
         //Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
         //$criteria->where("idFrameElement = '{$id}'");
@@ -167,7 +167,7 @@ class FrameElement extends map\FrameElementMap
     {
         $criteria = $this->getCriteria()->select('idFrameElement,entry,entries.name as name, entries.description as description, entries.nick as nick, coreType')->orderBy('entries.name');
         Base::entryLanguage($criteria);
-        Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
+        //Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
         if ($idFrame) {
             //Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
             $criteria->where("frame.idFrame = {$idFrame}");
@@ -188,9 +188,9 @@ class FrameElement extends map\FrameElementMap
     {
         $criteria = $this->getCriteria()->select('idEntity,entries.name as name')->orderBy('entries.name');
         Base::entryLanguage($criteria);
-        Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
+        //Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
         //Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
-        $criteria->where("typeinstance.entry = 'cty_core'");
+        //$criteria->where("typeinstance.entry = 'cty_core'");
         $criteria->where("frame.idEntity = {$idEntityFrame}");
         return $criteria;
     }
@@ -250,7 +250,7 @@ class FrameElement extends map\FrameElementMap
     {
         $criteria = $this->getCriteria()->select('idFrameElement, entry, active, idEntity, idColor, coreType')->orderBy('entry');
         //Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
-        Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
+        //Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
         $criteria->where("frame.idFrame = {$idFrame}");
         return $criteria;
     }
@@ -260,12 +260,13 @@ class FrameElement extends map\FrameElementMap
         $transaction = $this->beginTransaction();
         try {
             if ($this->isPersistent()) {
-                $coreType = new TypeInstance($this->getIdCoreType());
-                $this->setCoreType($coreType->getEntry());
-                Base::updateEntityRelation($this->getIdEntity(), 'rel_hastype', $coreType->getIdEntity());
+//                $coreType = new TypeInstance($this->getIdCoreType());
+//                $this->setCoreType($coreType->getEntry());
+                //Base::updateEntityRelation($this->getIdEntity(), 'rel_hastype', $coreType->getIdEntity());
+                $this->setCoreType($data->coreType);
                 $this->setActive(true);
                 $criteria = $this->getCriteria()->select('fe1.idFrameElement');
-                Base::relation($criteria, 'FrameElement fe1', 'FrameElement fe2', 'rel_hastemplate');
+                //Base::relation($criteria, 'FrameElement fe1', 'FrameElement fe2', 'rel_hastemplate');
                 $criteria->where("fe2.idEntity = {$this->getIdEntity()}");
                 $fes = $criteria->asQuery()->getResult();
                 foreach ($fes as $fe) {
@@ -291,10 +292,11 @@ class FrameElement extends map\FrameElementMap
                 }
                 //
                 $entry->newEntry($this->getEntry(), $entity->getId());
-                Base::createEntityRelation($entity->getId(), 'rel_elementof', $schema->getIdEntity());
-                $coreType = new TypeInstance($data->idCoreType);
-                Base::createEntityRelation($entity->getId(), 'rel_hastype', $coreType->getIdEntity());
-                $this->setCoreType($coreType->getEntry());
+                //Base::createEntityRelation($entity->getId(), 'rel_elementof', $schema->getIdEntity());
+                //$coreType = new TypeInstance($data->idCoreType);
+                //Base::createEntityRelation($entity->getId(), 'rel_hastype', $coreType->getIdEntity());
+                //$this->setCoreType($coreType->getEntry());
+                $this->setCoreType($data->idCoreType);
                 $this->setIdEntity($entity->getId());
                 $this->setActive(true);
             }
@@ -383,10 +385,11 @@ class FrameElement extends map\FrameElementMap
         $this->setActive($fe->active);
         $this->setIdEntity($fe->idEntity);
         $this->setIdColor($fe->idColor);
-        $coreType = new TypeInstance();
-        $idCoreType = $coreType->getIdCoreTypeByEntry($fe->coreType);
-        $coreType->getById($idCoreType);
-        Base::createEntityRelation($fe->idEntity, 'rel_hastype', $coreType->getIdEntity());
+        $this->setCoreType($fe->idCoreType);
+//        $coreType = new TypeInstance();
+//        $idCoreType = $coreType->getIdCoreTypeByEntry($fe->coreType);
+//        $coreType->getById($idCoreType);
+//        Base::createEntityRelation($fe->idEntity, 'rel_hastype', $coreType->getIdEntity());
         parent::save();
         Timeline::addTimeline("frameelement", $this->getId(), "S");
     }

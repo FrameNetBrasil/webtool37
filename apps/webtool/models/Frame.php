@@ -128,12 +128,13 @@ class Frame extends map\FrameMap
     public function listFE()
     {
         $fe = new FrameElement();
-        $criteria = $fe->getCriteria()->select('idFrameElement, entry, entries.name as name, coreType, color.rgbFg, color.rgbBg, ' .
-                'typeinstance.idTypeInstance as idCoreType, color.idColor');
+//        $criteria = $fe->getCriteria()->select('idFrameElement, entry, entries.name as name, coreType, color.rgbFg, color.rgbBg, ' .
+//                'typeinstance.idTypeInstance as idCoreType, color.idColor');
+        $criteria = $fe->getCriteria()->select('idFrameElement, entry, entries.name as name, coreType, color.rgbFg, color.rgbBg,color.idColor,typeinstance.idTypeInstance as idCoreType');
         Base::entryLanguage($criteria);
         //Base::relation($criteria, 'FrameElement', 'Frame', 'rel_elementof');
-        Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
-        $criteria->where("frame.idFrame = {$this->idFrame}");
+        //Base::relation($criteria, 'FrameElement', 'TypeInstance', 'rel_hastype');
+        $criteria->where("idFrame = {$this->idFrame}");
         $criteria->orderBy('typeinstance.idTypeInstance, entries.name');
         return $criteria;
     }

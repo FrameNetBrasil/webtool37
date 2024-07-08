@@ -11,7 +11,7 @@ class MLookupCoreType extends MControl
         $('#{$this->property->id}').combogrid({
             panelWidth:220,
             url: '{$url}',
-            idField:'idCoreType',
+            idField:'entry',
             textField:'name',
             mode:'remote',
             fitColumns:true,
