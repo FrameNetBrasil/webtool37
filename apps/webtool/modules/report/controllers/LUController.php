@@ -55,11 +55,11 @@ class LUController extends MController
         $this->data->patterns = $result['patterns'];
         $this->data->realizationAS = $result['realizationAS'];
         if (count($result['feAS']) > 0) {
-            $this->data->feAS = MUtil::php2js($result['feAS']);
+            $this->data->feAS = $result['feAS'];
             $this->data->patternFEAS = MUtil::php2js($result['patternFEAS']);
             $this->data->patternAS = MUtil::php2js($result['patternAS']);
         } else {
-            $this->data->feAS = MUtil::php2js([]);
+            $this->data->feAS = [];
             $this->data->patternFEAS = MUtil::php2js([]);
             $this->data->patternAS = MUtil::php2js([]);
         }

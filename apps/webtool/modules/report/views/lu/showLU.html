@@ -137,9 +137,11 @@
         fit: true
     });
 
-    var fes = {{MUtil::php2js($data->fes)|noescape}};
+    //var fes = {{MUtil::php2js($data->fes)|noescape}};
+    var fes = ({{MJSON::encode($data->fes)|noescape}});
     var realizationAS = {{MUtil::php2js($data->realizationAS)|noescape}};
-    var feAS = {{$data->feAS|noescape}};
+    //var feAS = {{$data->feAS|noescape}};
+    var feAS = ({{MJSON::encode($data->feAS)|noescape}});
     var patternFEAS = {{$data->patternFEAS|noescape}};
     var patternAS = {{$data->patternAS|noescape}};
 
