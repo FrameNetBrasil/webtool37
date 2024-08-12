@@ -28,11 +28,11 @@ class SentenceMap extends \MBusinessModel {
                 'paragraphOrder' => array('column' => 'paragraphOrder','type' => 'integer'),
                 'idParagraph' => array('column' => 'idParagraph','type' => 'integer'),
                 'idLanguage' => array('column' => 'idLanguage','type' => 'integer'),
-                'idDocument' => array('column' => 'idDocument','type' => 'integer'),
+                //'idDocument' => array('column' => 'idDocument','type' => 'integer'),
             ),
             'associations' => array(
                 'paragraph' => array('toClass' => 'fnbr\models\Paragraph', 'cardinality' => 'oneToOne' , 'keys' => 'idParagraph:idParagraph'),
-                'document' => array('toClass' => 'fnbr\models\Document', 'cardinality' => 'oneToOne' , 'keys' => 'idDocument:idDocument'),
+                //'document' => array('toClass' => 'fnbr\models\Document', 'cardinality' => 'oneToOne' , 'keys' => 'idDocument:idDocument'),
                 'language' => array('toClass' => 'fnbr\models\Language', 'cardinality' => 'oneToOne' , 'keys' => 'idLanguage:idLanguage'),
                 'annotationsets' => array('toClass' => 'fnbr\models\AnnotationSet', 'cardinality' => 'oneToMany' , 'keys' => 'idSentence:idSentence'), 
                 'sentencemm' => array('toClass' => 'fnbr\models\SentenceMM', 'cardinality' => 'oneToMany' , 'keys' => 'idSentence:idSentence'),

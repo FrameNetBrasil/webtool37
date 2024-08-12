@@ -77,10 +77,16 @@ class MainController extends \MController
 
     public function logout()
     {
-        Manager::getAuth()->logout();
-        $auth0 = $this->getAuth0();
-        $auth0->logout('/');
-        $this->redirect(Manager::getURL('main'));
+        if (Manager::getConf('login.handler') == 'auth0') {
+            Manager::getAuth()->logout();
+            $auth0 = $this->getAuth0();
+            $auth0->logout('/');
+            $this->redirect(Manager::getURL('main'));
+        } else {
+            Manager::getAuth()->logout();
+            $main = Manager::getURL('main');
+            $this->redirect($main);
+        }
     }
 
     public function login() {

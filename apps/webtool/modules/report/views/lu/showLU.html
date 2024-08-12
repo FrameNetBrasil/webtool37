@@ -9,15 +9,15 @@
         <a href="#" class="easyui-linkbutton" onclick="javascript:showFrame()">{{$data->lu->frameName|noescape}}</a>
     </div>
     <div class="divPanel">
-        <div id="panelDefinition" class="easyui-panel" title="{{_'repDefinition'}}" collapsible="false" data-options="fit:true"  style="width:100%;">
+        <div id="panelDefinition" class="easyui-panel" title="Definition" collapsible="false" data-options="fit:true"  style="width:100%;">
             <div class="text">
                 {{$data->lu->senseDescription|noescape}}
             </div>
         </div>
     </div>
     <div class="divPanel">
-        <div id="panelRealizations" class="easyui-panel" title="{{_'repSyntaticRealizations'}}" collapsible="true" data-options="fit:true"  style="width:100%;">
-            <div class="text">{{_'repSyntaticRealizationsMsg'}}</div>
+        <div id="panelRealizations" class="easyui-panel" title="Frame Elements and Their Syntactic Realizations" collapsible="true" data-options="fit:true"  style="width:100%;">
+            <div class="text">The Frame Elements for this word sense are (with realizations):</div>
             <table class="tableRealizations">
                 <tr>
                     <th>Frame Element</th>
@@ -54,8 +54,8 @@
     </div>
 
     <div class="divPanel">
-        <div id="panelVP" class="easyui-panel" title="{{_'repVP'}}" collapsible="true" data-options="fit:true"  style="width:100%;">
-            <div class="text">{{_'repVPMsg'}}</div>
+        <div id="panelVP" class="easyui-panel" title="Valence Patterns" collapsible="true" data-options="fit:true"  style="width:100%;">
+            <div class="text">Valence Patterns</div>
             <table class="tableVP">
                 <tr>
                     <th>Number Annotated</th>
