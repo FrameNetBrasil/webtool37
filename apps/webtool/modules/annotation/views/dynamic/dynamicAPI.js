@@ -15,7 +15,7 @@ let dynamicAPI = {
             toDelete: toDelete,
         }
         try {
-            let url = "/index.php/webtool/annotation/multimodal/deleteObjects";
+            let url = "/index.php/webtool/annotation/dynamic/deleteObjects";
             manager.doAjax(url, (response) => {
                 if (response.type === 'success') {
                     // $.messager.alert('Ok', 'Objects deleted.','info');
