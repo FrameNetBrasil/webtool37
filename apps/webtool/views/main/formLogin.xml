@@ -26,7 +26,7 @@
                 <mtextfield type="password" id="pwd" label="Password"  size="15"/>
             </fields>
             <buttons>
-                <mbutton id="btnLogin" text="Login" action="$this->data->action"/>
+                <mbutton id="btnLogin" text="Login" action="@auth/login/authenticate"/>
             </buttons>    
         </mformdialog>
 </view>
