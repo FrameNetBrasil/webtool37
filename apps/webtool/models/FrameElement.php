@@ -265,15 +265,15 @@ class FrameElement extends map\FrameElementMap
                 //Base::updateEntityRelation($this->getIdEntity(), 'rel_hastype', $coreType->getIdEntity());
                 $this->setCoreType($data->coreType);
                 $this->setActive(true);
-                $criteria = $this->getCriteria()->select('fe1.idFrameElement');
+                //$criteria = $this->getCriteria()->select('fe1.idFrameElement');
                 //Base::relation($criteria, 'FrameElement fe1', 'FrameElement fe2', 'rel_hastemplate');
-                $criteria->where("fe2.idEntity = {$this->getIdEntity()}");
-                $fes = $criteria->asQuery()->getResult();
-                foreach ($fes as $fe) {
-                    $feTemplated = new FrameElement($fe['idFrameElement']);
-                    $feTemplated->setIdColor($this->getIdColor());
-                    $feTemplated->save();
-                }
+                //$criteria->where("fe2.idEntity = {$this->getIdEntity()}");
+                //$fes = $criteria->asQuery()->getResult();
+                //foreach ($fes as $fe) {
+                //    $feTemplated = new FrameElement($fe['idFrameElement']);
+                //    $feTemplated->setIdColor($this->getIdColor());
+                //    $feTemplated->save();
+                //}
             } else {
                 if ($data->idFrame) {
                     $schema = new Frame($data->idFrame);
