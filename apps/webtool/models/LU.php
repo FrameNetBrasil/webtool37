@@ -92,7 +92,7 @@ class LU extends map\LUMap
     {
         $criteria = $this->getCriteria()->select("idLU, concat(frame.entries.name,'.',name) as fullname")->orderBy('frame.entries.name,name');
         $criteria->where("idLU = {$this->getId()}");
-        Base::relation($criteria, 'LU', 'Frame frame', 'rel_evokes');
+//        Base::relation($criteria, 'LU', 'Frame frame', 'rel_evokes');
         Base::entryLanguage($criteria, 'frame');
         return $criteria->asQuery()->getResult()[0]['fullname'];
     }
