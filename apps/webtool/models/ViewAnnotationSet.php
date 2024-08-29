@@ -172,7 +172,7 @@ HERE;
             $condition = "(idAnnotationSet = {$idAnnotationSet})";
         }
         $cmd = <<<HERE
-        SELECT l.idSentence, l.startChar, l.endChar, l.rgbFg, l. rgbBg, l.instantiationType, fe.entry as feEntry, e.name feName, layerTypeEntry
+        SELECT l.idSentence, l.startChar, l.endChar, l.rgbFg, l.rgbBg, l.instantiationType, fe.entry as feEntry, e.name feName, layerTypeEntry
         FROM view_labelfecetarget l left join view_frameelement fe on (l.idFrameElement = fe.idFrameElement)
         LEFT JOIN entry e on (fe.entry = e.entry)
         WHERE {$condition} AND (l.idLanguage = {$idLanguage} )
