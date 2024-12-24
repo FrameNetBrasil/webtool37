@@ -38,13 +38,8 @@ $ cd webtool
 $ docker-compose up
 ```
 
-* Create the MySQL/MariaDb database from the dump file
 
-```sh
-webtool/apps/webtool/dump/webtool_db.tar.gz
-```
-
-* Update the database credentials at .env file
+* Update the database credentials and options at .env file
 
 ```sh
 webtool/.env

@@ -50,6 +50,14 @@ class Genre extends map\GenreMap {
         Base::entryLanguage($criteria);
         return $criteria;
     }
+
+    public function getName()
+    {
+        $criteria = $this->getCriteria()->select('entries.name as name');
+        $criteria->where("idGenre = {$this->getId()}");
+        Base::entryLanguage($criteria);
+        return $criteria->asQuery()->getResult()[0]['name'];
+    }
     
     public function save($data)
     {

@@ -73,7 +73,7 @@ class LemmaController extends MController
     public function formDeleteLemma()
     {
         $ok = "^structure/lemma/deleteLemma/" . $this->data->id;
-        $this->renderPrompt('confirmation', 'Atenção: O Lemma será removido! Continua?', $ok);
+        $this->renderPrompt('confirmation', 'Warning: Lemma will be removed! Continue?', $ok);
     }
 
     public function deleteLemma()

@@ -7,7 +7,7 @@
         </tools>
         <mform id="formNewFrame">
             <fields>
-                <mtextfield id="frame_namePT" width="250px" label="Name [pt]"/>
+<!--                <mtextfield id="frame_namePT" width="250px" label="Name [pt]"/>-->
                 <mtextfield id="frame_nameEN" width="250px" label="Name [en]"/>
             </fields>
             <data load="$this->data->object"/>
@@ -19,11 +19,10 @@
                 if (response.status == 'error') {
                     theme.message('error','Error',response.message);
                 } else {
-<!--                    theme.dialog.refresh('formNewFrameDialog', {-->
-<!--                        toolbar: null,-->
-<!--                        width: 510,-->
-<!--                        url: '/index.php/webtool/structure/entry/gridUpdate/frm_' + $('#frame_entry').textbox('getValue')-->
-<!--                    });-->
+                    if (response.status == 'information') {
+                        theme.message('information','Information',response.message);
+                        structure.reloadFrame();
+                    }
                 }
             }, 'formNewFrame');
         }

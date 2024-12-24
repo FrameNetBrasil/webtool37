@@ -185,6 +185,27 @@ class Document extends map\DocumentMap
         return $sentence;
     }
 
+    public function delete() {
+        $transaction = $this->beginTransaction();
+        try {
+            $idEntity = $this->getIdEntity();
+            // remove entry
+            $entry = new Entry();
+            $entry->deleteEntry($this->getEntry());
+            // remove frame-relations
+            // remove this frame
+            Timeline::addTimeline("document",$this->getId(),"D");
+            parent::delete();
+            // remove entity
+            $entity = new Entity($idEntity);
+            $entity->delete();
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollback();
+            throw new \Exception($e->getMessage());
+        }
+    }
+
     /**
      * Upload FullText - plain text (without processing) - UTF8
      * @param type $data

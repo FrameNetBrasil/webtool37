@@ -1,17 +1,32 @@
 <?xml version="1.0"?>
 <view>
-    <mformdialog id="formNewDocument">
-        <property title="$this->data->title"  onClose="structure.reloadCorpus();"/>
-        <fields>
-            <mhiddenfield id="document_idCorpus" value="$this->data->idCorpus"/>
-            <mlabel text="$this->data->corpus" label="Corpus:"/>
-            <mtextfield id="document_entry" label="Entry:" prefix="doc_" width="250px"/>
-            <include component="MLookupGenre.php" id="document_idGenre" label="Genre"/>
-            <mtextfield id="document_author" label="Author:" width="250px"/>
-        </fields>
+    <mdialog id="formNewDocumentDialog" state="open" onClose="$this->data->close;">
+        <property title="$this->data->title"/>
         <tools>
-            <mlinkbutton id="lbCloseDocument" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
-            <mlinkbutton id="lbSaveDocument" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+            <mlinkbutton id="lbSaveCorpus" iconCls="icon-save" text="Save" plain="true" action="!formNewDocumentSave()"/>
         </tools>
-    </mformdialog>
+        <mform id="formNewDocument">
+            <fields>
+                <mhiddenfield id="document_idCorpus" value="$this->data->idCorpus"/>
+                <mlabel text="$this->data->corpus" label="Corpus:"/>
+                <mtextfield id="document_name" width="250px" label="Name"/>
+                <include component="MLookupGenre.php" id="document_idGenre" label="Genre"/>
+                <mtextfield id="document_author" label="Author:" width="250px"/>
+            </fields>
+        </mform>
+    </mdialog>
+    <script>
+        function formNewDocumentSave(){
+            manager.doAjax('/index.php/webtool/structure/corpus/newDocument', function(response){
+                if (response.status == 'error') {
+                    theme.message('error','Error',response.message);
+                } else {
+                    if (response.status == 'information') {
+                        theme.message('information','Information',response.message);
+                        structure.reloadCorpus();
+                    }
+                }
+            }, 'formNewDocument');
+        }
+    </script>
 </view>

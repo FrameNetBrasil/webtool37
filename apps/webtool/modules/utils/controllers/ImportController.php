@@ -93,10 +93,18 @@ class ImportController extends MController
     public function importFullText()
     {
         try {
-            $files = Mutil::parseFiles('uploadFile');
-            $model = new fnbr\models\Document($this->data->idDocument);
-            $model->uploadFullText($this->data, $files[0]);
-            $this->renderPrompt('information', 'Fulltext loaded successfully.');
+            if ($this->data->idDocument != '') {
+                if ($this->data->idLanguage != '') {
+                    $files = Mutil::parseFiles('uploadFile');
+                    $model = new fnbr\models\Document($this->data->idDocument);
+                    $model->uploadFullText($this->data, $files[0]);
+                    $this->renderPrompt('information', 'Fulltext loaded successfully.');
+                } else {
+                    throw new EMException("Language was not informed.");
+                }
+            } else {
+                throw new EMException("Document was not informed.");
+            }
         } catch (EMException $e) {
             $this->renderPrompt('error', $e->getMessage());
         }

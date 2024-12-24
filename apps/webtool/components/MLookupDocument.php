@@ -13,7 +13,7 @@ class MLookupDocument extends MControl
             url: '{$url}',
             idField:'idDocument',
             textField:'name',
-            prompt: 'minimum 2 letters or * for all',
+            prompt: 'minimum 2 letters',
             mode:'remote',
             fitColumns:true,
             columns:[[

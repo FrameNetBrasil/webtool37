@@ -123,6 +123,27 @@ class Corpus extends map\CorpusMap
         }
     }
 
+    public function delete() {
+        $transaction = $this->beginTransaction();
+        try {
+            $idEntity = $this->getIdEntity();
+            // remove entry
+            $entry = new Entry();
+            $entry->deleteEntry($this->getEntry());
+            // remove frame-relations
+            // remove this frame
+            Timeline::addTimeline("corpus",$this->getId(),"D");
+            parent::delete();
+            // remove entity
+            $entity = new Entity($idEntity);
+            $entity->delete();
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollback();
+            throw new \Exception($e->getMessage());
+        }
+    }
+
     /**
      * Upload sentenças do WordSketch com Documento anotado em cada linha. Documentos já devem estar cadastrados.
      * @param type $data

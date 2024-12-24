@@ -39,4 +39,32 @@ class StructureCorpusService extends MService
         return $result;
     }
 
+    public function deleteCorpus($idCorpus)
+    {
+        mdump('deleteCorpus ' . $idCorpus);
+        $corpus = new fnbr\models\Corpus($idCorpus);
+        $transaction = $corpus->beginTransaction();
+        try {
+            $corpus->delete();
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollback();
+            throw new \exception($e->getMessage());
+        }
+    }
+
+    public function deleteDocument($idDocument)
+    {
+        mdump('deleteDocument ' . $idDocument);
+        $document = new fnbr\models\Document($idDocument);
+        $transaction = $document->beginTransaction();
+        try {
+            $document->delete();
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollback();
+            throw new \exception($e->getMessage());
+        }
+    }
+
 }

@@ -11,7 +11,7 @@ return [
         'template' => 'index'
     ],
     'options' => [
-		'http' => 'https',
+		'http' => $_ENV['HTTP'],
         'startup' => 'webtool',
         'dbsession' => false,
         'debug' => true,
@@ -53,7 +53,7 @@ return [
     'logs' => [
         //'path' => sys_get_temp_dir() . '/log',
         'path' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '../var/log',
-        'level' => 0,
+        'level' => $_ENV['TRACE_LEVEL'],
         'handler' => "file",
         'peer' => $_ENV['TRACE_HOST'],
         //'strict' => '',

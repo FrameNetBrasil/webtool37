@@ -1,17 +1,33 @@
 <?xml version="1.0"?>
 <view>
-    <mformdialog id="formUpdateDocument">
-        <property title="$this->data->title" onClose="structure.reloadCorpus();"/>
-        <fields>
-            <mhiddenfield id="document_idDocument" value="$this->data->id"/>
-            <mtextfield id="document_entry" label="Entry:" prefix="doc_" width="250px"/>
-            <include component="MLookupGenre.php" id="document_idGenre" label="Genre"/>
-            <mtextfield id="document_author" label="Author:" width="250px"/>
-        </fields>
+    <mdialog id="formUpdateDocumentDialog" state="open" onClose="$this->data->close;">
+        <property title="$this->data->title"/>
         <tools>
-            <mlinkbutton id="lbCloseDocument" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
-            <mlinkbutton id="lbSaveDocument" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+            <mlinkbutton id="lbSaveDocument" iconCls="icon-save" text="Save" plain="true" action="!formUpdateDocumentSave()"/>
         </tools>
-        <data load="$this->data->object"/>
-    </mformdialog>
+        <mform id="formUpdateDocument">
+            <fields>
+                <mhiddenfield id="document_idCorpus" value="$this->data->object->idCorpus"/>
+                <mhiddenfield id="document_idDocument" value="$this->data->object->idDocument"/>
+                <mlabel text="$this->data->corpusName" label="Corpus:"/>
+                <mtextfield id="document_name" width="250px" label="Name" value="$this->data->name"/>
+                <include component="MLookupGenre.php" id="document_idGenre" label="Genre" value="$this->data->genreName"/>
+                <mtextfield id="document_author" label="Author:" width="250px" value="$this->data->object->author"/>
+            </fields>
+        </mform>
+    </mdialog>
+    <script>
+        function formUpdateDocumentSave(){
+            manager.doAjax('/index.php/webtool/structure/corpus/updateDocument', function(response){
+                if (response.status == 'error') {
+                    theme.message('error','Error',response.message);
+                } else {
+                    if (response.status == 'information') {
+                        theme.message('information','Information',response.message);
+                        structure.reloadCorpusParent();
+                    }
+                }
+            }, 'formUpdateDocument');
+        }
+    </script>
 </view>

@@ -1,5 +1,7 @@
 <?php
 
+use fnbr\models\Base;
+
 class FrameController extends MController
 {
 
@@ -86,9 +88,13 @@ class FrameController extends MController
             $inheritsFromBase = false;// ($this->data->inheritsFromBase == 'on');
             $relations = $frame->createNew($this->data->frame, $inheritsFromBase);
             $entry = new fnbr\models\Entry();
-            $entry->updateByIdEntity($frame->getIdEntity(), 1, $this->data->frame->namePT);
-            $entry->updateByIdEntity($frame->getIdEntity(), 2, $this->data->frame->nameEN);
-            $this->renderResponse('ok', 'Frame created.');
+//            $entry->updateByIdEntity($frame->getIdEntity(), 1, $this->data->frame->namePT);
+            $languages = Base::languages();
+            foreach($languages as $idLanguage => $language) {
+                $entry->updateByIdEntity($frame->getIdEntity(), $idLanguage, $this->data->frame->nameEN);
+            }
+//            $this->renderResponse('ok', 'Frame created.');
+            $this->renderResponse('information', 'OK. Frame created.');
         } catch (\Exception $e) {
             $this->renderResponse('error', $e->getMessage());
         }
@@ -115,8 +121,9 @@ class FrameController extends MController
 
     public function formDeleteFrame()
     {
-        $ok = ">structure/frame/deleteFrame/" . $this->data->id;
-        $this->renderPrompt('confirmation', 'Atenção: O Frame e todos os FrameElements serão removidos! Continua?', $ok);
+        //$ok = ">structure/frame/deleteFrame/" . $this->data->id;
+        $ok = "!structure.deleteFrameConfirmed({$this->data->id})";
+        $this->renderPrompt('confirmation', 'Warning: Frame and all FrameElements will be removed. Continue?', $ok);
     }
 
     public function deleteFrame()
@@ -124,7 +131,7 @@ class FrameController extends MController
         try {
             $structure = Manager::getAppService('structureframe');
             $structure->deleteFrame($this->data->id);
-            $this->renderResponse('information', 'OK', "!structure.reloadFrame();");
+            $this->renderResponse('information', 'OK. Frame deleted.');
         } catch (\Exception $e) {
             $this->renderResponse('error', $e->getMessage());
         }

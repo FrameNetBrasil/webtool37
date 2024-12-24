@@ -1,13 +1,30 @@
 <?xml version="1.0"?>
 <view>
-    <mformdialog id="formNewCorpus">
-        <property title="$this->data->title"  onClose="structure.reloadCorpus();"/>
-        <fields>
-            <mtextfield id="corpus_entry" width="250px" label="Entry" prefix="crp_"/> 
-        </fields>
+    <mdialog id="formNewCorpusDialog" state="open" onClose="structure.reloadCorpus();">
+        <property title="$this->data->title"/>
         <tools>
-            <mlinkbutton id="lbCloseFrame" iconCls="icon-cancel" text="{{_M('Close')}}" plain="true" action="$this->data->close"/>
-            <mlinkbutton id="lbSaveFrame" iconCls="icon-save" text="{{_M('Save')}}" plain="true" action="$this->data->save"/>
+            <mlinkbutton id="lbSaveCorpus" iconCls="icon-save" text="Save" plain="true" action="!formNewCorpusSave()"/>
         </tools>
-    </mformdialog>
+        <mform id="formNewCorpus">
+            <fields>
+                <mtextfield id="corpus_name" width="250px" label="Name"/>
+            </fields>
+            <data load="$this->data->object"/>
+        </mform>
+    </mdialog>
+    <script>
+        function formNewCorpusSave(){
+            manager.doAjax('/index.php/webtool/structure/corpus/newCorpus', function(response){
+                if (response.status == 'error') {
+                    theme.message('error','Error',response.message);
+                } else {
+                    if (response.status == 'information') {
+                        theme.message('information','Information',response.message);
+                        structure.reloadCorpus();
+                    }
+                }
+            }, 'formNewCorpus');
+        }
+    </script>
+
 </view>

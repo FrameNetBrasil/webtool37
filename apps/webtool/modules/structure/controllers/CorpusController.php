@@ -1,5 +1,7 @@
 <?php
 
+use fnbr\models\Base;
+
 class CorpusController extends MController
 {
 
@@ -58,9 +60,10 @@ class CorpusController extends MController
     {
         $this->data->idCorpus = $this->data->id;
         $model = new fnbr\models\Corpus($this->data->idCorpus);
-        $this->data->corpus = $model->getEntry() . '  [' . $model->getName() . ']';
+        $this->data->corpus = $model->getName();
         $this->data->save = "@structure/corpus/newDocument|formNewDocument";
-        $this->data->close = "!$('#formNewDocument_dialog').dialog('close');";
+        //$this->data->close = "!$('#formNewDocument_dialog').dialog('close');";
+        $this->data->close = "!structure.reloadCorpusById({$this->data->idCorpus});";
         $this->data->title = _M('new fnbr\models\Document');
         $this->render();
     }
@@ -68,10 +71,15 @@ class CorpusController extends MController
     public function formUpdateDocument()
     {
         $model = new fnbr\models\Document($this->data->id);
+        $corpus = new fnbr\models\Corpus($model->getIdCorpus());
+        $this->data->corpusName = $corpus->getName();
+        $genre = new fnbr\models\Genre($model->getIdGenre());
+        $this->data->genreName = $genre->getName();
+        $this->data->name = $model->getName();
         $this->data->object = $model->getData();
-        $this->data->save = "@structure/corpus/updateDocument|formUpdateDocument";
+//        $this->data->save = "@structure/corpus/updateDocument|formUpdateDocument";
         $this->data->close = "!$('#formUpdateDocument_dialog').dialog('close');";
-        $this->data->title = 'Document: ' . $model->getEntry() . '  [' . $model->getName() . ']';
+        $this->data->title = 'Document: ' . $model->getName();
         $this->render();
     }
 
@@ -106,12 +114,19 @@ class CorpusController extends MController
     {
         try {
             $model = new fnbr\models\Corpus();
-            $this->data->corpus->entry = 'crp_' . strtolower(str_replace('crp_', '', $this->data->corpus->entry));
+            //$this->data->corpus->entry = 'crp_' . strtolower(str_replace('crp_', '', $this->data->corpus->entry));
+            $this->data->corpus->entry = 'crp_' . $this->data->corpus->name;
             $model->setData($this->data->corpus);
             $model->save($this->data->corpus);
-            $this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->corpus->entry}');");
+            $entry = new fnbr\models\Entry();
+            $languages = Base::languages();
+            foreach($languages as $idLanguage => $language) {
+                $entry->updateByIdEntity($model->getIdEntity(), $idLanguage, $this->data->corpus->name);
+            }
+            //$this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->corpus->entry}');");
+            $this->renderResponse('information', 'OK. Corpus created.');
         } catch (\Exception $e) {
-            $this->renderPrompt('error', $e->getMessage());
+            $this->renderResponse('error', $e->getMessage());
         }
     }
 
@@ -127,16 +142,37 @@ class CorpusController extends MController
         }
     }
 
+    public function formDeleteCorpus()
+    {
+        $ok = "!structure.deleteCorpusConfirmed({$this->data->id})";
+        $this->renderPrompt('confirmation', 'Warning: Corpus will be removed. Continue?', $ok);
+    }
+
+    public function deleteCorpus()
+    {
+        try {
+            $structure = Manager::getAppService('structurecorpus');
+            $structure->deleteCorpus($this->data->id);
+            $this->renderResponse('information', 'OK. Corpus deleted.');
+        } catch (\Exception $e) {
+            $this->renderResponse('error', "Corpus can not be removed. Check if it has associated documents.");
+        }
+    }
     public function newDocument()
     {
         try {
             $model = new fnbr\models\Document();
-            $this->data->document->entry = 'doc_' . $this->data->document->entry;
+            $this->data->document->entry = 'doc_' . $this->data->document->name;
             $model->setData($this->data->document);
             $model->save();
-            $this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->document->entry}');");
+            $entry = new fnbr\models\Entry();
+            $languages = Base::languages();
+            foreach($languages as $idLanguage => $language) {
+                $entry->updateByIdEntity($model->getIdEntity(), $idLanguage, $this->data->document->name);
+            }
+            $this->renderResponse('information', 'OK. Document created.');
         } catch (\Exception $e) {
-            $this->renderPrompt('error', $e->getMessage());
+            $this->renderResponse('error', $e->getMessage());
         }
     }
 
@@ -144,15 +180,35 @@ class CorpusController extends MController
     {
         try {
             $model = new fnbr\models\Document($this->data->document->idDocument);
-            $model->updateEntry($this->data->document->entry);
+//            $model->updateEntry($this->data->document->entry);
             $model->setData($this->data->document);
             $model->save($this->data->document);
-            $this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->document->entry}');");
+            $entry = new fnbr\models\Entry();
+            $languages = Base::languages();
+            foreach($languages as $idLanguage => $language) {
+                $entry->updateByIdEntity($model->getIdEntity(), $idLanguage, $this->data->document->name);
+            }
+            $this->renderResponse('information', 'OK. Document updated.');
         } catch (\Exception $e) {
-            $this->renderPrompt('error', $e->getMessage());
+            $this->renderResponse('error', $e->getMessage());
         }
     }
+    public function formDeleteDocument()
+    {
+        $ok = "!structure.deleteDocumentConfirmed({$this->data->id})";
+        $this->renderPrompt('confirmation', 'Warning: Document will be removed. Continue?', $ok);
+    }
 
+    public function deleteDocument()
+    {
+        try {
+            $structure = Manager::getAppService('structurecorpus');
+            $structure->deleteDocument($this->data->id);
+            $this->renderResponse('information', 'OK. Document deleted.');
+        } catch (\Exception $e) {
+            $this->renderResponse('error', "Document can not be removed. Check if it has associated sentences.");
+        }
+    }
     public function newDocumentMM()
     {
         try {

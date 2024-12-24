@@ -19,14 +19,16 @@
 <div onclick="structure.newCorpus()" data-options="iconCls:'icon-add'">{{_'New Corpus'}}</div>
 </div>
 <div id="menuCorpus" style="display:none, width:120px;">
-<div onclick="structure.editCorpus()" data-options="iconCls:'icon-edit'">{{_'Edit Corpus'}}</div>
-<div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
+<!--<div onclick="structure.editCorpus()" data-options="iconCls:'icon-edit'">{{_'Edit Corpus'}}</div>-->
+<div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">Edit Translations</div>
+<div onclick="structure.deleteCorpus()" data-options="iconCls:'icon-remove'">Delete Corpus</div>
 <div onclick="structure.newDocument()" data-options="iconCls:'icon-add'">{{_'New Document'}}</div>
 </div>
 <div id="menuDocument" style="display:none, width:120px;">
 <div onclick="structure.editDocument()" data-options="iconCls:'icon-edit'">{{_'Edit Document'}}</div>
-<div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">{{_'Edit Entry'}}</div>
-<div onclick="structure.preprocessingDocumentMM()" data-options="iconCls:'icon-edit'">Preprocessing Document MM</div>
+<div onclick="structure.editEntry()" data-options="iconCls:'icon-edit'">Edit Translations</div>
+<div onclick="structure.deleteDocument()" data-options="iconCls:'icon-remove'">Delete Document</div>
+<!--<div onclick="structure.preprocessingDocumentMM()" data-options="iconCls:'icon-edit'">Preprocessing Document MM</div>-->
 </div>
 
 <script type="text/javascript">
@@ -52,7 +54,25 @@
         }
         
         structure.reloadCorpus = function () {
-            $('#corpusTree').tree('reload');
+            var node = $('#corpusTree').tree('getSelected');
+            if (node) {
+                $('#corpusTree').tree('reload', node.target);
+            } else {
+                $('#corpusTree').tree('reload');
+            }
+        }
+
+        structure.reloadCorpusById = function (id) {
+            var node = $('#corpusTree').tree('find', {id:'c' + id});
+            $('#corpusTree').tree('reload', node);
+        }
+
+        structure.reloadCorpusParent = function () {
+            var node = $('#corpusTree').tree('getSelected');
+            var parent = $('#corpusTree').tree('getParent', node.target);
+            if (node) {
+                $('#corpusTree').tree('reload', parent.target);
+            }
         }
         
         structure.editEntry = function (entry) {
@@ -60,6 +80,28 @@
                 entry = structure.node.entry;
             }
             manager.doAction('^' + structure.app + '/structure/entry/formUpdate/' + entry);
+        }
+
+        structure.deleteCorpus = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/corpus/formDeleteCorpus')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.deleteCorpusConfirmed = function (id) {
+            manager.doAjax('/index.php/webtool/structure/corpus/deleteCorpus/' + id, function(response){
+                if (response.status == 'error') {
+                    theme.message('error','Error',response.message);
+                } else {
+                    if (response.status == 'information') {
+                        theme.message('information','Information',response.message);
+                        console.log("reloading");
+                        $('#corpusTree').tree('reload');
+                    }
+                }
+            }, {});
         }
 
         structure.newDocument = function (idDocument) {
@@ -83,6 +125,29 @@
             }
             manager.doGet({{$manager->getURL('structure/corpus/formNewDocumentMM')}} + '/' + idDocument,'structureCenterPane');
         }
+
+        structure.deleteDocument = function (id) {
+            if ($.type(id) === "undefined") {
+                id = structure.node.id.substr(1);
+            }
+            $('#structureCenterPane').html('');
+            manager.doGet({{$manager->getURL('structure/corpus/formDeleteDocument')}} + '/' + id,'structureCenterPane');
+        }
+
+        structure.deleteDocumentConfirmed = function (id) {
+            manager.doAjax('/index.php/webtool/structure/corpus/deleteDocument/' + id, function(response){
+                if (response.status == 'error') {
+                    theme.message('error','Error',response.message);
+                } else {
+                    if (response.status == 'information') {
+                        theme.message('information','Information',response.message);
+                        console.log("reloading");
+                        structure.reloadCorpusParent();
+                    }
+                }
+            }, {});
+        }
+
 
         structure.preprocessingDocumentMM = function (id) {
             if ($.type(id) === "undefined") {

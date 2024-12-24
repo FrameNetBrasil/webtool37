@@ -3,11 +3,13 @@
     <mformdialog id="formImportFullText" title="Import FullText"  close=">fnbr/main" >
         <fields>
             <mvcontainer>
-                <mspan>Importação de arquivos texto simples, com uma sentença por linha, associadas a um Document.</mspan>
+                <mspan>Import plain text (UTF-8 encoded) file.</mspan>
+                <mspan>One sentence per line with a dot at the end of sentence.</mspan>
+                <mspan>The sentences will be associated to the informed Document.</mspan>
             </mvcontainer>
-            <mselection id="idLanguage" label="Língua" options="$this->data->languages"/>
-            <include component="MLookupDocument.php" id="idDocument" label="Document"/>
-            <mfilefield id="uploadFile" label="Arquivo com dados" text="Selecionar Arquivo" width="300px"/>
+            <mselection id="idLanguage" label="Language" options="$this->data->languages"/>
+            <include component="MLookupDocument.php" id="idDocument" label="Document name"/>
+            <mfilefield id="uploadFile" label="Text file" text="Select file" width="300px"/>
         </fields>    
         <buttons>
             <mbutton id="btnPost" text="{{_M('Send')}}" action="$this->data->action"/>
