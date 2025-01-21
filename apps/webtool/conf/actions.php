@@ -34,16 +34,16 @@ return [
 //            'staticAnnotation' => ['Static Mode', 'annotation/static/formImageAnnotation', 'fa fa-camera fa16px', '', A_ACCESS, []],
             'layers' => ['Manage Layers', '^annotation/layer/formManager', 'fa fa-list fa16px', 'JUNIOR', A_ACCESS, []],
         ]],
-        'reports' => ['Reports', 'main/reports', 'fa fa-newspaper-o fa16px', '', '', [
-            'framereport' => ['Frames', 'report/frame/main', 'fa fa-list-alt fa16px', '', '', []],
-            'lureport' => ['LU', 'report/lu/main', 'fa fa-list-alt fa16px', '', '', []],
-            'cxnreport' => ['Constructions', 'report/cxn/main', 'fa fa-th fa16px', '', '', []],
+        'reports' => ['Reports', 'main/reports', 'fa fa-newspaper-o fa16px', '', A_ACCESS, [
+            'framereport' => ['Frames', 'report/frame/main', 'fa fa-list-alt fa16px', '', A_ACCESS, []],
+            'lureport' => ['LU', 'report/lu/main', 'fa fa-list-alt fa16px', '', A_ACCESS, []],
+            'cxnreport' => ['Constructions', 'report/cxn/main', 'fa fa-th fa16px', '', A_ACCESS, []],
             'corpusAnnotationReport' => ['Corpus Annotation', 'report/corpus/main', 'fa fa-file-text fa16px', '', A_ACCESS, []],
         ]],
-        'grapher' => ['Grapher', 'main/grapher', 'fa fa-share-alt fa16px', '', '', [
-            'fullgrapher' => ['Frames & CxN', 'grapher/grapher/main', 'fa fa-link fa16px', '', '', []],
-            'domaingrapher' => ['Frames by Domain', 'grapher/domain/main', 'fa fa-link fa16px', '', '', []],
-            'ccngrapher' => ['Constructicon', 'grapher/ccn/main', 'fa fa-link fa16px', '', '', []],
+        'grapher' => ['Grapher', 'main/grapher', 'fa fa-share-alt fa16px', '', A_ACCESS, [
+            'fullgrapher' => ['Frames & CxN', 'grapher/grapher/main', 'fa fa-link fa16px', '', A_ACCESS, []],
+            'domaingrapher' => ['Frames by Domain', 'grapher/domain/main', 'fa fa-link fa16px', '', A_ACCESS, []],
+            'ccngrapher' => ['Constructicon', 'grapher/ccn/main', 'fa fa-link fa16px', '', A_ACCESS, []],
         ]],
         'editor' => ['Editor', 'main/visualeditor', 'fa fa-arrows fa16px', 'MASTER', A_ACCESS, [
             'frameeditor' => ['Frame Relation', 'visualeditor/frame/main', 'fa fa-list-alt fa16px', 'MASTER', A_ACCESS, []],

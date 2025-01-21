@@ -15,6 +15,7 @@
     </mdialog>
     <script>
         function formNewFrameSave(){
+        console.log('====');
             manager.doAjax('/index.php/webtool/structure/frame/newFrame', function(response){
                 if (response.status == 'error') {
                     theme.message('error','Error',response.message);

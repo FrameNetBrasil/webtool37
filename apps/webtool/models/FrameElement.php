@@ -344,7 +344,6 @@ class FrameElement extends map\FrameElementMap
             // remove labels
             $label = new Label();
             $label->deleteByIdLabelType($idEntity);
-            Base::entityTimelineDelete($this->getIdEntity());
             // remove this fe
             Timeline::addTimeline("frameelement", $this->getId(), "D");
             parent::delete();

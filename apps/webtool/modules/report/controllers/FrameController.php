@@ -52,7 +52,7 @@ class FrameController extends MController
         $this->data->relations = $report->getRelations($frame);
         $this->data->classification = $report->getClassification($frame);
         $this->data->lus = $report->getLUs($frame, $this->idLanguage );
-        mdump($this->data);
+        //mdump($this->data);
         $this->render();
     }
     

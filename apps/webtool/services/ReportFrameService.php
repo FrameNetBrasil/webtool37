@@ -40,12 +40,13 @@ class ReportFrameService extends MService
     public function decorate($description, $styles)
     {
         $decorated = "";
-        $sentence = utf8_decode($description);
+        //$sentence = utf8_decode($description);
+        $sentence = $description;
         $decorated = preg_replace_callback(
             "/\#([^\s\.\,\;\?\!]*)/i",
             function ($matches) use ($styles) {
-                $m = substr($matches[0], 1);
-                $l = strtolower($m);
+                $m = mb_substr($matches[0], 1);
+                $l = mb_strtolower($m);
                 $s = $styles[utf8_encode($l)];
                 if ($s) {
                     return "<span class='fe_{$l}'>{$m}</span>";
@@ -60,14 +61,17 @@ class ReportFrameService extends MService
             },
             $sentence
         );
+        mdump("###############");
+        mdump($decorated);
+        mdump("###############");
 
         //$partial = utf8_encode($decorated);
         $partial = $decorated;
         $final = preg_replace_callback(
             "/\[([^\]]*)\]/i",
             function ($matches) use ($styles) {
-                $m = substr($matches[0], 1, -1);
-                $l = strtolower($m);
+                $m = mb_substr($matches[0], 1, -1);
+                $l = mb_strtolower($m);
                 foreach ($styles as $fe => $s) {
                     if (str_contains(utf8_encode($l), '|target')) {
                         $m = substr($m, 0, strpos($m, '|'));
@@ -83,7 +87,8 @@ class ReportFrameService extends MService
             },
             $partial
         );
-        return utf8_encode(nl2br($final));
+        //return utf8_encode(nl2br($final));
+        return nl2br($final);
     }
 
     public function getFEData($idFrame)
@@ -108,7 +113,11 @@ class ReportFrameService extends MService
                 }
             }
             $fe['lower'] = strtolower($fe['name']);
+            mdump("===============================");
+            mdump($fe['description']);
             $fe['description'] = $this->decorate($fe['description'], $styles);
+            mdump($fe['description']);
+            mdump("===============================");
             if ($fe['coreType'] == 'cty_core') {
                 $core[] = $fe;
             } else if ($fe['coreType'] == 'cty_core-unexpressed') {

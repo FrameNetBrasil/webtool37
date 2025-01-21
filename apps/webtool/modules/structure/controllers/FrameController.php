@@ -211,10 +211,10 @@ class FrameController extends MController
             $fe->setData($this->data->frameelement);
             $fe->save($this->data->frameelement);
             $entry = new fnbr\models\Entry();
-            $entry->updateByIdEntity($fe->getIdEntity(), 1, $this->data->frameelement->namePT);
+//            $entry->updateByIdEntity($fe->getIdEntity(), 1, $this->data->frameelement->namePT);
             $entry->updateByIdEntity($fe->getIdEntity(), 2, $this->data->frameelement->nameEN);
             //$this->renderPrompt('information', 'OK', "structure.editEntry('{$this->data->frameelement->entry}');");
-            $this->renderPrompt('information', 'OK');
+            $this->renderPrompt('information', 'OK. FrameElement created.');
         } catch (\Exception $e) {
             $this->renderPrompt('error', $e->getMessage());
         }
@@ -257,7 +257,7 @@ class FrameController extends MController
         try {
             $model = new fnbr\models\FrameElement($this->data->id);
             $model->safeDelete();
-            $this->renderPrompt('information', 'FrameElement removed.', "!structure.reloadFrame();");
+            $this->renderPrompt('information', 'FrameElement removed.', "!structure.reloadFrameParent();");
         } catch (\Exception $e) {
             $this->renderPrompt('error', $e->getMessage());
         }
