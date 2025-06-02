@@ -18,7 +18,11 @@
     </mdialog>
     <script>
         function formUpdateDocumentSave(){
-            manager.doAjax('/index.php/webtool/structure/corpus/updateDocument', function(response){
+            var urlBase = window.location.href.replace(/\/index\.php\/(.*)/, "");
+            if (urlBase.endsWith('/')) {
+                urlBase = urlBase.substr(0, urlBase.length - 1);
+            }
+            manager.doAjax(urlBase + '/index.php/webtool/structure/corpus/updateDocument', function(response){
                 if (response.status == 'error') {
                     theme.message('error','Error',response.message);
                 } else {

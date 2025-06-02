@@ -123,7 +123,11 @@
         }
 
         structure.deleteFrameConfirmed = function (id) {
-            manager.doAjax('/index.php/webtool/structure/frame/deleteFrame/' + id, function(response){
+            var urlBase = window.location.href.replace(/\/index\.php\/(.*)/, "");
+            if (urlBase.endsWith('/')) {
+                urlBase = urlBase.substr(0, urlBase.length - 1);
+            }
+            manager.doAjax(urlBase + '/index.php/webtool/structure/frame/deleteFrame/' + id, function(response){
                 if (response.status == 'error') {
                     theme.message('error','Error',response.message);
                 } else {
