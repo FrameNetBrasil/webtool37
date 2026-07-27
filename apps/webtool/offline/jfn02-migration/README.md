@@ -30,6 +30,7 @@ a transaction, but the deletes are not recoverable once committed.
 | 05 | `05_annoset_import_38.sql` | Imports 38 annotation sets / 266 layers / 167 labels; resets `annotationset` AUTO_INCREMENT to 400000 |
 | 06 | `06_annoset_import_collided.sql` | Imports 2 more sets whose jfn02 ids were occupied in fnjp_db, under new ids 400000/400001 |
 | 07 | `07_annoset_delete_surplus.sql` | Deletes the remaining 97 surplus fnjp-only annotation sets |
+| 08 | `08_fix_postpos_labeltype_relations.sql` | Repoints 11 `rel_haslabeltype` rows for the jp postpositions from `lty_cee` to `lty_postpos` |
 
 End state: `lu` = 4902 rows matching `jfn02.lexunit` with zero field differences;
 `annotationset` = 9489 rows matching jfn02's LU-linked sets, with matching multiplicity
@@ -51,6 +52,34 @@ polymorphic `labeltype` table; both branches are plain id mirrors:
 
 Do **not** match generic labels by name — names are not unique (`NP` occurs 6 times across
 languages).
+
+**A GenericLabel is only usable if `rel_haslabeltype` links it to the right LayerType.**
+`entityrelation.idEntity1` must be the `layertype.idEntity` of the layer type the label
+belongs to (note: `idEntity`, not `idLayerType`). `AnnotationSet::getLabelTypesGL()` joins
+`LayerType → GenericLabel` over that relation to build the `annotation.labelTypes` JS map, so
+a label type reachable only from the wrong LayerType is silently absent from the map and
+`annotation.cellStyler` throws on the first cell that uses it, aborting the entire datagrid
+render. Step 08 fixed exactly this for the 11 jp postpositions, which were attached to
+`lty_cee` (entity 1291) instead of `lty_postpos` (entity 218481). Worth re-checking after any
+sync that touches `genericlabel` or `entityrelation`:
+
+```sql
+-- label types that annotation data uses but cannot be reached from their own LayerType
+SELECT lt.entry AS layerType, gl.idEntity AS idLabelType, gl.name, COUNT(*) AS n_labels
+FROM fnjp_db.label lab
+JOIN fnjp_db.layer lay ON lay.idLayer = lab.idLayer
+JOIN fnjp_db.layertype lt ON lt.idLayerType = lay.idLayerType
+JOIN fnjp_db.genericlabel gl ON gl.idEntity = lab.idLabelType
+WHERE NOT EXISTS (
+    SELECT 1 FROM fnjp_db.entityrelation er
+    JOIN fnjp_db.relationtype rt ON rt.idRelationType = er.idRelationType
+    WHERE rt.entry = 'rel_haslabeltype'
+      AND er.idEntity1 = lt.idEntity AND er.idEntity2 = lab.idLabelType)
+GROUP BY lt.entry, gl.idEntity, gl.name;
+```
+
+FE label types come from `getLabelTypesFE()` instead and do not use `rel_haslabeltype`, so
+`lty_fe` rows in that query's output are expected noise, not defects.
 
 **Ids that mirror between the databases:** `lexunit.ID`↔`lu.idLU`, `lemma.ID`↔`idLemma`,
 `lexeme.ID`↔`idLexeme`, `frame.ID`↔`idFrame`, `frameelement.ID`↔`idFrameElement`,

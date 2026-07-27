@@ -108,9 +108,6 @@
                     } else {
                         idLabelType = value;
                     }
-                    console.log(row);
-                    console.log('idLabelType = ' + idLabelType);
-                    console.log(annotation.labelTypes);
                     idColor = annotation.labelTypes[idLabelType]['idColor'];
                 }
                 //console.log('cellStyler');
